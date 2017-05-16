@@ -19,6 +19,7 @@
 
 #include "rpc_allocator.h"
 
+namespace tensorflow {
 RpcAllocator::RpcAllocator()
 {
 
@@ -26,5 +27,7 @@ RpcAllocator::RpcAllocator()
 
 RpcAllocator::~RpcAllocator()
 {
+
+}
 
 }

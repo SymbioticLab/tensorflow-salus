@@ -19,6 +19,8 @@
 
 #include "rpc_device_context.h"
 
+namespace tensorflow {
+
 RpcDeviceContext::RpcDeviceContext()
 {
 
@@ -26,5 +28,7 @@ RpcDeviceContext::RpcDeviceContext()
 
 RpcDeviceContext::~RpcDeviceContext()
 {
+
+}
 
 }

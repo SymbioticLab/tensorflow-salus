@@ -20,6 +20,7 @@
 #ifndef RPCDEVICECONTEXT_H
 #define RPCDEVICECONTEXT_H
 
+namespace tensorflow {
 /**
  * @todo write docs
  */
@@ -38,4 +39,5 @@ public:
 
 };
 
+}
 #endif // RPCDEVICECONTEXT_H

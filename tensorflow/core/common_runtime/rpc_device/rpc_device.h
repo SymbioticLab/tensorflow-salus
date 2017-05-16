@@ -25,22 +25,30 @@
 #include "tensorflow/core/common_runtime/rpc_device/rpc_device_context.h"
 #include "tensorflow/core/public/session_options.h"
 
+namespace tensorflow {
+
 /**
  * @todo write docs
  */
 class RpcDevice : public LocalDevice
 {
 public:
-    /**
-     * Default constructor
-     */
-    RpcDevice();
 
-    /**
-     * Destructor
-     */
-    ~RpcDevice();
+    RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+              const DeviceLocality &locality, Allocator *allocator);
 
+    ~RpcDevice() override;
+
+    void Compute(OpKernel *op_kernel, OpKernelContext *context) override;
+    Allocator *GetAllocator(AllocatorAttributes attr) override;
+    Status MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
+                               Tensor *tensor) override;
+
+    Status Sync() override;
+
+private:
+    Allocator *m_allocator;  // Not owned
 };
 
+}
 #endif // RPC_DEVICE_H

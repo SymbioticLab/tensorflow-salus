@@ -667,6 +667,7 @@ cc_library(
         ":core_cpu",
         ":gpu_runtime",
         ":sycl_runtime",
+        ":rpc_runtime",
     ],
 )
 
@@ -1641,6 +1642,36 @@ cc_library(
         ":protos_all_cc",
         "//third_party/eigen3",
         "@local_config_sycl//sycl:sycl",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "rpc_runtime",
+    srcs = [
+        "common_runtime/rpc_device/rpc_allocator.cpp",
+        "common_runtime/rpc_device/rpc_device.cpp",
+        "common_runtime/rpc_device/rpc_device_context.cpp",
+        "common_runtime/rpc_device/rpc_device_factory.cpp",
+        "common_runtime/rpc_device/threadpiscine_device.cc",
+    ],
+    hdrs = [
+        "common_runtime/rpc_device/rpc_allocator.h",
+        "common_runtime/rpc_device/rpc_device.h",
+        "common_runtime/rpc_device/rpc_device_context.h",
+        "common_runtime/rpc_device/threadpiscine_device.h",
+    ],
+    copts = tf_copts(),
+    linkstatic = 1,
+    deps = [
+        ":core_cpu",
+        ":core_cpu_internal",
+        ":framework",
+        ":framework_internal",
+        ":lib",
+        ":lib_internal",
+        ":protos_all_cc",
+        "//third_party/eigen3",
     ],
     alwayslink = 1,
 )

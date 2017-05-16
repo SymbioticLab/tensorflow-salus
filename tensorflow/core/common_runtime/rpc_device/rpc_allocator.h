@@ -20,6 +20,7 @@
 #ifndef RPCALLOCATOR_H
 #define RPCALLOCATOR_H
 
+namespace tensorflow {
 /**
  * @todo write docs
  */
@@ -37,5 +38,7 @@ public:
     ~RpcAllocator();
 
 };
+
+}
 
 #endif // RPCALLOCATOR_H

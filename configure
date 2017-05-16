@@ -283,6 +283,17 @@ while [ "$TF_NEED_CUDA" == "" ]; do
   esac
 done
 
+## Set up Rpc-related environment settings
+while [ "$TF_NEED_RPC" == "" ]; do
+  read -p "Do you wish to build TensorFlow with RPC support? (Flag is not picked up by the build system yet, will build anyway) [y/N] " INPUT
+  case $INPUT in
+    [Yy]* ) echo "RPC support will be enabled for TensorFlow"; TF_NEED_RPC=1;;
+    [Nn]* ) echo "No RPC support will be enabled for TensorFlow"; TF_NEED_RPC=0;;
+    "" ) echo "No RPC Support will be enabled for TensorFlow"; TF_NEED_RPC=0;;
+    * ) echo "Invalid selection: " $INPUT;;
+  esac
+done
+
 export TF_NEED_CUDA
 export TF_NEED_OPENCL
 if [[ "$TF_NEED_CUDA" == "0" ]] && [[ "$TF_NEED_OPENCL" == "0" ]]; then
@@ -290,6 +301,9 @@ if [[ "$TF_NEED_CUDA" == "0" ]] && [[ "$TF_NEED_OPENCL" == "0" ]]; then
   bazel_clean_and_fetch
   exit
 fi
+
+export TF_NEED_RPC
+write_action_env_to_bazelrc "TF_NEED_RPC" "$TF_NEED_RPC"
 
 if [ "$TF_NEED_CUDA" == "1" ]; then
 # Set up which gcc nvcc should use as the host compiler

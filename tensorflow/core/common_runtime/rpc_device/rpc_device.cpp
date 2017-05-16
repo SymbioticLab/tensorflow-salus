@@ -19,12 +19,57 @@
 
 #include "rpc_device.h"
 
-RpcDevice::RpcDevice()
-{
+#include "tensorflow/core/common_runtime/local_device.h"
+#include "tensorflow/core/framework/allocator.h"
+#include "tensorflow/core/framework/allocator_registry.h"
+#include "tensorflow/core/framework/device_base.h"
+#include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/tensor.pb_text.h"
+#include "tensorflow/core/framework/types.h"
+#include "tensorflow/core/graph/types.h"
+#include "tensorflow/core/lib/hash/hash.h"
+#include "tensorflow/core/platform/tracing.h"
+#include "tensorflow/core/platform/types.h"
+#include "tensorflow/core/public/session_options.h"
 
-}
+namespace tensorflow {
+RpcDevice::RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+                     const DeviceLocality &locality, Allocator *allocator)
+    : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_CPU, memory_limit, locality), allocator)
+    , m_allocator(allocator) {}
 
 RpcDevice::~RpcDevice()
 {
 
 }
+
+Status RpcDevice::Sync()
+{
+    return Status::OK();
+}
+
+void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
+{
+
+}
+
+Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)
+{
+    return m_allocator;
+}
+
+Status RpcDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
+                                      Tensor *tensor)
+{
+    if (tensor_proto.dtype() > 0 && tensor_proto.dtype() <= DataType_MAX) {
+        Tensor parsed(tensor_proto.dtype());
+        if (parsed.FromProto(cpu_allocator(), tensor_proto)) {
+            *tensor = parsed;
+            return Status::OK();
+        }
+    }
+    return errors::InvalidArgument("Cannot parse tensor from proto: ",
+                                   ProtoDebugString(tensor_proto));
+}
+
+} // namespace tensorflow

@@ -71,6 +71,7 @@ std::ostream& operator<<(std::ostream& os, const DeviceType& d);
 TF_EXPORT extern const char* const DEVICE_CPU;   // "CPU"
 TF_EXPORT extern const char* const DEVICE_GPU;   // "GPU"
 TF_EXPORT extern const char* const DEVICE_SYCL;  // "SYCL"
+TF_EXPORT extern const char* const DEVICE_RPC;  // "RPC"
 
 typedef gtl::InlinedVector<MemoryType, 4> MemoryTypeVector;
 typedef gtl::ArraySlice<MemoryType> MemoryTypeSlice;

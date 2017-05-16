@@ -38,6 +38,7 @@ std::ostream& operator<<(std::ostream& os, const DeviceType& d) {
 const char* const DEVICE_CPU = "CPU";
 const char* const DEVICE_GPU = "GPU";
 const char* const DEVICE_SYCL = "SYCL";
+const char* const DEVICE_RPC = "RPC";
 
 string DataTypeString(DataType dtype) {
   if (IsRefType(dtype)) {
