@@ -50,7 +50,8 @@ Status RpcDevice::Sync()
 
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-
+    // TODO: send kernel to rpc
+    op_kernel->Compute(context);
 }
 
 Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)

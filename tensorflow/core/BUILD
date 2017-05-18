@@ -1649,6 +1649,9 @@ cc_library(
 cc_library(
     name = "rpc_runtime",
     srcs = [
+        "common_runtime/rpc_device/rpc/executor.pb.cc",
+        "common_runtime/rpc_device/rpc/executor.grpc.pb.cc",
+        "common_runtime/rpc_device/rpc/rpcclient.cpp",
         "common_runtime/rpc_device/rpc_allocator.cpp",
         "common_runtime/rpc_device/rpc_device.cpp",
         "common_runtime/rpc_device/rpc_device_context.cpp",
@@ -1656,6 +1659,9 @@ cc_library(
         "common_runtime/rpc_device/threadpiscine_device.cc",
     ],
     hdrs = [
+        "common_runtime/rpc_device/rpc/executor.pb.h",
+        "common_runtime/rpc_device/rpc/executor.grpc.pb.h",
+        "common_runtime/rpc_device/rpc/rpcclient.h",
         "common_runtime/rpc_device/rpc_allocator.h",
         "common_runtime/rpc_device/rpc_device.h",
         "common_runtime/rpc_device/rpc_device_context.h",

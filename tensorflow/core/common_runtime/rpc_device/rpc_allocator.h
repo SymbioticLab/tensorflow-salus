@@ -20,23 +20,31 @@
 #ifndef RPCALLOCATOR_H
 #define RPCALLOCATOR_H
 
+#include "tensorflow/core/framework/allocator.h"
+#include "tensorflow/core/platform/types.h"
+#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
+
+#include <memory>
+
 namespace tensorflow {
+
 /**
  * @todo write docs
  */
-class RpcAllocator
+class RpcAllocator : public Allocator
 {
 public:
-    /**
-     * Default constructor
-     */
     RpcAllocator();
 
-    /**
-     * Destructor
-     */
-    ~RpcAllocator();
+    ~RpcAllocator() override;
 
+    string Name() override;
+    void *AllocateRaw(size_t alignment, size_t num_bytes) override;
+    void DeallocateRaw(void *ptr) override;
+
+private:
+
+    TF_DISALLOW_COPY_AND_ASSIGN(RpcAllocator);
 };
 
 }

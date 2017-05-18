@@ -17,7 +17,7 @@ class RpcDeviceFactory : public DeviceFactory {
       string name = strings::StrCat(name_prefix, "/device:RPC:", i);
       devices->push_back(
 //           new RpcDevice(options, name, Bytes(256 << 20), DeviceLocality(),
-//                         RpcLDevice::GetShortDeviceDescription(),
+//                         RpcDevice::GetShortDeviceDescription(),
 //                         cl::sycl::gpu_selector(), cpu_allocator()));
           new ThreadPiscineDevice(options, name, Bytes(256 << 20), DeviceLocality(), cpu_allocator()));
     }

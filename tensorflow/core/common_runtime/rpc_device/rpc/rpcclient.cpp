@@ -17,31 +17,14 @@
  *
  */
 
-#ifndef RPCDEVICECONTEXT_H
-#define RPCDEVICECONTEXT_H
+#include "rpcclient.h"
 
-#include "tensorflow/core/common_runtime/device.h"
-#include "tensorflow/core/framework/device_base.h"
-
-namespace tensorflow {
-/**
- * @todo write docs
- */
-class RpcDeviceContext : public DeviceContext
+RpcClient::RpcClient()
 {
-public:
-    RpcDeviceContext();
-
-    ~RpcDeviceContext() override;
-
-    void CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device,
-                               Tensor *device_tensor,
-                               StatusCallback done) const override;
-
-    void CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
-                               Device *device, Tensor *cpu_tensor,
-                               StatusCallback done) override;
-};
 
 }
-#endif // RPCDEVICECONTEXT_H
+
+RpcClient::~RpcClient()
+{
+
+}

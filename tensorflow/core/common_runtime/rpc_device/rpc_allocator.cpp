@@ -20,6 +20,7 @@
 #include "rpc_allocator.h"
 
 namespace tensorflow {
+
 RpcAllocator::RpcAllocator()
 {
 
@@ -30,4 +31,20 @@ RpcAllocator::~RpcAllocator()
 
 }
 
+string RpcAllocator::Name()
+{
+    return "rpc";
 }
+
+void *RpcAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
+{
+    // TODO: call rpc
+    return nullptr;
+}
+
+void RpcAllocator::DeallocateRaw(void *ptr)
+{
+    // TODO: call rpc
+}
+
+} // namespace tensorflow
