@@ -58,7 +58,9 @@ grpc::Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
 
     ClientContext grpc_context;
 
+    LOG(INFO) << "RpcClient::run    calling rpc using rpc stub" << m_stub.get();
     auto status = m_stub->run(&grpc_context, request, &response);
+    LOG(INFO) << "RpcClient::run    rpc returned " << status.error_message();
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {

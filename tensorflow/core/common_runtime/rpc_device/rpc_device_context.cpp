@@ -22,6 +22,7 @@
 #include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
 
 #include "tensorflow/core/common_runtime/dma_helper.h"
+#include "tensorflow/core/platform/logging.h"
 
 namespace tensorflow {
 
@@ -37,6 +38,7 @@ RpcDeviceContext::~RpcDeviceContext()
 
 void RpcDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device, Tensor *device_tensor,
                                              StatusCallback done) const {
+    LOG(INFO) << "RpcDeviceContext::CopyCPUTensorToDevice";
     const int64 total_bytes = cpu_tensor->TotalBytes();
     if (total_bytes > 0) {
         const void *src_ptr = DMAHelper::base(cpu_tensor);
@@ -76,6 +78,7 @@ void RpcDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *d
 
 void RpcDeviceContext::CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
                                              Device *device, Tensor *cpu_tensor, StatusCallback done) {
+    LOG(INFO) << "RpcDeviceContext::CopyDeviceTensorToCPU";
     const int64 total_bytes = device_tensor->TotalBytes();
     if (total_bytes > 0) {
         const void *src_ptr = DMAHelper::base(device_tensor);

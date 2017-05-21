@@ -1678,6 +1678,7 @@ cc_library(
         ":lib_internal",
         ":protos_all_cc",
         "//third_party/eigen3",
+        "@grpc//:grpc++_unsecure",
     ],
     alwayslink = 1,
 )
