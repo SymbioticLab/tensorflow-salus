@@ -34,9 +34,11 @@
 
 namespace tensorflow {
 RpcDevice::RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
-                     const DeviceLocality &locality, Allocator *allocator)
+                     const DeviceLocality &locality, Allocator *allocator, RpcClient *rpc)
     : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_CPU, memory_limit, locality), allocator)
-    , m_allocator(allocator) {}
+    , m_allocator(allocator)
+    , m_rpc(rpc)
+{}
 
 RpcDevice::~RpcDevice()
 {
@@ -50,8 +52,7 @@ Status RpcDevice::Sync()
 
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-    // TODO: send kernel to rpc
-    op_kernel->Compute(context);
+    m_rpc->run(op_kernel, context);
 }
 
 Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)

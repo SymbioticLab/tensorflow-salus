@@ -19,9 +19,12 @@
 
 #include "rpc_allocator.h"
 
+#include "rpc/rpcclient.h"
+
 namespace tensorflow {
 
-RpcAllocator::RpcAllocator()
+RpcAllocator::RpcAllocator(RpcClient *rpc)
+    : m_rpc(rpc)
 {
 
 }
@@ -38,13 +41,18 @@ string RpcAllocator::Name()
 
 void *RpcAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 {
-    // TODO: call rpc
+    uint64_t addr_handle;
+
+    auto status = m_rpc->allocate(alignment, num_bytes, &addr_handle);
+    if (status.ok()) {
+        return reinterpret_cast<void*>(addr_handle);
+    }
     return nullptr;
 }
 
 void RpcAllocator::DeallocateRaw(void *ptr)
 {
-    // TODO: call rpc
+    m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
 }
 
 } // namespace tensorflow

@@ -28,13 +28,15 @@
 
 namespace tensorflow {
 
+class RpcClient;
+
 /**
  * @todo write docs
  */
 class RpcAllocator : public Allocator
 {
 public:
-    RpcAllocator();
+    RpcAllocator(RpcClient *rpc);
 
     ~RpcAllocator() override;
 
@@ -43,6 +45,8 @@ public:
     void DeallocateRaw(void *ptr) override;
 
 private:
+
+    RpcClient *m_rpc; // not owned
 
     TF_DISALLOW_COPY_AND_ASSIGN(RpcAllocator);
 };

@@ -19,14 +19,16 @@
 
 #include "rpcclient.h"
 
+#include "tensorflow/core/platform/logging.h"
+#include "tensorflow/core/framework/op_kernel.h"
+
 #include "grpc++/grpc++.h"
 
 #include <sstream>
 
-using namespace executor;
+namespace rpc = ::executor;
 using grpc::Channel;
 using grpc::ClientContext;
-using grpc::Status;
 using std::shared_ptr;
 using std::unique_ptr;
 using std::ostringstream;
@@ -38,46 +40,91 @@ RpcClient::RpcClient()
 { }
 
 RpcClient::RpcClient(shared_ptr<Channel> channel)
-    : m_stub(IExecEngine::NewStub(channel))
+    : m_stub(rpc::IExecEngine::NewStub(channel))
 { }
 
 RpcClient::~RpcClient() { }
 
-Status RpcClient::run(const OpKernel *kernel, OpContext *context)
+grpc::Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
 {
-    // TODO: revisit and remove unnecessary copies of kernel and context.
+    LOG(INFO) << "RpcClient::run";
 
-    RunRequest request;
-    *(request.mutable_opkernel()) = *kernel;
-    request.set_allocated_context(context);
+    rpc::RunRequest request;
+    // TODO: fill in rpc_opkernel and context
+    auto rpc_opkernel = request.mutable_opkernel();
+    auto rpc_context = request.mutable_context();
 
-    RunResponse response;
+    rpc::RunResponse response;
 
     ClientContext grpc_context;
 
     auto status = m_stub->run(&grpc_context, request, &response);
 
     // TODO: better error handling
-    if (status.ok() && response.result().code() == 0) {
-        *context = response.context();
-        return status;
-    } else {
+    if (!status.ok() || response.result().code() != 0) {
         ostringstream oss;
         oss << "ExecEngine returned " << response.result().code();
-        return Status(grpc::StatusCode::ABORTED, oss.str());
+        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
     }
-    return status;
+
+    // TODO: update kernel and context
+//     *context = response.context();
+
+    return grpc::Status::OK;
 }
 
-AllocResponse RpcClient::allocate(uint64_t alignment, uint64_t num_bytes)
+grpc::Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)
 {
-    AllocRequest request;
-    return {};
+    LOG(INFO) << "RpcClient::allocate(alignment=" << alignment << ", num_bytes=" << num_bytes << ")";
+
+    rpc::AllocRequest request;
+    request.set_alignment(alignment);
+    request.set_num_bytes(num_bytes);
+
+    rpc::AllocResponse response;
+    ClientContext grpc_context;
+
+    auto status = m_stub->allocate(&grpc_context, request, &response);
+
+    // TODO: better error handling
+    if (!status.ok() || response.result().code() != 0) {
+        ostringstream oss;
+        oss << "ExecEngine returned " << response.result().code();
+        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
+    }
+
+    *addr_handle = response.addr_handle();
+    LOG(INFO) << "RpcClient::allocate returned addr_handle=" << addr_handle;
+    return grpc::Status::OK;
 }
 
-DeallocResponse RpcClient::deallocate(uint64_t addr_handle)
+grpc::Status RpcClient::deallocate(uint64_t addr_handle)
 {
-    return {};
+    LOG(INFO) << "RpcClient::deallocate(addr_handle=" << addr_handle;
+
+    rpc::DeallocRequest request;
+    request.set_addr_handle(addr_handle);
+
+    rpc::DeallocResponse response;
+    ClientContext grpc_context;
+
+    auto status = m_stub->deallocate(&grpc_context, request, &response);
+
+    // TODO: better error handling
+    if (!status.ok() || response.result().code() != 0) {
+        ostringstream oss;
+        oss << "ExecEngine returned " << response.result().code();
+        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
+    }
+
+    return grpc::Status::OK;
+}
+
+RpcClient &RpcClient::instance()
+{
+    static RpcClient client;
+
+    return client;
 }
 
 } // namespace tensorflow

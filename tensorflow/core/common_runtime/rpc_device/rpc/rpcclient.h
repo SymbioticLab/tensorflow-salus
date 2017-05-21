@@ -25,6 +25,10 @@
 #include <memory>
 
 namespace tensorflow {
+
+class OpKernel;
+class OpKernelContext;
+
 /**
  * @todo write docs
  */
@@ -36,15 +40,18 @@ public:
      */
     RpcClient();
 
-    RpcClient(std::shared_ptr<grpc::Channel> channel);
 
     ~RpcClient();
 
-    grpc::Status run(const executor::OpKernel *kernel, executor::OpContext *context);
-    executor::AllocResponse allocate(uint64_t alignment, uint64_t num_bytes);
-    executor::DeallocResponse deallocate(uint64_t addr_handle);
+    grpc::Status run(OpKernel *kernel, OpKernelContext *context);
+    grpc::Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle);
+    grpc::Status deallocate(uint64_t addr_handle);
+
+    static RpcClient &instance();
 
 private:
+    RpcClient(std::shared_ptr<grpc::Channel> channel);
+
     std::unique_ptr<executor::IExecEngine::Stub> m_stub;
 };
 

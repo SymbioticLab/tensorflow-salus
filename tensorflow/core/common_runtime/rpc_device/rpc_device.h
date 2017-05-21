@@ -20,10 +20,14 @@
 #ifndef RPC_DEVICE_H
 #define RPC_DEVICE_H
 
+#include "rpc/rpcclient.h"
+
 #include "tensorflow/core/common_runtime/local_device.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc_allocator.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc_device_context.h"
 #include "tensorflow/core/public/session_options.h"
+
+#include <memory>
 
 namespace tensorflow {
 
@@ -35,7 +39,7 @@ class RpcDevice : public LocalDevice
 public:
 
     RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
-              const DeviceLocality &locality, Allocator *allocator);
+              const DeviceLocality &locality, Allocator *allocator, RpcClient *rpc);
 
     ~RpcDevice() override;
 
@@ -48,6 +52,7 @@ public:
 
 private:
     Allocator *m_allocator;  // Not owned
+    RpcClient *m_rpc; // Not owned
 };
 
 }
