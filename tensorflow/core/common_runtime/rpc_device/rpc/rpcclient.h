@@ -20,6 +20,11 @@
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
 
+#include "tensorflow/core/common_runtime/rpc_device/rpc/executor.grpc.pb.h"
+
+#include <memory>
+
+namespace tensorflow {
 /**
  * @todo write docs
  */
@@ -27,15 +32,22 @@ class RpcClient
 {
 public:
     /**
-     * Default constructor
+     * Default constructor. Hardcoded to connect to localhost:50051
      */
     RpcClient();
 
-    /**
-     * Destructor
-     */
+    RpcClient(std::shared_ptr<grpc::Channel> channel);
+
     ~RpcClient();
 
+    grpc::Status run(const executor::OpKernel *kernel, executor::OpContext *context);
+    executor::AllocResponse allocate(uint64_t alignment, uint64_t num_bytes);
+    executor::DeallocResponse deallocate(uint64_t addr_handle);
+
+private:
+    std::unique_ptr<executor::IExecEngine::Stub> m_stub;
 };
+
+} // namespace tensorflow
 
 #endif // RPCCLIENT_H

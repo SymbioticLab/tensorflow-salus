@@ -19,12 +19,65 @@
 
 #include "rpcclient.h"
 
+#include "grpc++/grpc++.h"
+
+#include <sstream>
+
+using namespace executor;
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::Status;
+using std::shared_ptr;
+using std::unique_ptr;
+using std::ostringstream;
+
+namespace tensorflow {
+
 RpcClient::RpcClient()
-{
+    : RpcClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))
+{ }
 
+RpcClient::RpcClient(shared_ptr<Channel> channel)
+    : m_stub(IExecEngine::NewStub(channel))
+{ }
+
+RpcClient::~RpcClient() { }
+
+Status RpcClient::run(const OpKernel *kernel, OpContext *context)
+{
+    // TODO: revisit and remove unnecessary copies of kernel and context.
+
+    RunRequest request;
+    *(request.mutable_opkernel()) = *kernel;
+    request.set_allocated_context(context);
+
+    RunResponse response;
+
+    ClientContext grpc_context;
+
+    auto status = m_stub->run(&grpc_context, request, &response);
+
+    // TODO: better error handling
+    if (status.ok() && response.result().code() == 0) {
+        *context = response.context();
+        return status;
+    } else {
+        ostringstream oss;
+        oss << "ExecEngine returned " << response.result().code();
+        return Status(grpc::StatusCode::ABORTED, oss.str());
+    }
+    return status;
 }
 
-RpcClient::~RpcClient()
+AllocResponse RpcClient::allocate(uint64_t alignment, uint64_t num_bytes)
 {
-
+    AllocRequest request;
+    return {};
 }
+
+DeallocResponse RpcClient::deallocate(uint64_t addr_handle)
+{
+    return {};
+}
+
+} // namespace tensorflow
