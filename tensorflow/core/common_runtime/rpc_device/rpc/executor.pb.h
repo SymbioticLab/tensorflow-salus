@@ -43,12 +43,12 @@ extern DeallocRequestDefaultTypeInternal _DeallocRequest_default_instance_;
 class DeallocResponse;
 class DeallocResponseDefaultTypeInternal;
 extern DeallocResponseDefaultTypeInternal _DeallocResponse_default_instance_;
-class OpContext;
-class OpContextDefaultTypeInternal;
-extern OpContextDefaultTypeInternal _OpContext_default_instance_;
-class OpKernel;
-class OpKernelDefaultTypeInternal;
-extern OpKernelDefaultTypeInternal _OpKernel_default_instance_;
+class OpContextDef;
+class OpContextDefDefaultTypeInternal;
+extern OpContextDefDefaultTypeInternal _OpContextDef_default_instance_;
+class OpKernelDef;
+class OpKernelDefDefaultTypeInternal;
+extern OpKernelDefDefaultTypeInternal _OpKernelDef_default_instance_;
 class ResultCode;
 class ResultCodeDefaultTypeInternal;
 extern ResultCodeDefaultTypeInternal _ResultCode_default_instance_;
@@ -73,25 +73,25 @@ void AddDescriptors();
 void InitDefaults();
 }  // namespace protobuf_executor_2eproto
 
-enum OpKernel_OpLibraryType {
-  OpKernel_OpLibraryType_TENSORFLOW = 0,
-  OpKernel_OpLibraryType_OpKernel_OpLibraryType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  OpKernel_OpLibraryType_OpKernel_OpLibraryType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum OpKernelDef_OpLibraryType {
+  OpKernelDef_OpLibraryType_TENSORFLOW = 0,
+  OpKernelDef_OpLibraryType_OpKernelDef_OpLibraryType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  OpKernelDef_OpLibraryType_OpKernelDef_OpLibraryType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool OpKernel_OpLibraryType_IsValid(int value);
-const OpKernel_OpLibraryType OpKernel_OpLibraryType_OpLibraryType_MIN = OpKernel_OpLibraryType_TENSORFLOW;
-const OpKernel_OpLibraryType OpKernel_OpLibraryType_OpLibraryType_MAX = OpKernel_OpLibraryType_TENSORFLOW;
-const int OpKernel_OpLibraryType_OpLibraryType_ARRAYSIZE = OpKernel_OpLibraryType_OpLibraryType_MAX + 1;
+bool OpKernelDef_OpLibraryType_IsValid(int value);
+const OpKernelDef_OpLibraryType OpKernelDef_OpLibraryType_OpLibraryType_MIN = OpKernelDef_OpLibraryType_TENSORFLOW;
+const OpKernelDef_OpLibraryType OpKernelDef_OpLibraryType_OpLibraryType_MAX = OpKernelDef_OpLibraryType_TENSORFLOW;
+const int OpKernelDef_OpLibraryType_OpLibraryType_ARRAYSIZE = OpKernelDef_OpLibraryType_OpLibraryType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* OpKernel_OpLibraryType_descriptor();
-inline const ::std::string& OpKernel_OpLibraryType_Name(OpKernel_OpLibraryType value) {
+const ::google::protobuf::EnumDescriptor* OpKernelDef_OpLibraryType_descriptor();
+inline const ::std::string& OpKernelDef_OpLibraryType_Name(OpKernelDef_OpLibraryType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    OpKernel_OpLibraryType_descriptor(), value);
+    OpKernelDef_OpLibraryType_descriptor(), value);
 }
-inline bool OpKernel_OpLibraryType_Parse(
-    const ::std::string& name, OpKernel_OpLibraryType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<OpKernel_OpLibraryType>(
-    OpKernel_OpLibraryType_descriptor(), name, value);
+inline bool OpKernelDef_OpLibraryType_Parse(
+    const ::std::string& name, OpKernelDef_OpLibraryType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<OpKernelDef_OpLibraryType>(
+    OpKernelDef_OpLibraryType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -162,30 +162,30 @@ class RunRequest : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // .executor.OpKernel opkernel = 1;
+  // .executor.OpKernelDef opkernel = 1;
   bool has_opkernel() const;
   void clear_opkernel();
   static const int kOpkernelFieldNumber = 1;
-  const ::executor::OpKernel& opkernel() const;
-  ::executor::OpKernel* mutable_opkernel();
-  ::executor::OpKernel* release_opkernel();
-  void set_allocated_opkernel(::executor::OpKernel* opkernel);
+  const ::executor::OpKernelDef& opkernel() const;
+  ::executor::OpKernelDef* mutable_opkernel();
+  ::executor::OpKernelDef* release_opkernel();
+  void set_allocated_opkernel(::executor::OpKernelDef* opkernel);
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   bool has_context() const;
   void clear_context();
   static const int kContextFieldNumber = 2;
-  const ::executor::OpContext& context() const;
-  ::executor::OpContext* mutable_context();
-  ::executor::OpContext* release_context();
-  void set_allocated_context(::executor::OpContext* context);
+  const ::executor::OpContextDef& context() const;
+  ::executor::OpContextDef* mutable_context();
+  ::executor::OpContextDef* release_context();
+  void set_allocated_context(::executor::OpContextDef* context);
 
   // @@protoc_insertion_point(class_scope:executor.RunRequest)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::executor::OpKernel* opkernel_;
-  ::executor::OpContext* context_;
+  ::executor::OpKernelDef* opkernel_;
+  ::executor::OpContextDef* context_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
 };
@@ -267,21 +267,21 @@ class RunResponse : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::executor::ResultCode* release_result();
   void set_allocated_result(::executor::ResultCode* result);
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   bool has_context() const;
   void clear_context();
   static const int kContextFieldNumber = 2;
-  const ::executor::OpContext& context() const;
-  ::executor::OpContext* mutable_context();
-  ::executor::OpContext* release_context();
-  void set_allocated_context(::executor::OpContext* context);
+  const ::executor::OpContextDef& context() const;
+  ::executor::OpContextDef* mutable_context();
+  ::executor::OpContextDef* release_context();
+  void set_allocated_context(::executor::OpContextDef* context);
 
   // @@protoc_insertion_point(class_scope:executor.RunResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::executor::ResultCode* result_;
-  ::executor::OpContext* context_;
+  ::executor::OpContextDef* context_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
 };
@@ -639,37 +639,37 @@ class AllocResponse : public ::google::protobuf::Message /* @@protoc_insertion_p
 };
 // -------------------------------------------------------------------
 
-class OpKernel : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.OpKernel) */ {
+class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.OpKernelDef) */ {
  public:
-  OpKernel();
-  virtual ~OpKernel();
+  OpKernelDef();
+  virtual ~OpKernelDef();
 
-  OpKernel(const OpKernel& from);
+  OpKernelDef(const OpKernelDef& from);
 
-  inline OpKernel& operator=(const OpKernel& from) {
+  inline OpKernelDef& operator=(const OpKernelDef& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const OpKernel& default_instance();
+  static const OpKernelDef& default_instance();
 
-  static inline const OpKernel* internal_default_instance() {
-    return reinterpret_cast<const OpKernel*>(
-               &_OpKernel_default_instance_);
+  static inline const OpKernelDef* internal_default_instance() {
+    return reinterpret_cast<const OpKernelDef*>(
+               &_OpKernelDef_default_instance_);
   }
 
-  void Swap(OpKernel* other);
+  void Swap(OpKernelDef* other);
 
   // implements Message ----------------------------------------------
 
-  inline OpKernel* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline OpKernelDef* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  OpKernel* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  OpKernelDef* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const OpKernel& from);
-  void MergeFrom(const OpKernel& from);
+  void CopyFrom(const OpKernelDef& from);
+  void MergeFrom(const OpKernelDef& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -690,7 +690,7 @@ class OpKernel : public ::google::protobuf::Message /* @@protoc_insertion_point(
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(OpKernel* other);
+  void InternalSwap(OpKernelDef* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -704,28 +704,28 @@ class OpKernel : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // nested types ----------------------------------------------------
 
-  typedef OpKernel_OpLibraryType OpLibraryType;
+  typedef OpKernelDef_OpLibraryType OpLibraryType;
   static const OpLibraryType TENSORFLOW =
-    OpKernel_OpLibraryType_TENSORFLOW;
+    OpKernelDef_OpLibraryType_TENSORFLOW;
   static inline bool OpLibraryType_IsValid(int value) {
-    return OpKernel_OpLibraryType_IsValid(value);
+    return OpKernelDef_OpLibraryType_IsValid(value);
   }
   static const OpLibraryType OpLibraryType_MIN =
-    OpKernel_OpLibraryType_OpLibraryType_MIN;
+    OpKernelDef_OpLibraryType_OpLibraryType_MIN;
   static const OpLibraryType OpLibraryType_MAX =
-    OpKernel_OpLibraryType_OpLibraryType_MAX;
+    OpKernelDef_OpLibraryType_OpLibraryType_MAX;
   static const int OpLibraryType_ARRAYSIZE =
-    OpKernel_OpLibraryType_OpLibraryType_ARRAYSIZE;
+    OpKernelDef_OpLibraryType_OpLibraryType_ARRAYSIZE;
   static inline const ::google::protobuf::EnumDescriptor*
   OpLibraryType_descriptor() {
-    return OpKernel_OpLibraryType_descriptor();
+    return OpKernelDef_OpLibraryType_descriptor();
   }
   static inline const ::std::string& OpLibraryType_Name(OpLibraryType value) {
-    return OpKernel_OpLibraryType_Name(value);
+    return OpKernelDef_OpLibraryType_Name(value);
   }
   static inline bool OpLibraryType_Parse(const ::std::string& name,
       OpLibraryType* value) {
-    return OpKernel_OpLibraryType_Parse(name, value);
+    return OpKernelDef_OpLibraryType_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -744,13 +744,13 @@ class OpKernel : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_id();
   void set_allocated_id(::std::string* id);
 
-  // .executor.OpKernel.OpLibraryType oplibrary = 1;
+  // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
   void clear_oplibrary();
   static const int kOplibraryFieldNumber = 1;
-  ::executor::OpKernel_OpLibraryType oplibrary() const;
-  void set_oplibrary(::executor::OpKernel_OpLibraryType value);
+  ::executor::OpKernelDef_OpLibraryType oplibrary() const;
+  void set_oplibrary(::executor::OpKernelDef_OpLibraryType value);
 
-  // @@protoc_insertion_point(class_scope:executor.OpKernel)
+  // @@protoc_insertion_point(class_scope:executor.OpKernelDef)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -761,37 +761,37 @@ class OpKernel : public ::google::protobuf::Message /* @@protoc_insertion_point(
 };
 // -------------------------------------------------------------------
 
-class OpContext : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.OpContext) */ {
+class OpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.OpContextDef) */ {
  public:
-  OpContext();
-  virtual ~OpContext();
+  OpContextDef();
+  virtual ~OpContextDef();
 
-  OpContext(const OpContext& from);
+  OpContextDef(const OpContextDef& from);
 
-  inline OpContext& operator=(const OpContext& from) {
+  inline OpContextDef& operator=(const OpContextDef& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const OpContext& default_instance();
+  static const OpContextDef& default_instance();
 
-  static inline const OpContext* internal_default_instance() {
-    return reinterpret_cast<const OpContext*>(
-               &_OpContext_default_instance_);
+  static inline const OpContextDef* internal_default_instance() {
+    return reinterpret_cast<const OpContextDef*>(
+               &_OpContextDef_default_instance_);
   }
 
-  void Swap(OpContext* other);
+  void Swap(OpContextDef* other);
 
   // implements Message ----------------------------------------------
 
-  inline OpContext* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline OpContextDef* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  OpContext* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  OpContextDef* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const OpContext& from);
-  void MergeFrom(const OpContext& from);
+  void CopyFrom(const OpContextDef& from);
+  void MergeFrom(const OpContextDef& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -812,7 +812,7 @@ class OpContext : public ::google::protobuf::Message /* @@protoc_insertion_point
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(OpContext* other);
+  void InternalSwap(OpContextDef* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -882,7 +882,7 @@ class OpContext : public ::google::protobuf::Message /* @@protoc_insertion_point
   bool is_output_dead() const;
   void set_is_output_dead(bool value);
 
-  // @@protoc_insertion_point(class_scope:executor.OpContext)
+  // @@protoc_insertion_point(class_scope:executor.OpContextDef)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -989,7 +989,7 @@ class ResultCode : public ::google::protobuf::Message /* @@protoc_insertion_poin
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
 // RunRequest
 
-// .executor.OpKernel opkernel = 1;
+// .executor.OpKernelDef opkernel = 1;
 inline bool RunRequest::has_opkernel() const {
   return this != internal_default_instance() && opkernel_ != NULL;
 }
@@ -997,27 +997,27 @@ inline void RunRequest::clear_opkernel() {
   if (GetArenaNoVirtual() == NULL && opkernel_ != NULL) delete opkernel_;
   opkernel_ = NULL;
 }
-inline const ::executor::OpKernel& RunRequest::opkernel() const {
+inline const ::executor::OpKernelDef& RunRequest::opkernel() const {
   // @@protoc_insertion_point(field_get:executor.RunRequest.opkernel)
   return opkernel_ != NULL ? *opkernel_
-                         : *::executor::OpKernel::internal_default_instance();
+                         : *::executor::OpKernelDef::internal_default_instance();
 }
-inline ::executor::OpKernel* RunRequest::mutable_opkernel() {
+inline ::executor::OpKernelDef* RunRequest::mutable_opkernel() {
   
   if (opkernel_ == NULL) {
-    opkernel_ = new ::executor::OpKernel;
+    opkernel_ = new ::executor::OpKernelDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunRequest.opkernel)
   return opkernel_;
 }
-inline ::executor::OpKernel* RunRequest::release_opkernel() {
+inline ::executor::OpKernelDef* RunRequest::release_opkernel() {
   // @@protoc_insertion_point(field_release:executor.RunRequest.opkernel)
   
-  ::executor::OpKernel* temp = opkernel_;
+  ::executor::OpKernelDef* temp = opkernel_;
   opkernel_ = NULL;
   return temp;
 }
-inline void RunRequest::set_allocated_opkernel(::executor::OpKernel* opkernel) {
+inline void RunRequest::set_allocated_opkernel(::executor::OpKernelDef* opkernel) {
   delete opkernel_;
   opkernel_ = opkernel;
   if (opkernel) {
@@ -1028,7 +1028,7 @@ inline void RunRequest::set_allocated_opkernel(::executor::OpKernel* opkernel) {
   // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.opkernel)
 }
 
-// .executor.OpContext context = 2;
+// .executor.OpContextDef context = 2;
 inline bool RunRequest::has_context() const {
   return this != internal_default_instance() && context_ != NULL;
 }
@@ -1036,27 +1036,27 @@ inline void RunRequest::clear_context() {
   if (GetArenaNoVirtual() == NULL && context_ != NULL) delete context_;
   context_ = NULL;
 }
-inline const ::executor::OpContext& RunRequest::context() const {
+inline const ::executor::OpContextDef& RunRequest::context() const {
   // @@protoc_insertion_point(field_get:executor.RunRequest.context)
   return context_ != NULL ? *context_
-                         : *::executor::OpContext::internal_default_instance();
+                         : *::executor::OpContextDef::internal_default_instance();
 }
-inline ::executor::OpContext* RunRequest::mutable_context() {
+inline ::executor::OpContextDef* RunRequest::mutable_context() {
   
   if (context_ == NULL) {
-    context_ = new ::executor::OpContext;
+    context_ = new ::executor::OpContextDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunRequest.context)
   return context_;
 }
-inline ::executor::OpContext* RunRequest::release_context() {
+inline ::executor::OpContextDef* RunRequest::release_context() {
   // @@protoc_insertion_point(field_release:executor.RunRequest.context)
   
-  ::executor::OpContext* temp = context_;
+  ::executor::OpContextDef* temp = context_;
   context_ = NULL;
   return temp;
 }
-inline void RunRequest::set_allocated_context(::executor::OpContext* context) {
+inline void RunRequest::set_allocated_context(::executor::OpContextDef* context) {
   delete context_;
   context_ = context;
   if (context) {
@@ -1110,7 +1110,7 @@ inline void RunResponse::set_allocated_result(::executor::ResultCode* result) {
   // @@protoc_insertion_point(field_set_allocated:executor.RunResponse.result)
 }
 
-// .executor.OpContext context = 2;
+// .executor.OpContextDef context = 2;
 inline bool RunResponse::has_context() const {
   return this != internal_default_instance() && context_ != NULL;
 }
@@ -1118,27 +1118,27 @@ inline void RunResponse::clear_context() {
   if (GetArenaNoVirtual() == NULL && context_ != NULL) delete context_;
   context_ = NULL;
 }
-inline const ::executor::OpContext& RunResponse::context() const {
+inline const ::executor::OpContextDef& RunResponse::context() const {
   // @@protoc_insertion_point(field_get:executor.RunResponse.context)
   return context_ != NULL ? *context_
-                         : *::executor::OpContext::internal_default_instance();
+                         : *::executor::OpContextDef::internal_default_instance();
 }
-inline ::executor::OpContext* RunResponse::mutable_context() {
+inline ::executor::OpContextDef* RunResponse::mutable_context() {
   
   if (context_ == NULL) {
-    context_ = new ::executor::OpContext;
+    context_ = new ::executor::OpContextDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunResponse.context)
   return context_;
 }
-inline ::executor::OpContext* RunResponse::release_context() {
+inline ::executor::OpContextDef* RunResponse::release_context() {
   // @@protoc_insertion_point(field_release:executor.RunResponse.context)
   
-  ::executor::OpContext* temp = context_;
+  ::executor::OpContextDef* temp = context_;
   context_ = NULL;
   return temp;
 }
-inline void RunResponse::set_allocated_context(::executor::OpContext* context) {
+inline void RunResponse::set_allocated_context(::executor::OpContextDef* context) {
   delete context_;
   context_ = context;
   if (context) {
@@ -1301,206 +1301,206 @@ inline void AllocResponse::set_addr_handle(::google::protobuf::uint64 value) {
 
 // -------------------------------------------------------------------
 
-// OpKernel
+// OpKernelDef
 
-// .executor.OpKernel.OpLibraryType oplibrary = 1;
-inline void OpKernel::clear_oplibrary() {
+// .executor.OpKernelDef.OpLibraryType oplibrary = 1;
+inline void OpKernelDef::clear_oplibrary() {
   oplibrary_ = 0;
 }
-inline ::executor::OpKernel_OpLibraryType OpKernel::oplibrary() const {
-  // @@protoc_insertion_point(field_get:executor.OpKernel.oplibrary)
-  return static_cast< ::executor::OpKernel_OpLibraryType >(oplibrary_);
+inline ::executor::OpKernelDef_OpLibraryType OpKernelDef::oplibrary() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.oplibrary)
+  return static_cast< ::executor::OpKernelDef_OpLibraryType >(oplibrary_);
 }
-inline void OpKernel::set_oplibrary(::executor::OpKernel_OpLibraryType value) {
+inline void OpKernelDef::set_oplibrary(::executor::OpKernelDef_OpLibraryType value) {
   
   oplibrary_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpKernel.oplibrary)
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.oplibrary)
 }
 
 // string id = 2;
-inline void OpKernel::clear_id() {
+inline void OpKernelDef::clear_id() {
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& OpKernel::id() const {
-  // @@protoc_insertion_point(field_get:executor.OpKernel.id)
+inline const ::std::string& OpKernelDef::id() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.id)
   return id_.GetNoArena();
 }
-inline void OpKernel::set_id(const ::std::string& value) {
+inline void OpKernelDef::set_id(const ::std::string& value) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.id)
 }
 #if LANG_CXX11
-inline void OpKernel::set_id(::std::string&& value) {
+inline void OpKernelDef::set_id(::std::string&& value) {
   
   id_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernelDef.id)
 }
 #endif
-inline void OpKernel::set_id(const char* value) {
+inline void OpKernelDef::set_id(const char* value) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_char:executor.OpKernelDef.id)
 }
-inline void OpKernel::set_id(const char* value, size_t size) {
+inline void OpKernelDef::set_id(const char* value, size_t size) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_pointer:executor.OpKernelDef.id)
 }
-inline ::std::string* OpKernel::mutable_id() {
+inline ::std::string* OpKernelDef::mutable_id() {
   
-  // @@protoc_insertion_point(field_mutable:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_mutable:executor.OpKernelDef.id)
   return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* OpKernel::release_id() {
-  // @@protoc_insertion_point(field_release:executor.OpKernel.id)
+inline ::std::string* OpKernelDef::release_id() {
+  // @@protoc_insertion_point(field_release:executor.OpKernelDef.id)
   
   return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void OpKernel::set_allocated_id(::std::string* id) {
+inline void OpKernelDef::set_allocated_id(::std::string* id) {
   if (id != NULL) {
     
   } else {
     
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
 }
 
 // -------------------------------------------------------------------
 
-// OpContext
+// OpContextDef
 
 // int64 host_temp_memory_size = 1;
-inline void OpContext::clear_host_temp_memory_size() {
+inline void OpContextDef::clear_host_temp_memory_size() {
   host_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OpContext::host_temp_memory_size() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_temp_memory_size)
+inline ::google::protobuf::int64 OpContextDef::host_temp_memory_size() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_temp_memory_size)
   return host_temp_memory_size_;
 }
-inline void OpContext::set_host_temp_memory_size(::google::protobuf::int64 value) {
+inline void OpContextDef::set_host_temp_memory_size(::google::protobuf::int64 value) {
   
   host_temp_memory_size_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_temp_memory_size)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_temp_memory_size)
 }
 
 // int64 device_temp_memory_size = 2;
-inline void OpContext::clear_device_temp_memory_size() {
+inline void OpContextDef::clear_device_temp_memory_size() {
   device_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OpContext::device_temp_memory_size() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_temp_memory_size)
+inline ::google::protobuf::int64 OpContextDef::device_temp_memory_size() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_temp_memory_size)
   return device_temp_memory_size_;
 }
-inline void OpContext::set_device_temp_memory_size(::google::protobuf::int64 value) {
+inline void OpContextDef::set_device_temp_memory_size(::google::protobuf::int64 value) {
   
   device_temp_memory_size_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_temp_memory_size)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_temp_memory_size)
 }
 
 // repeated int64 host_persistent_alloc_ids = 3;
-inline int OpContext::host_persistent_alloc_ids_size() const {
+inline int OpContextDef::host_persistent_alloc_ids_size() const {
   return host_persistent_alloc_ids_.size();
 }
-inline void OpContext::clear_host_persistent_alloc_ids() {
+inline void OpContextDef::clear_host_persistent_alloc_ids() {
   host_persistent_alloc_ids_.Clear();
 }
-inline ::google::protobuf::int64 OpContext::host_persistent_alloc_ids(int index) const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_persistent_alloc_ids)
+inline ::google::protobuf::int64 OpContextDef::host_persistent_alloc_ids(int index) const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_persistent_alloc_ids)
   return host_persistent_alloc_ids_.Get(index);
 }
-inline void OpContext::set_host_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
+inline void OpContextDef::set_host_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
   host_persistent_alloc_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_persistent_alloc_ids)
 }
-inline void OpContext::add_host_persistent_alloc_ids(::google::protobuf::int64 value) {
+inline void OpContextDef::add_host_persistent_alloc_ids(::google::protobuf::int64 value) {
   host_persistent_alloc_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:executor.OpContext.host_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_add:executor.OpContextDef.host_persistent_alloc_ids)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
-OpContext::host_persistent_alloc_ids() const {
-  // @@protoc_insertion_point(field_list:executor.OpContext.host_persistent_alloc_ids)
+OpContextDef::host_persistent_alloc_ids() const {
+  // @@protoc_insertion_point(field_list:executor.OpContextDef.host_persistent_alloc_ids)
   return host_persistent_alloc_ids_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
-OpContext::mutable_host_persistent_alloc_ids() {
-  // @@protoc_insertion_point(field_mutable_list:executor.OpContext.host_persistent_alloc_ids)
+OpContextDef::mutable_host_persistent_alloc_ids() {
+  // @@protoc_insertion_point(field_mutable_list:executor.OpContextDef.host_persistent_alloc_ids)
   return &host_persistent_alloc_ids_;
 }
 
 // repeated int64 device_persistent_alloc_ids = 4;
-inline int OpContext::device_persistent_alloc_ids_size() const {
+inline int OpContextDef::device_persistent_alloc_ids_size() const {
   return device_persistent_alloc_ids_.size();
 }
-inline void OpContext::clear_device_persistent_alloc_ids() {
+inline void OpContextDef::clear_device_persistent_alloc_ids() {
   device_persistent_alloc_ids_.Clear();
 }
-inline ::google::protobuf::int64 OpContext::device_persistent_alloc_ids(int index) const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_persistent_alloc_ids)
+inline ::google::protobuf::int64 OpContextDef::device_persistent_alloc_ids(int index) const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_persistent_alloc_ids)
   return device_persistent_alloc_ids_.Get(index);
 }
-inline void OpContext::set_device_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
+inline void OpContextDef::set_device_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
   device_persistent_alloc_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_persistent_alloc_ids)
 }
-inline void OpContext::add_device_persistent_alloc_ids(::google::protobuf::int64 value) {
+inline void OpContextDef::add_device_persistent_alloc_ids(::google::protobuf::int64 value) {
   device_persistent_alloc_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:executor.OpContext.device_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_add:executor.OpContextDef.device_persistent_alloc_ids)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
-OpContext::device_persistent_alloc_ids() const {
-  // @@protoc_insertion_point(field_list:executor.OpContext.device_persistent_alloc_ids)
+OpContextDef::device_persistent_alloc_ids() const {
+  // @@protoc_insertion_point(field_list:executor.OpContextDef.device_persistent_alloc_ids)
   return device_persistent_alloc_ids_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
-OpContext::mutable_device_persistent_alloc_ids() {
-  // @@protoc_insertion_point(field_mutable_list:executor.OpContext.device_persistent_alloc_ids)
+OpContextDef::mutable_device_persistent_alloc_ids() {
+  // @@protoc_insertion_point(field_mutable_list:executor.OpContextDef.device_persistent_alloc_ids)
   return &device_persistent_alloc_ids_;
 }
 
 // int64 host_persistent_memory_allocated = 5;
-inline void OpContext::clear_host_persistent_memory_allocated() {
+inline void OpContextDef::clear_host_persistent_memory_allocated() {
   host_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OpContext::host_persistent_memory_allocated() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_persistent_memory_allocated)
+inline ::google::protobuf::int64 OpContextDef::host_persistent_memory_allocated() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_persistent_memory_allocated)
   return host_persistent_memory_allocated_;
 }
-inline void OpContext::set_host_persistent_memory_allocated(::google::protobuf::int64 value) {
+inline void OpContextDef::set_host_persistent_memory_allocated(::google::protobuf::int64 value) {
   
   host_persistent_memory_allocated_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_persistent_memory_allocated)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_persistent_memory_allocated)
 }
 
 // int64 device_persistent_memory_allocated = 6;
-inline void OpContext::clear_device_persistent_memory_allocated() {
+inline void OpContextDef::clear_device_persistent_memory_allocated() {
   device_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OpContext::device_persistent_memory_allocated() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_persistent_memory_allocated)
+inline ::google::protobuf::int64 OpContextDef::device_persistent_memory_allocated() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_persistent_memory_allocated)
   return device_persistent_memory_allocated_;
 }
-inline void OpContext::set_device_persistent_memory_allocated(::google::protobuf::int64 value) {
+inline void OpContextDef::set_device_persistent_memory_allocated(::google::protobuf::int64 value) {
   
   device_persistent_memory_allocated_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_persistent_memory_allocated)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_persistent_memory_allocated)
 }
 
 // bool is_output_dead = 7;
-inline void OpContext::clear_is_output_dead() {
+inline void OpContextDef::clear_is_output_dead() {
   is_output_dead_ = false;
 }
-inline bool OpContext::is_output_dead() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.is_output_dead)
+inline bool OpContextDef::is_output_dead() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.is_output_dead)
   return is_output_dead_;
 }
-inline void OpContext::set_is_output_dead(bool value) {
+inline void OpContextDef::set_is_output_dead(bool value) {
   
   is_output_dead_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.is_output_dead)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.is_output_dead)
 }
 
 // -------------------------------------------------------------------
@@ -1548,10 +1548,10 @@ inline void ResultCode::set_code(::google::protobuf::int32 value) {
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::executor::OpKernel_OpLibraryType> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::executor::OpKernelDef_OpLibraryType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::executor::OpKernel_OpLibraryType>() {
-  return ::executor::OpKernel_OpLibraryType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::executor::OpKernelDef_OpLibraryType>() {
+  return ::executor::OpKernelDef_OpLibraryType_descriptor();
 }
 
 }  // namespace protobuf

@@ -1678,7 +1678,7 @@ cc_library(
         ":lib_internal",
         ":protos_all_cc",
         "//third_party/eigen3",
-        "@grpc//:grpc++_unsecure",
+        #"@grpc//:grpc++_unsecure", # link to this after fix grpc version problem
     ],
     alwayslink = 1,
 )

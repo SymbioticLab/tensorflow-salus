@@ -30,10 +30,10 @@ class AllocRequestDefaultTypeInternal : public ::google::protobuf::internal::Exp
 } _AllocRequest_default_instance_;
 class AllocResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<AllocResponse> {
 } _AllocResponse_default_instance_;
-class OpKernelDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpKernel> {
-} _OpKernel_default_instance_;
-class OpContextDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpContext> {
-} _OpContext_default_instance_;
+class OpKernelDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpKernelDef> {
+} _OpKernelDef_default_instance_;
+class OpContextDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpContextDef> {
+} _OpContextDef_default_instance_;
 class ResultCodeDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ResultCode> {
 } _ResultCode_default_instance_;
 
@@ -83,22 +83,22 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllocResponse, result_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllocResponse, addr_handle_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernel, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernel, oplibrary_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernel, id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, oplibrary_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, id_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, host_temp_memory_size_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, device_temp_memory_size_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, host_persistent_alloc_ids_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, device_persistent_alloc_ids_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, host_persistent_memory_allocated_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, device_persistent_memory_allocated_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContext, is_output_dead_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, host_temp_memory_size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, device_temp_memory_size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, host_persistent_alloc_ids_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, device_persistent_alloc_ids_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, host_persistent_memory_allocated_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, device_persistent_memory_allocated_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, is_output_dead_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResultCode, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -113,8 +113,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 17, -1, sizeof(DeallocResponse)},
   { 22, -1, sizeof(AllocRequest)},
   { 28, -1, sizeof(AllocResponse)},
-  { 34, -1, sizeof(OpKernel)},
-  { 40, -1, sizeof(OpContext)},
+  { 34, -1, sizeof(OpKernelDef)},
+  { 40, -1, sizeof(OpContextDef)},
   { 51, -1, sizeof(ResultCode)},
 };
 
@@ -125,8 +125,8 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_DeallocResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_AllocRequest_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_AllocResponse_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_OpKernel_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_OpContext_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_OpKernelDef_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_OpContextDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ResultCode_default_instance_),
 };
 
@@ -166,9 +166,9 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[4].reflection;
   _AllocResponse_default_instance_.Shutdown();
   delete file_level_metadata[5].reflection;
-  _OpKernel_default_instance_.Shutdown();
+  _OpKernelDef_default_instance_.Shutdown();
   delete file_level_metadata[6].reflection;
-  _OpContext_default_instance_.Shutdown();
+  _OpContextDef_default_instance_.Shutdown();
   delete file_level_metadata[7].reflection;
   _ResultCode_default_instance_.Shutdown();
   delete file_level_metadata[8].reflection;
@@ -184,17 +184,17 @@ void TableStruct::InitDefaultsImpl() {
   _DeallocResponse_default_instance_.DefaultConstruct();
   _AllocRequest_default_instance_.DefaultConstruct();
   _AllocResponse_default_instance_.DefaultConstruct();
-  _OpKernel_default_instance_.DefaultConstruct();
-  _OpContext_default_instance_.DefaultConstruct();
+  _OpKernelDef_default_instance_.DefaultConstruct();
+  _OpContextDef_default_instance_.DefaultConstruct();
   _ResultCode_default_instance_.DefaultConstruct();
-  _RunRequest_default_instance_.get_mutable()->opkernel_ = const_cast< ::executor::OpKernel*>(
-      ::executor::OpKernel::internal_default_instance());
-  _RunRequest_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContext*>(
-      ::executor::OpContext::internal_default_instance());
+  _RunRequest_default_instance_.get_mutable()->opkernel_ = const_cast< ::executor::OpKernelDef*>(
+      ::executor::OpKernelDef::internal_default_instance());
+  _RunRequest_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContextDef*>(
+      ::executor::OpContextDef::internal_default_instance());
   _RunResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
       ::executor::ResultCode::internal_default_instance());
-  _RunResponse_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContext*>(
-      ::executor::OpContext::internal_default_instance());
+  _RunResponse_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContextDef*>(
+      ::executor::OpContextDef::internal_default_instance());
   _DeallocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
       ::executor::ResultCode::internal_default_instance());
   _AllocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
@@ -208,36 +208,36 @@ void InitDefaults() {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] = {
-      "\n\016executor.proto\022\010executor\"X\n\nRunRequest"
-      "\022$\n\010opkernel\030\001 \001(\0132\022.executor.OpKernel\022$"
-      "\n\007context\030\002 \001(\0132\023.executor.OpContext\"Y\n\013"
-      "RunResponse\022$\n\006result\030\001 \001(\0132\024.executor.R"
-      "esultCode\022$\n\007context\030\002 \001(\0132\023.executor.Op"
-      "Context\"%\n\016DeallocRequest\022\023\n\013addr_handle"
-      "\030\001 \001(\004\"7\n\017DeallocResponse\022$\n\006result\030\001 \001("
-      "\0132\024.executor.ResultCode\"4\n\014AllocRequest\022"
-      "\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes\030\002 \001(\004\"J\n"
-      "\rAllocResponse\022$\n\006result\030\001 \001(\0132\024.executo"
-      "r.ResultCode\022\023\n\013addr_handle\030\002 \001(\004\"l\n\010OpK"
-      "ernel\0223\n\toplibrary\030\001 \001(\0162 .executor.OpKe"
-      "rnel.OpLibraryType\022\n\n\002id\030\002 \001(\t\"\037\n\rOpLibr"
-      "aryType\022\016\n\nTENSORFLOW\020\000\"\201\002\n\tOpContext\022\035\n"
-      "\025host_temp_memory_size\030\001 \001(\003\022\037\n\027device_t"
-      "emp_memory_size\030\002 \001(\003\022!\n\031host_persistent"
-      "_alloc_ids\030\003 \003(\003\022#\n\033device_persistent_al"
-      "loc_ids\030\004 \003(\003\022(\n host_persistent_memory_"
-      "allocated\030\005 \001(\003\022*\n\"device_persistent_mem"
-      "ory_allocated\030\006 \001(\003\022\026\n\016is_output_dead\030\007 "
-      "\001(\010\"\032\n\nResultCode\022\014\n\004code\030\001 \001(\0052\307\001\n\013IExe"
-      "cEngine\0224\n\003run\022\024.executor.RunRequest\032\025.e"
-      "xecutor.RunResponse\"\000\022=\n\010allocate\022\026.exec"
-      "utor.AllocRequest\032\027.executor.AllocRespon"
-      "se\"\000\022C\n\ndeallocate\022\030.executor.DeallocReq"
-      "uest\032\031.executor.DeallocResponse\"\000b\006proto"
-      "3"
+      "\n\016executor.proto\022\010executor\"^\n\nRunRequest"
+      "\022\'\n\010opkernel\030\001 \001(\0132\025.executor.OpKernelDe"
+      "f\022\'\n\007context\030\002 \001(\0132\026.executor.OpContextD"
+      "ef\"\\\n\013RunResponse\022$\n\006result\030\001 \001(\0132\024.exec"
+      "utor.ResultCode\022\'\n\007context\030\002 \001(\0132\026.execu"
+      "tor.OpContextDef\"%\n\016DeallocRequest\022\023\n\013ad"
+      "dr_handle\030\001 \001(\004\"7\n\017DeallocResponse\022$\n\006re"
+      "sult\030\001 \001(\0132\024.executor.ResultCode\"4\n\014Allo"
+      "cRequest\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes"
+      "\030\002 \001(\004\"J\n\rAllocResponse\022$\n\006result\030\001 \001(\0132"
+      "\024.executor.ResultCode\022\023\n\013addr_handle\030\002 \001"
+      "(\004\"r\n\013OpKernelDef\0226\n\toplibrary\030\001 \001(\0162#.e"
+      "xecutor.OpKernelDef.OpLibraryType\022\n\n\002id\030"
+      "\002 \001(\t\"\037\n\rOpLibraryType\022\016\n\nTENSORFLOW\020\000\"\204"
+      "\002\n\014OpContextDef\022\035\n\025host_temp_memory_size"
+      "\030\001 \001(\003\022\037\n\027device_temp_memory_size\030\002 \001(\003\022"
+      "!\n\031host_persistent_alloc_ids\030\003 \003(\003\022#\n\033de"
+      "vice_persistent_alloc_ids\030\004 \003(\003\022(\n host_"
+      "persistent_memory_allocated\030\005 \001(\003\022*\n\"dev"
+      "ice_persistent_memory_allocated\030\006 \001(\003\022\026\n"
+      "\016is_output_dead\030\007 \001(\010\"\032\n\nResultCode\022\014\n\004c"
+      "ode\030\001 \001(\0052\307\001\n\013IExecEngine\0224\n\003run\022\024.execu"
+      "tor.RunRequest\032\025.executor.RunResponse\"\000\022"
+      "=\n\010allocate\022\026.executor.AllocRequest\032\027.ex"
+      "ecutor.AllocResponse\"\000\022C\n\ndeallocate\022\030.e"
+      "xecutor.DeallocRequest\032\031.executor.Deallo"
+      "cResponse\"\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1041);
+      descriptor, 1059);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -256,11 +256,11 @@ struct StaticDescriptorInitializer {
 
 }  // namespace protobuf_executor_2eproto
 
-const ::google::protobuf::EnumDescriptor* OpKernel_OpLibraryType_descriptor() {
+const ::google::protobuf::EnumDescriptor* OpKernelDef_OpLibraryType_descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_enum_descriptors[0];
 }
-bool OpKernel_OpLibraryType_IsValid(int value) {
+bool OpKernelDef_OpLibraryType_IsValid(int value) {
   switch (value) {
     case 0:
       return true;
@@ -270,10 +270,10 @@ bool OpKernel_OpLibraryType_IsValid(int value) {
 }
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const OpKernel_OpLibraryType OpKernel::TENSORFLOW;
-const OpKernel_OpLibraryType OpKernel::OpLibraryType_MIN;
-const OpKernel_OpLibraryType OpKernel::OpLibraryType_MAX;
-const int OpKernel::OpLibraryType_ARRAYSIZE;
+const OpKernelDef_OpLibraryType OpKernelDef::TENSORFLOW;
+const OpKernelDef_OpLibraryType OpKernelDef::OpLibraryType_MIN;
+const OpKernelDef_OpLibraryType OpKernelDef::OpLibraryType_MAX;
+const int OpKernelDef::OpLibraryType_ARRAYSIZE;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 // ===================================================================
@@ -297,12 +297,12 @@ RunRequest::RunRequest(const RunRequest& from)
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_opkernel()) {
-    opkernel_ = new ::executor::OpKernel(*from.opkernel_);
+    opkernel_ = new ::executor::OpKernelDef(*from.opkernel_);
   } else {
     opkernel_ = NULL;
   }
   if (from.has_context()) {
-    context_ = new ::executor::OpContext(*from.context_);
+    context_ = new ::executor::OpContextDef(*from.context_);
   } else {
     context_ = NULL;
   }
@@ -374,7 +374,7 @@ bool RunRequest::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.OpKernel opkernel = 1;
+      // .executor.OpKernelDef opkernel = 1;
       case 1: {
         if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -385,7 +385,7 @@ bool RunRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // .executor.OpContext context = 2;
+      // .executor.OpContextDef context = 2;
       case 2: {
         if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -420,13 +420,13 @@ failure:
 void RunRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.RunRequest)
-  // .executor.OpKernel opkernel = 1;
+  // .executor.OpKernelDef opkernel = 1;
   if (this->has_opkernel()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->opkernel_, output);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->context_, output);
@@ -439,14 +439,14 @@ void RunRequest::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.RunRequest)
-  // .executor.OpKernel opkernel = 1;
+  // .executor.OpKernelDef opkernel = 1;
   if (this->has_opkernel()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         1, *this->opkernel_, false, target);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -461,14 +461,14 @@ size_t RunRequest::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.RunRequest)
   size_t total_size = 0;
 
-  // .executor.OpKernel opkernel = 1;
+  // .executor.OpKernelDef opkernel = 1;
   if (this->has_opkernel()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->opkernel_);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -502,10 +502,10 @@ void RunRequest::MergeFrom(const RunRequest& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_opkernel()) {
-    mutable_opkernel()->::executor::OpKernel::MergeFrom(from.opkernel());
+    mutable_opkernel()->::executor::OpKernelDef::MergeFrom(from.opkernel());
   }
   if (from.has_context()) {
-    mutable_context()->::executor::OpContext::MergeFrom(from.context());
+    mutable_context()->::executor::OpContextDef::MergeFrom(from.context());
   }
 }
 
@@ -545,7 +545,7 @@ void RunRequest::InternalSwap(RunRequest* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // RunRequest
 
-// .executor.OpKernel opkernel = 1;
+// .executor.OpKernelDef opkernel = 1;
 bool RunRequest::has_opkernel() const {
   return this != internal_default_instance() && opkernel_ != NULL;
 }
@@ -553,27 +553,27 @@ void RunRequest::clear_opkernel() {
   if (GetArenaNoVirtual() == NULL && opkernel_ != NULL) delete opkernel_;
   opkernel_ = NULL;
 }
-const ::executor::OpKernel& RunRequest::opkernel() const {
+const ::executor::OpKernelDef& RunRequest::opkernel() const {
   // @@protoc_insertion_point(field_get:executor.RunRequest.opkernel)
   return opkernel_ != NULL ? *opkernel_
-                         : *::executor::OpKernel::internal_default_instance();
+                         : *::executor::OpKernelDef::internal_default_instance();
 }
-::executor::OpKernel* RunRequest::mutable_opkernel() {
+::executor::OpKernelDef* RunRequest::mutable_opkernel() {
   
   if (opkernel_ == NULL) {
-    opkernel_ = new ::executor::OpKernel;
+    opkernel_ = new ::executor::OpKernelDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunRequest.opkernel)
   return opkernel_;
 }
-::executor::OpKernel* RunRequest::release_opkernel() {
+::executor::OpKernelDef* RunRequest::release_opkernel() {
   // @@protoc_insertion_point(field_release:executor.RunRequest.opkernel)
   
-  ::executor::OpKernel* temp = opkernel_;
+  ::executor::OpKernelDef* temp = opkernel_;
   opkernel_ = NULL;
   return temp;
 }
-void RunRequest::set_allocated_opkernel(::executor::OpKernel* opkernel) {
+void RunRequest::set_allocated_opkernel(::executor::OpKernelDef* opkernel) {
   delete opkernel_;
   opkernel_ = opkernel;
   if (opkernel) {
@@ -584,7 +584,7 @@ void RunRequest::set_allocated_opkernel(::executor::OpKernel* opkernel) {
   // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.opkernel)
 }
 
-// .executor.OpContext context = 2;
+// .executor.OpContextDef context = 2;
 bool RunRequest::has_context() const {
   return this != internal_default_instance() && context_ != NULL;
 }
@@ -592,27 +592,27 @@ void RunRequest::clear_context() {
   if (GetArenaNoVirtual() == NULL && context_ != NULL) delete context_;
   context_ = NULL;
 }
-const ::executor::OpContext& RunRequest::context() const {
+const ::executor::OpContextDef& RunRequest::context() const {
   // @@protoc_insertion_point(field_get:executor.RunRequest.context)
   return context_ != NULL ? *context_
-                         : *::executor::OpContext::internal_default_instance();
+                         : *::executor::OpContextDef::internal_default_instance();
 }
-::executor::OpContext* RunRequest::mutable_context() {
+::executor::OpContextDef* RunRequest::mutable_context() {
   
   if (context_ == NULL) {
-    context_ = new ::executor::OpContext;
+    context_ = new ::executor::OpContextDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunRequest.context)
   return context_;
 }
-::executor::OpContext* RunRequest::release_context() {
+::executor::OpContextDef* RunRequest::release_context() {
   // @@protoc_insertion_point(field_release:executor.RunRequest.context)
   
-  ::executor::OpContext* temp = context_;
+  ::executor::OpContextDef* temp = context_;
   context_ = NULL;
   return temp;
 }
-void RunRequest::set_allocated_context(::executor::OpContext* context) {
+void RunRequest::set_allocated_context(::executor::OpContextDef* context) {
   delete context_;
   context_ = context;
   if (context) {
@@ -651,7 +651,7 @@ RunResponse::RunResponse(const RunResponse& from)
     result_ = NULL;
   }
   if (from.has_context()) {
-    context_ = new ::executor::OpContext(*from.context_);
+    context_ = new ::executor::OpContextDef(*from.context_);
   } else {
     context_ = NULL;
   }
@@ -734,7 +734,7 @@ bool RunResponse::MergePartialFromCodedStream(
         break;
       }
 
-      // .executor.OpContext context = 2;
+      // .executor.OpContextDef context = 2;
       case 2: {
         if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -775,7 +775,7 @@ void RunResponse::SerializeWithCachedSizes(
       1, *this->result_, output);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->context_, output);
@@ -795,7 +795,7 @@ void RunResponse::SerializeWithCachedSizes(
         1, *this->result_, false, target);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -817,7 +817,7 @@ size_t RunResponse::ByteSizeLong() const {
         *this->result_);
   }
 
-  // .executor.OpContext context = 2;
+  // .executor.OpContextDef context = 2;
   if (this->has_context()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -854,7 +854,7 @@ void RunResponse::MergeFrom(const RunResponse& from) {
     mutable_result()->::executor::ResultCode::MergeFrom(from.result());
   }
   if (from.has_context()) {
-    mutable_context()->::executor::OpContext::MergeFrom(from.context());
+    mutable_context()->::executor::OpContextDef::MergeFrom(from.context());
   }
 }
 
@@ -933,7 +933,7 @@ void RunResponse::set_allocated_result(::executor::ResultCode* result) {
   // @@protoc_insertion_point(field_set_allocated:executor.RunResponse.result)
 }
 
-// .executor.OpContext context = 2;
+// .executor.OpContextDef context = 2;
 bool RunResponse::has_context() const {
   return this != internal_default_instance() && context_ != NULL;
 }
@@ -941,27 +941,27 @@ void RunResponse::clear_context() {
   if (GetArenaNoVirtual() == NULL && context_ != NULL) delete context_;
   context_ = NULL;
 }
-const ::executor::OpContext& RunResponse::context() const {
+const ::executor::OpContextDef& RunResponse::context() const {
   // @@protoc_insertion_point(field_get:executor.RunResponse.context)
   return context_ != NULL ? *context_
-                         : *::executor::OpContext::internal_default_instance();
+                         : *::executor::OpContextDef::internal_default_instance();
 }
-::executor::OpContext* RunResponse::mutable_context() {
+::executor::OpContextDef* RunResponse::mutable_context() {
   
   if (context_ == NULL) {
-    context_ = new ::executor::OpContext;
+    context_ = new ::executor::OpContextDef;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunResponse.context)
   return context_;
 }
-::executor::OpContext* RunResponse::release_context() {
+::executor::OpContextDef* RunResponse::release_context() {
   // @@protoc_insertion_point(field_release:executor.RunResponse.context)
   
-  ::executor::OpContext* temp = context_;
+  ::executor::OpContextDef* temp = context_;
   context_ = NULL;
   return temp;
 }
-void RunResponse::set_allocated_context(::executor::OpContext* context) {
+void RunResponse::set_allocated_context(::executor::OpContextDef* context) {
   delete context_;
   context_ = context;
   if (context) {
@@ -2054,19 +2054,19 @@ void AllocResponse::set_addr_handle(::google::protobuf::uint64 value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OpKernel::kOplibraryFieldNumber;
-const int OpKernel::kIdFieldNumber;
+const int OpKernelDef::kOplibraryFieldNumber;
+const int OpKernelDef::kIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-OpKernel::OpKernel()
+OpKernelDef::OpKernelDef()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.OpKernel)
+  // @@protoc_insertion_point(constructor:executor.OpKernelDef)
 }
-OpKernel::OpKernel(const OpKernel& from)
+OpKernelDef::OpKernelDef(const OpKernelDef& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
@@ -2076,71 +2076,71 @@ OpKernel::OpKernel(const OpKernel& from)
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
   oplibrary_ = from.oplibrary_;
-  // @@protoc_insertion_point(copy_constructor:executor.OpKernel)
+  // @@protoc_insertion_point(copy_constructor:executor.OpKernelDef)
 }
 
-void OpKernel::SharedCtor() {
+void OpKernelDef::SharedCtor() {
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   oplibrary_ = 0;
   _cached_size_ = 0;
 }
 
-OpKernel::~OpKernel() {
-  // @@protoc_insertion_point(destructor:executor.OpKernel)
+OpKernelDef::~OpKernelDef() {
+  // @@protoc_insertion_point(destructor:executor.OpKernelDef)
   SharedDtor();
 }
 
-void OpKernel::SharedDtor() {
+void OpKernelDef::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void OpKernel::SetCachedSize(int size) const {
+void OpKernelDef::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* OpKernel::descriptor() {
+const ::google::protobuf::Descriptor* OpKernelDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[6].descriptor;
 }
 
-const OpKernel& OpKernel::default_instance() {
+const OpKernelDef& OpKernelDef::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-OpKernel* OpKernel::New(::google::protobuf::Arena* arena) const {
-  OpKernel* n = new OpKernel;
+OpKernelDef* OpKernelDef::New(::google::protobuf::Arena* arena) const {
+  OpKernelDef* n = new OpKernelDef;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void OpKernel::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.OpKernel)
+void OpKernelDef::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.OpKernelDef)
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   oplibrary_ = 0;
 }
 
-bool OpKernel::MergePartialFromCodedStream(
+bool OpKernelDef::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.OpKernel)
+  // @@protoc_insertion_point(parse_start:executor.OpKernelDef)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.OpKernel.OpLibraryType oplibrary = 1;
+      // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
       case 1: {
         if (tag == 8u) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_oplibrary(static_cast< ::executor::OpKernel_OpLibraryType >(value));
+          set_oplibrary(static_cast< ::executor::OpKernelDef_OpLibraryType >(value));
         } else {
           goto handle_unusual;
         }
@@ -2155,7 +2155,7 @@ bool OpKernel::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->id().data(), this->id().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "executor.OpKernel.id"));
+            "executor.OpKernelDef.id"));
         } else {
           goto handle_unusual;
         }
@@ -2175,18 +2175,18 @@ bool OpKernel::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.OpKernel)
+  // @@protoc_insertion_point(parse_success:executor.OpKernelDef)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.OpKernel)
+  // @@protoc_insertion_point(parse_failure:executor.OpKernelDef)
   return false;
 #undef DO_
 }
 
-void OpKernel::SerializeWithCachedSizes(
+void OpKernelDef::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.OpKernel)
-  // .executor.OpKernel.OpLibraryType oplibrary = 1;
+  // @@protoc_insertion_point(serialize_start:executor.OpKernelDef)
+  // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
   if (this->oplibrary() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->oplibrary(), output);
@@ -2197,19 +2197,19 @@ void OpKernel::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "executor.OpKernel.id");
+      "executor.OpKernelDef.id");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->id(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.OpKernel)
+  // @@protoc_insertion_point(serialize_end:executor.OpKernelDef)
 }
 
-::google::protobuf::uint8* OpKernel::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OpKernelDef::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.OpKernel)
-  // .executor.OpKernel.OpLibraryType oplibrary = 1;
+  // @@protoc_insertion_point(serialize_to_array_start:executor.OpKernelDef)
+  // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
   if (this->oplibrary() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       1, this->oplibrary(), target);
@@ -2220,18 +2220,18 @@ void OpKernel::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->id().data(), this->id().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "executor.OpKernel.id");
+      "executor.OpKernelDef.id");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->id(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.OpKernel)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.OpKernelDef)
   return target;
 }
 
-size_t OpKernel::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.OpKernel)
+size_t OpKernelDef::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.OpKernelDef)
   size_t total_size = 0;
 
   // string id = 2;
@@ -2241,7 +2241,7 @@ size_t OpKernel::ByteSizeLong() const {
         this->id());
   }
 
-  // .executor.OpKernel.OpLibraryType oplibrary = 1;
+  // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
   if (this->oplibrary() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
@@ -2254,23 +2254,23 @@ size_t OpKernel::ByteSizeLong() const {
   return total_size;
 }
 
-void OpKernel::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.OpKernel)
+void OpKernelDef::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.OpKernelDef)
   GOOGLE_DCHECK_NE(&from, this);
-  const OpKernel* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const OpKernel>(
+  const OpKernelDef* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const OpKernelDef>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.OpKernel)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.OpKernelDef)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.OpKernel)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.OpKernelDef)
     MergeFrom(*source);
   }
 }
 
-void OpKernel::MergeFrom(const OpKernel& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.OpKernel)
+void OpKernelDef::MergeFrom(const OpKernelDef& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.OpKernelDef)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.id().size() > 0) {
@@ -2282,106 +2282,106 @@ void OpKernel::MergeFrom(const OpKernel& from) {
   }
 }
 
-void OpKernel::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.OpKernel)
+void OpKernelDef::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.OpKernelDef)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void OpKernel::CopyFrom(const OpKernel& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.OpKernel)
+void OpKernelDef::CopyFrom(const OpKernelDef& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.OpKernelDef)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OpKernel::IsInitialized() const {
+bool OpKernelDef::IsInitialized() const {
   return true;
 }
 
-void OpKernel::Swap(OpKernel* other) {
+void OpKernelDef::Swap(OpKernelDef* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void OpKernel::InternalSwap(OpKernel* other) {
+void OpKernelDef::InternalSwap(OpKernelDef* other) {
   id_.Swap(&other->id_);
   std::swap(oplibrary_, other->oplibrary_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata OpKernel::GetMetadata() const {
+::google::protobuf::Metadata OpKernelDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[6];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// OpKernel
+// OpKernelDef
 
-// .executor.OpKernel.OpLibraryType oplibrary = 1;
-void OpKernel::clear_oplibrary() {
+// .executor.OpKernelDef.OpLibraryType oplibrary = 1;
+void OpKernelDef::clear_oplibrary() {
   oplibrary_ = 0;
 }
-::executor::OpKernel_OpLibraryType OpKernel::oplibrary() const {
-  // @@protoc_insertion_point(field_get:executor.OpKernel.oplibrary)
-  return static_cast< ::executor::OpKernel_OpLibraryType >(oplibrary_);
+::executor::OpKernelDef_OpLibraryType OpKernelDef::oplibrary() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.oplibrary)
+  return static_cast< ::executor::OpKernelDef_OpLibraryType >(oplibrary_);
 }
-void OpKernel::set_oplibrary(::executor::OpKernel_OpLibraryType value) {
+void OpKernelDef::set_oplibrary(::executor::OpKernelDef_OpLibraryType value) {
   
   oplibrary_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpKernel.oplibrary)
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.oplibrary)
 }
 
 // string id = 2;
-void OpKernel::clear_id() {
+void OpKernelDef::clear_id() {
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& OpKernel::id() const {
-  // @@protoc_insertion_point(field_get:executor.OpKernel.id)
+const ::std::string& OpKernelDef::id() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.id)
   return id_.GetNoArena();
 }
-void OpKernel::set_id(const ::std::string& value) {
+void OpKernelDef::set_id(const ::std::string& value) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.id)
 }
 #if LANG_CXX11
-void OpKernel::set_id(::std::string&& value) {
+void OpKernelDef::set_id(::std::string&& value) {
   
   id_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernelDef.id)
 }
 #endif
-void OpKernel::set_id(const char* value) {
+void OpKernelDef::set_id(const char* value) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_char:executor.OpKernelDef.id)
 }
-void OpKernel::set_id(const char* value, size_t size) {
+void OpKernelDef::set_id(const char* value, size_t size) {
   
   id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_pointer:executor.OpKernelDef.id)
 }
-::std::string* OpKernel::mutable_id() {
+::std::string* OpKernelDef::mutable_id() {
   
-  // @@protoc_insertion_point(field_mutable:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_mutable:executor.OpKernelDef.id)
   return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* OpKernel::release_id() {
-  // @@protoc_insertion_point(field_release:executor.OpKernel.id)
+::std::string* OpKernelDef::release_id() {
+  // @@protoc_insertion_point(field_release:executor.OpKernelDef.id)
   
   return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void OpKernel::set_allocated_id(::std::string* id) {
+void OpKernelDef::set_allocated_id(::std::string* id) {
   if (id != NULL) {
     
   } else {
     
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:executor.OpKernel.id)
+  // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2389,24 +2389,24 @@ void OpKernel::set_allocated_id(::std::string* id) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OpContext::kHostTempMemorySizeFieldNumber;
-const int OpContext::kDeviceTempMemorySizeFieldNumber;
-const int OpContext::kHostPersistentAllocIdsFieldNumber;
-const int OpContext::kDevicePersistentAllocIdsFieldNumber;
-const int OpContext::kHostPersistentMemoryAllocatedFieldNumber;
-const int OpContext::kDevicePersistentMemoryAllocatedFieldNumber;
-const int OpContext::kIsOutputDeadFieldNumber;
+const int OpContextDef::kHostTempMemorySizeFieldNumber;
+const int OpContextDef::kDeviceTempMemorySizeFieldNumber;
+const int OpContextDef::kHostPersistentAllocIdsFieldNumber;
+const int OpContextDef::kDevicePersistentAllocIdsFieldNumber;
+const int OpContextDef::kHostPersistentMemoryAllocatedFieldNumber;
+const int OpContextDef::kDevicePersistentMemoryAllocatedFieldNumber;
+const int OpContextDef::kIsOutputDeadFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-OpContext::OpContext()
+OpContextDef::OpContextDef()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.OpContext)
+  // @@protoc_insertion_point(constructor:executor.OpContextDef)
 }
-OpContext::OpContext(const OpContext& from)
+OpContextDef::OpContextDef(const OpContextDef& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       host_persistent_alloc_ids_(from.host_persistent_alloc_ids_),
@@ -2416,59 +2416,59 @@ OpContext::OpContext(const OpContext& from)
   ::memcpy(&host_temp_memory_size_, &from.host_temp_memory_size_,
     reinterpret_cast<char*>(&is_output_dead_) -
     reinterpret_cast<char*>(&host_temp_memory_size_) + sizeof(is_output_dead_));
-  // @@protoc_insertion_point(copy_constructor:executor.OpContext)
+  // @@protoc_insertion_point(copy_constructor:executor.OpContextDef)
 }
 
-void OpContext::SharedCtor() {
+void OpContextDef::SharedCtor() {
   ::memset(&host_temp_memory_size_, 0, reinterpret_cast<char*>(&is_output_dead_) -
     reinterpret_cast<char*>(&host_temp_memory_size_) + sizeof(is_output_dead_));
   _cached_size_ = 0;
 }
 
-OpContext::~OpContext() {
-  // @@protoc_insertion_point(destructor:executor.OpContext)
+OpContextDef::~OpContextDef() {
+  // @@protoc_insertion_point(destructor:executor.OpContextDef)
   SharedDtor();
 }
 
-void OpContext::SharedDtor() {
+void OpContextDef::SharedDtor() {
 }
 
-void OpContext::SetCachedSize(int size) const {
+void OpContextDef::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* OpContext::descriptor() {
+const ::google::protobuf::Descriptor* OpContextDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[7].descriptor;
 }
 
-const OpContext& OpContext::default_instance() {
+const OpContextDef& OpContextDef::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-OpContext* OpContext::New(::google::protobuf::Arena* arena) const {
-  OpContext* n = new OpContext;
+OpContextDef* OpContextDef::New(::google::protobuf::Arena* arena) const {
+  OpContextDef* n = new OpContextDef;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void OpContext::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.OpContext)
+void OpContextDef::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.OpContextDef)
   host_persistent_alloc_ids_.Clear();
   device_persistent_alloc_ids_.Clear();
   ::memset(&host_temp_memory_size_, 0, reinterpret_cast<char*>(&is_output_dead_) -
     reinterpret_cast<char*>(&host_temp_memory_size_) + sizeof(is_output_dead_));
 }
 
-bool OpContext::MergePartialFromCodedStream(
+bool OpContextDef::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.OpContext)
+  // @@protoc_insertion_point(parse_start:executor.OpContextDef)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2584,17 +2584,17 @@ bool OpContext::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.OpContext)
+  // @@protoc_insertion_point(parse_success:executor.OpContextDef)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.OpContext)
+  // @@protoc_insertion_point(parse_failure:executor.OpContextDef)
   return false;
 #undef DO_
 }
 
-void OpContext::SerializeWithCachedSizes(
+void OpContextDef::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.OpContext)
+  // @@protoc_insertion_point(serialize_start:executor.OpContextDef)
   // int64 host_temp_memory_size = 1;
   if (this->host_temp_memory_size() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->host_temp_memory_size(), output);
@@ -2640,13 +2640,13 @@ void OpContext::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(7, this->is_output_dead(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.OpContext)
+  // @@protoc_insertion_point(serialize_end:executor.OpContextDef)
 }
 
-::google::protobuf::uint8* OpContext::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OpContextDef::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.OpContext)
+  // @@protoc_insertion_point(serialize_to_array_start:executor.OpContextDef)
   // int64 host_temp_memory_size = 1;
   if (this->host_temp_memory_size() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->host_temp_memory_size(), target);
@@ -2700,12 +2700,12 @@ void OpContext::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(7, this->is_output_dead(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.OpContext)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.OpContextDef)
   return target;
 }
 
-size_t OpContext::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.OpContext)
+size_t OpContextDef::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.OpContextDef)
   size_t total_size = 0;
 
   // repeated int64 host_persistent_alloc_ids = 3;
@@ -2778,23 +2778,23 @@ size_t OpContext::ByteSizeLong() const {
   return total_size;
 }
 
-void OpContext::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.OpContext)
+void OpContextDef::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.OpContextDef)
   GOOGLE_DCHECK_NE(&from, this);
-  const OpContext* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const OpContext>(
+  const OpContextDef* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const OpContextDef>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.OpContext)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.OpContextDef)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.OpContext)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.OpContextDef)
     MergeFrom(*source);
   }
 }
 
-void OpContext::MergeFrom(const OpContext& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.OpContext)
+void OpContextDef::MergeFrom(const OpContextDef& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.OpContextDef)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   host_persistent_alloc_ids_.MergeFrom(from.host_persistent_alloc_ids_);
@@ -2816,29 +2816,29 @@ void OpContext::MergeFrom(const OpContext& from) {
   }
 }
 
-void OpContext::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.OpContext)
+void OpContextDef::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.OpContextDef)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void OpContext::CopyFrom(const OpContext& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.OpContext)
+void OpContextDef::CopyFrom(const OpContextDef& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.OpContextDef)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OpContext::IsInitialized() const {
+bool OpContextDef::IsInitialized() const {
   return true;
 }
 
-void OpContext::Swap(OpContext* other) {
+void OpContextDef::Swap(OpContextDef* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void OpContext::InternalSwap(OpContext* other) {
+void OpContextDef::InternalSwap(OpContextDef* other) {
   host_persistent_alloc_ids_.UnsafeArenaSwap(&other->host_persistent_alloc_ids_);
   device_persistent_alloc_ids_.UnsafeArenaSwap(&other->device_persistent_alloc_ids_);
   std::swap(host_temp_memory_size_, other->host_temp_memory_size_);
@@ -2849,142 +2849,142 @@ void OpContext::InternalSwap(OpContext* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata OpContext::GetMetadata() const {
+::google::protobuf::Metadata OpContextDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[7];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// OpContext
+// OpContextDef
 
 // int64 host_temp_memory_size = 1;
-void OpContext::clear_host_temp_memory_size() {
+void OpContextDef::clear_host_temp_memory_size() {
   host_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
-::google::protobuf::int64 OpContext::host_temp_memory_size() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_temp_memory_size)
+::google::protobuf::int64 OpContextDef::host_temp_memory_size() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_temp_memory_size)
   return host_temp_memory_size_;
 }
-void OpContext::set_host_temp_memory_size(::google::protobuf::int64 value) {
+void OpContextDef::set_host_temp_memory_size(::google::protobuf::int64 value) {
   
   host_temp_memory_size_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_temp_memory_size)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_temp_memory_size)
 }
 
 // int64 device_temp_memory_size = 2;
-void OpContext::clear_device_temp_memory_size() {
+void OpContextDef::clear_device_temp_memory_size() {
   device_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
-::google::protobuf::int64 OpContext::device_temp_memory_size() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_temp_memory_size)
+::google::protobuf::int64 OpContextDef::device_temp_memory_size() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_temp_memory_size)
   return device_temp_memory_size_;
 }
-void OpContext::set_device_temp_memory_size(::google::protobuf::int64 value) {
+void OpContextDef::set_device_temp_memory_size(::google::protobuf::int64 value) {
   
   device_temp_memory_size_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_temp_memory_size)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_temp_memory_size)
 }
 
 // repeated int64 host_persistent_alloc_ids = 3;
-int OpContext::host_persistent_alloc_ids_size() const {
+int OpContextDef::host_persistent_alloc_ids_size() const {
   return host_persistent_alloc_ids_.size();
 }
-void OpContext::clear_host_persistent_alloc_ids() {
+void OpContextDef::clear_host_persistent_alloc_ids() {
   host_persistent_alloc_ids_.Clear();
 }
-::google::protobuf::int64 OpContext::host_persistent_alloc_ids(int index) const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_persistent_alloc_ids)
+::google::protobuf::int64 OpContextDef::host_persistent_alloc_ids(int index) const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_persistent_alloc_ids)
   return host_persistent_alloc_ids_.Get(index);
 }
-void OpContext::set_host_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
+void OpContextDef::set_host_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
   host_persistent_alloc_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_persistent_alloc_ids)
 }
-void OpContext::add_host_persistent_alloc_ids(::google::protobuf::int64 value) {
+void OpContextDef::add_host_persistent_alloc_ids(::google::protobuf::int64 value) {
   host_persistent_alloc_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:executor.OpContext.host_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_add:executor.OpContextDef.host_persistent_alloc_ids)
 }
 const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
-OpContext::host_persistent_alloc_ids() const {
-  // @@protoc_insertion_point(field_list:executor.OpContext.host_persistent_alloc_ids)
+OpContextDef::host_persistent_alloc_ids() const {
+  // @@protoc_insertion_point(field_list:executor.OpContextDef.host_persistent_alloc_ids)
   return host_persistent_alloc_ids_;
 }
 ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
-OpContext::mutable_host_persistent_alloc_ids() {
-  // @@protoc_insertion_point(field_mutable_list:executor.OpContext.host_persistent_alloc_ids)
+OpContextDef::mutable_host_persistent_alloc_ids() {
+  // @@protoc_insertion_point(field_mutable_list:executor.OpContextDef.host_persistent_alloc_ids)
   return &host_persistent_alloc_ids_;
 }
 
 // repeated int64 device_persistent_alloc_ids = 4;
-int OpContext::device_persistent_alloc_ids_size() const {
+int OpContextDef::device_persistent_alloc_ids_size() const {
   return device_persistent_alloc_ids_.size();
 }
-void OpContext::clear_device_persistent_alloc_ids() {
+void OpContextDef::clear_device_persistent_alloc_ids() {
   device_persistent_alloc_ids_.Clear();
 }
-::google::protobuf::int64 OpContext::device_persistent_alloc_ids(int index) const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_persistent_alloc_ids)
+::google::protobuf::int64 OpContextDef::device_persistent_alloc_ids(int index) const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_persistent_alloc_ids)
   return device_persistent_alloc_ids_.Get(index);
 }
-void OpContext::set_device_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
+void OpContextDef::set_device_persistent_alloc_ids(int index, ::google::protobuf::int64 value) {
   device_persistent_alloc_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_persistent_alloc_ids)
 }
-void OpContext::add_device_persistent_alloc_ids(::google::protobuf::int64 value) {
+void OpContextDef::add_device_persistent_alloc_ids(::google::protobuf::int64 value) {
   device_persistent_alloc_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:executor.OpContext.device_persistent_alloc_ids)
+  // @@protoc_insertion_point(field_add:executor.OpContextDef.device_persistent_alloc_ids)
 }
 const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
-OpContext::device_persistent_alloc_ids() const {
-  // @@protoc_insertion_point(field_list:executor.OpContext.device_persistent_alloc_ids)
+OpContextDef::device_persistent_alloc_ids() const {
+  // @@protoc_insertion_point(field_list:executor.OpContextDef.device_persistent_alloc_ids)
   return device_persistent_alloc_ids_;
 }
 ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
-OpContext::mutable_device_persistent_alloc_ids() {
-  // @@protoc_insertion_point(field_mutable_list:executor.OpContext.device_persistent_alloc_ids)
+OpContextDef::mutable_device_persistent_alloc_ids() {
+  // @@protoc_insertion_point(field_mutable_list:executor.OpContextDef.device_persistent_alloc_ids)
   return &device_persistent_alloc_ids_;
 }
 
 // int64 host_persistent_memory_allocated = 5;
-void OpContext::clear_host_persistent_memory_allocated() {
+void OpContextDef::clear_host_persistent_memory_allocated() {
   host_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
-::google::protobuf::int64 OpContext::host_persistent_memory_allocated() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.host_persistent_memory_allocated)
+::google::protobuf::int64 OpContextDef::host_persistent_memory_allocated() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.host_persistent_memory_allocated)
   return host_persistent_memory_allocated_;
 }
-void OpContext::set_host_persistent_memory_allocated(::google::protobuf::int64 value) {
+void OpContextDef::set_host_persistent_memory_allocated(::google::protobuf::int64 value) {
   
   host_persistent_memory_allocated_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.host_persistent_memory_allocated)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.host_persistent_memory_allocated)
 }
 
 // int64 device_persistent_memory_allocated = 6;
-void OpContext::clear_device_persistent_memory_allocated() {
+void OpContextDef::clear_device_persistent_memory_allocated() {
   device_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
-::google::protobuf::int64 OpContext::device_persistent_memory_allocated() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.device_persistent_memory_allocated)
+::google::protobuf::int64 OpContextDef::device_persistent_memory_allocated() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.device_persistent_memory_allocated)
   return device_persistent_memory_allocated_;
 }
-void OpContext::set_device_persistent_memory_allocated(::google::protobuf::int64 value) {
+void OpContextDef::set_device_persistent_memory_allocated(::google::protobuf::int64 value) {
   
   device_persistent_memory_allocated_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.device_persistent_memory_allocated)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.device_persistent_memory_allocated)
 }
 
 // bool is_output_dead = 7;
-void OpContext::clear_is_output_dead() {
+void OpContextDef::clear_is_output_dead() {
   is_output_dead_ = false;
 }
-bool OpContext::is_output_dead() const {
-  // @@protoc_insertion_point(field_get:executor.OpContext.is_output_dead)
+bool OpContextDef::is_output_dead() const {
+  // @@protoc_insertion_point(field_get:executor.OpContextDef.is_output_dead)
   return is_output_dead_;
 }
-void OpContext::set_is_output_dead(bool value) {
+void OpContextDef::set_is_output_dead(bool value) {
   
   is_output_dead_ = value;
-  // @@protoc_insertion_point(field_set:executor.OpContext.is_output_dead)
+  // @@protoc_insertion_point(field_set:executor.OpContextDef.is_output_dead)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
