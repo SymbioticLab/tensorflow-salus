@@ -22,13 +22,11 @@
 #include "tensorflow/core/platform/logging.h"
 #include "tensorflow/core/framework/op_kernel.h"
 
-#include "grpc++/grpc++.h"
+#include "zmq.hpp"
 
 #include <sstream>
 
 namespace rpc = ::executor;
-using grpc::Channel;
-using grpc::ClientContext;
 using std::shared_ptr;
 using std::unique_ptr;
 using std::ostringstream;
@@ -36,16 +34,18 @@ using std::ostringstream;
 namespace tensorflow {
 
 RpcClient::RpcClient()
-    : RpcClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))
+//     : RpcClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))
 { }
 
+/*
 RpcClient::RpcClient(shared_ptr<Channel> channel)
     : m_stub(rpc::IExecEngine::NewStub(channel))
 { }
+*/
 
 RpcClient::~RpcClient() { }
 
-grpc::Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
+Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
 {
     LOG(INFO) << "RpcClient::run";
 
@@ -54,28 +54,32 @@ grpc::Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
     auto rpc_opkernel = request.mutable_opkernel();
     auto rpc_context = request.mutable_context();
 
+    rpc_opkernel->set_oplibrary(rpc::OpKernelDef::TENSORFLOW);
+//     rpc_opkernel->set_id(kernel->def());
+
     rpc::RunResponse response;
 
-    ClientContext grpc_context;
+//     ClientContext grpc_context;
 
-    LOG(INFO) << "RpcClient::run    calling rpc using rpc stub" << m_stub.get();
-    auto status = m_stub->run(&grpc_context, request, &response);
+    LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";
+//     auto status = m_stub->run(&grpc_context, request, &response);
+    Status status;
     LOG(INFO) << "RpcClient::run    rpc returned " << status.error_message();
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
         ostringstream oss;
         oss << "ExecEngine returned " << response.result().code();
-        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
+        return Status(error::ABORTED, oss.str());
     }
 
     // TODO: update kernel and context
 //     *context = response.context();
 
-    return grpc::Status::OK;
+    return Status::OK();
 }
 
-grpc::Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)
+Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)
 {
     LOG(INFO) << "RpcClient::allocate(alignment=" << alignment << ", num_bytes=" << num_bytes << ")";
 
@@ -84,23 +88,24 @@ grpc::Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_
     request.set_num_bytes(num_bytes);
 
     rpc::AllocResponse response;
-    ClientContext grpc_context;
+//     ClientContext grpc_context;
 
-    auto status = m_stub->allocate(&grpc_context, request, &response);
+//     auto status = m_stub->allocate(&grpc_context, request, &response);
+    Status status;
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
         ostringstream oss;
         oss << "ExecEngine returned " << response.result().code();
-        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
+        return Status(error::ABORTED, oss.str());
     }
 
     *addr_handle = response.addr_handle();
     LOG(INFO) << "RpcClient::allocate returned addr_handle=" << addr_handle;
-    return grpc::Status::OK;
+    return Status::OK();
 }
 
-grpc::Status RpcClient::deallocate(uint64_t addr_handle)
+Status RpcClient::deallocate(uint64_t addr_handle)
 {
     LOG(INFO) << "RpcClient::deallocate(addr_handle=" << addr_handle;
 
@@ -108,18 +113,19 @@ grpc::Status RpcClient::deallocate(uint64_t addr_handle)
     request.set_addr_handle(addr_handle);
 
     rpc::DeallocResponse response;
-    ClientContext grpc_context;
+//     ClientContext grpc_context;
 
-    auto status = m_stub->deallocate(&grpc_context, request, &response);
+//     auto status = m_stub->deallocate(&grpc_context, request, &response);
+    Status status;
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
         ostringstream oss;
         oss << "ExecEngine returned " << response.result().code();
-        return grpc::Status(grpc::StatusCode::ABORTED, oss.str());
+        return Status(error::ABORTED, oss.str());
     }
 
-    return grpc::Status::OK;
+    return Status::OK();
 }
 
 RpcClient &RpcClient::instance()

@@ -52,7 +52,10 @@ Status RpcDevice::Sync()
 
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-    m_rpc->run(op_kernel, context);
+    auto status = m_rpc->run(op_kernel, context);
+    if (!status.ok()) {
+        LOG(ERROR) << "RPC call failed with " << status;
+    }
 }
 
 Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)

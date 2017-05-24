@@ -20,7 +20,9 @@
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
 
-#include "tensorflow/core/common_runtime/rpc_device/rpc/executor.grpc.pb.h"
+#include "tensorflow/core/lib/core/status.h"
+
+#include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 
 #include <memory>
 
@@ -40,19 +42,18 @@ public:
      */
     RpcClient();
 
-
     ~RpcClient();
 
-    grpc::Status run(OpKernel *kernel, OpKernelContext *context);
-    grpc::Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle);
-    grpc::Status deallocate(uint64_t addr_handle);
+    Status run(OpKernel *kernel, OpKernelContext *context);
+    Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle);
+    Status deallocate(uint64_t addr_handle);
 
     static RpcClient &instance();
 
 private:
-    RpcClient(std::shared_ptr<grpc::Channel> channel);
+//     RpcClient(std::shared_ptr<grpc::Channel> channel);
 
-    std::unique_ptr<executor::IExecEngine::Stub> m_stub;
+//     std::unique_ptr<executor::IExecEngine::Stub> m_stub;
 };
 
 } // namespace tensorflow

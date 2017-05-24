@@ -1650,7 +1650,7 @@ cc_library(
     name = "rpc_runtime",
     srcs = [
         "common_runtime/rpc_device/rpc/executor.pb.cc",
-        "common_runtime/rpc_device/rpc/executor.grpc.pb.cc",
+        #"common_runtime/rpc_device/rpc/executor.grpc.pb.cc",
         "common_runtime/rpc_device/rpc/rpcclient.cpp",
         "common_runtime/rpc_device/rpc_allocator.cpp",
         "common_runtime/rpc_device/rpc_device.cpp",
@@ -1660,14 +1660,14 @@ cc_library(
     ],
     hdrs = [
         "common_runtime/rpc_device/rpc/executor.pb.h",
-        "common_runtime/rpc_device/rpc/executor.grpc.pb.h",
+        #"common_runtime/rpc_device/rpc/executor.grpc.pb.h",
         "common_runtime/rpc_device/rpc/rpcclient.h",
         "common_runtime/rpc_device/rpc_allocator.h",
         "common_runtime/rpc_device/rpc_device.h",
         "common_runtime/rpc_device/rpc_device_context.h",
         "common_runtime/rpc_device/threadpiscine_device.h",
     ],
-    copts = tf_copts(),
+    copts = tf_copts() + ["-fexceptions"],
     linkstatic = 1,
     deps = [
         ":core_cpu",
@@ -1678,7 +1678,8 @@ cc_library(
         ":lib_internal",
         ":protos_all_cc",
         "//third_party/eigen3",
-        #"@grpc//:grpc++_unsecure", # link to this after fix grpc version problem
+        #"@grpc_new//:grpc++_unsecure", # link to this after fix grpc version problem
+        "@zeromq//:zmq_cpp",
     ],
     alwayslink = 1,
 )

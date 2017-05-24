@@ -419,6 +419,12 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
       repository = tf_repo_name,
   )
 
+  native.new_local_repository(
+      name = "zeromq",
+      path = "/usr",
+      build_file = str(Label("//third_party:zeromq.BUILD")),
+  )
+
   java_import_external(
       name = "junit",
       jar_sha256 = "59721f0805e223d84b90677887d9ff567dc534d7c502ca903c0c2b17f05c116a",
