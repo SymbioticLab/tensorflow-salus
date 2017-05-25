@@ -24,6 +24,8 @@
 
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 
+#include "zmq.hpp"
+
 #include <memory>
 
 namespace tensorflow {
@@ -37,23 +39,38 @@ class OpKernelContext;
 class RpcClient
 {
 public:
-    /**
-     * Default constructor. Hardcoded to connect to localhost:50051
-     */
-    RpcClient();
+    virtual ~RpcClient();
 
-    ~RpcClient();
+    virtual Status run(OpKernel *kernel, OpKernelContext *context) = 0;
+    virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
+    virtual Status deallocate(uint64_t addr_handle) = 0;
 
-    Status run(OpKernel *kernel, OpKernelContext *context);
-    Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle);
-    Status deallocate(uint64_t addr_handle);
-
+    // default instance always connect to localhost:55001
     static RpcClient &instance();
 
 private:
 //     RpcClient(std::shared_ptr<grpc::Channel> channel);
 
 //     std::unique_ptr<executor::IExecEngine::Stub> m_stub;
+};
+
+class ZmqRpcClient : public RpcClient
+{
+public:
+    ZmqRpcClient();
+
+    ~ZmqRpcClient() override;
+
+    Status run(OpKernel *kernel, OpKernelContext *context) override;
+    Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
+    Status deallocate(uint64_t addr_handle) override;
+
+private:
+    Status rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply);
+
+private:
+    zmq::context_t m_zmqctx;
+    zmq::socket_t m_zmqsock;
 };
 
 } // namespace tensorflow

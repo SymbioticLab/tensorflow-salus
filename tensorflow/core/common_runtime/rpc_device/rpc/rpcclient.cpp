@@ -25,6 +25,7 @@
 #include "zmq.hpp"
 
 #include <sstream>
+#include <cstring>
 
 namespace rpc = ::executor;
 using std::shared_ptr;
@@ -33,19 +34,62 @@ using std::ostringstream;
 
 namespace tensorflow {
 
-RpcClient::RpcClient()
-//     : RpcClient(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))
-{ }
-
-/*
-RpcClient::RpcClient(shared_ptr<Channel> channel)
-    : m_stub(rpc::IExecEngine::NewStub(channel))
-{ }
-*/
-
 RpcClient::~RpcClient() { }
 
-Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
+RpcClient &RpcClient::instance()
+{
+    static ZmqRpcClient client;
+
+    return client;
+}
+
+ZmqRpcClient::ZmqRpcClient()
+    : m_zmqctx(1)
+    , m_zmqsock(m_zmqctx, ZMQ_REQ)
+{
+    try {
+        m_zmqsock.connect("tcp://localhost:55001");
+    } catch (zmq::error_t &err) {
+        LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
+    }
+}
+
+Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply)
+{
+    auto type = msg.GetTypeName();
+    bool ok = true;
+
+    try {
+        // Create evenlop message
+        zmq::message_t evenlop(type.size());
+        memcpy(evenlop.data(), type.c_str(), evenlop.size());
+
+        // Create body message
+        zmq::message_t zmqmsg(msg.ByteSizeLong());
+        // TODO: consider remove the copy
+        msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
+
+        m_zmqsock.send(evenlop, ZMQ_SNDMORE);
+        m_zmqsock.send(zmqmsg);
+
+        // Receive reply
+        zmq::message_t revenlop, rbody;
+        m_zmqsock.recv(&revenlop);
+        m_zmqsock.recv(&rbody);
+
+        // Parse reply
+        if(reply.ParseFromArray(rbody.data(), rbody.size())) {
+            return Status::OK();
+        } else {
+            return Status(error::INTERNAL, "Malformated message");
+        }
+    } catch (zmq::error_t &err) {
+        LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
+        return Status(error::INTERNAL, err.what());
+    }
+}
+
+Status ZmqRpcClient::run(OpKernel *kernel, OpKernelContext *context)
 {
     LOG(INFO) << "RpcClient::run";
 
@@ -59,11 +103,8 @@ Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
 
     rpc::RunResponse response;
 
-//     ClientContext grpc_context;
-
     LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";
-//     auto status = m_stub->run(&grpc_context, request, &response);
-    Status status;
+    auto status = rpcCall(request, response);
     LOG(INFO) << "RpcClient::run    rpc returned " << status.error_message();
 
     // TODO: better error handling
@@ -79,7 +120,7 @@ Status RpcClient::run(OpKernel *kernel, OpKernelContext *context)
     return Status::OK();
 }
 
-Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)
+Status ZmqRpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)
 {
     LOG(INFO) << "RpcClient::allocate(alignment=" << alignment << ", num_bytes=" << num_bytes << ")";
 
@@ -88,10 +129,7 @@ Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *add
     request.set_num_bytes(num_bytes);
 
     rpc::AllocResponse response;
-//     ClientContext grpc_context;
-
-//     auto status = m_stub->allocate(&grpc_context, request, &response);
-    Status status;
+    auto status = rpcCall(request, response);
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
@@ -105,7 +143,7 @@ Status RpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *add
     return Status::OK();
 }
 
-Status RpcClient::deallocate(uint64_t addr_handle)
+Status ZmqRpcClient::deallocate(uint64_t addr_handle)
 {
     LOG(INFO) << "RpcClient::deallocate(addr_handle=" << addr_handle;
 
@@ -113,10 +151,7 @@ Status RpcClient::deallocate(uint64_t addr_handle)
     request.set_addr_handle(addr_handle);
 
     rpc::DeallocResponse response;
-//     ClientContext grpc_context;
-
-//     auto status = m_stub->deallocate(&grpc_context, request, &response);
-    Status status;
+    auto status = rpcCall(request, response);
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
@@ -126,13 +161,6 @@ Status RpcClient::deallocate(uint64_t addr_handle)
     }
 
     return Status::OK();
-}
-
-RpcClient &RpcClient::instance()
-{
-    static RpcClient client;
-
-    return client;
 }
 
 } // namespace tensorflow
