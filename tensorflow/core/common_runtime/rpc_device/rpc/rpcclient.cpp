@@ -34,6 +34,8 @@ using std::ostringstream;
 
 namespace tensorflow {
 
+RpcClient::RpcClient() {}
+
 RpcClient::~RpcClient() { }
 
 RpcClient &RpcClient::instance()
@@ -53,6 +55,8 @@ ZmqRpcClient::ZmqRpcClient()
         LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
     }
 }
+
+ZmqRpcClient::~ZmqRpcClient() { }
 
 Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply)
 {

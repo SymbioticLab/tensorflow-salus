@@ -39,6 +39,8 @@ class OpKernelContext;
 class RpcClient
 {
 public:
+    RpcClient();
+
     virtual ~RpcClient();
 
     virtual Status run(OpKernel *kernel, OpKernelContext *context) = 0;
