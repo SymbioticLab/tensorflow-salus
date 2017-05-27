@@ -34,8 +34,8 @@ class OpKernelDefDefaultTypeInternal : public ::google::protobuf::internal::Expl
 } _OpKernelDef_default_instance_;
 class OpContextDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpContextDef> {
 } _OpContextDef_default_instance_;
-class ResultCodeDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ResultCode> {
-} _ResultCode_default_instance_;
+class StatusDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Status> {
+} _Status_default_instance_;
 
 namespace protobuf_executor_2eproto {
 
@@ -101,10 +101,10 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, device_persistent_memory_allocated_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, is_output_dead_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResultCode, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Status, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResultCode, code_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Status, code_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
@@ -116,7 +116,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 28, -1, sizeof(AllocResponse)},
   { 34, -1, sizeof(OpKernelDef)},
   { 41, -1, sizeof(OpContextDef)},
-  { 52, -1, sizeof(ResultCode)},
+  { 52, -1, sizeof(Status)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -128,7 +128,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_AllocResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpKernelDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpContextDef_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_ResultCode_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_Status_default_instance_),
 };
 
 namespace {
@@ -171,7 +171,7 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[6].reflection;
   _OpContextDef_default_instance_.Shutdown();
   delete file_level_metadata[7].reflection;
-  _ResultCode_default_instance_.Shutdown();
+  _Status_default_instance_.Shutdown();
   delete file_level_metadata[8].reflection;
 }
 
@@ -187,19 +187,19 @@ void TableStruct::InitDefaultsImpl() {
   _AllocResponse_default_instance_.DefaultConstruct();
   _OpKernelDef_default_instance_.DefaultConstruct();
   _OpContextDef_default_instance_.DefaultConstruct();
-  _ResultCode_default_instance_.DefaultConstruct();
+  _Status_default_instance_.DefaultConstruct();
   _RunRequest_default_instance_.get_mutable()->opkernel_ = const_cast< ::executor::OpKernelDef*>(
       ::executor::OpKernelDef::internal_default_instance());
   _RunRequest_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContextDef*>(
       ::executor::OpContextDef::internal_default_instance());
-  _RunResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
-      ::executor::ResultCode::internal_default_instance());
+  _RunResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
+      ::executor::Status::internal_default_instance());
   _RunResponse_default_instance_.get_mutable()->context_ = const_cast< ::executor::OpContextDef*>(
       ::executor::OpContextDef::internal_default_instance());
-  _DeallocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
-      ::executor::ResultCode::internal_default_instance());
-  _AllocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::ResultCode*>(
-      ::executor::ResultCode::internal_default_instance());
+  _DeallocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
+      ::executor::Status::internal_default_instance());
+  _AllocResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
+      ::executor::Status::internal_default_instance());
 }
 
 void InitDefaults() {
@@ -212,33 +212,33 @@ void AddDescriptorsImpl() {
       "\n\016executor.proto\022\010executor\"^\n\nRunRequest"
       "\022\'\n\010opkernel\030\001 \001(\0132\025.executor.OpKernelDe"
       "f\022\'\n\007context\030\002 \001(\0132\026.executor.OpContextD"
-      "ef\"\\\n\013RunResponse\022$\n\006result\030\001 \001(\0132\024.exec"
-      "utor.ResultCode\022\'\n\007context\030\002 \001(\0132\026.execu"
-      "tor.OpContextDef\"%\n\016DeallocRequest\022\023\n\013ad"
-      "dr_handle\030\001 \001(\004\"7\n\017DeallocResponse\022$\n\006re"
-      "sult\030\001 \001(\0132\024.executor.ResultCode\"4\n\014Allo"
-      "cRequest\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes"
-      "\030\002 \001(\004\"J\n\rAllocResponse\022$\n\006result\030\001 \001(\0132"
-      "\024.executor.ResultCode\022\023\n\013addr_handle\030\002 \001"
-      "(\004\"\201\001\n\013OpKernelDef\0226\n\toplibrary\030\001 \001(\0162#."
-      "executor.OpKernelDef.OpLibraryType\022\n\n\002id"
-      "\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"\037\n\rOpLibraryType\022\016"
-      "\n\nTENSORFLOW\020\000\"\204\002\n\014OpContextDef\022\035\n\025host_"
-      "temp_memory_size\030\001 \001(\003\022\037\n\027device_temp_me"
-      "mory_size\030\002 \001(\003\022!\n\031host_persistent_alloc"
-      "_ids\030\003 \003(\003\022#\n\033device_persistent_alloc_id"
-      "s\030\004 \003(\003\022(\n host_persistent_memory_alloca"
-      "ted\030\005 \001(\003\022*\n\"device_persistent_memory_al"
-      "located\030\006 \001(\003\022\026\n\016is_output_dead\030\007 \001(\010\"\032\n"
-      "\nResultCode\022\014\n\004code\030\001 \001(\0052\307\001\n\013IExecEngin"
-      "e\0224\n\003run\022\024.executor.RunRequest\032\025.executo"
-      "r.RunResponse\"\000\022=\n\010allocate\022\026.executor.A"
-      "llocRequest\032\027.executor.AllocResponse\"\000\022C"
-      "\n\ndeallocate\022\030.executor.DeallocRequest\032\031"
-      ".executor.DeallocResponse\"\000b\006proto3"
+      "ef\"X\n\013RunResponse\022 \n\006result\030\001 \001(\0132\020.exec"
+      "utor.Status\022\'\n\007context\030\002 \001(\0132\026.executor."
+      "OpContextDef\"%\n\016DeallocRequest\022\023\n\013addr_h"
+      "andle\030\001 \001(\004\"3\n\017DeallocResponse\022 \n\006result"
+      "\030\001 \001(\0132\020.executor.Status\"4\n\014AllocRequest"
+      "\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes\030\002 \001(\004\"F"
+      "\n\rAllocResponse\022 \n\006result\030\001 \001(\0132\020.execut"
+      "or.Status\022\023\n\013addr_handle\030\002 \001(\004\"\201\001\n\013OpKer"
+      "nelDef\0226\n\toplibrary\030\001 \001(\0162#.executor.OpK"
+      "ernelDef.OpLibraryType\022\n\n\002id\030\002 \001(\t\022\r\n\005ex"
+      "tra\030\003 \001(\014\"\037\n\rOpLibraryType\022\016\n\nTENSORFLOW"
+      "\020\000\"\204\002\n\014OpContextDef\022\035\n\025host_temp_memory_"
+      "size\030\001 \001(\003\022\037\n\027device_temp_memory_size\030\002 "
+      "\001(\003\022!\n\031host_persistent_alloc_ids\030\003 \003(\003\022#"
+      "\n\033device_persistent_alloc_ids\030\004 \003(\003\022(\n h"
+      "ost_persistent_memory_allocated\030\005 \001(\003\022*\n"
+      "\"device_persistent_memory_allocated\030\006 \001("
+      "\003\022\026\n\016is_output_dead\030\007 \001(\010\"\026\n\006Status\022\014\n\004c"
+      "ode\030\001 \001(\0052\307\001\n\013IExecEngine\0224\n\003run\022\024.execu"
+      "tor.RunRequest\032\025.executor.RunResponse\"\000\022"
+      "=\n\010allocate\022\026.executor.AllocRequest\032\027.ex"
+      "ecutor.AllocResponse\"\000\022C\n\ndeallocate\022\030.e"
+      "xecutor.DeallocRequest\032\031.executor.Deallo"
+      "cResponse\"\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1075);
+      descriptor, 1059);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -647,7 +647,7 @@ RunResponse::RunResponse(const RunResponse& from)
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    result_ = new ::executor::ResultCode(*from.result_);
+    result_ = new ::executor::Status(*from.result_);
   } else {
     result_ = NULL;
   }
@@ -724,7 +724,7 @@ bool RunResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.ResultCode result = 1;
+      // .executor.Status result = 1;
       case 1: {
         if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -770,7 +770,7 @@ failure:
 void RunResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.RunResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->result_, output);
@@ -789,7 +789,7 @@ void RunResponse::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.RunResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -811,7 +811,7 @@ size_t RunResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.RunResponse)
   size_t total_size = 0;
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -852,7 +852,7 @@ void RunResponse::MergeFrom(const RunResponse& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    mutable_result()->::executor::ResultCode::MergeFrom(from.result());
+    mutable_result()->::executor::Status::MergeFrom(from.result());
   }
   if (from.has_context()) {
     mutable_context()->::executor::OpContextDef::MergeFrom(from.context());
@@ -895,7 +895,7 @@ void RunResponse::InternalSwap(RunResponse* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // RunResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 bool RunResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -903,27 +903,27 @@ void RunResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-const ::executor::ResultCode& RunResponse::result() const {
+const ::executor::Status& RunResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.RunResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-::executor::ResultCode* RunResponse::mutable_result() {
+::executor::Status* RunResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunResponse.result)
   return result_;
 }
-::executor::ResultCode* RunResponse::release_result() {
+::executor::Status* RunResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.RunResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-void RunResponse::set_allocated_result(::executor::ResultCode* result) {
+void RunResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1220,7 +1220,7 @@ DeallocResponse::DeallocResponse(const DeallocResponse& from)
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    result_ = new ::executor::ResultCode(*from.result_);
+    result_ = new ::executor::Status(*from.result_);
   } else {
     result_ = NULL;
   }
@@ -1284,7 +1284,7 @@ bool DeallocResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.ResultCode result = 1;
+      // .executor.Status result = 1;
       case 1: {
         if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -1319,7 +1319,7 @@ failure:
 void DeallocResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.DeallocResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->result_, output);
@@ -1332,7 +1332,7 @@ void DeallocResponse::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.DeallocResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -1347,7 +1347,7 @@ size_t DeallocResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.DeallocResponse)
   size_t total_size = 0;
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1381,7 +1381,7 @@ void DeallocResponse::MergeFrom(const DeallocResponse& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    mutable_result()->::executor::ResultCode::MergeFrom(from.result());
+    mutable_result()->::executor::Status::MergeFrom(from.result());
   }
 }
 
@@ -1420,7 +1420,7 @@ void DeallocResponse::InternalSwap(DeallocResponse* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // DeallocResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 bool DeallocResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -1428,27 +1428,27 @@ void DeallocResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-const ::executor::ResultCode& DeallocResponse::result() const {
+const ::executor::Status& DeallocResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.DeallocResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-::executor::ResultCode* DeallocResponse::mutable_result() {
+::executor::Status* DeallocResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.DeallocResponse.result)
   return result_;
 }
-::executor::ResultCode* DeallocResponse::release_result() {
+::executor::Status* DeallocResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.DeallocResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-void DeallocResponse::set_allocated_result(::executor::ResultCode* result) {
+void DeallocResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1760,7 +1760,7 @@ AllocResponse::AllocResponse(const AllocResponse& from)
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    result_ = new ::executor::ResultCode(*from.result_);
+    result_ = new ::executor::Status(*from.result_);
   } else {
     result_ = NULL;
   }
@@ -1827,7 +1827,7 @@ bool AllocResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.ResultCode result = 1;
+      // .executor.Status result = 1;
       case 1: {
         if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -1875,7 +1875,7 @@ failure:
 void AllocResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.AllocResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->result_, output);
@@ -1893,7 +1893,7 @@ void AllocResponse::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.AllocResponse)
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -1913,7 +1913,7 @@ size_t AllocResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.AllocResponse)
   size_t total_size = 0;
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   if (this->has_result()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1954,7 +1954,7 @@ void AllocResponse::MergeFrom(const AllocResponse& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_result()) {
-    mutable_result()->::executor::ResultCode::MergeFrom(from.result());
+    mutable_result()->::executor::Status::MergeFrom(from.result());
   }
   if (from.addr_handle() != 0) {
     set_addr_handle(from.addr_handle());
@@ -1997,7 +1997,7 @@ void AllocResponse::InternalSwap(AllocResponse* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // AllocResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 bool AllocResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -2005,27 +2005,27 @@ void AllocResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-const ::executor::ResultCode& AllocResponse::result() const {
+const ::executor::Status& AllocResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.AllocResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-::executor::ResultCode* AllocResponse::mutable_result() {
+::executor::Status* AllocResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.AllocResponse.result)
   return result_;
 }
-::executor::ResultCode* AllocResponse::release_result() {
+::executor::Status* AllocResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.AllocResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-void AllocResponse::set_allocated_result(::executor::ResultCode* result) {
+void AllocResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -3089,72 +3089,72 @@ void OpContextDef::set_is_output_dead(bool value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ResultCode::kCodeFieldNumber;
+const int Status::kCodeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-ResultCode::ResultCode()
+Status::Status()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.ResultCode)
+  // @@protoc_insertion_point(constructor:executor.Status)
 }
-ResultCode::ResultCode(const ResultCode& from)
+Status::Status(const Status& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   code_ = from.code_;
-  // @@protoc_insertion_point(copy_constructor:executor.ResultCode)
+  // @@protoc_insertion_point(copy_constructor:executor.Status)
 }
 
-void ResultCode::SharedCtor() {
+void Status::SharedCtor() {
   code_ = 0;
   _cached_size_ = 0;
 }
 
-ResultCode::~ResultCode() {
-  // @@protoc_insertion_point(destructor:executor.ResultCode)
+Status::~Status() {
+  // @@protoc_insertion_point(destructor:executor.Status)
   SharedDtor();
 }
 
-void ResultCode::SharedDtor() {
+void Status::SharedDtor() {
 }
 
-void ResultCode::SetCachedSize(int size) const {
+void Status::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ResultCode::descriptor() {
+const ::google::protobuf::Descriptor* Status::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[8].descriptor;
 }
 
-const ResultCode& ResultCode::default_instance() {
+const Status& Status::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-ResultCode* ResultCode::New(::google::protobuf::Arena* arena) const {
-  ResultCode* n = new ResultCode;
+Status* Status::New(::google::protobuf::Arena* arena) const {
+  Status* n = new Status;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void ResultCode::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.ResultCode)
+void Status::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.Status)
   code_ = 0;
 }
 
-bool ResultCode::MergePartialFromCodedStream(
+bool Status::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.ResultCode)
+  // @@protoc_insertion_point(parse_start:executor.Status)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -3186,40 +3186,40 @@ bool ResultCode::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.ResultCode)
+  // @@protoc_insertion_point(parse_success:executor.Status)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.ResultCode)
+  // @@protoc_insertion_point(parse_failure:executor.Status)
   return false;
 #undef DO_
 }
 
-void ResultCode::SerializeWithCachedSizes(
+void Status::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.ResultCode)
+  // @@protoc_insertion_point(serialize_start:executor.Status)
   // int32 code = 1;
   if (this->code() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->code(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.ResultCode)
+  // @@protoc_insertion_point(serialize_end:executor.Status)
 }
 
-::google::protobuf::uint8* ResultCode::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Status::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.ResultCode)
+  // @@protoc_insertion_point(serialize_to_array_start:executor.Status)
   // int32 code = 1;
   if (this->code() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->code(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.ResultCode)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.Status)
   return target;
 }
 
-size_t ResultCode::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.ResultCode)
+size_t Status::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.Status)
   size_t total_size = 0;
 
   // int32 code = 1;
@@ -3236,23 +3236,23 @@ size_t ResultCode::ByteSizeLong() const {
   return total_size;
 }
 
-void ResultCode::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.ResultCode)
+void Status::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.Status)
   GOOGLE_DCHECK_NE(&from, this);
-  const ResultCode* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ResultCode>(
+  const Status* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Status>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.ResultCode)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.Status)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.ResultCode)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.Status)
     MergeFrom(*source);
   }
 }
 
-void ResultCode::MergeFrom(const ResultCode& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.ResultCode)
+void Status::MergeFrom(const Status& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.Status)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.code() != 0) {
@@ -3260,53 +3260,53 @@ void ResultCode::MergeFrom(const ResultCode& from) {
   }
 }
 
-void ResultCode::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.ResultCode)
+void Status::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.Status)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void ResultCode::CopyFrom(const ResultCode& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.ResultCode)
+void Status::CopyFrom(const Status& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.Status)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ResultCode::IsInitialized() const {
+bool Status::IsInitialized() const {
   return true;
 }
 
-void ResultCode::Swap(ResultCode* other) {
+void Status::Swap(Status* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void ResultCode::InternalSwap(ResultCode* other) {
+void Status::InternalSwap(Status* other) {
   std::swap(code_, other->code_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata ResultCode::GetMetadata() const {
+::google::protobuf::Metadata Status::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[8];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// ResultCode
+// Status
 
 // int32 code = 1;
-void ResultCode::clear_code() {
+void Status::clear_code() {
   code_ = 0;
 }
-::google::protobuf::int32 ResultCode::code() const {
-  // @@protoc_insertion_point(field_get:executor.ResultCode.code)
+::google::protobuf::int32 Status::code() const {
+  // @@protoc_insertion_point(field_get:executor.Status.code)
   return code_;
 }
-void ResultCode::set_code(::google::protobuf::int32 value) {
+void Status::set_code(::google::protobuf::int32 value) {
   
   code_ = value;
-  // @@protoc_insertion_point(field_set:executor.ResultCode.code)
+  // @@protoc_insertion_point(field_set:executor.Status.code)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

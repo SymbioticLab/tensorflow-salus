@@ -49,15 +49,15 @@ extern OpContextDefDefaultTypeInternal _OpContextDef_default_instance_;
 class OpKernelDef;
 class OpKernelDefDefaultTypeInternal;
 extern OpKernelDefDefaultTypeInternal _OpKernelDef_default_instance_;
-class ResultCode;
-class ResultCodeDefaultTypeInternal;
-extern ResultCodeDefaultTypeInternal _ResultCode_default_instance_;
 class RunRequest;
 class RunRequestDefaultTypeInternal;
 extern RunRequestDefaultTypeInternal _RunRequest_default_instance_;
 class RunResponse;
 class RunResponseDefaultTypeInternal;
 extern RunResponseDefaultTypeInternal _RunResponse_default_instance_;
+class Status;
+class StatusDefaultTypeInternal;
+extern StatusDefaultTypeInternal _Status_default_instance_;
 }  // namespace executor
 
 namespace executor {
@@ -258,14 +258,14 @@ class RunResponse : public ::google::protobuf::Message /* @@protoc_insertion_poi
 
   // accessors -------------------------------------------------------
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   bool has_result() const;
   void clear_result();
   static const int kResultFieldNumber = 1;
-  const ::executor::ResultCode& result() const;
-  ::executor::ResultCode* mutable_result();
-  ::executor::ResultCode* release_result();
-  void set_allocated_result(::executor::ResultCode* result);
+  const ::executor::Status& result() const;
+  ::executor::Status* mutable_result();
+  ::executor::Status* release_result();
+  void set_allocated_result(::executor::Status* result);
 
   // .executor.OpContextDef context = 2;
   bool has_context() const;
@@ -280,7 +280,7 @@ class RunResponse : public ::google::protobuf::Message /* @@protoc_insertion_poi
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::executor::ResultCode* result_;
+  ::executor::Status* result_;
   ::executor::OpContextDef* context_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
@@ -437,20 +437,20 @@ class DeallocResponse : public ::google::protobuf::Message /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   bool has_result() const;
   void clear_result();
   static const int kResultFieldNumber = 1;
-  const ::executor::ResultCode& result() const;
-  ::executor::ResultCode* mutable_result();
-  ::executor::ResultCode* release_result();
-  void set_allocated_result(::executor::ResultCode* result);
+  const ::executor::Status& result() const;
+  ::executor::Status* mutable_result();
+  ::executor::Status* release_result();
+  void set_allocated_result(::executor::Status* result);
 
   // @@protoc_insertion_point(class_scope:executor.DeallocResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::executor::ResultCode* result_;
+  ::executor::Status* result_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
 };
@@ -613,14 +613,14 @@ class AllocResponse : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   // accessors -------------------------------------------------------
 
-  // .executor.ResultCode result = 1;
+  // .executor.Status result = 1;
   bool has_result() const;
   void clear_result();
   static const int kResultFieldNumber = 1;
-  const ::executor::ResultCode& result() const;
-  ::executor::ResultCode* mutable_result();
-  ::executor::ResultCode* release_result();
-  void set_allocated_result(::executor::ResultCode* result);
+  const ::executor::Status& result() const;
+  ::executor::Status* mutable_result();
+  ::executor::Status* release_result();
+  void set_allocated_result(::executor::Status* result);
 
   // uint64 addr_handle = 2;
   void clear_addr_handle();
@@ -632,7 +632,7 @@ class AllocResponse : public ::google::protobuf::Message /* @@protoc_insertion_p
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::executor::ResultCode* result_;
+  ::executor::Status* result_;
   ::google::protobuf::uint64 addr_handle_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
@@ -915,37 +915,37 @@ class OpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class ResultCode : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.ResultCode) */ {
+class Status : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.Status) */ {
  public:
-  ResultCode();
-  virtual ~ResultCode();
+  Status();
+  virtual ~Status();
 
-  ResultCode(const ResultCode& from);
+  Status(const Status& from);
 
-  inline ResultCode& operator=(const ResultCode& from) {
+  inline Status& operator=(const Status& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ResultCode& default_instance();
+  static const Status& default_instance();
 
-  static inline const ResultCode* internal_default_instance() {
-    return reinterpret_cast<const ResultCode*>(
-               &_ResultCode_default_instance_);
+  static inline const Status* internal_default_instance() {
+    return reinterpret_cast<const Status*>(
+               &_Status_default_instance_);
   }
 
-  void Swap(ResultCode* other);
+  void Swap(Status* other);
 
   // implements Message ----------------------------------------------
 
-  inline ResultCode* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline Status* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  ResultCode* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  Status* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const ResultCode& from);
-  void MergeFrom(const ResultCode& from);
+  void CopyFrom(const Status& from);
+  void MergeFrom(const Status& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -966,7 +966,7 @@ class ResultCode : public ::google::protobuf::Message /* @@protoc_insertion_poin
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(ResultCode* other);
+  void InternalSwap(Status* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -988,7 +988,7 @@ class ResultCode : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::int32 code() const;
   void set_code(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:executor.ResultCode)
+  // @@protoc_insertion_point(class_scope:executor.Status)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -1086,7 +1086,7 @@ inline void RunRequest::set_allocated_context(::executor::OpContextDef* context)
 
 // RunResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 inline bool RunResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -1094,27 +1094,27 @@ inline void RunResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-inline const ::executor::ResultCode& RunResponse::result() const {
+inline const ::executor::Status& RunResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.RunResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-inline ::executor::ResultCode* RunResponse::mutable_result() {
+inline ::executor::Status* RunResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.RunResponse.result)
   return result_;
 }
-inline ::executor::ResultCode* RunResponse::release_result() {
+inline ::executor::Status* RunResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.RunResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-inline void RunResponse::set_allocated_result(::executor::ResultCode* result) {
+inline void RunResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1186,7 +1186,7 @@ inline void DeallocRequest::set_addr_handle(::google::protobuf::uint64 value) {
 
 // DeallocResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 inline bool DeallocResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -1194,27 +1194,27 @@ inline void DeallocResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-inline const ::executor::ResultCode& DeallocResponse::result() const {
+inline const ::executor::Status& DeallocResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.DeallocResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-inline ::executor::ResultCode* DeallocResponse::mutable_result() {
+inline ::executor::Status* DeallocResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.DeallocResponse.result)
   return result_;
 }
-inline ::executor::ResultCode* DeallocResponse::release_result() {
+inline ::executor::Status* DeallocResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.DeallocResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-inline void DeallocResponse::set_allocated_result(::executor::ResultCode* result) {
+inline void DeallocResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1261,7 +1261,7 @@ inline void AllocRequest::set_num_bytes(::google::protobuf::uint64 value) {
 
 // AllocResponse
 
-// .executor.ResultCode result = 1;
+// .executor.Status result = 1;
 inline bool AllocResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -1269,27 +1269,27 @@ inline void AllocResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-inline const ::executor::ResultCode& AllocResponse::result() const {
+inline const ::executor::Status& AllocResponse::result() const {
   // @@protoc_insertion_point(field_get:executor.AllocResponse.result)
   return result_ != NULL ? *result_
-                         : *::executor::ResultCode::internal_default_instance();
+                         : *::executor::Status::internal_default_instance();
 }
-inline ::executor::ResultCode* AllocResponse::mutable_result() {
+inline ::executor::Status* AllocResponse::mutable_result() {
   
   if (result_ == NULL) {
-    result_ = new ::executor::ResultCode;
+    result_ = new ::executor::Status;
   }
   // @@protoc_insertion_point(field_mutable:executor.AllocResponse.result)
   return result_;
 }
-inline ::executor::ResultCode* AllocResponse::release_result() {
+inline ::executor::Status* AllocResponse::release_result() {
   // @@protoc_insertion_point(field_release:executor.AllocResponse.result)
   
-  ::executor::ResultCode* temp = result_;
+  ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-inline void AllocResponse::set_allocated_result(::executor::ResultCode* result) {
+inline void AllocResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1572,20 +1572,20 @@ inline void OpContextDef::set_is_output_dead(bool value) {
 
 // -------------------------------------------------------------------
 
-// ResultCode
+// Status
 
 // int32 code = 1;
-inline void ResultCode::clear_code() {
+inline void Status::clear_code() {
   code_ = 0;
 }
-inline ::google::protobuf::int32 ResultCode::code() const {
-  // @@protoc_insertion_point(field_get:executor.ResultCode.code)
+inline ::google::protobuf::int32 Status::code() const {
+  // @@protoc_insertion_point(field_get:executor.Status.code)
   return code_;
 }
-inline void ResultCode::set_code(::google::protobuf::int32 value) {
+inline void Status::set_code(::google::protobuf::int32 value) {
   
   code_ = value;
-  // @@protoc_insertion_point(field_set:executor.ResultCode.code)
+  // @@protoc_insertion_point(field_set:executor.Status.code)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
