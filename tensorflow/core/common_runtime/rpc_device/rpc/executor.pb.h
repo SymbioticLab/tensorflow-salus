@@ -744,6 +744,20 @@ class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_id();
   void set_allocated_id(::std::string* id);
 
+  // bytes extra = 3;
+  void clear_extra();
+  static const int kExtraFieldNumber = 3;
+  const ::std::string& extra() const;
+  void set_extra(const ::std::string& value);
+  #if LANG_CXX11
+  void set_extra(::std::string&& value);
+  #endif
+  void set_extra(const char* value);
+  void set_extra(const void* value, size_t size);
+  ::std::string* mutable_extra();
+  ::std::string* release_extra();
+  void set_allocated_extra(::std::string* extra);
+
   // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
   void clear_oplibrary();
   static const int kOplibraryFieldNumber = 1;
@@ -755,6 +769,7 @@ class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_poi
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr id_;
+  ::google::protobuf::internal::ArenaStringPtr extra_;
   int oplibrary_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
@@ -1367,6 +1382,58 @@ inline void OpKernelDef::set_allocated_id(::std::string* id) {
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
   // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
+}
+
+// bytes extra = 3;
+inline void OpKernelDef::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& OpKernelDef::extra() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.extra)
+  return extra_.GetNoArena();
+}
+inline void OpKernelDef::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.extra)
+}
+#if LANG_CXX11
+inline void OpKernelDef::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernelDef.extra)
+}
+#endif
+inline void OpKernelDef::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.OpKernelDef.extra)
+}
+inline void OpKernelDef::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.OpKernelDef.extra)
+}
+inline ::std::string* OpKernelDef::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.OpKernelDef.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OpKernelDef::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.OpKernelDef.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OpKernelDef::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.extra)
 }
 
 // -------------------------------------------------------------------

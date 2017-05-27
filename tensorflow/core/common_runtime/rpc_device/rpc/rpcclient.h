@@ -22,11 +22,12 @@
 
 #include "tensorflow/core/lib/core/status.h"
 
-#include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
-
-#include "zmq.hpp"
-
 #include <memory>
+
+namespace executor {
+class OpKernelDef;
+class OpContextDef;
+}
 
 namespace tensorflow {
 
@@ -47,32 +48,14 @@ public:
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
 
-    // default instance always connect to localhost:55001
+    // default instance always connect to localhost:5501
     static RpcClient &instance();
 
-private:
-//     RpcClient(std::shared_ptr<grpc::Channel> channel);
-
-//     std::unique_ptr<executor::IExecEngine::Stub> m_stub;
-};
-
-class ZmqRpcClient : public RpcClient
-{
-public:
-    ZmqRpcClient();
-
-    ~ZmqRpcClient() override;
-
-    Status run(OpKernel *kernel, OpKernelContext *context) override;
-    Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
-    Status deallocate(uint64_t addr_handle) override;
+    void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel);
+    void serializeOpContext(executor::OpContextDef *def, const OpKernelContext *context);
+    void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 
 private:
-    Status rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply);
-
-private:
-    zmq::context_t m_zmqctx;
-    zmq::socket_t m_zmqsock;
 };
 
 } // namespace tensorflow

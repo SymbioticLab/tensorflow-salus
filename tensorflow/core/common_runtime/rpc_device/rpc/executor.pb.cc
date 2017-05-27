@@ -88,6 +88,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, oplibrary_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, extra_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -114,8 +115,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 22, -1, sizeof(AllocRequest)},
   { 28, -1, sizeof(AllocResponse)},
   { 34, -1, sizeof(OpKernelDef)},
-  { 40, -1, sizeof(OpContextDef)},
-  { 51, -1, sizeof(ResultCode)},
+  { 41, -1, sizeof(OpContextDef)},
+  { 52, -1, sizeof(ResultCode)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -219,25 +220,25 @@ void AddDescriptorsImpl() {
       "cRequest\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes"
       "\030\002 \001(\004\"J\n\rAllocResponse\022$\n\006result\030\001 \001(\0132"
       "\024.executor.ResultCode\022\023\n\013addr_handle\030\002 \001"
-      "(\004\"r\n\013OpKernelDef\0226\n\toplibrary\030\001 \001(\0162#.e"
-      "xecutor.OpKernelDef.OpLibraryType\022\n\n\002id\030"
-      "\002 \001(\t\"\037\n\rOpLibraryType\022\016\n\nTENSORFLOW\020\000\"\204"
-      "\002\n\014OpContextDef\022\035\n\025host_temp_memory_size"
-      "\030\001 \001(\003\022\037\n\027device_temp_memory_size\030\002 \001(\003\022"
-      "!\n\031host_persistent_alloc_ids\030\003 \003(\003\022#\n\033de"
-      "vice_persistent_alloc_ids\030\004 \003(\003\022(\n host_"
-      "persistent_memory_allocated\030\005 \001(\003\022*\n\"dev"
-      "ice_persistent_memory_allocated\030\006 \001(\003\022\026\n"
-      "\016is_output_dead\030\007 \001(\010\"\032\n\nResultCode\022\014\n\004c"
-      "ode\030\001 \001(\0052\307\001\n\013IExecEngine\0224\n\003run\022\024.execu"
-      "tor.RunRequest\032\025.executor.RunResponse\"\000\022"
-      "=\n\010allocate\022\026.executor.AllocRequest\032\027.ex"
-      "ecutor.AllocResponse\"\000\022C\n\ndeallocate\022\030.e"
-      "xecutor.DeallocRequest\032\031.executor.Deallo"
-      "cResponse\"\000b\006proto3"
+      "(\004\"\201\001\n\013OpKernelDef\0226\n\toplibrary\030\001 \001(\0162#."
+      "executor.OpKernelDef.OpLibraryType\022\n\n\002id"
+      "\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"\037\n\rOpLibraryType\022\016"
+      "\n\nTENSORFLOW\020\000\"\204\002\n\014OpContextDef\022\035\n\025host_"
+      "temp_memory_size\030\001 \001(\003\022\037\n\027device_temp_me"
+      "mory_size\030\002 \001(\003\022!\n\031host_persistent_alloc"
+      "_ids\030\003 \003(\003\022#\n\033device_persistent_alloc_id"
+      "s\030\004 \003(\003\022(\n host_persistent_memory_alloca"
+      "ted\030\005 \001(\003\022*\n\"device_persistent_memory_al"
+      "located\030\006 \001(\003\022\026\n\016is_output_dead\030\007 \001(\010\"\032\n"
+      "\nResultCode\022\014\n\004code\030\001 \001(\0052\307\001\n\013IExecEngin"
+      "e\0224\n\003run\022\024.executor.RunRequest\032\025.executo"
+      "r.RunResponse\"\000\022=\n\010allocate\022\026.executor.A"
+      "llocRequest\032\027.executor.AllocResponse\"\000\022C"
+      "\n\ndeallocate\022\030.executor.DeallocRequest\032\031"
+      ".executor.DeallocResponse\"\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1059);
+      descriptor, 1075);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -2056,6 +2057,7 @@ void AllocResponse::set_addr_handle(::google::protobuf::uint64 value) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int OpKernelDef::kOplibraryFieldNumber;
 const int OpKernelDef::kIdFieldNumber;
+const int OpKernelDef::kExtraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 OpKernelDef::OpKernelDef()
@@ -2075,12 +2077,17 @@ OpKernelDef::OpKernelDef(const OpKernelDef& from)
   if (from.id().size() > 0) {
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.extra().size() > 0) {
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
   oplibrary_ = from.oplibrary_;
   // @@protoc_insertion_point(copy_constructor:executor.OpKernelDef)
 }
 
 void OpKernelDef::SharedCtor() {
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   oplibrary_ = 0;
   _cached_size_ = 0;
 }
@@ -2092,6 +2099,7 @@ OpKernelDef::~OpKernelDef() {
 
 void OpKernelDef::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void OpKernelDef::SetCachedSize(int size) const {
@@ -2120,6 +2128,7 @@ OpKernelDef* OpKernelDef::New(::google::protobuf::Arena* arena) const {
 void OpKernelDef::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.OpKernelDef)
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   oplibrary_ = 0;
 }
 
@@ -2156,6 +2165,17 @@ bool OpKernelDef::MergePartialFromCodedStream(
             this->id().data(), this->id().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "executor.OpKernelDef.id"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes extra = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_extra()));
         } else {
           goto handle_unusual;
         }
@@ -2202,6 +2222,12 @@ void OpKernelDef::SerializeWithCachedSizes(
       2, this->id(), output);
   }
 
+  // bytes extra = 3;
+  if (this->extra().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->extra(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:executor.OpKernelDef)
 }
 
@@ -2226,6 +2252,13 @@ void OpKernelDef::SerializeWithCachedSizes(
         2, this->id(), target);
   }
 
+  // bytes extra = 3;
+  if (this->extra().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->extra(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:executor.OpKernelDef)
   return target;
 }
@@ -2239,6 +2272,13 @@ size_t OpKernelDef::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->id());
+  }
+
+  // bytes extra = 3;
+  if (this->extra().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->extra());
   }
 
   // .executor.OpKernelDef.OpLibraryType oplibrary = 1;
@@ -2277,6 +2317,10 @@ void OpKernelDef::MergeFrom(const OpKernelDef& from) {
 
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
+  if (from.extra().size() > 0) {
+
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
   if (from.oplibrary() != 0) {
     set_oplibrary(from.oplibrary());
   }
@@ -2306,6 +2350,7 @@ void OpKernelDef::Swap(OpKernelDef* other) {
 }
 void OpKernelDef::InternalSwap(OpKernelDef* other) {
   id_.Swap(&other->id_);
+  extra_.Swap(&other->extra_);
   std::swap(oplibrary_, other->oplibrary_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -2382,6 +2427,58 @@ void OpKernelDef::set_allocated_id(::std::string* id) {
   }
   id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
   // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
+}
+
+// bytes extra = 3;
+void OpKernelDef::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& OpKernelDef::extra() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.extra)
+  return extra_.GetNoArena();
+}
+void OpKernelDef::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.extra)
+}
+#if LANG_CXX11
+void OpKernelDef::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.OpKernelDef.extra)
+}
+#endif
+void OpKernelDef::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.OpKernelDef.extra)
+}
+void OpKernelDef::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.OpKernelDef.extra)
+}
+::std::string* OpKernelDef::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.OpKernelDef.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* OpKernelDef::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.OpKernelDef.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void OpKernelDef::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.extra)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
