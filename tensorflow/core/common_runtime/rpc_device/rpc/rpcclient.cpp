@@ -21,6 +21,7 @@
 
 #include "tensorflow/core/common_runtime/rpc_device/rpc/zmqrpcclient.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
+#include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
 
 #include "tensorflow/core/graph/graph.h"
 #include "tensorflow/core/platform/logging.h"
@@ -45,7 +46,6 @@ RpcClient &RpcClient::instance()
 void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::OpKernel *kernel,
                                   Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
 {
-    // TODO: serialize OpKernel to protobuf
     LOG(INFO) << "About to serialize OpKernel";
 
     LOG(INFO) << "def " << def;
@@ -54,33 +54,15 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::
 
     def->set_id(kernel->name());
     def->set_oplibrary(executor::OpKernelDef::TENSORFLOW);
-    def->set_graph_def_version(graph->versions().producer());
 
-    LOG(INFO) << "Creating coded output stream";
-    google::protobuf::io::StringOutputStream raw_output(def->mutable_extra());
-    google::protobuf::io::CodedOutputStream coded_stream(&raw_output);
+    executor::TFOpKernelDef tfdef;
+    tfdef.set_graph_def_version(graph->versions().producer());
 
-    LOG(INFO) << "Writing NodeDef";
-    const auto &ndef = kernel->def();
-    coded_stream.WriteVarint32(ndef.ByteSize());
-    ndef.SerializeToCodedStream(&coded_stream);
+    *tfdef.mutable_nodedef() = kernel->def();
+    *tfdef.mutable_cfgproto() = cfgProto;
+    *tfdef.mutable_funcdef() = library;
 
-    LOG(INFO) << "Writing FunctionDefLibrary";
-    LOG(INFO) << "library byte size " << library.ByteSize();
-    LOG(INFO) << "library content " << library.DebugString();
-    coded_stream.WriteVarint32(library.ByteSize());
-
-    LOG(INFO) << "library size written";
-    auto ok = library.SerializeToCodedStream(&coded_stream);
-    if (!ok) {
-        LOG(ERROR) << "library serialize to coded stream failed";
-    }
-
-    LOG(INFO) << "Writing ConfigProto";
-    LOG(INFO) << "cfgProto byte size " << cfgProto.ByteSize();
-    LOG(INFO) << "cfgProto content " << cfgProto.DebugString();
-    coded_stream.WriteVarint32(cfgProto.ByteSize());
-    cfgProto.SerializeToCodedStream(&coded_stream);
+    tfdef.SerializeToString(def->mutable_extra());
 
     LOG(INFO) << "Done";
 }
@@ -89,6 +71,13 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, const OpKernelCo
                                    Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
 {
     // TODO: serialize OpKernelContext to protobuf
+    LOG(INFO) << "About to serialize OpContext";
+
+    executor::TFOpContextDef tfdef;
+
+    tfdef.SerializeToString(def->mutable_extra());
+
+    LOG(INFO) << "Done";
 }
 
 void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def)
