@@ -25,6 +25,7 @@
 #include "tensorflow/core/framework/device_base.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor.pb_text.h"
+#include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/graph/types.h"
 #include "tensorflow/core/lib/hash/hash.h"
@@ -38,7 +39,9 @@ RpcDevice::RpcDevice(const SessionOptions &options, const string &name, Bytes me
     : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_CPU, memory_limit, locality), allocator)
     , m_allocator(allocator)
     , m_rpc(rpc)
-{}
+    , m_cfgProto(options.config)
+{
+}
 
 RpcDevice::~RpcDevice()
 {
@@ -50,9 +53,18 @@ Status RpcDevice::Sync()
     return Status::OK();
 }
 
+Status RpcDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph)
+{
+    m_funcDefLib = library;
+
+    m_graph = (*graph).get();
+
+    return Status::OK();
+}
+
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-    auto status = m_rpc->run(op_kernel, context);
+    auto status = m_rpc->run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
     if (!status.ok()) {
         LOG(ERROR) << "RPC call failed with " << status;
     }

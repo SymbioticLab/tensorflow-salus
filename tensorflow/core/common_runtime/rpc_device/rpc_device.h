@@ -49,10 +49,15 @@ public:
                                Tensor *tensor) override;
 
     Status Sync() override;
+    Status MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph) override;
 
 private:
     Allocator *m_allocator;  // Not owned
     RpcClient *m_rpc; // Not owned
+
+    FunctionDefLibrary m_funcDefLib;
+    Graph *m_graph;
+    ConfigProto m_cfgProto;
 };
 
 }

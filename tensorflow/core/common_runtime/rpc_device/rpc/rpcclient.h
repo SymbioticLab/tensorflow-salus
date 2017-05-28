@@ -33,6 +33,9 @@ namespace tensorflow {
 
 class OpKernel;
 class OpKernelContext;
+class Graph;
+class FunctionDefLibrary;
+class ConfigProto;
 
 /**
  * @todo write docs
@@ -44,15 +47,18 @@ public:
 
     virtual ~RpcClient();
 
-    virtual Status run(OpKernel *kernel, OpKernelContext *context) = 0;
+    virtual Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+                       OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
 
     // default instance always connect to localhost:5501
     static RpcClient &instance();
 
-    void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel);
-    void serializeOpContext(executor::OpContextDef *def, const OpKernelContext *context);
+    void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel,
+                           Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
+    void serializeOpContext(executor::OpContextDef *def, const OpKernelContext *context,
+                            Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
     void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 
 private:

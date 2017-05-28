@@ -88,6 +88,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, oplibrary_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, graph_def_version_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpKernelDef, extra_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, _internal_metadata_),
@@ -115,8 +116,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 22, -1, sizeof(AllocRequest)},
   { 28, -1, sizeof(AllocResponse)},
   { 34, -1, sizeof(OpKernelDef)},
-  { 41, -1, sizeof(OpContextDef)},
-  { 52, -1, sizeof(Status)},
+  { 42, -1, sizeof(OpContextDef)},
+  { 53, -1, sizeof(Status)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -219,26 +220,27 @@ void AddDescriptorsImpl() {
       "\030\001 \001(\0132\020.executor.Status\"4\n\014AllocRequest"
       "\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes\030\002 \001(\004\"F"
       "\n\rAllocResponse\022 \n\006result\030\001 \001(\0132\020.execut"
-      "or.Status\022\023\n\013addr_handle\030\002 \001(\004\"\201\001\n\013OpKer"
+      "or.Status\022\023\n\013addr_handle\030\002 \001(\004\"\234\001\n\013OpKer"
       "nelDef\0226\n\toplibrary\030\001 \001(\0162#.executor.OpK"
-      "ernelDef.OpLibraryType\022\n\n\002id\030\002 \001(\t\022\r\n\005ex"
-      "tra\030\003 \001(\014\"\037\n\rOpLibraryType\022\016\n\nTENSORFLOW"
-      "\020\000\"\204\002\n\014OpContextDef\022\035\n\025host_temp_memory_"
-      "size\030\001 \001(\003\022\037\n\027device_temp_memory_size\030\002 "
-      "\001(\003\022!\n\031host_persistent_alloc_ids\030\003 \003(\003\022#"
-      "\n\033device_persistent_alloc_ids\030\004 \003(\003\022(\n h"
-      "ost_persistent_memory_allocated\030\005 \001(\003\022*\n"
-      "\"device_persistent_memory_allocated\030\006 \001("
-      "\003\022\026\n\016is_output_dead\030\007 \001(\010\"\026\n\006Status\022\014\n\004c"
-      "ode\030\001 \001(\0052\307\001\n\013IExecEngine\0224\n\003run\022\024.execu"
-      "tor.RunRequest\032\025.executor.RunResponse\"\000\022"
-      "=\n\010allocate\022\026.executor.AllocRequest\032\027.ex"
-      "ecutor.AllocResponse\"\000\022C\n\ndeallocate\022\030.e"
-      "xecutor.DeallocRequest\032\031.executor.Deallo"
-      "cResponse\"\000b\006proto3"
+      "ernelDef.OpLibraryType\022\n\n\002id\030\002 \001(\t\022\031\n\021gr"
+      "aph_def_version\030\003 \001(\005\022\r\n\005extra\030\004 \001(\014\"\037\n\r"
+      "OpLibraryType\022\016\n\nTENSORFLOW\020\000\"\204\002\n\014OpCont"
+      "extDef\022\035\n\025host_temp_memory_size\030\001 \001(\003\022\037\n"
+      "\027device_temp_memory_size\030\002 \001(\003\022!\n\031host_p"
+      "ersistent_alloc_ids\030\003 \003(\003\022#\n\033device_pers"
+      "istent_alloc_ids\030\004 \003(\003\022(\n host_persisten"
+      "t_memory_allocated\030\005 \001(\003\022*\n\"device_persi"
+      "stent_memory_allocated\030\006 \001(\003\022\026\n\016is_outpu"
+      "t_dead\030\007 \001(\010\"\026\n\006Status\022\014\n\004code\030\001 \001(\0052\307\001\n"
+      "\013IExecEngine\0224\n\003run\022\024.executor.RunReques"
+      "t\032\025.executor.RunResponse\"\000\022=\n\010allocate\022\026"
+      ".executor.AllocRequest\032\027.executor.AllocR"
+      "esponse\"\000\022C\n\ndeallocate\022\030.executor.Deall"
+      "ocRequest\032\031.executor.DeallocResponse\"\000b\006"
+      "proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1059);
+      descriptor, 1086);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -2057,6 +2059,7 @@ void AllocResponse::set_addr_handle(::google::protobuf::uint64 value) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int OpKernelDef::kOplibraryFieldNumber;
 const int OpKernelDef::kIdFieldNumber;
+const int OpKernelDef::kGraphDefVersionFieldNumber;
 const int OpKernelDef::kExtraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2081,14 +2084,17 @@ OpKernelDef::OpKernelDef(const OpKernelDef& from)
   if (from.extra().size() > 0) {
     extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
   }
-  oplibrary_ = from.oplibrary_;
+  ::memcpy(&oplibrary_, &from.oplibrary_,
+    reinterpret_cast<char*>(&graph_def_version_) -
+    reinterpret_cast<char*>(&oplibrary_) + sizeof(graph_def_version_));
   // @@protoc_insertion_point(copy_constructor:executor.OpKernelDef)
 }
 
 void OpKernelDef::SharedCtor() {
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
+  ::memset(&oplibrary_, 0, reinterpret_cast<char*>(&graph_def_version_) -
+    reinterpret_cast<char*>(&oplibrary_) + sizeof(graph_def_version_));
   _cached_size_ = 0;
 }
 
@@ -2129,7 +2135,8 @@ void OpKernelDef::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.OpKernelDef)
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
+  ::memset(&oplibrary_, 0, reinterpret_cast<char*>(&graph_def_version_) -
+    reinterpret_cast<char*>(&oplibrary_) + sizeof(graph_def_version_));
 }
 
 bool OpKernelDef::MergePartialFromCodedStream(
@@ -2171,9 +2178,22 @@ bool OpKernelDef::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes extra = 3;
+      // int32 graph_def_version = 3;
       case 3: {
-        if (tag == 26u) {
+        if (tag == 24u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &graph_def_version_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes extra = 4;
+      case 4: {
+        if (tag == 34u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_extra()));
         } else {
@@ -2222,10 +2242,15 @@ void OpKernelDef::SerializeWithCachedSizes(
       2, this->id(), output);
   }
 
-  // bytes extra = 3;
+  // int32 graph_def_version = 3;
+  if (this->graph_def_version() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->graph_def_version(), output);
+  }
+
+  // bytes extra = 4;
   if (this->extra().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      3, this->extra(), output);
+      4, this->extra(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:executor.OpKernelDef)
@@ -2252,11 +2277,16 @@ void OpKernelDef::SerializeWithCachedSizes(
         2, this->id(), target);
   }
 
-  // bytes extra = 3;
+  // int32 graph_def_version = 3;
+  if (this->graph_def_version() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->graph_def_version(), target);
+  }
+
+  // bytes extra = 4;
   if (this->extra().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->extra(), target);
+        4, this->extra(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:executor.OpKernelDef)
@@ -2274,7 +2304,7 @@ size_t OpKernelDef::ByteSizeLong() const {
         this->id());
   }
 
-  // bytes extra = 3;
+  // bytes extra = 4;
   if (this->extra().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -2285,6 +2315,13 @@ size_t OpKernelDef::ByteSizeLong() const {
   if (this->oplibrary() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
+  }
+
+  // int32 graph_def_version = 3;
+  if (this->graph_def_version() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->graph_def_version());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2324,6 +2361,9 @@ void OpKernelDef::MergeFrom(const OpKernelDef& from) {
   if (from.oplibrary() != 0) {
     set_oplibrary(from.oplibrary());
   }
+  if (from.graph_def_version() != 0) {
+    set_graph_def_version(from.graph_def_version());
+  }
 }
 
 void OpKernelDef::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2352,6 +2392,7 @@ void OpKernelDef::InternalSwap(OpKernelDef* other) {
   id_.Swap(&other->id_);
   extra_.Swap(&other->extra_);
   std::swap(oplibrary_, other->oplibrary_);
+  std::swap(graph_def_version_, other->graph_def_version_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -2429,7 +2470,21 @@ void OpKernelDef::set_allocated_id(::std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
 }
 
-// bytes extra = 3;
+// int32 graph_def_version = 3;
+void OpKernelDef::clear_graph_def_version() {
+  graph_def_version_ = 0;
+}
+::google::protobuf::int32 OpKernelDef::graph_def_version() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.graph_def_version)
+  return graph_def_version_;
+}
+void OpKernelDef::set_graph_def_version(::google::protobuf::int32 value) {
+  
+  graph_def_version_ = value;
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.graph_def_version)
+}
+
+// bytes extra = 4;
 void OpKernelDef::clear_extra() {
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

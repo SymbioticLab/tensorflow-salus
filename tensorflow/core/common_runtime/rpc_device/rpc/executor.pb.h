@@ -744,9 +744,9 @@ class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_id();
   void set_allocated_id(::std::string* id);
 
-  // bytes extra = 3;
+  // bytes extra = 4;
   void clear_extra();
-  static const int kExtraFieldNumber = 3;
+  static const int kExtraFieldNumber = 4;
   const ::std::string& extra() const;
   void set_extra(const ::std::string& value);
   #if LANG_CXX11
@@ -764,6 +764,12 @@ class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::executor::OpKernelDef_OpLibraryType oplibrary() const;
   void set_oplibrary(::executor::OpKernelDef_OpLibraryType value);
 
+  // int32 graph_def_version = 3;
+  void clear_graph_def_version();
+  static const int kGraphDefVersionFieldNumber = 3;
+  ::google::protobuf::int32 graph_def_version() const;
+  void set_graph_def_version(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:executor.OpKernelDef)
  private:
 
@@ -771,6 +777,7 @@ class OpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr extra_;
   int oplibrary_;
+  ::google::protobuf::int32 graph_def_version_;
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
 };
@@ -1384,7 +1391,21 @@ inline void OpKernelDef::set_allocated_id(::std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:executor.OpKernelDef.id)
 }
 
-// bytes extra = 3;
+// int32 graph_def_version = 3;
+inline void OpKernelDef::clear_graph_def_version() {
+  graph_def_version_ = 0;
+}
+inline ::google::protobuf::int32 OpKernelDef::graph_def_version() const {
+  // @@protoc_insertion_point(field_get:executor.OpKernelDef.graph_def_version)
+  return graph_def_version_;
+}
+inline void OpKernelDef::set_graph_def_version(::google::protobuf::int32 value) {
+  
+  graph_def_version_ = value;
+  // @@protoc_insertion_point(field_set:executor.OpKernelDef.graph_def_version)
+}
+
+// bytes extra = 4;
 inline void OpKernelDef::clear_extra() {
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

@@ -33,7 +33,8 @@ public:
 
     ~ZmqRpcClient() override;
 
-    Status run(OpKernel *kernel, OpKernelContext *context) override;
+    Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+               OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
     Status deallocate(uint64_t addr_handle) override;
 

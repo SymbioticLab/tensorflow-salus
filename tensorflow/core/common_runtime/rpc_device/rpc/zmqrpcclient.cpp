@@ -86,18 +86,20 @@ Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobu
     }
 }
 
-Status ZmqRpcClient::run(OpKernel *kernel, OpKernelContext *context)
+Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+                         OpKernel *kernel, OpKernelContext *context)
 {
     LOG(INFO) << "RpcClient::run";
 
     rpc::RunRequest request;
-    serializeOpKernel(request.mutable_opkernel(), kernel);
-    serializeOpContext(request.mutable_context(), context);
+    serializeOpKernel(request.mutable_opkernel(), kernel, graph, library, cfgProto);
+    serializeOpContext(request.mutable_context(), context, graph, library, cfgProto);
 
     rpc::RunResponse response;
     LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";
     auto status = rpcCall(request, response);
-    LOG(INFO) << "RpcClient::run    rpc returned with status message: " << status.error_message();
+    LOG(INFO) << "RpcClient::run    rpc returned with status: "
+              << status.code() << " " << status.error_message();
 
     // TODO: better error handling
     if (!status.ok() || response.result().code() != 0) {
