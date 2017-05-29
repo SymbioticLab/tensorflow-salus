@@ -31,6 +31,7 @@
 #include "tensorflow/core/framework/node_def.pb.h"
 #include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/protobuf/config.pb.h"
+#include "tensorflow/core/lib/core/error_codes.pb.h"
 // @@protoc_insertion_point(includes)
 namespace executor {
 class TFOpContextDef;
@@ -77,6 +78,8 @@ extern RunOptionsDefaultTypeInternal _RunOptions_default_instance_;
 class ThreadPoolOptionProto;
 class ThreadPoolOptionProtoDefaultTypeInternal;
 extern ThreadPoolOptionProtoDefaultTypeInternal _ThreadPoolOptionProto_default_instance_;
+namespace error {
+}  // namespace error
 }  // namespace tensorflow
 
 namespace executor {
@@ -274,10 +277,10 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // repeated int64 host_persistent_alloc_ids = 3;
+  // repeated int64 host_persistent_alloc_ids = 9;
   int host_persistent_alloc_ids_size() const;
   void clear_host_persistent_alloc_ids();
-  static const int kHostPersistentAllocIdsFieldNumber = 3;
+  static const int kHostPersistentAllocIdsFieldNumber = 9;
   ::google::protobuf::int64 host_persistent_alloc_ids(int index) const;
   void set_host_persistent_alloc_ids(int index, ::google::protobuf::int64 value);
   void add_host_persistent_alloc_ids(::google::protobuf::int64 value);
@@ -286,10 +289,10 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
       mutable_host_persistent_alloc_ids();
 
-  // repeated int64 device_persistent_alloc_ids = 4;
+  // repeated int64 device_persistent_alloc_ids = 10;
   int device_persistent_alloc_ids_size() const;
   void clear_device_persistent_alloc_ids();
-  static const int kDevicePersistentAllocIdsFieldNumber = 4;
+  static const int kDevicePersistentAllocIdsFieldNumber = 10;
   ::google::protobuf::int64 device_persistent_alloc_ids(int index) const;
   void set_device_persistent_alloc_ids(int index, ::google::protobuf::int64 value);
   void add_device_persistent_alloc_ids(::google::protobuf::int64 value);
@@ -298,35 +301,79 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
       mutable_device_persistent_alloc_ids();
 
-  // int64 host_temp_memory_size = 1;
+  // string status_msg = 15;
+  void clear_status_msg();
+  static const int kStatusMsgFieldNumber = 15;
+  const ::std::string& status_msg() const;
+  void set_status_msg(const ::std::string& value);
+  #if LANG_CXX11
+  void set_status_msg(::std::string&& value);
+  #endif
+  void set_status_msg(const char* value);
+  void set_status_msg(const char* value, size_t size);
+  ::std::string* mutable_status_msg();
+  ::std::string* release_status_msg();
+  void set_allocated_status_msg(::std::string* status_msg);
+
+  // int64 step_id = 1;
+  void clear_step_id();
+  static const int kStepIdFieldNumber = 1;
+  ::google::protobuf::int64 step_id() const;
+  void set_step_id(::google::protobuf::int64 value);
+
+  // uint64 frame_id = 4;
+  void clear_frame_id();
+  static const int kFrameIdFieldNumber = 4;
+  ::google::protobuf::uint64 frame_id() const;
+  void set_frame_id(::google::protobuf::uint64 value);
+
+  // int64 iter_id = 5;
+  void clear_iter_id();
+  static const int kIterIdFieldNumber = 5;
+  ::google::protobuf::int64 iter_id() const;
+  void set_iter_id(::google::protobuf::int64 value);
+
+  // int64 host_temp_memory_size = 7;
   void clear_host_temp_memory_size();
-  static const int kHostTempMemorySizeFieldNumber = 1;
+  static const int kHostTempMemorySizeFieldNumber = 7;
   ::google::protobuf::int64 host_temp_memory_size() const;
   void set_host_temp_memory_size(::google::protobuf::int64 value);
 
-  // int64 device_temp_memory_size = 2;
+  // int64 device_temp_memory_size = 8;
   void clear_device_temp_memory_size();
-  static const int kDeviceTempMemorySizeFieldNumber = 2;
+  static const int kDeviceTempMemorySizeFieldNumber = 8;
   ::google::protobuf::int64 device_temp_memory_size() const;
   void set_device_temp_memory_size(::google::protobuf::int64 value);
 
-  // int64 host_persistent_memory_allocated = 5;
+  // int64 host_persistent_memory_allocated = 11;
   void clear_host_persistent_memory_allocated();
-  static const int kHostPersistentMemoryAllocatedFieldNumber = 5;
+  static const int kHostPersistentMemoryAllocatedFieldNumber = 11;
   ::google::protobuf::int64 host_persistent_memory_allocated() const;
   void set_host_persistent_memory_allocated(::google::protobuf::int64 value);
 
-  // int64 device_persistent_memory_allocated = 6;
-  void clear_device_persistent_memory_allocated();
-  static const int kDevicePersistentMemoryAllocatedFieldNumber = 6;
-  ::google::protobuf::int64 device_persistent_memory_allocated() const;
-  void set_device_persistent_memory_allocated(::google::protobuf::int64 value);
+  // bool is_input_dead = 6;
+  void clear_is_input_dead();
+  static const int kIsInputDeadFieldNumber = 6;
+  bool is_input_dead() const;
+  void set_is_input_dead(bool value);
 
-  // bool is_output_dead = 7;
+  // bool is_output_dead = 13;
   void clear_is_output_dead();
-  static const int kIsOutputDeadFieldNumber = 7;
+  static const int kIsOutputDeadFieldNumber = 13;
   bool is_output_dead() const;
   void set_is_output_dead(bool value);
+
+  // .tensorflow.error.Code status_code = 14;
+  void clear_status_code();
+  static const int kStatusCodeFieldNumber = 14;
+  ::tensorflow::error::Code status_code() const;
+  void set_status_code(::tensorflow::error::Code value);
+
+  // int64 device_persistent_memory_allocated = 12;
+  void clear_device_persistent_memory_allocated();
+  static const int kDevicePersistentMemoryAllocatedFieldNumber = 12;
+  ::google::protobuf::int64 device_persistent_memory_allocated() const;
+  void set_device_persistent_memory_allocated(::google::protobuf::int64 value);
 
   // @@protoc_insertion_point(class_scope:executor.TFOpContextDef)
  private:
@@ -336,11 +383,17 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
   mutable int _host_persistent_alloc_ids_cached_byte_size_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int64 > device_persistent_alloc_ids_;
   mutable int _device_persistent_alloc_ids_cached_byte_size_;
+  ::google::protobuf::internal::ArenaStringPtr status_msg_;
+  ::google::protobuf::int64 step_id_;
+  ::google::protobuf::uint64 frame_id_;
+  ::google::protobuf::int64 iter_id_;
   ::google::protobuf::int64 host_temp_memory_size_;
   ::google::protobuf::int64 device_temp_memory_size_;
   ::google::protobuf::int64 host_persistent_memory_allocated_;
-  ::google::protobuf::int64 device_persistent_memory_allocated_;
+  bool is_input_dead_;
   bool is_output_dead_;
+  int status_code_;
+  ::google::protobuf::int64 device_persistent_memory_allocated_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -502,7 +555,63 @@ inline void TFOpKernelDef::set_allocated_funcdef(::tensorflow::FunctionDefLibrar
 
 // TFOpContextDef
 
-// int64 host_temp_memory_size = 1;
+// int64 step_id = 1;
+inline void TFOpContextDef::clear_step_id() {
+  step_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 TFOpContextDef::step_id() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.step_id)
+  return step_id_;
+}
+inline void TFOpContextDef::set_step_id(::google::protobuf::int64 value) {
+  
+  step_id_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.step_id)
+}
+
+// uint64 frame_id = 4;
+inline void TFOpContextDef::clear_frame_id() {
+  frame_id_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 TFOpContextDef::frame_id() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.frame_id)
+  return frame_id_;
+}
+inline void TFOpContextDef::set_frame_id(::google::protobuf::uint64 value) {
+  
+  frame_id_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.frame_id)
+}
+
+// int64 iter_id = 5;
+inline void TFOpContextDef::clear_iter_id() {
+  iter_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 TFOpContextDef::iter_id() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.iter_id)
+  return iter_id_;
+}
+inline void TFOpContextDef::set_iter_id(::google::protobuf::int64 value) {
+  
+  iter_id_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.iter_id)
+}
+
+// bool is_input_dead = 6;
+inline void TFOpContextDef::clear_is_input_dead() {
+  is_input_dead_ = false;
+}
+inline bool TFOpContextDef::is_input_dead() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.is_input_dead)
+  return is_input_dead_;
+}
+inline void TFOpContextDef::set_is_input_dead(bool value) {
+  
+  is_input_dead_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.is_input_dead)
+}
+
+// int64 host_temp_memory_size = 7;
 inline void TFOpContextDef::clear_host_temp_memory_size() {
   host_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
@@ -516,7 +625,7 @@ inline void TFOpContextDef::set_host_temp_memory_size(::google::protobuf::int64 
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.host_temp_memory_size)
 }
 
-// int64 device_temp_memory_size = 2;
+// int64 device_temp_memory_size = 8;
 inline void TFOpContextDef::clear_device_temp_memory_size() {
   device_temp_memory_size_ = GOOGLE_LONGLONG(0);
 }
@@ -530,7 +639,7 @@ inline void TFOpContextDef::set_device_temp_memory_size(::google::protobuf::int6
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.device_temp_memory_size)
 }
 
-// repeated int64 host_persistent_alloc_ids = 3;
+// repeated int64 host_persistent_alloc_ids = 9;
 inline int TFOpContextDef::host_persistent_alloc_ids_size() const {
   return host_persistent_alloc_ids_.size();
 }
@@ -560,7 +669,7 @@ TFOpContextDef::mutable_host_persistent_alloc_ids() {
   return &host_persistent_alloc_ids_;
 }
 
-// repeated int64 device_persistent_alloc_ids = 4;
+// repeated int64 device_persistent_alloc_ids = 10;
 inline int TFOpContextDef::device_persistent_alloc_ids_size() const {
   return device_persistent_alloc_ids_.size();
 }
@@ -590,7 +699,7 @@ TFOpContextDef::mutable_device_persistent_alloc_ids() {
   return &device_persistent_alloc_ids_;
 }
 
-// int64 host_persistent_memory_allocated = 5;
+// int64 host_persistent_memory_allocated = 11;
 inline void TFOpContextDef::clear_host_persistent_memory_allocated() {
   host_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
@@ -604,7 +713,7 @@ inline void TFOpContextDef::set_host_persistent_memory_allocated(::google::proto
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.host_persistent_memory_allocated)
 }
 
-// int64 device_persistent_memory_allocated = 6;
+// int64 device_persistent_memory_allocated = 12;
 inline void TFOpContextDef::clear_device_persistent_memory_allocated() {
   device_persistent_memory_allocated_ = GOOGLE_LONGLONG(0);
 }
@@ -618,7 +727,7 @@ inline void TFOpContextDef::set_device_persistent_memory_allocated(::google::pro
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.device_persistent_memory_allocated)
 }
 
-// bool is_output_dead = 7;
+// bool is_output_dead = 13;
 inline void TFOpContextDef::clear_is_output_dead() {
   is_output_dead_ = false;
 }
@@ -630,6 +739,72 @@ inline void TFOpContextDef::set_is_output_dead(bool value) {
   
   is_output_dead_ = value;
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.is_output_dead)
+}
+
+// .tensorflow.error.Code status_code = 14;
+inline void TFOpContextDef::clear_status_code() {
+  status_code_ = 0;
+}
+inline ::tensorflow::error::Code TFOpContextDef::status_code() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.status_code)
+  return static_cast< ::tensorflow::error::Code >(status_code_);
+}
+inline void TFOpContextDef::set_status_code(::tensorflow::error::Code value) {
+  
+  status_code_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.status_code)
+}
+
+// string status_msg = 15;
+inline void TFOpContextDef::clear_status_msg() {
+  status_msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TFOpContextDef::status_msg() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.status_msg)
+  return status_msg_.GetNoArena();
+}
+inline void TFOpContextDef::set_status_msg(const ::std::string& value) {
+  
+  status_msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.status_msg)
+}
+#if LANG_CXX11
+inline void TFOpContextDef::set_status_msg(::std::string&& value) {
+  
+  status_msg_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFOpContextDef.status_msg)
+}
+#endif
+inline void TFOpContextDef::set_status_msg(const char* value) {
+  
+  status_msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFOpContextDef.status_msg)
+}
+inline void TFOpContextDef::set_status_msg(const char* value, size_t size) {
+  
+  status_msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFOpContextDef.status_msg)
+}
+inline ::std::string* TFOpContextDef::mutable_status_msg() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFOpContextDef.status_msg)
+  return status_msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TFOpContextDef::release_status_msg() {
+  // @@protoc_insertion_point(field_release:executor.TFOpContextDef.status_msg)
+  
+  return status_msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TFOpContextDef::set_allocated_status_msg(::std::string* status_msg) {
+  if (status_msg != NULL) {
+    
+  } else {
+    
+  }
+  status_msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), status_msg);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFOpContextDef.status_msg)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS

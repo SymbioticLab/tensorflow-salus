@@ -74,6 +74,12 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, const OpKernelCo
     LOG(INFO) << "About to serialize OpContext";
 
     executor::TFOpContextDef tfdef;
+    auto params = context->params_;
+
+    tfdef.set_step_id(params->step_id);
+    tfdef.set_frame_id(params->frame_iter.frame_id);
+    tfdef.set_iter_id(params->frame_iter.iter_id);
+    tfdef.set_is_input_dead(params->is_input_dead);
 
     tfdef.SerializeToString(def->mutable_extra());
 

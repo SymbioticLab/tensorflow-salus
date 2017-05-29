@@ -1650,6 +1650,7 @@ cc_library(
     name = "rpc_runtime",
     srcs = [
         "common_runtime/rpc_device/rpc/executor.pb.cc",
+        "common_runtime/rpc_device/rpc/tfoplibrary.pb.cc",
         #"common_runtime/rpc_device/rpc/executor.grpc.pb.cc",
         "common_runtime/rpc_device/rpc/rpcclient.cpp",
         "common_runtime/rpc_device/rpc/zmqrpcclient.cpp",
@@ -1661,6 +1662,7 @@ cc_library(
     ],
     hdrs = [
         "common_runtime/rpc_device/rpc/executor.pb.h",
+        "common_runtime/rpc_device/rpc/tfoplibrary.pb.h",
         #"common_runtime/rpc_device/rpc/executor.grpc.pb.h",
         "common_runtime/rpc_device/rpc/rpcclient.h",
         "common_runtime/rpc_device/rpc/zmqrpcclient.h",
