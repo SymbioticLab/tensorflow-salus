@@ -19,6 +19,7 @@
 
 #include "rpcclient.h"
 
+#include "tensorflow/core/common_runtime/rpc_device/rpc_allocator.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/zmqrpcclient.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
@@ -67,10 +68,9 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::
     LOG(INFO) << "Done";
 }
 
-void RpcClient::serializeOpContext(executor::OpContextDef *def, const OpKernelContext *context,
+void RpcClient::serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,
                                    Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
 {
-    // TODO: serialize OpKernelContext to protobuf
     LOG(INFO) << "About to serialize OpContext";
 
     executor::TFOpContextDef tfdef;
@@ -81,6 +81,19 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, const OpKernelCo
     tfdef.set_iter_id(params->frame_iter.iter_id);
     tfdef.set_is_input_dead(params->is_input_dead);
 
+    for (int i = 0; i != context->num_inputs(); i++) {
+        auto in = context->input(i);
+        auto indef = tfdef.add_inputs();
+
+        indef->set_dtype(in.dtype());
+        in.shape().AsProto(indef->mutable_tensor_shape());
+
+        auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
+        // HACK: use a int64 val entry to store the addr handle for simplicity,
+        // idealy should store this in tensor_content with proper encoding.
+        indef->add_int64_val(addr_handle);
+    }
+
     tfdef.SerializeToString(def->mutable_extra());
 
     LOG(INFO) << "Done";
@@ -88,7 +101,22 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, const OpKernelCo
 
 void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def)
 {
-    // TODO: deserialize OpKernelContext from protobuf
+    LOG(INFO) << "About to update context";
+
+    executor::TFOpContextUpdate tfdef;
+    tfdef.ParseFromString(def->extra());
+
+    *context->is_output_dead() = tfdef.is_output_dead();
+    context->SetStatus(Status(tfdef.status_code(), tfdef.status_msg()));
+
+    for (int i = 0; i != tfdef.outputs_size(); ++i) {
+        const auto &outdef = tfdef.outputs(i);
+        OneTimeAllocator alloc(outdef.int64_val(0));
+        Tensor output(&alloc, outdef.dtype(), TensorShape(outdef.tensor_shape()));
+        context->set_output(i, output);
+    }
+
+    LOG(INFO) << "Done";
 }
 
 } // namespace tensorflow

@@ -57,7 +57,7 @@ public:
 
     void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel,
                            Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
-    void serializeOpContext(executor::OpContextDef *def, const OpKernelContext *context,
+    void serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,
                             Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
     void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 

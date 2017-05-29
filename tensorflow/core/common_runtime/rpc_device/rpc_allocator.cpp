@@ -52,7 +52,31 @@ void *RpcAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 
 void RpcAllocator::DeallocateRaw(void *ptr)
 {
-    m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
+    auto status = m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
+    if (!status.ok()) {
+        LOG(ERROR) << "Error in RpcAllocator::DeallocateRaw";
+    }
+}
+
+OneTimeAllocator::OneTimeAllocator(uint64_t addr_handle)
+    : m_addr_handle(addr_handle)
+{ }
+
+OneTimeAllocator::~OneTimeAllocator() = default;
+
+string OneTimeAllocator::Name()
+{
+    return "onetime";
+}
+
+void *OneTimeAllocator::AllocateRaw(size_t /* alignment */, size_t /* num_bytes */)
+{
+    return reinterpret_cast<void*>(m_addr_handle);
+}
+
+void OneTimeAllocator::DeallocateRaw(void *ptr)
+{
+    CHECK(reinterpret_cast<uint64_t>(ptr) == m_addr_handle);
 }
 
 } // namespace tensorflow
