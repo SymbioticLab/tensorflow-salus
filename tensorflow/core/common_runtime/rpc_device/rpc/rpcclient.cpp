@@ -107,7 +107,12 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
     tfdef.ParseFromString(def->extra());
 
     *context->is_output_dead() = tfdef.is_output_dead();
-    context->SetStatus(Status(tfdef.status_code(), tfdef.status_msg()));
+
+    if (tfdef.status_code() == error::OK) {
+        context->SetStatus(Status::OK());
+    } else {
+        context->SetStatus(Status(tfdef.status_code(), tfdef.status_msg()));
+    }
 
     for (int i = 0; i != tfdef.outputs_size(); ++i) {
         const auto &outdef = tfdef.outputs(i);

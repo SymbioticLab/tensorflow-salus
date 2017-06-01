@@ -110,7 +110,7 @@ Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &
 
     deserializeOpContext(context, &response.context());
 
-    return Status::OK();
+    return context->status();
 }
 
 Status ZmqRpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle)

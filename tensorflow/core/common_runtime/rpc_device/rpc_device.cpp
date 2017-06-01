@@ -65,8 +65,19 @@ Status RpcDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
     auto status = m_rpc->run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
+    LOG(INFO) << "m_rpc->run returned status " << status;
+
     if (!status.ok()) {
         LOG(ERROR) << "RPC call failed with " << status;
+    }
+
+//     op_kernel->Compute(context);
+
+    LOG(INFO) << "context.status() " << context->status();
+    LOG(INFO) << "context.is_output_dead() " << *context->is_output_dead();
+    LOG(INFO) << "context.num_outputs() " << context->num_outputs();
+    for (int i = 0; i != context->num_outputs(); ++i) {
+        LOG(INFO) << "context.mutable_output(" << i << ") " << context->mutable_output(i);
     }
 }
 
