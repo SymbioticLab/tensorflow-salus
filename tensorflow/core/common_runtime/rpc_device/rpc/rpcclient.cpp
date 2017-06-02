@@ -54,7 +54,7 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::
     LOG(INFO) << "graph " << graph;
 
     def->set_id(kernel->name());
-    def->set_oplibrary(executor::OpKernelDef::TENSORFLOW);
+    def->set_oplibrary(executor::TENSORFLOW);
 
     executor::TFOpKernelDef tfdef;
     tfdef.set_graph_def_version(graph->versions().producer());
