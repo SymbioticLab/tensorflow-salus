@@ -36,6 +36,7 @@ class OpKernelContext;
 class Graph;
 class FunctionDefLibrary;
 class ConfigProto;
+class Tensor;
 
 /**
  * @todo write docs
@@ -51,6 +52,8 @@ public:
                        OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
+    virtual Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) = 0;
+    virtual Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) = 0;
 
     // default instance always connect to localhost:5501
     static RpcClient &instance();
@@ -62,6 +65,8 @@ public:
     void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 
 private:
+
+    TF_DISALLOW_COPY_AND_ASSIGN(RpcClient);
 };
 
 } // namespace tensorflow

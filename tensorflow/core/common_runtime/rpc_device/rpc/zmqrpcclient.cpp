@@ -20,6 +20,7 @@
 #include "zmqrpcclient.h"
 
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
+#include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
 #include "tensorflow/core/framework/op_kernel.h"
 
 #include <sstream>
@@ -29,6 +30,20 @@ namespace rpc = ::executor;
 using std::shared_ptr;
 using std::unique_ptr;
 using std::ostringstream;
+
+namespace {
+void tensorToProto(tensorflow::TensorProto *proto, const tensorflow::Tensor &tensor)
+{
+    proto->set_dtype(tensor.dtype());
+    tensor.shape().AsProto(proto->mutable_tensor_shape());
+
+    auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
+    // HACK: use a int64 val entry to store the addr handle for simplicity,
+    // idealy should store this in tensor_content with proper encoding.
+    proto->add_int64_val(addr_handle);
+}
+
+}
 
 namespace tensorflow {
 
@@ -89,6 +104,7 @@ Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobu
 Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                          OpKernel *kernel, OpKernelContext *context)
 {
+    LOG(INFO) << "===================================================================";
     LOG(INFO) << "RpcClient::run";
 
     rpc::RunRequest request;
@@ -144,6 +160,67 @@ Status ZmqRpcClient::deallocate(uint64_t addr_handle)
     request.set_addr_handle(addr_handle);
 
     rpc::DeallocResponse response;
+    auto status = rpcCall(request, response);
+
+    // TODO: better error handling
+    if (!status.ok() || response.result().code() != 0) {
+        ostringstream oss;
+        oss << "ExecEngine returned " << response.result().code();
+        return Status(error::ABORTED, oss.str());
+    }
+
+    return Status::OK();
+}
+
+Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor)
+{
+    LOG(INFO) << "RpcClient::fetch";
+
+    rpc::TFTensors tensors;
+    auto proto = tensors.add_tensors();
+    tensorToProto(proto, *dev_tensor);
+
+    rpc::FetchRequest request;
+    request.set_oplibrary(rpc::TENSORFLOW);
+    proto->SerializeToString(request.mutable_extra());
+
+    // Actuall call
+    rpc::FetchResponse response;
+    auto status = rpcCall(request, response);
+
+    // TODO: better error handling
+    if (!status.ok() || response.result().code() != 0) {
+        ostringstream oss;
+        oss << "ExecEngine returned " << response.result().code();
+        return Status(error::ABORTED, oss.str());
+    }
+
+    rpc::TFTensors recved;
+    recved.ParseFromString(response.extra());
+    auto recvedproto = recved.tensors(0);
+
+    if (!cpu_tensor->FromProto(recvedproto)) {
+        LOG(ERROR) << "Failed to parse proto: " << recvedproto.DebugString();
+        return errors::Internal("Failed to parse proto");
+    }
+
+    return Status::OK();
+}
+
+Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor)
+{
+    LOG(INFO) << "RpcClient::push";
+
+    rpc::TFPushRequest push;
+    cpu_tensor->AsProtoTensorContent(push.add_data());
+    tensorToProto(push.add_tensors(), *dev_tensor);
+
+    rpc::PushRequest request;
+    request.set_oplibrary(rpc::TENSORFLOW);
+    push.SerializeToString(request.mutable_extra());
+
+    // Actuall call
+    rpc::PushResponse response;
     auto status = rpcCall(request, response);
 
     // TODO: better error handling

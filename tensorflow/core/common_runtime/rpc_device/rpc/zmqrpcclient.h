@@ -37,6 +37,8 @@ public:
                OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
     Status deallocate(uint64_t addr_handle) override;
+    Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) override;
+    Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) override;
 
 private:
     Status rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply);
@@ -44,6 +46,8 @@ private:
 private:
     zmq::context_t m_zmqctx;
     zmq::socket_t m_zmqsock;
+
+    TF_DISALLOW_COPY_AND_ASSIGN(ZmqRpcClient);
 };
 
 } // namespace tensorflow

@@ -18,7 +18,7 @@ public:
 
             auto &rpc = RpcClient::instance();
             auto allocator = new RpcAllocator(&rpc);
-            auto device = new RpcDevice(options, name, Bytes(256 << 20), DeviceLocality(), allocator, &rpc);
+            auto device = new RpcDevice(options, name, Bytes(256 << 20), DeviceLocality(), allocator, rpc);
             devices->push_back(device);
 //             devices->push_back(
 //                 new ThreadPiscineDevice(options, name, Bytes(256 << 20), DeviceLocality(), cpu_allocator()));

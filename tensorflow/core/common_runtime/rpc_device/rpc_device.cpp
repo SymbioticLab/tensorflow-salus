@@ -35,7 +35,7 @@
 
 namespace tensorflow {
 RpcDevice::RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
-                     const DeviceLocality &locality, Allocator *allocator, RpcClient *rpc)
+                     const DeviceLocality &locality, Allocator *allocator, RpcClient &rpc)
     : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_CPU, memory_limit, locality), allocator)
     , m_allocator(allocator)
     , m_rpc(rpc)
@@ -62,10 +62,23 @@ Status RpcDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
     return Status::OK();
 }
 
+Status RpcDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
+{
+    VLOG(1) << "RpcDevice::FillContextMap";
+    device_context_map->resize(graph->num_node_ids());
+    auto* ctx = new RpcDeviceContext(m_rpc);
+    for (Node* n : graph->nodes()) {
+        VLOG(2) << n->id() << " : " << n->type_string() << " : " << n->name();
+        ctx->Ref();
+        (*device_context_map)[n->id()] = ctx;
+    }
+    ctx->Unref();
+    return Status::OK();
+}
+
 void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-    auto status = m_rpc->run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
-    LOG(INFO) << "m_rpc->run returned status " << status;
+    auto status = m_rpc.run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
 
     if (!status.ok()) {
         LOG(ERROR) << "RPC call failed with " << status;
@@ -76,19 +89,20 @@ void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
     LOG(INFO) << "context.status() " << context->status();
     LOG(INFO) << "context.is_output_dead() " << *context->is_output_dead();
     LOG(INFO) << "context.num_outputs() " << context->num_outputs();
-    for (int i = 0; i != context->num_outputs(); ++i) {
-        LOG(INFO) << "context.mutable_output(" << i << ") " << context->mutable_output(i);
-    }
 }
 
 Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)
 {
+    LOG(WARNING) << "!!!!!RpcDevice GetAllocator called";
     return m_allocator;
 }
 
 Status RpcDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
                                       Tensor *tensor)
 {
+    LOG(WARNING) << "!!!RpcDevice MakeTensorFromProto";
+
+    // TODO: implement make tensor from proto through rpc
     if (tensor_proto.dtype() > 0 && tensor_proto.dtype() <= DataType_MAX) {
         Tensor parsed(tensor_proto.dtype());
         if (parsed.FromProto(cpu_allocator(), tensor_proto)) {

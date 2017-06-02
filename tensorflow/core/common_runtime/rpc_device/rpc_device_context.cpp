@@ -21,15 +21,15 @@
 
 #include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
 
+#include "tensorflow/core/common_runtime/rpc_device/rpc/rpcclient.h"
 #include "tensorflow/core/common_runtime/dma_helper.h"
 #include "tensorflow/core/platform/logging.h"
 
 namespace tensorflow {
 
-RpcDeviceContext::RpcDeviceContext()
-{
-
-}
+RpcDeviceContext::RpcDeviceContext(RpcClient &client)
+    : m_rpc(client)
+{ }
 
 RpcDeviceContext::~RpcDeviceContext()
 {
@@ -39,81 +39,17 @@ RpcDeviceContext::~RpcDeviceContext()
 void RpcDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device, Tensor *device_tensor,
                                              StatusCallback done) const {
     LOG(INFO) << "RpcDeviceContext::CopyCPUTensorToDevice";
-    const int64 total_bytes = cpu_tensor->TotalBytes();
-    if (total_bytes > 0) {
-        const void *src_ptr = DMAHelper::base(cpu_tensor);
-        void *dst_ptr = DMAHelper::base(device_tensor);
-        // TODO: copy data from CPU to RPC device
-        switch (cpu_tensor->dtype()) {
-        case DT_FLOAT:
-            break;
-        case DT_DOUBLE:
-            break;
-        case DT_INT32:
-            break;
-        case DT_INT64:
-            break;
-        case DT_HALF:
-            break;
-        case DT_COMPLEX64:
-            break;
-        case DT_COMPLEX128:
-            break;
-        case DT_INT8:
-            break;
-        case DT_INT16:
-            break;
-        case DT_UINT8:
-            break;
-        case DT_UINT16:
-            break;
-        case DT_BOOL:
-            break;
-        default:
-            assert(false && "unsupported type");
-        }
-    }
-    done(Status::OK());
+    auto status = m_rpc.push(device_tensor, cpu_tensor);
+    done(status);
 }
 
 void RpcDeviceContext::CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
                                              Device *device, Tensor *cpu_tensor, StatusCallback done) {
     LOG(INFO) << "RpcDeviceContext::CopyDeviceTensorToCPU";
-    const int64 total_bytes = device_tensor->TotalBytes();
-    if (total_bytes > 0) {
-        const void *src_ptr = DMAHelper::base(device_tensor);
-        void *dst_ptr = DMAHelper::base(cpu_tensor);
-        switch (device_tensor->dtype()) {
-            // TODO: copy data from RPC device to CPU
-        case DT_FLOAT:
-            break;
-        case DT_DOUBLE:
-            break;
-        case DT_INT32:
-            break;
-        case DT_INT64:
-            break;
-        case DT_HALF:
-            break;
-        case DT_COMPLEX64:
-            break;
-        case DT_COMPLEX128:
-            break;
-        case DT_INT8:
-            break;
-        case DT_INT16:
-            break;
-        case DT_UINT8:
-            break;
-        case DT_UINT16:
-            break;
-        case DT_BOOL:
-            break;
-        default:
-            assert(false && "unsupported type");
-        }
-    }
-    done(Status::OK());
+
+    auto status = m_rpc.fetch(cpu_tensor, device_tensor);
+
+    done(status);
 }
 
 } // namespace tensorflow

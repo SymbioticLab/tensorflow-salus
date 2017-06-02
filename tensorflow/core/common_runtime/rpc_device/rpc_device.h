@@ -34,12 +34,13 @@ namespace tensorflow {
 /**
  * @todo write docs
  */
+// TODO: derive from Device directly
 class RpcDevice : public LocalDevice
 {
 public:
 
     RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
-              const DeviceLocality &locality, Allocator *allocator, RpcClient *rpc);
+              const DeviceLocality &locality, Allocator *allocator, RpcClient &rpc);
 
     ~RpcDevice() override;
 
@@ -51,9 +52,12 @@ public:
     Status Sync() override;
     Status MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph) override;
 
+    Status FillContextMap(const Graph* graph, DeviceContextMap* device_context_map) override;
+
 private:
     Allocator *m_allocator;  // Not owned
-    RpcClient *m_rpc; // Not owned
+
+    RpcClient &m_rpc;
 
     FunctionDefLibrary m_funcDefLib;
     Graph *m_graph;

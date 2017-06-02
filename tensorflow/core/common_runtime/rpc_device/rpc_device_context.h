@@ -24,13 +24,16 @@
 #include "tensorflow/core/framework/device_base.h"
 
 namespace tensorflow {
+
+class RpcClient;
+
 /**
  * @todo write docs
  */
 class RpcDeviceContext : public DeviceContext
 {
 public:
-    RpcDeviceContext();
+    RpcDeviceContext(RpcClient &client);
 
     ~RpcDeviceContext() override;
 
@@ -41,6 +44,8 @@ public:
     void CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
                                Device *device, Tensor *cpu_tensor,
                                StatusCallback done) override;
+private:
+    RpcClient &m_rpc;
 };
 
 }
