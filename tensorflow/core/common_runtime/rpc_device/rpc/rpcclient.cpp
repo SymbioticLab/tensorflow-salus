@@ -116,8 +116,9 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
 
     for (int i = 0; i != tfdef.outputs_size(); ++i) {
         const auto &outdef = tfdef.outputs(i);
-        OneTimeAllocator alloc(outdef.int64_val(0));
-        Tensor output(&alloc, outdef.dtype(), TensorShape(outdef.tensor_shape()));
+        // create a one time allocator, it will delete itself after DeallocateRaw
+        auto alloc = OneTimeAllocator::create(outdef.int64_val(0)).release();
+        Tensor output(alloc, outdef.dtype(), TensorShape(outdef.tensor_shape()));
         context->set_output(i, output);
     }
 

@@ -21,6 +21,8 @@
 
 #include "rpc/rpcclient.h"
 
+#include <memory>
+
 namespace tensorflow {
 
 RpcAllocator::RpcAllocator(RpcClient *rpc)
@@ -58,6 +60,11 @@ void RpcAllocator::DeallocateRaw(void *ptr)
     }
 }
 
+std::unique_ptr<OneTimeAllocator> OneTimeAllocator::create(uint64_t addr)
+{
+    return std::unique_ptr<OneTimeAllocator>(new OneTimeAllocator(addr));
+}
+
 OneTimeAllocator::OneTimeAllocator(uint64_t addr_handle)
     : m_addr_handle(addr_handle)
 { }
@@ -77,6 +84,7 @@ void *OneTimeAllocator::AllocateRaw(size_t /* alignment */, size_t /* num_bytes 
 void OneTimeAllocator::DeallocateRaw(void *ptr)
 {
     CHECK(reinterpret_cast<uint64_t>(ptr) == m_addr_handle);
+    delete this;
 }
 
 } // namespace tensorflow

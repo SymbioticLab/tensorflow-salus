@@ -54,14 +54,16 @@ private:
 class OneTimeAllocator : public Allocator
 {
 public:
-    OneTimeAllocator(uint64_t addr_handle);
-    ~OneTimeAllocator();
+    static std::unique_ptr<OneTimeAllocator> create(uint64_t);
+
+    ~OneTimeAllocator() override;
 
     string Name() override;
     void *AllocateRaw(size_t alignment, size_t num_bytes) override;
     void DeallocateRaw(void *ptr) override;
 
 private:
+    OneTimeAllocator(uint64_t addr_handle);
 
     uint64_t m_addr_handle;
 
