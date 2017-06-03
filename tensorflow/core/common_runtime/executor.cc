@@ -1413,6 +1413,8 @@ void ExecutorImpl::InitializePending(const Graph* graph,
 }
 
 void ExecutorState::RunAsync(Executor::DoneCallback done) {
+  VLOG(3) << "Executor::RunAsync";
+
   const Graph* graph = impl_->graph_;
   TaggedNodeSeq ready;
 
@@ -1529,6 +1531,8 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
     const int id = node->id();
     const NodeItem& item = *gview.node(id);
 
+    VLOG(3) << "Get a new node from inline_ready queue";
+
     // TODO(misard) Replace with a finer-grain enabling flag once we
     // add better optional debugging support.
     if (vlog_ && VLOG_IS_ON(1)) {
@@ -1596,6 +1600,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
 
       if (item.kernel_is_async) {
         // Asynchronous computes.
+        VLOG(3) << "Launch Async kernel";
         AsyncOpKernel* async = item.kernel->AsAsync();
         DCHECK(async != nullptr);
         launched_asynchronously = true;
@@ -1647,11 +1652,13 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
         device->ComputeAsync(async, &state->ctx, done);
       } else {
         // Synchronous computes.
+        VLOG(3) << "Launch sync kernel";
         OpKernelContext ctx(&params, item.num_outputs);
         if (stats) nodestats::SetOpStart(stats);
         device->Compute(CHECK_NOTNULL(op_kernel), &ctx);
         if (stats) nodestats::SetOpEnd(stats);
 
+        VLOG(3) << "Sync ProcessOutputs";
         s = ProcessOutputs(item, &ctx, &outputs, stats);
         if (s.ok() && impl_->device_record_tensor_accesses_) {
           // Get the list of all tensors accessed during the execution
@@ -1671,6 +1678,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
       MaybeMarkCompleted(input_frame, input_iter, id);
       // Propagates outputs.
       if (s.ok()) {
+        VLOG(3) << "Propagates outputs";
         PropagateOutputs(tagged_node, &item, &outputs, &ready);
       }
       outputs.clear();
@@ -1684,9 +1692,11 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
       }
       // Postprocess.
       completed = NodeDone(s, item.node, ready, stats, &inline_ready);
+      VLOG(3) << "Postprocess completed: " << completed;
     }
   }  // while !inline_ready.empty()
 
+  VLOG(3) << "inline ready queue empty";
   // This thread of computation is done if completed = true.
   if (completed) Finish();
 }
@@ -1975,13 +1985,17 @@ void ExecutorState::PropagateOutputs(const TaggedNode& tagged_node,
   // At this point, this node is completely done. We also know if the
   // completion of this node makes its frame completed.
   if (is_frame_done) {
+    VLOG(3) << "Deleting frames";
     FrameState* parent_frame = input_frame->parent_frame;
     int64 parent_iter = input_frame->parent_iter;
     DeleteFrame(input_frame, ready);
+    VLOG(3) << "Frame deleted";
     if (parent_frame != nullptr) {
       // The completion of frame may cause completions in its parent frame.
       // So clean things up recursively.
+      VLOG(3) << "Cleanup frame iterations";
       CleanupFramesIterations(parent_frame, parent_iter, ready);
+      VLOG(3) << "Cleanup frame iterations finished";
     }
   }
 }
@@ -2002,7 +2016,9 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
   bool abort_run = false;
   if (!s.ok()) {
     // Some error happened. This thread of computation is done.
+    VLOG(3) << "Try get lock for error handle";
     mutex_lock l(mu_);
+    VLOG(3) << "Error handle";
     if (status_.ok()) {
       abort_run = true;
       status_ = s;
@@ -2035,7 +2051,11 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
 
 void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
                                   TaggedNodeReadyQueue* inline_ready) {
-  if (ready.empty()) return;
+  if (ready.empty()) {
+    VLOG(3) << "ScheduleReady on an empty ready queue";
+      return;
+  }
+  VLOG(3) << "ScheduleReady";
 
   int64 scheduled_usec = 0;
   if (stats_collector_) {
@@ -2043,6 +2063,7 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
   }
   if (inline_ready == nullptr) {
     // Schedule to run all the ready ops in thread pool.
+    VLOG(3) << "Schedule to run all the ready ops in thread pool.";
     for (auto& tagged_node : ready) {
       runner_([=]() { Process(tagged_node, scheduled_usec); });
     }
@@ -2052,6 +2073,7 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
   const TaggedNode* curr_expensive_node = nullptr;
   for (auto& tagged_node : ready) {
     const NodeItem& item = *gview.node(tagged_node.node->id());
+    VLOG(3) << "Visit node " << item.node->name();
     if (tagged_node.is_dead || !item.kernel_is_expensive) {
       // Inline this inexpensive node.
       inline_ready->push_back(tagged_node);
@@ -2210,11 +2232,13 @@ void ExecutorState::DumpState() {
 }
 
 void ExecutorState::Finish() {
+  VLOG(3) << "ExecutorState::Finish try lock";
   mu_.lock();
   auto status = status_;
   auto done_cb = std::move(done_cb_);
   auto runner = std::move(runner_);
   mu_.unlock();
+  VLOG(3) << "ExecutorState::Finish after lock";
   if (sync_on_finish_ && status.ok()) {
     // Block until the device has finished all queued operations. For
     // devices like GPUs that continue to execute Ops after their Compute
@@ -2222,6 +2246,7 @@ void ExecutorState::Finish() {
     // the user until the step (and its side-effects) has actually completed.
     status = impl_->params_.device->Sync();
   }
+  VLOG(3) << "ExecutorState about to delete this";
   delete this;
   CHECK(done_cb != nullptr);
   runner([=]() { done_cb(status); });

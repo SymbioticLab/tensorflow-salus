@@ -19,6 +19,7 @@
 
 #include "rpcclient.h"
 
+#include "tensorflow/core/common_runtime/rpc_device/rpc_device_context.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc_allocator.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/zmqrpcclient.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
@@ -30,6 +31,8 @@
 #include "tensorflow/core/framework/node_def.pb.h"
 #include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/protobuf/config.pb.h"
+
+#include <typeinfo>
 
 namespace {
 
@@ -121,7 +124,7 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
     tfdef.ParseFromString(def->extra());
 
     // Emit send on rendezvous
-    LOG(INFO) << "Emit send on rendezvous";
+    LOG(INFO) << tfdef.rendeztensors_size() << " emits to send for rendezvous";
     for (int i = 0; i != tfdef.rendeztensors_size(); ++i) {
         const auto &outdef = tfdef.rendeztensors(i);
         Rendezvous::Args args;
@@ -135,6 +138,8 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
         }
         args.device_context = context->op_device_context();
         args.alloc_attrs.value = outdef.allocattributes();
+
+        LOG(INFO) << "parsedkey is " << outdef.key();
         Rendezvous::ParsedKey parsed;
         auto status = Rendezvous::ParseKey(outdef.key(), &parsed);
         if (!status.ok()) {
@@ -142,8 +147,11 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
                        << " for rendezvous received: " << status;
             continue;
         }
+        LOG(INFO) << "Tensor proto is " << outdef.val().DebugString();
+        auto t = tensorFromProtoMeta(outdef.val());
+        LOG(INFO) << "Process tensor " << t.DebugString();
         LOG(INFO) << "Rendezvous send";
-        status = context->rendezvous()->Send(parsed, args, tensorFromProtoMeta(outdef.val()), outdef.isdead());
+        status = context->rendezvous()->Send(parsed, args, t, outdef.isdead());
         LOG(INFO) << "Rendezvous send finished";
         if (!status.ok()) {
             LOG(ERROR) << "Rendezvous send error: " << status;

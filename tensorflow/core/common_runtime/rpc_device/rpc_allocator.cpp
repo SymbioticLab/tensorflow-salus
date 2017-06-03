@@ -44,6 +44,7 @@ string RPCAllocator::Name()
 void *RPCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 {
     uint64_t addr_handle;
+    LOG(INFO) << "RpcAllocateRaw with alignment " << alignment << " num_bytes " << num_bytes;
 
     auto status = m_rpc->allocate(alignment, num_bytes, &addr_handle);
     if (status.ok()) {
@@ -54,6 +55,7 @@ void *RPCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 
 void RPCAllocator::DeallocateRaw(void *ptr)
 {
+    LOG(INFO) << "RpcDeallocateRaw with ptr " << reinterpret_cast<uint64_t>(ptr);
     auto status = m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
     if (!status.ok()) {
         LOG(ERROR) << "Error in RpcAllocator::DeallocateRaw";

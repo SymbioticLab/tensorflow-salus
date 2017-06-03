@@ -64,11 +64,11 @@ Status RPCDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
 
 Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
 {
-    VLOG(1) << "RpcDevice::FillContextMap";
+    LOG(INFO) << "RpcDevice::FillContextMap";
     device_context_map->resize(graph->num_node_ids());
     auto* ctx = new RPCDeviceContext(m_rpc);
     for (Node* n : graph->nodes()) {
-        VLOG(2) << n->id() << " : " << n->type_string() << " : " << n->name();
+        LOG(INFO) << n->id() << " : " << n->type_string() << " : " << n->name();
         ctx->Ref();
         (*device_context_map)[n->id()] = ctx;
     }
@@ -93,7 +93,6 @@ void RPCDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 
 Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)
 {
-    LOG(WARNING) << "!!!!!RpcDevice GetAllocator called";
     return m_allocator;
 }
 
