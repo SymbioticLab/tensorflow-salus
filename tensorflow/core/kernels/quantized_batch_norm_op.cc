@@ -237,4 +237,9 @@ REGISTER_KERNEL_BUILDER(Name("QuantizedBatchNormWithGlobalNormalization")
                             .TypeConstraint<qint32>("out_type"),
                         QuantizedBatchNormOp<quint8, qint32>);
 
+REGISTER_KERNEL_BUILDER(Name("QuantizedBatchNormWithGlobalNormalization")
+                            .Device(DEVICE_RPC)
+                            .TypeConstraint<quint8>("Tinput")
+                            .TypeConstraint<qint32>("out_type"),
+                        QuantizedBatchNormOp<quint8, qint32>);
 }  // namespace tensorflow

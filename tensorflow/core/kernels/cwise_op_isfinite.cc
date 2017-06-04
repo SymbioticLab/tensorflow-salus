@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER3(UnaryOp, CPU, "IsFinite", functor::isfinite, float, Eigen::half,
           double);
+REGISTER_RPC3(UnaryOp, "IsFinite", functor::isfinite, float, Eigen::half,
+          double);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

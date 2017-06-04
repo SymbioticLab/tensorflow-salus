@@ -615,6 +615,23 @@ inline void CheckValidBoxInd<CPUDevice>(
   REGISTER_KERNEL_BUILDER(Name("CropAndResizeGradBoxes")           \
                               .Device(DEVICE_CPU)                  \
                               .TypeConstraint<T>("T"),             \
+                          CropAndResizeGradBoxesOp<CPUDevice, T>); \
+                                                                   \
+  REGISTER_KERNEL_BUILDER(Name("CropAndResize")                    \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T")              \
+                              .HostMemory("crop_size"),            \
+                          CropAndResizeOp<CPUDevice, T>);          \
+                                                                   \
+  REGISTER_KERNEL_BUILDER(Name("CropAndResizeGradImage")           \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T")              \
+                              .HostMemory("image_size"),           \
+                          CropAndResizeGradImageOp<CPUDevice, T>); \
+                                                                   \
+  REGISTER_KERNEL_BUILDER(Name("CropAndResizeGradBoxes")           \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T"),             \
                           CropAndResizeGradBoxesOp<CPUDevice, T>);
 
 TF_CALL_float(REGISTER_KERNEL);

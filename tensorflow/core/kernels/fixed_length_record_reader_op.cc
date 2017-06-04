@@ -124,4 +124,9 @@ REGISTER_KERNEL_BUILDER(Name("FixedLengthRecordReader").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("FixedLengthRecordReaderV2").Device(DEVICE_CPU),
                         FixedLengthRecordReaderOp);
 
+REGISTER_KERNEL_BUILDER(Name("FixedLengthRecordReader").Device(DEVICE_RPC),
+                        FixedLengthRecordReaderOp);
+REGISTER_KERNEL_BUILDER(Name("FixedLengthRecordReaderV2").Device(DEVICE_RPC),
+                        FixedLengthRecordReaderOp);
+
 }  // namespace tensorflow

@@ -406,4 +406,9 @@ REGISTER_KERNEL_BUILDER(Name("QuantizedInstanceNorm")
                             .TypeConstraint<quint8>("T"),
                         QuantizedInstanceNorm);
 
+REGISTER_KERNEL_BUILDER(Name("QuantizedInstanceNorm")
+                            .Device(DEVICE_RPC)
+                            .TypeConstraint<quint8>("T"),
+                        QuantizedInstanceNorm);
+
 }  // namespace tensorflow

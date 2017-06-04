@@ -134,5 +134,6 @@ class EncodeJpegOp : public OpKernel {
   jpeg::CompressFlags flags_;
 };
 REGISTER_KERNEL_BUILDER(Name("EncodeJpeg").Device(DEVICE_CPU), EncodeJpegOp);
+REGISTER_KERNEL_BUILDER(Name("EncodeJpeg").Device(DEVICE_RPC), EncodeJpegOp);
 
 }  // namespace tensorflow

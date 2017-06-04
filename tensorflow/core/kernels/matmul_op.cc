@@ -348,6 +348,14 @@ struct MatMulFunctor<SYCLDevice, T> {
       Name("MatMul").Device(DEVICE_CPU).TypeConstraint<T>("T").Label("eigen"), \
       MatMulOp<CPUDevice, T, false /* cublas, ignored for CPU */>)
 
+#define REGISTER_RPC(T)                                                        \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("MatMul").Device(DEVICE_RPC).TypeConstraint<T>("T"),                \
+      MatMulOp<CPUDevice, T, false /* cublas, ignored for CPU */>);            \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("MatMul").Device(DEVICE_RPC).TypeConstraint<T>("T").Label("eigen"), \
+      MatMulOp<CPUDevice, T, false /* cublas, ignored for CPU */>)
+
 #define REGISTER_GPU(T)                                            \
   REGISTER_KERNEL_BUILDER(                                         \
       Name("MatMul").Device(DEVICE_GPU).TypeConstraint<T>("T"),    \
@@ -364,6 +372,8 @@ struct MatMulFunctor<SYCLDevice, T> {
 // types
 TF_CALL_half(REGISTER_CPU);
 TF_CALL_int32(REGISTER_CPU);
+TF_CALL_half(REGISTER_RPC);
+TF_CALL_int32(REGISTER_RPC);
 #else
 TF_CALL_float(REGISTER_CPU);
 TF_CALL_double(REGISTER_CPU);
@@ -372,6 +382,14 @@ TF_CALL_half(REGISTER_CPU);
 TF_CALL_int32(REGISTER_CPU);
 TF_CALL_complex64(REGISTER_CPU);
 TF_CALL_complex128(REGISTER_CPU);
+
+TF_CALL_float(REGISTER_RPC);
+TF_CALL_double(REGISTER_RPC);
+TF_CALL_half(REGISTER_RPC);
+
+TF_CALL_int32(REGISTER_RPC);
+TF_CALL_complex64(REGISTER_RPC);
+TF_CALL_complex128(REGISTER_RPC);
 #endif
 
 #if GOOGLE_CUDA

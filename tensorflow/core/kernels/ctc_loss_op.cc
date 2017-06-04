@@ -160,5 +160,6 @@ class CTCLossOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("CTCLoss").Device(DEVICE_CPU), CTCLossOp);
+REGISTER_KERNEL_BUILDER(Name("CTCLoss").Device(DEVICE_RPC), CTCLossOp);
 
 }  // end namespace tensorflow

@@ -65,4 +65,6 @@ class ParseTensorOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ParseTensor").Device(DEVICE_CPU), ParseTensorOp);
 
+REGISTER_KERNEL_BUILDER(Name("ParseTensor").Device(DEVICE_RPC), ParseTensorOp);
+
 }  // namespace tensorflow

@@ -246,6 +246,9 @@ class AdjustHueOp<CPUDevice> : public AdjustHueOpBase {
 REGISTER_KERNEL_BUILDER(Name("AdjustHue").Device(DEVICE_CPU),
                         AdjustHueOp<CPUDevice>);
 
+REGISTER_KERNEL_BUILDER(Name("AdjustHue").Device(DEVICE_RPC),
+                        AdjustHueOp<CPUDevice>);
+
 #if GOOGLE_CUDA
 template <>
 class AdjustHueOp<GPUDevice> : public AdjustHueOpBase {

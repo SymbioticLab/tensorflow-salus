@@ -885,4 +885,26 @@ TF_CALL_float(REGISTER_FUSED);
 
 TF_CALL_float(REGISTER_PAD_ONLY_FUSED);
 
+#define REGISTER_FUSED_RPC(T)                                                \
+  REGISTER_KERNEL_BUILDER(                                                   \
+      Name("FusedResizeAndPadConv2D")                                        \
+          .Device(DEVICE_RPC)                                                \
+          .TypeConstraint<T>("T"),                                           \
+      FusedResizeConv2DUsingGemmOp<                                          \
+          T, FusedResizeAndPadConvFunctor<T, T, T, FastGemmFunctor<T, T, T>, \
+                                          BILINEAR>,                         \
+          true>);
+
+TF_CALL_float(REGISTER_FUSED_RPC);
+
+#define REGISTER_PAD_ONLY_FUSED_RPC(T)                                       \
+  REGISTER_KERNEL_BUILDER(                                                   \
+      Name("FusedPadConv2D").Device(DEVICE_RPC).TypeConstraint<T>("T"),      \
+      FusedResizeConv2DUsingGemmOp<                                          \
+          T, FusedResizeAndPadConvFunctor<T, T, T, FastGemmFunctor<T, T, T>, \
+                                          NEAREST>,                          \
+          false>);
+
+TF_CALL_float(REGISTER_PAD_ONLY_FUSED_RPC);
+
 }  // namespace tensorflow

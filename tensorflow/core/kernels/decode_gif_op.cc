@@ -62,5 +62,6 @@ class DecodeGifOp : public OpKernel {
   }
 };
 REGISTER_KERNEL_BUILDER(Name("DecodeGif").Device(DEVICE_CPU), DecodeGifOp);
+REGISTER_KERNEL_BUILDER(Name("DecodeGif").Device(DEVICE_RPC), DecodeGifOp);
 
 }  // namespace tensorflow

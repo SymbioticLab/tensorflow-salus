@@ -487,6 +487,11 @@ class BatchMatMul : public OpKernel {
       Name("BatchMatMul").Device(DEVICE_CPU).TypeConstraint<TYPE>("T"), \
       BatchMatMul<CPUDevice, TYPE>)
 
+#define REGISTER_BATCH_MATMUL_RPC(TYPE)                                              \
+  REGISTER_KERNEL_BUILDER(                                              \
+      Name("BatchMatMul").Device(DEVICE_RPC).TypeConstraint<TYPE>("T"), \
+      BatchMatMul<CPUDevice, TYPE>)
+
 #define REGISTER_BATCH_MATMUL_GPU(TYPE)                                              \
   REGISTER_KERNEL_BUILDER(                                              \
       Name("BatchMatMul").Device(DEVICE_GPU).TypeConstraint<TYPE>("T"), \

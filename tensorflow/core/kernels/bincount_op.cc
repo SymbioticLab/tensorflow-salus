@@ -101,6 +101,13 @@ class BincountOp : public OpKernel {
 
 TF_CALL_NUMBER_TYPES(REGISTER);
 
+#define REGISTER_RPC(TYPE)                                           \
+  REGISTER_KERNEL_BUILDER(                                           \
+      Name("Bincount").Device(DEVICE_RPC).TypeConstraint<TYPE>("T"), \
+      BincountOp<TYPE>)
+
+TF_CALL_NUMBER_TYPES(REGISTER_RPC);
+
 // TODO(ringwalt): Add a GPU implementation. We probably want to take a
 // different approach, e.g. threads in a warp each taking a pass over the same
 // data, and each thread summing a single bin.

@@ -98,5 +98,6 @@ class EncodePngOp : public OpKernel {
   int desired_channel_bits_;
 };
 REGISTER_KERNEL_BUILDER(Name("EncodePng").Device(DEVICE_CPU), EncodePngOp);
+REGISTER_KERNEL_BUILDER(Name("EncodePng").Device(DEVICE_RPC), EncodePngOp);
 
 }  // namespace tensorflow

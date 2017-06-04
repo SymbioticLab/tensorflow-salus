@@ -162,4 +162,12 @@ class DynamicPartitionOp : public DynamicPartitionOp_Shared {
 TF_CALL_ALL_TYPES(REGISTER_DYNAMIC_PARTITION);
 #undef REGISTER_DYNAMIC_PARTITION
 
+#define REGISTER_DYNAMIC_PARTITION_RPC(T)                                     \
+  REGISTER_KERNEL_BUILDER(                                                \
+      Name("DynamicPartition").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      DynamicPartitionOp<T>)
+
+TF_CALL_ALL_TYPES(REGISTER_DYNAMIC_PARTITION_RPC);
+#undef REGISTER_DYNAMIC_PARTITION_RPC
+
 }  // namespace tensorflow

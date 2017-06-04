@@ -17,6 +17,7 @@ limitations under the License.
 
 namespace tensorflow {
 REGISTER2(UnaryOp, CPU, "Atan", functor::atan, float, double);
+REGISTER_RPC2(UnaryOp, "Atan", functor::atan, float, double);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

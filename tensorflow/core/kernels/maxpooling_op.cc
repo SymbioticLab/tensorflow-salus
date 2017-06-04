@@ -194,6 +194,14 @@ REGISTER_KERNEL_BUILDER(
     Name("MaxPool").Device(DEVICE_CPU).TypeConstraint<Eigen::half>("T"),
     MaxPoolingOp<CPUDevice, Eigen::half>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPool").Device(DEVICE_RPC).TypeConstraint<float>("T"),
+    MaxPoolingOp<CPUDevice, float>);
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPool").Device(DEVICE_RPC).TypeConstraint<Eigen::half>("T"),
+    MaxPoolingOp<CPUDevice, Eigen::half>);
+
+
 #if GOOGLE_CUDA
 // Forward declarations for the functor specializations for GPU.
 namespace functor {
@@ -311,6 +319,14 @@ REGISTER_KERNEL_BUILDER(
 REGISTER_KERNEL_BUILDER(
     Name("MaxPoolGrad").Device(DEVICE_CPU).TypeConstraint<Eigen::half>("T"),
     MaxPoolingGradOp<CPUDevice, Eigen::half>);
+
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPoolGrad").Device(DEVICE_RPC).TypeConstraint<float>("T"),
+    MaxPoolingGradOp<CPUDevice, float>);
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPoolGrad").Device(DEVICE_RPC).TypeConstraint<Eigen::half>("T"),
+    MaxPoolingGradOp<CPUDevice, Eigen::half>);
+
 
 #ifdef GOOGLE_CUDA
 

@@ -621,6 +621,15 @@ TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
+#define REGISTER_RPC(T)                                       \
+  REGISTER_KERNEL_BUILDER(Name("DepthwiseConv2dNativeBackpropInput") \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T"),               \
+                          DepthwiseConv2dNativeBackpropInputOp<CPUDevice, T>);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+#undef REGISTER_RPC_KERNEL
+
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("DepthwiseConv2dNativeBackpropInput")
                             .Device(DEVICE_GPU)
@@ -1015,15 +1024,15 @@ class DepthwiseConv2dNativeBackpropFilterOp : public OpKernel {
   TF_DISALLOW_COPY_AND_ASSIGN(DepthwiseConv2dNativeBackpropFilterOp);
 };
 
-#define REGISTER_CPU_KERNEL(T)                    \
+#define REGISTER_RPC_KERNEL(T)                    \
   REGISTER_KERNEL_BUILDER(                        \
       Name("DepthwiseConv2dNativeBackpropFilter") \
-          .Device(DEVICE_CPU)                     \
+          .Device(DEVICE_RPC)                     \
           .TypeConstraint<T>("T"),                \
       DepthwiseConv2dNativeBackpropFilterOp<CPUDevice, T>);
-TF_CALL_float(REGISTER_CPU_KERNEL);
-TF_CALL_double(REGISTER_CPU_KERNEL);
-#undef REGISTER_CPU_KERNEL
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+#undef REGISTER_RPC_KERNEL
 
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(

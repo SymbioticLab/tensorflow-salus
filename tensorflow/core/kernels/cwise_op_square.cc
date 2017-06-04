@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER7(UnaryOp, CPU, "Square", functor::square, float, Eigen::half, double,
           int32, int64, complex64, complex128);
+REGISTER_RPC7(UnaryOp, "Square", functor::square, float, Eigen::half, double,
+              int32, int64, complex64, complex128);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

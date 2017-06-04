@@ -127,6 +127,13 @@ REGISTER_KERNEL_BUILDER(Name("BroadcastArgs")
                             .HostMemory("r0"),
                         BCastArgsOp);
 REGISTER_KERNEL_BUILDER(Name("BroadcastArgs")
+                            .Device(DEVICE_RPC)
+                            .TypeConstraint<int32>("T")
+                            .HostMemory("s0")
+                            .HostMemory("s1")
+                            .HostMemory("r0"),
+                        BCastArgsOp);
+REGISTER_KERNEL_BUILDER(Name("BroadcastArgs")
                             .Device(DEVICE_GPU)
                             .TypeConstraint<int32>("T")
                             .HostMemory("s0")
@@ -146,6 +153,14 @@ REGISTER_KERNEL_BUILDER(Name("BroadcastArgs")
 
 REGISTER_KERNEL_BUILDER(Name("BroadcastGradientArgs")
                             .Device(DEVICE_CPU)
+                            .TypeConstraint<int32>("T")
+                            .HostMemory("s0")
+                            .HostMemory("s1")
+                            .HostMemory("r0")
+                            .HostMemory("r1"),
+                        BCastGradArgsOp);
+REGISTER_KERNEL_BUILDER(Name("BroadcastGradientArgs")
+                            .Device(DEVICE_RPC)
                             .TypeConstraint<int32>("T")
                             .HostMemory("s0")
                             .HostMemory("s1")

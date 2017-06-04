@@ -118,6 +118,9 @@ class EnqueueOp : public QueueAccessOpKernel {
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueue").Device(DEVICE_CPU), EnqueueOp);
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueueV2").Device(DEVICE_CPU), EnqueueOp);
 
+REGISTER_KERNEL_BUILDER(Name("QueueEnqueue").Device(DEVICE_RPC), EnqueueOp);
+REGISTER_KERNEL_BUILDER(Name("QueueEnqueueV2").Device(DEVICE_RPC), EnqueueOp);
+
 // Defines an EnqueueManyOp, the execution of which slices each
 // component of a tuple of tensors along the 0th dimension, and
 // enqueues tuples of slices in the given Queue.
@@ -177,6 +180,11 @@ REGISTER_KERNEL_BUILDER(Name("QueueEnqueueMany").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueueManyV2").Device(DEVICE_CPU),
                         EnqueueManyOp);
 
+REGISTER_KERNEL_BUILDER(Name("QueueEnqueueMany").Device(DEVICE_RPC),
+                        EnqueueManyOp);
+REGISTER_KERNEL_BUILDER(Name("QueueEnqueueManyV2").Device(DEVICE_RPC),
+                        EnqueueManyOp);
+
 // Defines a DequeueOp, the execution of which dequeues a tuple of
 // tensors from the given Queue.
 //
@@ -225,6 +233,9 @@ class DequeueOp : public QueueAccessOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QueueDequeue").Device(DEVICE_CPU), DequeueOp);
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueV2").Device(DEVICE_CPU), DequeueOp);
+
+REGISTER_KERNEL_BUILDER(Name("QueueDequeue").Device(DEVICE_RPC), DequeueOp);
+REGISTER_KERNEL_BUILDER(Name("QueueDequeueV2").Device(DEVICE_RPC), DequeueOp);
 
 // Defines a DequeueManyOp, the execution of which concatenates the
 // requested number of elements from the given Queue along the 0th
@@ -293,6 +304,12 @@ REGISTER_KERNEL_BUILDER(Name("QueueDequeueMany").Device(DEVICE_CPU),
                         DequeueManyOp);
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueManyV2").Device(DEVICE_CPU),
                         DequeueManyOp);
+
+REGISTER_KERNEL_BUILDER(Name("QueueDequeueMany").Device(DEVICE_RPC),
+                        DequeueManyOp);
+REGISTER_KERNEL_BUILDER(Name("QueueDequeueManyV2").Device(DEVICE_RPC),
+                        DequeueManyOp);
+
 
 // Defines a DequeueUpToOp, the execution of which concatenates the
 // requested number of elements from the given Queue along the 0th
@@ -380,6 +397,11 @@ REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpTo").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpToV2").Device(DEVICE_CPU),
                         DequeueUpToOp);
 
+REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpTo").Device(DEVICE_RPC),
+                        DequeueUpToOp);
+REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpToV2").Device(DEVICE_RPC),
+                        DequeueUpToOp);
+
 // Defines a QueueCloseOp, which closes the given Queue. Closing a
 // Queue signals that no more elements will be enqueued in it.
 //
@@ -405,6 +427,9 @@ class QueueCloseOp : public QueueOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QueueClose").Device(DEVICE_CPU), QueueCloseOp);
 REGISTER_KERNEL_BUILDER(Name("QueueCloseV2").Device(DEVICE_CPU), QueueCloseOp);
+
+REGISTER_KERNEL_BUILDER(Name("QueueClose").Device(DEVICE_RPC), QueueCloseOp);
+REGISTER_KERNEL_BUILDER(Name("QueueCloseV2").Device(DEVICE_RPC), QueueCloseOp);
 
 // Defines a QueueSizeOp, which computes the number of elements in the
 // given Queue, and emits it as an output tensor.
@@ -433,6 +458,9 @@ class QueueSizeOp : public QueueOpKernel {
 REGISTER_KERNEL_BUILDER(Name("QueueSize").Device(DEVICE_CPU), QueueSizeOp);
 REGISTER_KERNEL_BUILDER(Name("QueueSizeV2").Device(DEVICE_CPU), QueueSizeOp);
 
+REGISTER_KERNEL_BUILDER(Name("QueueSize").Device(DEVICE_RPC), QueueSizeOp);
+REGISTER_KERNEL_BUILDER(Name("QueueSizeV2").Device(DEVICE_RPC), QueueSizeOp);
+
 class FakeQueueOp : public OpKernel {
  public:
   explicit FakeQueueOp(OpKernelConstruction* context) : OpKernel(context) {
@@ -454,5 +482,7 @@ class FakeQueueOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("FakeQueue").Device(DEVICE_CPU), FakeQueueOp);
+
+REGISTER_KERNEL_BUILDER(Name("FakeQueue").Device(DEVICE_RPC), FakeQueueOp);
 
 }  // namespace tensorflow

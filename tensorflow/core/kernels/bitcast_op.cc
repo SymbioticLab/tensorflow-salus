@@ -74,5 +74,6 @@ class BitcastOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Bitcast").Device(DEVICE_CPU), BitcastOp);
+REGISTER_KERNEL_BUILDER(Name("Bitcast").Device(DEVICE_RPC), BitcastOp);
 
 }  // end namespace tensorflow

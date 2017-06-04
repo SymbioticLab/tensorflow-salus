@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Rsqrt", functor::rsqrt, float, Eigen::half, double,
           complex64, complex128);
+REGISTER_RPC5(UnaryOp, "Rsqrt", functor::rsqrt, float, Eigen::half, double,
+              complex64, complex128);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \
@@ -37,6 +39,8 @@ REGISTER3(UnaryOp, GPU, "Rsqrt", functor::rsqrt, float, Eigen::half, double);
 
 REGISTER5(SimpleBinaryOp, CPU, "RsqrtGrad", functor::rsqrt_grad, float,
           Eigen::half, double, complex64, complex128);
+REGISTER_RPC5(SimpleBinaryOp, "RsqrtGrad", functor::rsqrt_grad, float,
+              Eigen::half, double, complex64, complex128);
 #if GOOGLE_CUDA
 REGISTER3(SimpleBinaryOp, GPU, "RsqrtGrad", functor::rsqrt_grad, float,
           Eigen::half, double);

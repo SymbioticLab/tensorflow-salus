@@ -220,6 +220,17 @@ TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
+#define REGISTER_RPC_KERNEL(T)                                                 \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("Conv3DBackpropInput").Device(DEVICE_RPC).TypeConstraint<T>("T"),   \
+      Conv3DBackpropInputOp<CPUDevice, T>);                                    \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("Conv3DBackpropInputV2").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      Conv3DBackpropInputOp<CPUDevice, T>);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+#undef REGISTER_RPC_KERNEL
+
 // Backprop for filter.
 template <typename Device, class T>
 class Conv3DBackpropFilterOp : public OpKernel {
@@ -350,6 +361,18 @@ class Conv3DBackpropFilterOp : public OpKernel {
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
+
+#define REGISTER_RPC_KERNEL(T)                                                \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("Conv3DBackpropFilter").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      Conv3DBackpropFilterOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("Conv3DBackpropFilterV2")                      \
+                              .Device(DEVICE_RPC)                             \
+                              .TypeConstraint<T>("T"),                        \
+                          Conv3DBackpropFilterOp<CPUDevice, T>);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+#undef REGISTER_RPC_KERNEL
 
 // GPU definitions of both ops.
 #if GOOGLE_CUDA

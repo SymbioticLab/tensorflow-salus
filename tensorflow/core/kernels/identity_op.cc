@@ -24,19 +24,25 @@ limitations under the License.
 namespace tensorflow {
 
 REGISTER_KERNEL_BUILDER(Name("Identity").Device(DEVICE_CPU), IdentityOp);
+REGISTER_KERNEL_BUILDER(Name("Identity").Device(DEVICE_RPC), IdentityOp);
 // StopGradient does the same thing as Identity, but has a different
 // gradient registered.
 REGISTER_KERNEL_BUILDER(Name("StopGradient").Device(DEVICE_CPU), IdentityOp);
+REGISTER_KERNEL_BUILDER(Name("StopGradient").Device(DEVICE_RPC), IdentityOp);
 // PreventGradient does the same thing as Identity, but has a NO
 // gradient registered.
 REGISTER_KERNEL_BUILDER(Name("PreventGradient").Device(DEVICE_CPU), IdentityOp);
+REGISTER_KERNEL_BUILDER(Name("PreventGradient").Device(DEVICE_RPC), IdentityOp);
 
 // PlaceholderWithDefault does the same thing as Identity, but has a
 // different shape function (and constant value function) registered.
 REGISTER_KERNEL_BUILDER(Name("PlaceholderWithDefault").Device(DEVICE_CPU),
                         IdentityOp);
+REGISTER_KERNEL_BUILDER(Name("PlaceholderWithDefault").Device(DEVICE_RPC),
+                        IdentityOp);
 
 REGISTER_KERNEL_BUILDER(Name("RefIdentity").Device(DEVICE_CPU), IdentityOp);
+REGISTER_KERNEL_BUILDER(Name("RefIdentity").Device(DEVICE_RPC), IdentityOp);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(type)                                           \

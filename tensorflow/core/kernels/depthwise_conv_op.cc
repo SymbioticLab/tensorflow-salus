@@ -443,6 +443,14 @@ class DepthwiseConv2dNativeOp : public BinaryOp<T> {
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 
+#define REGISTER_RPC_KERNEL(T)                                                 \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("DepthwiseConv2dNative").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      DepthwiseConv2dNativeOp<CPUDevice, T>);
+
+TF_CALL_float(REGISTER_RPC);
+TF_CALL_double(REGISTER_RPC);
+
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(
     Name("DepthwiseConv2dNative").Device(DEVICE_GPU).TypeConstraint<float>("T"),

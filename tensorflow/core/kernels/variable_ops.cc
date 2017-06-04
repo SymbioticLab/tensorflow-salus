@@ -32,6 +32,15 @@ REGISTER_KERNEL_BUILDER(Name("DestroyTemporaryVariable").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("IsVariableInitialized").Device(DEVICE_CPU),
                         IsVariableInitializedOp);
 
+REGISTER_KERNEL_BUILDER(Name("Variable").Device(DEVICE_RPC), VariableOp);
+REGISTER_KERNEL_BUILDER(Name("VariableV2").Device(DEVICE_RPC), VariableOp);
+REGISTER_KERNEL_BUILDER(Name("TemporaryVariable").Device(DEVICE_RPC),
+                        TemporaryVariableOp);
+REGISTER_KERNEL_BUILDER(Name("DestroyTemporaryVariable").Device(DEVICE_RPC),
+                        DestroyTemporaryVariableOp);
+REGISTER_KERNEL_BUILDER(Name("IsVariableInitialized").Device(DEVICE_RPC),
+                        IsVariableInitializedOp);
+
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                      \
   REGISTER_KERNEL_BUILDER(                                              \

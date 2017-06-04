@@ -85,6 +85,9 @@ class DecodeRawOp : public OpKernel {
 #define REGISTER(type)                                                       \
   REGISTER_KERNEL_BUILDER(                                                   \
       Name("DecodeRaw").Device(DEVICE_CPU).TypeConstraint<type>("out_type"), \
+      DecodeRawOp<type>) \
+  REGISTER_KERNEL_BUILDER(                                                   \
+      Name("DecodeRaw").Device(DEVICE_RPC).TypeConstraint<type>("out_type"), \
       DecodeRawOp<type>)
 
 REGISTER(Eigen::half);

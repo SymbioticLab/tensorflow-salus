@@ -122,6 +122,17 @@ class BiasOp<CPUDevice, T> : public BinaryOp<T> {
 TF_CALL_NUMBER_TYPES(REGISTER_KERNEL);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(type)                                     \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("BiasAdd").Device(DEVICE_RPC).TypeConstraint<type>("T"),   \
+      BiasOp<CPUDevice, type>);                                       \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("BiasAddV1").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      BiasOp<CPUDevice, type>);
+
+TF_CALL_NUMBER_TYPES(REGISTER_KERNEL_RPC);
+#undef REGISTER_KERNEL_RPC
+
 namespace {
 
 void GetBiasValueDims(const Tensor& value_tensor, TensorFormat data_format,
@@ -228,7 +239,6 @@ class BiasGradOp<CPUDevice, T> : public OpKernel {
   TensorFormat data_format_;
 };
 
-// Registration of the GPU implementations.
 #define REGISTER_KERNEL(type)                                           \
   REGISTER_KERNEL_BUILDER(                                              \
       Name("BiasAddGrad").Device(DEVICE_CPU).TypeConstraint<type>("T"), \
@@ -237,6 +247,15 @@ class BiasGradOp<CPUDevice, T> : public OpKernel {
 TF_CALL_NUMBER_TYPES(REGISTER_KERNEL);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(type)                                       \
+  REGISTER_KERNEL_BUILDER(                                              \
+      Name("BiasAddGrad").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      BiasGradOp<CPUDevice, type>);
+
+TF_CALL_NUMBER_TYPES(REGISTER_KERNEL_RPC);
+#undef REGISTER_KERNEL_RPC
+
+// Registration of the GPU implementations.
 #if GOOGLE_CUDA
 template <typename T>
 class BiasOp<GPUDevice, T> : public BinaryOp<T> {

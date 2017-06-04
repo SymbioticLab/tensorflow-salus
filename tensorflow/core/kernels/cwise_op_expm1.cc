@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Expm1", functor::expm1, float, Eigen::half, double,
           complex64, complex128);
+REGISTER_RPC5(UnaryOp, "Expm1", functor::expm1, float, Eigen::half, double,
+              complex64, complex128);
 #if GOOGLE_CUDA
 REGISTER3(UnaryOp, GPU, "Expm1", functor::expm1, float, Eigen::half, double);
 #endif

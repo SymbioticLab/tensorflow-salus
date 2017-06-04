@@ -153,6 +153,13 @@ class SelectOp : public OpKernel {
 
 TF_CALL_ALL_TYPES(REGISTER_SELECT);
 
+#define REGISTER_SELECT_RPC(type)                                  \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("Select").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      SelectOp<CPUDevice, type>);
+
+TF_CALL_ALL_TYPES(REGISTER_SELECT_RPC);
+
 #if GOOGLE_CUDA
 
 // Registration of the GPU implementations.

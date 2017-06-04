@@ -466,6 +466,10 @@ struct ApproximateEqual<CPUDevice, T> {
   REGISTER_KERNEL_BUILDER(Name(N).Device(DEVICE_##D).TypeConstraint<T>("T"), \
                           OP<D##Device, F<T>>);
 
+#define REGISTER_RPC(OP, N, F, T)                                            \
+  REGISTER_KERNEL_BUILDER(Name(N).Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+                          OP<CPUDevice, F<T>>);
+
 // Macros to register kernels for multiple types (T0, T1, etc.)  on
 // device type "D" (CPU or GPU) for operation "N" (e.g., sqrt) using
 // the functor "F" (e.g., functor:sqrt).
@@ -512,6 +516,31 @@ struct ApproximateEqual<CPUDevice, T> {
 #define REGISTER9(OP, D, N, F, T0, T1, T2, T3, T4, T5, T6, T7, T8) \
   REGISTER5(OP, D, N, F, T0, T1, T2, T3, T4)                       \
   REGISTER4(OP, D, N, F, T5, T6, T7, T8)
+
+#define REGISTER_RPC2(OP, N, F, T0, T1) \
+  REGISTER_RPC(OP, N, F, T0)            \
+  REGISTER_RPC(OP, N, F, T1)
+#define REGISTER_RPC3(OP, N, F, T0, T1, T2) \
+  REGISTER_RPC2(OP, N, F, T0, T1)           \
+  REGISTER_RPC(OP, N, F, T2)
+#define REGISTER_RPC4(OP, N, F, T0, T1, T2, T3) \
+  REGISTER_RPC2(OP, N, F, T0, T1)               \
+  REGISTER_RPC2(OP, N, F, T2, T3)
+#define REGISTER_RPC5(OP, N, F, T0, T1, T2, T3, T4) \
+  REGISTER_RPC3(OP, N, F, T0, T1, T2)               \
+  REGISTER_RPC2(OP, N, F, T3, T4)
+#define REGISTER_RPC6(OP, N, F, T0, T1, T2, T3, T4, T5) \
+  REGISTER_RPC3(OP, N, F, T0, T1, T2)                   \
+  REGISTER_RPC3(OP, N, F, T3, T4, T5)
+#define REGISTER_RPC7(OP, N, F, T0, T1, T2, T3, T4, T5, T6) \
+  REGISTER_RPC4(OP, N, F, T0, T1, T2, T3)                   \
+  REGISTER_RPC3(OP, N, F, T4, T5, T6)
+#define REGISTER_RPC8(OP, N, F, T0, T1, T2, T3, T4, T5, T6, T7) \
+  REGISTER_RPC4(OP, N, F, T0, T1, T2, T3)                       \
+  REGISTER_RPC4(OP, N, F, T4, T5, T6, T7)
+#define REGISTER_RPC9(OP, N, F, T0, T1, T2, T3, T4, T5, T6, T7, T8) \
+  REGISTER_RPC5(OP, N, F, T0, T1, T2, T3, T4)                       \
+  REGISTER_RPC4(OP, N, F, T5, T6, T7, T8)
 
 // Instead of adding REGISTER10, etc., shard the .cc files - see
 // cwise_op_equal_to_*.cc for an example.

@@ -88,4 +88,11 @@ REGISTER_KERNEL_BUILDER(
     Name("InTopK").Device(DEVICE_CPU).TypeConstraint<int64>("T"),
     InTopK<float, int64>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("InTopK").Device(DEVICE_RPC).TypeConstraint<int32>("T"),
+    InTopK<float, int32>);
+REGISTER_KERNEL_BUILDER(
+    Name("InTopK").Device(DEVICE_RPC).TypeConstraint<int64>("T"),
+    InTopK<float, int64>);
+
 }  // namespace tensorflow

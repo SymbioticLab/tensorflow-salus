@@ -170,6 +170,22 @@ TF_CALL_ALL_TYPES(REGISTER_GATHER_ND_CPU);
 
 #undef REGISTER_GATHER_ND_CPU
 
+#define REGISTER_GATHER_ND_FULL_RPC(type, index_type)             \
+  REGISTER_KERNEL_BUILDER(Name("GatherNd")                             \
+                              .Device(DEVICE_RPC)                      \
+                              .TypeConstraint<type>("Tparams")         \
+                              .TypeConstraint<index_type>("Tindices"), \
+                          GatherNdOp<CPUDevice, type, index_type>)
+
+#define REGISTER_GATHER_ND_ALL_INDICES_RPC(type) \
+  REGISTER_GATHER_ND_FULL_RPC(type, int32);      \
+  REGISTER_GATHER_ND_FULL_RPC(type, int64)
+
+TF_CALL_ALL_TYPES(REGISTER_GATHER_ND_ALL_INDICES_RPC);
+
+#undef REGISTER_GATHER_ND_ALL_INDICES_RPC
+#undef REGISTER_GATHER_ND_FULL_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

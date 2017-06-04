@@ -136,6 +136,15 @@ TF_CALL_ALL_TYPES(REGISTER_KERNELS);
 TF_CALL_QUANTIZED_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(type)                                     \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("Assign").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      AssignOpT<CPUDevice, type>);
+
+TF_CALL_ALL_TYPES(REGISTER_KERNELS_RPC);
+TF_CALL_QUANTIZED_TYPES(REGISTER_KERNELS_RPC);
+#undef REGISTER_KERNELS_RPC
+
 #if TENSORFLOW_USE_SYCL
 typedef Eigen::SyclDevice SYCLDevice;
 #define REGISTER_SYCL_KERNEL(type)                                     \
@@ -186,6 +195,17 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS);
 TF_CALL_NUMBER_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(type)                                        \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("AssignAdd").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      DenseUpdateOp<CPUDevice, type, DenseUpdateType::ADD>);          \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("AssignSub").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      DenseUpdateOp<CPUDevice, type, DenseUpdateType::SUB>);
+
+TF_CALL_NUMBER_TYPES(REGISTER_KERNELS_RPC);
+#undef REGISTER_KERNELS_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {
@@ -214,4 +234,4 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS);
 #undef REGISTER_GPU_KERNELS
 #endif  // end GOOGLE_CUDA
 
-}  // namespace tensorflow
+}  // namespace tensorflow_RPC

@@ -623,6 +623,12 @@ REGISTER_KERNEL_BUILDER(Name("FusedBatchNorm").Device(DEVICE_CPU),
 
 REGISTER_KERNEL_BUILDER(Name("FusedBatchNormGrad").Device(DEVICE_CPU),
                         FusedBatchNormGradOp<CPUDevice, float>);
+
+REGISTER_KERNEL_BUILDER(Name("FusedBatchNorm").Device(DEVICE_RPC),
+                        FusedBatchNormOp<CPUDevice, float>);
+
+REGISTER_KERNEL_BUILDER(Name("FusedBatchNormGrad").Device(DEVICE_RPC),
+                        FusedBatchNormGradOp<CPUDevice, float>);
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("FusedBatchNorm").Device(DEVICE_GPU),
                         FusedBatchNormOp<GPUDevice, float>);

@@ -205,4 +205,7 @@ class AdjustSaturationOp<CPUDevice> : public AdjustSaturationOpBase {
 REGISTER_KERNEL_BUILDER(Name("AdjustSaturation").Device(DEVICE_CPU),
                         AdjustSaturationOp<CPUDevice>);
 
+REGISTER_KERNEL_BUILDER(Name("AdjustSaturation").Device(DEVICE_RPC),
+                        AdjustSaturationOp<CPUDevice>);
+
 }  // namespace tensorflow

@@ -49,6 +49,7 @@ class AssertOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Assert").Device(DEVICE_CPU), AssertOp);
+REGISTER_KERNEL_BUILDER(Name("Assert").Device(DEVICE_RPC), AssertOp);
 
 class PrintOp : public OpKernel {
  public:
@@ -88,5 +89,6 @@ class PrintOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Print").Device(DEVICE_CPU), PrintOp);
+REGISTER_KERNEL_BUILDER(Name("Print").Device(DEVICE_RPC), PrintOp);
 
 }  // end namespace tensorflow

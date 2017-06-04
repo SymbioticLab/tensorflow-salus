@@ -407,6 +407,8 @@ class InitializeTableOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("InitializeTable").Device(DEVICE_CPU),
                         InitializeTableOp);
+REGISTER_KERNEL_BUILDER(Name("InitializeTable").Device(DEVICE_RPC),
+                        InitializeTableOp);
 
 // Kernel to initialize a lookup table from a text file.
 //
@@ -470,6 +472,8 @@ class InitializeTableFromTextFileOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("InitializeTableFromTextFile").Device(DEVICE_CPU),
+                        InitializeTableFromTextFileOp);
+REGISTER_KERNEL_BUILDER(Name("InitializeTableFromTextFile").Device(DEVICE_RPC),
                         InitializeTableFromTextFileOp);
 
 }  // namespace tensorflow

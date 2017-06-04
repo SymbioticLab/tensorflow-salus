@@ -101,4 +101,15 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER_LISTDIFF);
 REGISTER_LISTDIFF(string);
 #undef REGISTER_LISTDIFF
 
+#define REGISTER_LISTDIFF_RPF(type)                                  \
+  REGISTER_KERNEL_BUILDER(Name("ListDiff")                       \
+                              .Device(DEVICE_RPC)                \
+                              .TypeConstraint<type>("T")         \
+                              .TypeConstraint<int32>("out_idx"), \
+                          ListDiffOp<type>)
+
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_LISTDIFF_RPC);
+REGISTER_LISTDIFF_RPC(string);
+#undef REGISTER_LISTDIFF_RPC
+
 }  // namespace tensorflow

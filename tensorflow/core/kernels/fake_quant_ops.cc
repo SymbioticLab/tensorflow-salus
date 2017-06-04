@@ -118,6 +118,12 @@ REGISTER_KERNEL_BUILDER(
     Name("FakeQuantWithMinMaxArgsGradient").Device(DEVICE_CPU),
     FakeQuantWithMinMaxArgsGradientOp<CPUDevice>);
 
+REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxArgs").Device(DEVICE_RPC),
+                        FakeQuantWithMinMaxArgsOp<CPUDevice>);
+REGISTER_KERNEL_BUILDER(
+    Name("FakeQuantWithMinMaxArgsGradient").Device(DEVICE_RPC),
+    FakeQuantWithMinMaxArgsGradientOp<CPUDevice>);
+
 #if GOOGLE_CUDA
 typedef Eigen::GpuDevice GPUDevice;
 
@@ -248,6 +254,12 @@ REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVars").Device(DEVICE_CPU),
                         FakeQuantWithMinMaxVarsOp<CPUDevice>);
 REGISTER_KERNEL_BUILDER(
     Name("FakeQuantWithMinMaxVarsGradient").Device(DEVICE_CPU),
+    FakeQuantWithMinMaxVarsGradientOp<CPUDevice>);
+
+REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVars").Device(DEVICE_RPC),
+                        FakeQuantWithMinMaxVarsOp<CPUDevice>);
+REGISTER_KERNEL_BUILDER(
+    Name("FakeQuantWithMinMaxVarsGradient").Device(DEVICE_RPC),
     FakeQuantWithMinMaxVarsGradientOp<CPUDevice>);
 
 #if GOOGLE_CUDA
@@ -475,6 +487,13 @@ REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVarsPerChannel")
                         FakeQuantWithMinMaxVarsPerChannelOp<CPUDevice>);
 REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVarsPerChannelGradient")
                             .Device(DEVICE_CPU),
+    FakeQuantWithMinMaxVarsPerChannelGradientOp<CPUDevice>);
+
+REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVarsPerChannel")
+                            .Device(DEVICE_RPC),
+                        FakeQuantWithMinMaxVarsPerChannelOp<CPUDevice>);
+REGISTER_KERNEL_BUILDER(Name("FakeQuantWithMinMaxVarsPerChannelGradient")
+                            .Device(DEVICE_RPC),
     FakeQuantWithMinMaxVarsPerChannelGradientOp<CPUDevice>);
 
 #if GOOGLE_CUDA

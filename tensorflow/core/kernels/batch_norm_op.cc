@@ -168,6 +168,17 @@ TF_CALL_float(REGISTER_KERNEL);
 TF_CALL_double(REGISTER_KERNEL);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(T)                                         \
+  REGISTER_KERNEL_BUILDER(Name("BatchNormWithGlobalNormalization") \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T"),             \
+                          BatchNormOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_KERNEL_RPC);
+TF_CALL_float(REGISTER_KERNEL_RPC);
+TF_CALL_double(REGISTER_KERNEL_RPC);
+#undef REGISTER_KERNEL_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

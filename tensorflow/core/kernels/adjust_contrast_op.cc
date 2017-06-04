@@ -96,6 +96,21 @@ REGISTER_KERNEL(float);
 REGISTER_KERNEL(double);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL(T)                                              \
+  REGISTER_KERNEL_BUILDER(                                              \
+      Name("AdjustContrast").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      AdjustContrastOp<CPUDevice, T>);
+
+
+REGISTER_KERNEL(uint8);
+REGISTER_KERNEL(int8);
+REGISTER_KERNEL(int16);
+REGISTER_KERNEL(int32);
+REGISTER_KERNEL(float);
+REGISTER_KERNEL(double);
+#undef REGISTER_KERNEL
+
+
 #if GOOGLE_CUDA
 // Forward declarations of the function specializations for GPU (to prevent
 // building the GPU versions here, they will be built compiling _gpu.cu.cc).

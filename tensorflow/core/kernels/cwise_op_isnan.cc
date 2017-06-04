@@ -17,6 +17,7 @@ limitations under the License.
 
 namespace tensorflow {
 REGISTER3(UnaryOp, CPU, "IsNan", functor::isnan, float, Eigen::half, double);
+REGISTER_RPC3(UnaryOp, "IsNan", functor::isnan, float, Eigen::half, double);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

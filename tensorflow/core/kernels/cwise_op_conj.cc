@@ -18,6 +18,7 @@ limitations under the License.
 namespace tensorflow {
 
 REGISTER2(UnaryOp, CPU, "Conj", functor::conj, complex64, complex128);
+REGISTER_RPC2(UnaryOp, "Conj", functor::conj, complex64, complex128);
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("Conj").Device(DEVICE_GPU).TypeConstraint<complex64>("T"),
                         UnaryOp<GPUDevice, functor::conj<complex64>>);

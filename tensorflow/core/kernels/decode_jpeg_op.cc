@@ -100,5 +100,6 @@ class DecodeJpegOp : public OpKernel {
   jpeg::UncompressFlags flags_;
 };
 REGISTER_KERNEL_BUILDER(Name("DecodeJpeg").Device(DEVICE_CPU), DecodeJpegOp);
+REGISTER_KERNEL_BUILDER(Name("DecodeJpeg").Device(DEVICE_RPC), DecodeJpegOp);
 
 }  // namespace tensorflow

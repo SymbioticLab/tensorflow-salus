@@ -19,6 +19,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Tanh", functor::tanh, float, Eigen::half, double,
           complex64, complex128);
+REGISTER_RPC5(UnaryOp, "Tanh", functor::tanh, float, Eigen::half, double,
+              complex64, complex128);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

@@ -178,6 +178,8 @@ extern template class LinearAlgebraOp<complex128>;
 
 #define REGISTER_LINALG_OP(OpName, OpClass, Scalar) \
   REGISTER_KERNEL_BUILDER(                          \
-      Name(OpName).Device(DEVICE_CPU).TypeConstraint<Scalar>("T"), OpClass)
+      Name(OpName).Device(DEVICE_CPU).TypeConstraint<Scalar>("T"), OpClass) \
+  REGISTER_KERNEL_BUILDER(                          \
+      Name(OpName).Device(DEVICE_RPC).TypeConstraint<Scalar>("T"), OpClass)
 
 #endif  // TENSORFLOW_KERNELS_LINALG_OPS_COMMON_H_

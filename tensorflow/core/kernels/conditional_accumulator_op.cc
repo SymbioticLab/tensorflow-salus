@@ -58,6 +58,18 @@ TF_CALL_double(REGISTER_KERNELS_CPU);
 #undef REGISTER_KERNELS_CPU
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(type, dev)                       \
+  REGISTER_KERNEL_BUILDER(Name("ConditionalAccumulator")      \
+                              .Device(DEVICE_RPC)           \
+                              .TypeConstraint<type>("dtype"), \
+                          ConditionalAccumulatorOp<CPUDevice, type>)
+
+TF_CALL_half(REGISTER_KERNELS_RPC);
+TF_CALL_float(REGISTER_KERNELS_RPC);
+TF_CALL_double(REGISTER_KERNELS_RPC);
+
+#undef REGISTER_KERNELS_RPC
+
 /**
  * Defines a AccumulateGradientOp, the execution of which adds a gradient to the
  * given ConditionalAccumulator.
@@ -82,6 +94,8 @@ class AccumulatorApplyGradientOp
 };
 
 REGISTER_KERNEL_BUILDER(Name("AccumulatorApplyGradient").Device(DEVICE_CPU),
+                        AccumulatorApplyGradientOp);
+REGISTER_KERNEL_BUILDER(Name("AccumulatorApplyGradient").Device(DEVICE_RPC),
                         AccumulatorApplyGradientOp);
 
 /**
@@ -109,6 +123,8 @@ class AccumulatorTakeGradientOp
 };
 
 REGISTER_KERNEL_BUILDER(Name("AccumulatorTakeGradient").Device(DEVICE_CPU),
+                        AccumulatorTakeGradientOp);
+REGISTER_KERNEL_BUILDER(Name("AccumulatorTakeGradient").Device(DEVICE_RPC),
                         AccumulatorTakeGradientOp);
 
 

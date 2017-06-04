@@ -116,6 +116,18 @@ class HSVToRGBOp : public OpKernel {
 TF_CALL_float(REGISTER_CPU);
 TF_CALL_double(REGISTER_CPU);
 
+#define REGISTER_RPC(T)                                       \
+  REGISTER_KERNEL_BUILDER(Name("RGBToHSV").Device(DEVICE_RPC) \
+                              .TypeConstraint<T>("T"),        \
+                          RGBToHSVOp<CPUDevice, T>);          \
+  template class RGBToHSVOp<CPUDevice, T>;                    \
+  REGISTER_KERNEL_BUILDER(Name("HSVToRGB").Device(DEVICE_RPC) \
+                              .TypeConstraint<T>("T"),        \
+                          HSVToRGBOp<CPUDevice, T>);          \
+  template class HSVToRGBOp<CPUDevice, T>;
+TF_CALL_float(REGISTER_RPC);
+TF_CALL_double(REGISTER_RPC);
+
 #if GOOGLE_CUDA
 // Forward declarations of the function specializations for GPU (to prevent
 // building the GPU versions here, they will be built compiling _gpu.cu.cc).

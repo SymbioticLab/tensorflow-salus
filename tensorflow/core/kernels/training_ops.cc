@@ -418,9 +418,23 @@ class ApplyGradientDescentOp : public OpKernel {
                           ApplyGradientDescentOp<D##Device, T>);
 #define REGISTER_CPU_KERNELS(T) REGISTER_KERNELS(CPU, T);
 
+#define REGISTER_RPC_KERNELS(T)                                                \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("ApplyGradientDescent").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyGradientDescentOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyGradientDescent")                \
+                              .Device(DEVICE_RPC)                             \
+                              .HostMemory("var")                              \
+                              .TypeConstraint<T>("T"),                        \
+                          ApplyGradientDescentOp<CPUDevice, T>);
+
 TF_CALL_half(REGISTER_CPU_KERNELS);
 TF_CALL_float(REGISTER_CPU_KERNELS);
 TF_CALL_double(REGISTER_CPU_KERNELS);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
 
 #ifdef TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNELS(T) REGISTER_KERNELS(SYCL, T);
@@ -450,6 +464,7 @@ REGISTER_KERNELS(GPU, float);
 REGISTER_KERNELS(GPU, double);
 #endif
 #undef REGISTER_CPU_KERNELS
+#undef REGISTER_RPC_KERNELS
 #undef REGISTER_KERNELS
 
 template <typename Device, typename T>
@@ -554,6 +569,24 @@ class ApplyAdadeltaOp : public OpKernel {
 
 using CPUDevice = Eigen::ThreadPoolDevice;
 using GPUDevice = Eigen::GpuDevice;
+
+#define REGISTER_RPC_KERNELS(T)                                         \
+  REGISTER_KERNEL_BUILDER(                                             \
+      Name("ApplyAdadelta").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyAdadeltaOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyAdadelta")                \
+                              .Device(DEVICE_RPC)                      \
+                              .HostMemory("var")                       \
+                              .HostMemory("accum")                     \
+                              .HostMemory("accum_update")              \
+                              .TypeConstraint<T>("T"),                 \
+                          ApplyAdadeltaOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 #define REGISTER_KERNELS(D, T)                                         \
   REGISTER_KERNEL_BUILDER(                                             \

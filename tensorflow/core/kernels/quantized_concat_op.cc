@@ -246,4 +246,16 @@ REGISTER_QUANTIZED_CONCAT(qint32);
 
 #undef REGISTER_QUANTIZED_CONCAT
 
+#define REGISTER_QUANTIZED_CONCAT_RPC(type)              \
+  REGISTER_KERNEL_BUILDER(Name("QuantizedConcat")        \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<type>("T") \
+                              .HostMemory("concat_dim"), \
+                          QuantizedConcatOp<type>)
+
+REGISTER_QUANTIZED_CONCAT_RPC(quint8);
+REGISTER_QUANTIZED_CONCAT_RPC(qint32);
+
+#undef REGISTER_QUANTIZED_CONCAT_RPC
+
 }  // namespace tensorflow

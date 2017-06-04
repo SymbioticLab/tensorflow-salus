@@ -122,6 +122,15 @@ REGISTER_KERNELS(float);
 REGISTER_KERNELS(double);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(type)                                      \
+  REGISTER_KERNEL_BUILDER(                                          \
+      Name("Betainc").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      BetaincOp<CPUDevice, type>);
+
+REGISTER_KERNELS_RPC(float);
+REGISTER_KERNELS_RPC(double);
+#undef REGISTER_KERNELS_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

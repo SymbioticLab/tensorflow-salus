@@ -575,4 +575,12 @@ REGISTER_KERNEL_BUILDER(
         .TypeConstraint<qint32>("out_type"),
     QuantizedConv2DOp<quint8, quint8, qint32, Im2ColConvFunctor>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("QuantizedConv2D")
+        .Device(DEVICE_RPC)
+        .TypeConstraint<quint8>("Tinput")
+        .TypeConstraint<quint8>("Tfilter")
+        .TypeConstraint<qint32>("out_type"),
+    QuantizedConv2DOp<quint8, quint8, qint32, Im2ColConvFunctor>);
+
 }  // namespace tensorflow

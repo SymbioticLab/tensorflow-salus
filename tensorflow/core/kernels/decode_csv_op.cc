@@ -236,5 +236,6 @@ class DecodeCSVOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("DecodeCSV").Device(DEVICE_CPU), DecodeCSVOp);
+REGISTER_KERNEL_BUILDER(Name("DecodeCSV").Device(DEVICE_RPC), DecodeCSVOp);
 
 }  // namespace tensorflow

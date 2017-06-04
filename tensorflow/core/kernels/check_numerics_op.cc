@@ -191,6 +191,14 @@ TF_CALL_half(REGISTER_CPU_KERNEL);
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 
+#define REGISTER_RPC_KERNEL(T)                                         \
+  REGISTER_KERNEL_BUILDER(                                             \
+      Name("CheckNumerics").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      CheckNumericsOp<CPUDevice, T>);
+TF_CALL_half(REGISTER_RPC_KERNEL);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("CheckNumerics")
                             .Device(DEVICE_GPU)

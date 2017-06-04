@@ -57,6 +57,16 @@ REGISTER_KERNEL(double);
 REGISTER_KERNEL(Eigen::half);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(T)                                      \
+  REGISTER_KERNEL_BUILDER(                                      \
+      Name("L2Loss").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      L2LossOp<CPUDevice, T>);
+
+REGISTER_KERNEL_RPC(float);
+REGISTER_KERNEL_RPC(double);
+REGISTER_KERNEL_RPC(Eigen::half);
+#undef REGISTER_KERNEL_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

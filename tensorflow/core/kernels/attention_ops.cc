@@ -108,5 +108,7 @@ class ExtractGlimpseOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ExtractGlimpse").Device(DEVICE_CPU),
                         ExtractGlimpseOp);
+REGISTER_KERNEL_BUILDER(Name("ExtractGlimpse").Device(DEVICE_RPC),
+                        ExtractGlimpseOp);
 
 }  // end namespace tensorflow

@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(BinaryOp, CPU, "Minimum", functor::minimum, float, Eigen::half,
           double, int32, int64);
+REGISTER_RPC5(BinaryOp, "Minimum", functor::minimum, float, Eigen::half,
+              double, int32, int64);
 #if GOOGLE_CUDA
 REGISTER4(BinaryOp, GPU, "Minimum", functor::minimum, float, Eigen::half,
           double, int64);

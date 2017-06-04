@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER7(BinaryOp, CPU, "Pow", functor::pow, float, Eigen::half, double, int32,
           int64, complex64, complex128);
+REGISTER_RPC7(BinaryOp, "Pow", functor::pow, float, Eigen::half, double, int32,
+              int64, complex64, complex128);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

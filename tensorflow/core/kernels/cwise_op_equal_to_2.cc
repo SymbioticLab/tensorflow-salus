@@ -24,6 +24,8 @@ namespace tensorflow {
 
 REGISTER6(BinaryOp, CPU, "Equal", functor::equal_to, int32, int64, complex64,
           complex128, string, bool);
+REGISTER_RPC6(BinaryOp, "Equal", functor::equal_to, int32, int64, complex64,
+              complex128, string, bool);
 #if GOOGLE_CUDA
 REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, int8, int16, int64, bool);
 #endif  // GOOGLE_CUDA

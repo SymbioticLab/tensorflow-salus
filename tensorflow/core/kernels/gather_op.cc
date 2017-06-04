@@ -108,6 +108,24 @@ TF_CALL_QUANTIZED_TYPES(REGISTER_GATHER_CPU);
 
 #undef REGISTER_GATHER_CPU
 
+#define REGISTER_GATHER_FULL_RPC(type, index_type)                    \
+  REGISTER_KERNEL_BUILDER(Name("Gather")                               \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<type>("Tparams")         \
+                              .TypeConstraint<index_type>("Tindices"), \
+                          GatherOp<CPUDevice, type, index_type>)
+
+#define REGISTER_GATHER_ALL_INDICES_RPC(type) \
+  REGISTER_GATHER_FULL(type, int32);      \
+  REGISTER_GATHER_FULL(type, int64)
+
+// Registration of the CPU implementations.
+TF_CALL_ALL_TYPES(REGISTER_GATHER_ALL_INDICES_RPC);
+TF_CALL_QUANTIZED_TYPES(REGISTER_GATHER_ALL_INDICES_RPC);
+
+#undef REGISTER_GATHER_ALL_INDICES_RPC
+#undef REGISTER_GATHER_FULL_RPC
+
 #if GOOGLE_CUDA
 
 // Registration of the GPU implementations.

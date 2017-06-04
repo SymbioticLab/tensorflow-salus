@@ -132,6 +132,20 @@ REGISTER_KERNEL_BUILDER(Name("ThreadUnsafeUnigramCandidateSampler")
                             .Device(DEVICE_CPU),
                         SimpleCandidateSamplerOp<ThreadUnsafeUnigramSampler>);
 
+REGISTER_KERNEL_BUILDER(Name("UniformCandidateSampler").Device(DEVICE_RPC),
+                        SimpleCandidateSamplerOp<UniformSampler>);
+
+REGISTER_KERNEL_BUILDER(Name("LogUniformCandidateSampler").Device(DEVICE_RPC),
+                        SimpleCandidateSamplerOp<LogUniformSampler>);
+
+REGISTER_KERNEL_BUILDER(Name("LearnedUnigramCandidateSampler")
+                            .Device(DEVICE_RPC),
+                        SimpleCandidateSamplerOp<UnigramSampler>);
+
+REGISTER_KERNEL_BUILDER(Name("ThreadUnsafeUnigramCandidateSampler")
+                            .Device(DEVICE_RPC),
+                        SimpleCandidateSamplerOp<ThreadUnsafeUnigramSampler>);
+
 class AllCandidateSamplerOp : public BaseCandidateSamplerOp {
  public:
   explicit AllCandidateSamplerOp(OpKernelConstruction* context)
@@ -143,6 +157,9 @@ class AllCandidateSamplerOp : public BaseCandidateSamplerOp {
 };
 
 REGISTER_KERNEL_BUILDER(Name("AllCandidateSampler").Device(DEVICE_CPU),
+                        AllCandidateSamplerOp);
+
+REGISTER_KERNEL_BUILDER(Name("AllCandidateSampler").Device(DEVICE_RPC),
                         AllCandidateSamplerOp);
 
 class FixedUnigramCandidateSamplerOp : public BaseCandidateSamplerOp {
@@ -183,6 +200,8 @@ class FixedUnigramCandidateSamplerOp : public BaseCandidateSamplerOp {
 };
 
 REGISTER_KERNEL_BUILDER(Name("FixedUnigramCandidateSampler").Device(DEVICE_CPU),
+                        FixedUnigramCandidateSamplerOp);
+REGISTER_KERNEL_BUILDER(Name("FixedUnigramCandidateSampler").Device(DEVICE_RPC),
                         FixedUnigramCandidateSamplerOp);
 
 class ComputeAccidentalHitsOp : public OpKernel {
@@ -258,6 +277,8 @@ class ComputeAccidentalHitsOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("ComputeAccidentalHits").Device(DEVICE_CPU),
+                        ComputeAccidentalHitsOp);
+REGISTER_KERNEL_BUILDER(Name("ComputeAccidentalHits").Device(DEVICE_RPC),
                         ComputeAccidentalHitsOp);
 
 }  // namespace tensorflow

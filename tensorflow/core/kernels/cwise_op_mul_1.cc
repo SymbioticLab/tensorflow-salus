@@ -19,6 +19,8 @@ namespace tensorflow {
 
 REGISTER5(BinaryOp, CPU, "Mul", functor::mul, float, Eigen::half, double,
           uint8, int32);
+REGISTER_RPC5(BinaryOp, "Mul", functor::mul, float, Eigen::half, double,
+              uint8, int32);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

@@ -66,5 +66,9 @@ REGISTER_KERNEL_BUILDER(Name("PriorityQueue").Device(DEVICE_CPU),
                         PriorityQueueOp);
 REGISTER_KERNEL_BUILDER(Name("PriorityQueueV2").Device(DEVICE_CPU),
                         PriorityQueueOp);
+REGISTER_KERNEL_BUILDER(Name("PriorityQueue").Device(DEVICE_RPC),
+                        PriorityQueueOp);
+REGISTER_KERNEL_BUILDER(Name("PriorityQueueV2").Device(DEVICE_RPC),
+                        PriorityQueueOp);
 
 }  // namespace tensorflow

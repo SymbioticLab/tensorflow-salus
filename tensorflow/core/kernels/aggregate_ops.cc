@@ -160,6 +160,15 @@ class AddNOp : public OpKernel {
 TF_CALL_NUMBER_TYPES(REGISTER_ADDN_CPU);
 #undef REGISTER_ADDN_CPU
 
+#define REGISTER_ADDN_RPC(type)                                   \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("AddN").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      AddNOp<CPUDevice, type>)
+
+TF_CALL_NUMBER_TYPES(REGISTER_ADDN_RPC);
+#undef REGISTER_ADDN_RPC
+
+
 #if GOOGLE_CUDA
 REGISTER_ADDN(Eigen::half, GPU);
 REGISTER_ADDN(float, GPU);

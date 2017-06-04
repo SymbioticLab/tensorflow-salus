@@ -519,6 +519,25 @@ TF_CALL_half(REGISTER_CPU_KERNELS);
 TF_CALL_float(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
+#define REGISTER_RPC_KERNELS(T)                                              \
+  REGISTER_KERNEL_BUILDER(                                                   \
+      Name("Conv2DBackpropInput").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      Conv2DCustomBackpropInputOp<CPUDevice, T>);                            \
+  REGISTER_KERNEL_BUILDER(Name("Conv2DBackpropInput")                        \
+                              .Device(DEVICE_RPC)                            \
+                              .Label("custom")                               \
+                              .TypeConstraint<T>("T"),                       \
+                          Conv2DCustomBackpropInputOp<CPUDevice, T>);        \
+  REGISTER_KERNEL_BUILDER(Name("Conv2DBackpropInput")                        \
+                              .Device(DEVICE_RPC)                            \
+                              .Label("eigen_tensor")                         \
+                              .TypeConstraint<T>("T"),                       \
+                          Conv2DFastBackpropInputOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+#undef REGISTER_RPC_KERNELS
+
 // GPU definitions.
 #if GOOGLE_CUDA
 // The slow version (but compiles for GPU)

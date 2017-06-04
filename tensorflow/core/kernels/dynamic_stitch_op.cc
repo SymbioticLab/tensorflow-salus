@@ -165,6 +165,16 @@ class DynamicStitchOp : public OpKernel {
 TF_CALL_POD_STRING_TYPES(REGISTER_DYNAMIC_STITCH);
 #undef REGISTER_DYNAMIC_STITCH
 
+#define REGISTER_DYNAMIC_STITCH_RPC(type)                    \
+  REGISTER_KERNEL_BUILDER(Name("DynamicStitch")          \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<type>("T") \
+                              .HostMemory("indices"),    \
+                          DynamicStitchOp<type>)
+
+TF_CALL_POD_STRING_TYPES(REGISTER_DYNAMIC_STITCH_RPC);
+#undef REGISTER_DYNAMIC_STITCH_RPC
+
 #ifdef TENSORFLOW_USE_SYCL
 #define REGISTER_DYNAMIC_STITCH_SYCL(type)               \
   REGISTER_KERNEL_BUILDER(Name("DynamicStitch")          \
@@ -194,4 +204,4 @@ TF_CALL_POD_STRING_TYPES(REGISTER_DYNAMIC_STITCH_GPU);
 
 #endif  // GOOGLE_CUDA
 
-}  // namespace tensorflow
+}  // namespace tensorflow_RPC

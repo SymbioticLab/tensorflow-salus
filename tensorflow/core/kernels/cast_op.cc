@@ -182,6 +182,7 @@ class GpuCastOp : public CastOpBase {
 #undef CAST_CASE
 
 REGISTER_KERNEL_BUILDER(Name("Cast").Device(DEVICE_CPU), CpuCastOp);
+REGISTER_KERNEL_BUILDER(Name("Cast").Device(DEVICE_RPC), CpuCastOp);
 
 #if GOOGLE_CUDA
 #define REGISTER_CAST_GPU(srctype, dsttype)                    \
@@ -259,6 +260,9 @@ CURRY_TYPES2(REGISTER_CAST_SYCL, double);
 
 // HostCast differs from Cast in that its input and output are in host memory.
 REGISTER_KERNEL_BUILDER(Name("_HostCast").Device(DEVICE_CPU), CpuCastOp);
+REGISTER_KERNEL_BUILDER(
+    Name("_HostCast").Device(DEVICE_RPC).HostMemory("x").HostMemory("y"),
+    CpuCastOp);
 REGISTER_KERNEL_BUILDER(
     Name("_HostCast").Device(DEVICE_GPU).HostMemory("x").HostMemory("y"),
     CpuCastOp);

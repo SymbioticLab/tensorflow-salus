@@ -51,6 +51,7 @@ void ConstantOp::Compute(OpKernelContext* ctx) { ctx->set_output(0, tensor_); }
 ConstantOp::~ConstantOp() {}
 
 REGISTER_KERNEL_BUILDER(Name("Const").Device(DEVICE_CPU), ConstantOp);
+REGISTER_KERNEL_BUILDER(Name("Const").Device(DEVICE_RPC), ConstantOp);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                     \
@@ -197,6 +198,19 @@ TF_CALL_ALL_TYPES(REGISTER_CPU_KERNEL);
 // the conversion from uint8 to quint8.
 REGISTER_KERNEL(CPU, quint8);
 #undef REGISTER_CPU_KERNEL
+
+#define REGISTER_KERNEL_RPC(TYPE)                        \
+  REGISTER_KERNEL_BUILDER(Name("Fill")                   \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<TYPE>("T") \
+                              .HostMemory("dims"),       \
+                          FillOp<CPUDevice, TYPE>);
+
+TF_CALL_ALL_TYPES(REGISTER_KERNEL_RPC);
+// TODO(b/28917570): Add a test for this. Currently python 3 is not happy about
+// the conversion from uint8 to quint8.
+REGISTER_KERNEL_RPC(quint8);
+#undef REGISTER_KERNEL_RPC
 
 #ifdef TENSORFLOW_USE_SYCL
 REGISTER_KERNEL(SYCL, float)

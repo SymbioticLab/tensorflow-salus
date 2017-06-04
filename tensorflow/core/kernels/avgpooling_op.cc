@@ -357,6 +357,17 @@ TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 TF_CALL_half(REGISTER_CPU_KERNEL);
 
+#define REGISTER_RPC_KERNEL(T)                                 \
+  REGISTER_KERNEL_BUILDER(Name("AvgPoolGrad")                  \
+                              .Device(DEVICE_RPC)              \
+                              .TypeConstraint<T>("T")          \
+                              .HostMemory("orig_input_shape"), \
+                          AvgPoolingGradOp<CPUDevice, T>);
+
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+TF_CALL_half(REGISTER_RPC_KERNEL);
+
 #if GOOGLE_CUDA
 
 // A CUDNN based AvgPoolingGrad implementation. It includes the padding as the

@@ -67,9 +67,28 @@ void SwitchOp::Compute(OpKernelContext* context) {
                               .TypeConstraint<type>("T"), \
                           SwitchOp)
 
+#define REGISTER_RPC_SWITCH(type)                         \
+  REGISTER_KERNEL_BUILDER(Name("Switch")                  \
+                              .Device(DEVICE_RPC)         \
+                              .HostMemory("pred")         \
+                              .TypeConstraint<type>("T"), \
+                          SwitchOp)
+
+#define REGISTER_RPC_REF_SWITCH(type)                     \
+  REGISTER_KERNEL_BUILDER(Name("RefSwitch")               \
+                              .Device(DEVICE_RPC)         \
+                              .HostMemory("pred")         \
+                              .TypeConstraint<type>("T"), \
+                          SwitchOp)
+
+
 TF_CALL_ALL_TYPES(REGISTER_CPU_SWITCH);
 TF_CALL_ALL_TYPES(REGISTER_CPU_REF_SWITCH);
 TF_CALL_QUANTIZED_TYPES(REGISTER_CPU_SWITCH);
+
+TF_CALL_ALL_TYPES(REGISTER_RPC_SWITCH);
+TF_CALL_ALL_TYPES(REGISTER_RPC_REF_SWITCH);
+TF_CALL_QUANTIZED_TYPES(REGISTER_RPC_SWITCH);
 
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_SWITCH);
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_REF_SWITCH);
@@ -177,6 +196,16 @@ TF_CALL_ALL_TYPES(REGISTER_CPU_REF_SELECT);
 
 #undef REGISTER_CPU_REF_SWITCH
 
+#define REGISTER_RPCREF_SELECT(type)                     \
+  REGISTER_KERNEL_BUILDER(Name("RefSelect")               \
+                              .Device(DEVICE_RPC         \
+                              .HostMemory("index")        \
+                              .TypeConstraint<type>("T"), \
+                          RefSelectOp)
+TF_CALL_ALL_TYPES(REGISTER_RPCREF_SELECT);
+
+#undef REGISTER_RPCREF_SWITCH
+
 MergeOp::MergeOp(OpKernelConstruction* context) : OpKernel(context) {
   const DataType dt = context->input_type(0);
   const int num_in = context->num_inputs();
@@ -210,6 +239,9 @@ void MergeOp::Compute(OpKernelContext* context) {
 
 REGISTER_KERNEL_BUILDER(Name("Merge").Device(DEVICE_CPU), MergeOp);
 REGISTER_KERNEL_BUILDER(Name("RefMerge").Device(DEVICE_CPU), MergeOp);
+
+REGISTER_KERNEL_BUILDER(Name("Merge").Device(DEVICE_RPC), MergeOp);
+REGISTER_KERNEL_BUILDER(Name("RefMerge").Device(DEVICE_RPC), MergeOp);
 
 #define REGISTER_GPU_KERNEL(type)                         \
   REGISTER_KERNEL_BUILDER(Name("Merge")                   \
@@ -290,6 +322,9 @@ void EnterOp::Compute(OpKernelContext* context) {
 
 REGISTER_KERNEL_BUILDER(Name("Enter").Device(DEVICE_CPU), EnterOp);
 REGISTER_KERNEL_BUILDER(Name("RefEnter").Device(DEVICE_CPU), EnterOp);
+
+REGISTER_KERNEL_BUILDER(Name("Enter").Device(DEVICE_RPC), EnterOp);
+REGISTER_KERNEL_BUILDER(Name("RefEnter").Device(DEVICE_RPC), EnterOp);
 
 #define REGISTER_GPU_KERNEL(type) \
   REGISTER_KERNEL_BUILDER(        \
@@ -386,6 +421,9 @@ void ExitOp::Compute(OpKernelContext* context) {
 REGISTER_KERNEL_BUILDER(Name("Exit").Device(DEVICE_CPU), ExitOp);
 REGISTER_KERNEL_BUILDER(Name("RefExit").Device(DEVICE_CPU), ExitOp);
 
+REGISTER_KERNEL_BUILDER(Name("Exit").Device(DEVICE_RPC), ExitOp);
+REGISTER_KERNEL_BUILDER(Name("RefExit").Device(DEVICE_RPC), ExitOp);
+
 #define REGISTER_GPU_KERNEL(type) \
   REGISTER_KERNEL_BUILDER(        \
       Name("Exit").Device(DEVICE_GPU).TypeConstraint<type>("T"), ExitOp);
@@ -470,6 +508,10 @@ void NextIterationOp::Compute(OpKernelContext* context) {
 REGISTER_KERNEL_BUILDER(Name("NextIteration").Device(DEVICE_CPU),
                         NextIterationOp);
 REGISTER_KERNEL_BUILDER(Name("RefNextIteration").Device(DEVICE_CPU),
+                        NextIterationOp);
+REGISTER_KERNEL_BUILDER(Name("NextIteration").Device(DEVICE_RPC),
+                        NextIterationOp);
+REGISTER_KERNEL_BUILDER(Name("RefNextIteration").Device(DEVICE_RPC),
                         NextIterationOp);
 
 #define REGISTER_GPU_KERNEL(type)                                            \
@@ -572,6 +614,12 @@ class LoopCondOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("LoopCond").Device(DEVICE_CPU), LoopCondOp);
 REGISTER_KERNEL_BUILDER(Name("LoopCond")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("input")
+                            .HostMemory("output"),
+                        LoopCondOp);
+
+REGISTER_KERNEL_BUILDER(Name("LoopCond")
                             .Device(DEVICE_GPU)
                             .HostMemory("input")
                             .HostMemory("output"),
@@ -587,6 +635,9 @@ REGISTER_KERNEL_BUILDER(Name("LoopCond")
 
 // ControlTrigger kernels
 REGISTER_KERNEL_BUILDER(Name("ControlTrigger").Device(DEVICE_CPU),
+                        ControlTriggerOp);
+
+REGISTER_KERNEL_BUILDER(Name("ControlTrigger").Device(DEVICE_RPC),
                         ControlTriggerOp);
 
 REGISTER_KERNEL_BUILDER(Name("ControlTrigger").Device(DEVICE_GPU),
@@ -622,5 +673,6 @@ class AbortOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Abort").Device(DEVICE_CPU), AbortOp);
+REGISTER_KERNEL_BUILDER(Name("Abort").Device(DEVICE_RPC), AbortOp);
 
 }  // namespace tensorflow

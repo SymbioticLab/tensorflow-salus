@@ -492,6 +492,7 @@ class BarrierOp : public ResourceOpKernel<Barrier> {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Barrier").Device(DEVICE_CPU), BarrierOp);
+REGISTER_KERNEL_BUILDER(Name("Barrier").Device(DEVICE_RPC), BarrierOp);
 
 class BarrierOpKernel : public AsyncOpKernel {
  public:
@@ -557,6 +558,15 @@ class InsertManyOp : public BarrierOpKernel {
 TF_CALL_ALL_TYPES(REGISTER_INSERTMANY);
 #undef REGISTER_INSERTMANY
 
+#define REGISTER_INSERTMANY_RPC(T)                                             \
+  REGISTER_KERNEL_BUILDER(                                                 \
+      Name("BarrierInsertMany").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      InsertManyOp<T>);
+
+TF_CALL_ALL_TYPES(REGISTER_INSERTMANY_RPC);
+#undef REGISTER_INSERTMANY_RPC
+
+
 class TakeManyOp : public BarrierOpKernel {
  public:
   explicit TakeManyOp(OpKernelConstruction* context)
@@ -621,6 +631,7 @@ class TakeManyOp : public BarrierOpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("BarrierTakeMany").Device(DEVICE_CPU), TakeManyOp);
+REGISTER_KERNEL_BUILDER(Name("BarrierTakeMany").Device(DEVICE_RPC), TakeManyOp);
 
 class BarrierCloseOp : public BarrierOpKernel {
  public:
@@ -643,6 +654,8 @@ class BarrierCloseOp : public BarrierOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("BarrierClose").Device(DEVICE_CPU),
                         BarrierCloseOp);
+REGISTER_KERNEL_BUILDER(Name("BarrierClose").Device(DEVICE_RPC),
+                        BarrierCloseOp);
 
 class BarrierIncompleteSizeOp : public BarrierOpKernel {
  public:
@@ -662,6 +675,8 @@ class BarrierIncompleteSizeOp : public BarrierOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("BarrierIncompleteSize").Device(DEVICE_CPU),
                         BarrierIncompleteSizeOp);
+REGISTER_KERNEL_BUILDER(Name("BarrierIncompleteSize").Device(DEVICE_RPC),
+                        BarrierIncompleteSizeOp);
 
 class BarrierReadySizeOp : public BarrierOpKernel {
  public:
@@ -679,7 +694,7 @@ class BarrierReadySizeOp : public BarrierOpKernel {
   }
 };
 
-REGISTER_KERNEL_BUILDER(Name("BarrierReadySize").Device(DEVICE_CPU),
+REGISTER_KERNEL_BUILDER(Name("BarrierReadySize").Device(DEVICE_RPC),
                         BarrierReadySizeOp);
 
 }  // namespace barrier

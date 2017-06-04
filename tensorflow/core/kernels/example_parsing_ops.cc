@@ -167,6 +167,8 @@ class ExampleParserOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ParseExample").Device(DEVICE_CPU),
                         ExampleParserOp);
+REGISTER_KERNEL_BUILDER(Name("ParseExample").Device(DEVICE_RPC),
+                        ExampleParserOp);
 
 class SingleSequenceExampleParserOp : public OpKernel {
  public:
@@ -562,6 +564,8 @@ class SingleSequenceExampleParserOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ParseSingleSequenceExample").Device(DEVICE_CPU),
                         SingleSequenceExampleParserOp);
+REGISTER_KERNEL_BUILDER(Name("ParseSingleSequenceExample").Device(DEVICE_RPC),
+                        SingleSequenceExampleParserOp);
 
 #ifndef IS_MOBILE_PLATFORM
 // when using lite protos on mobile, decoding JSON is not available.
@@ -597,6 +601,8 @@ class DecodeJSONExampleOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("DecodeJSONExample").Device(DEVICE_CPU),
+                        DecodeJSONExampleOp);
+REGISTER_KERNEL_BUILDER(Name("DecodeJSONExample").Device(DEVICE_RPC),
                         DecodeJSONExampleOp);
 #endif
 

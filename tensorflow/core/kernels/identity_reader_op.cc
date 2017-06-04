@@ -71,4 +71,9 @@ REGISTER_KERNEL_BUILDER(Name("IdentityReader").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("IdentityReaderV2").Device(DEVICE_CPU),
                         IdentityReaderOp);
 
+REGISTER_KERNEL_BUILDER(Name("IdentityReader").Device(DEVICE_RPC),
+                        IdentityReaderOp);
+REGISTER_KERNEL_BUILDER(Name("IdentityReaderV2").Device(DEVICE_RPC),
+                        IdentityReaderOp);
+
 }  // namespace tensorflow

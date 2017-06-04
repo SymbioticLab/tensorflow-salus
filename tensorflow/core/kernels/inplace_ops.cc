@@ -136,6 +136,15 @@ class FailureKernel : public OpKernel {
 TF_CALL_POD_STRING_TYPES(REGISTER)
 #undef REGISTER
 
+#define REGISTER_RPC(type)                                    \
+  REGISTER_KERNEL_BUILDER(Name("_ParallelConcatUpdate")   \
+                              .Device(DEVICE_RPC)         \
+                              .TypeConstraint<type>("T"), \
+                          ParallelConcatUpdate<CPUDevice>);
+TF_CALL_POD_STRING_TYPES(REGISTER_RPC)
+#undef REGISTER_RPC
+
+
 #define REGISTER_EMPTY(type)                                  \
   REGISTER_KERNEL_BUILDER(Name("_ParallelConcatStart")        \
                               .Device(DEVICE_CPU)             \
@@ -145,12 +154,28 @@ TF_CALL_POD_STRING_TYPES(REGISTER)
 TF_CALL_POD_STRING_TYPES(REGISTER_EMPTY)
 #undef REGISTER_EMPTY
 
+#define REGISTER_EMPTY_RPC(type)                                  \
+  REGISTER_KERNEL_BUILDER(Name("_ParallelConcatStart")        \
+                              .Device(DEVICE_RPC)             \
+                              .TypeConstraint<type>("dtype"), \
+                          ParallelConcatStart<CPUDevice, type>)
+
+TF_CALL_POD_STRING_TYPES(REGISTER_EMPTY_RPC)
+#undef REGISTER_EMPTY_RPC
+
 #define REGISTER_PARALLEL_CONCAT(type)                                     \
   REGISTER_KERNEL_BUILDER(                                                 \
       Name("ParallelConcat").Device(DEVICE_CPU).TypeConstraint<type>("T"), \
       FailureKernel);
 TF_CALL_POD_STRING_TYPES(REGISTER_PARALLEL_CONCAT);
 #undef REGISTER_PARALLEL_CONCAT
+
+#define REGISTER_PARALLEL_CONCAT_RPC(type)                                     \
+  REGISTER_KERNEL_BUILDER(                                                 \
+      Name("ParallelConcat").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      FailureKernel);
+TF_CALL_POD_STRING_TYPES(REGISTER_PARALLEL_CONCAT_RPC);
+#undef REGISTER_PARALLEL_CONCAT_RPC
 
 #if GOOGLE_CUDA
 

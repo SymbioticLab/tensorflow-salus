@@ -57,6 +57,9 @@ class CountUpToOp : public OpKernel {
 #define REGISTER(TYPE)                                                \
   REGISTER_KERNEL_BUILDER(                                            \
       Name("CountUpTo").TypeConstraint<TYPE>("T").Device(DEVICE_CPU), \
+      CountUpToOp<TYPE>) \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("CountUpTo").TypeConstraint<TYPE>("T").Device(DEVICE_RPC), \
       CountUpToOp<TYPE>)
 
 REGISTER(int32);

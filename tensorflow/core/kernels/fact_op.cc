@@ -129,4 +129,14 @@ REGISTER_KERNEL_BUILDER(Name("Fact")
                             .Label(D("yoxmos").c_str()),
                         FactOpKernel2);
 
+REGISTER_KERNEL_BUILDER(Name("Fact")
+                            .Device(DEVICE_RPC)
+                            .Label(D("Yoxmos").c_str()),
+                        FactOpKernel2);
+REGISTER_KERNEL_BUILDER(Name("Fact")
+                            .Device(DEVICE_RPC)
+                            .Label(D("yoxmos").c_str()),
+                        FactOpKernel2);
+
+
 }  // namespace tensorflow

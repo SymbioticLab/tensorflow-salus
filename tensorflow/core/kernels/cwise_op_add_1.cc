@@ -18,6 +18,8 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(BinaryOp, CPU, "Add", functor::add, float, Eigen::half, double, int32,
           int64);
+REGISTER_RPC5(BinaryOp, "Add", functor::add, float, Eigen::half, double, int32,
+          int64);
 
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \

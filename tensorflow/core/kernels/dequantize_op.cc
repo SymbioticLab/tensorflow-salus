@@ -110,4 +110,21 @@ REGISTER_KERNEL_BUILDER(
     Name("Dequantize").Device(DEVICE_CPU).TypeConstraint<qint32>("T"),
     DequantizeOp<CPUDevice, qint32>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("Dequantize").Device(DEVICE_RPC).TypeConstraint<quint8>("T"),
+    DequantizeOp<CPUDevice, quint8>);
+REGISTER_KERNEL_BUILDER(
+    Name("Dequantize").Device(DEVICE_RPC).TypeConstraint<qint8>("T"),
+    DequantizeOp<CPUDevice, qint8>);
+REGISTER_KERNEL_BUILDER(
+    Name("Dequantize").Device(DEVICE_CPU).TypeConstraint<quint16>("T"),
+    DequantizeOp<CPUDevice, quint16>);
+REGISTER_KERNEL_BUILDER(
+    Name("Dequantize").Device(DEVICE_RPC).TypeConstraint<qint16>("T"),
+    DequantizeOp<CPUDevice, qint16>);
+
+REGISTER_KERNEL_BUILDER(
+    Name("Dequantize").Device(DEVICE_RPC).TypeConstraint<qint32>("T"),
+    DequantizeOp<CPUDevice, qint32>);
+
 }  // namespace tensorflow

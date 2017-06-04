@@ -761,6 +761,8 @@ class LookupTableFindOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("LookupTableFind").Device(DEVICE_CPU),
                         LookupTableFindOp);
+REGISTER_KERNEL_BUILDER(Name("LookupTableFind").Device(DEVICE_RPC),
+                        LookupTableFindOp);
 
 // Table insert op.
 class LookupTableInsertOp : public OpKernel {
@@ -794,6 +796,8 @@ class LookupTableInsertOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("LookupTableInsert").Device(DEVICE_CPU),
                         LookupTableInsertOp);
+REGISTER_KERNEL_BUILDER(Name("LookupTableInsert").Device(DEVICE_RPC),
+                        LookupTableInsertOp);
 
 // Op that returns the size of the given table.
 class LookupTableSizeOp : public OpKernel {
@@ -813,6 +817,8 @@ class LookupTableSizeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("LookupTableSize").Device(DEVICE_CPU),
                         LookupTableSizeOp);
+REGISTER_KERNEL_BUILDER(Name("LookupTableSize").Device(DEVICE_RPC),
+                        LookupTableSizeOp);
 
 // Op that outputs tensors of all keys and all values.
 class LookupTableExportOp : public OpKernel {
@@ -829,6 +835,8 @@ class LookupTableExportOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("LookupTableExport").Device(DEVICE_CPU),
+                        LookupTableExportOp);
+REGISTER_KERNEL_BUILDER(Name("LookupTableExport").Device(DEVICE_RPC),
                         LookupTableExportOp);
 
 // Clear the table and insert data.
@@ -863,6 +871,8 @@ class LookupTableImportOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("LookupTableImport").Device(DEVICE_CPU),
                         LookupTableImportOp);
+REGISTER_KERNEL_BUILDER(Name("LookupTableImport").Device(DEVICE_RPC),
+                        LookupTableImportOp);
 
 // Register the HashTable op with the currently supported key and value types.
 #define REGISTER_KERNEL(key_dtype, value_dtype)                           \
@@ -885,6 +895,26 @@ REGISTER_KERNEL(string, bool);
 
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(key_dtype, value_dtype)                           \
+  REGISTER_KERNEL_BUILDER(                                                \
+      Name("HashTable")                                                   \
+          .Device(DEVICE_RPC)                                             \
+          .TypeConstraint<key_dtype>("key_dtype")                         \
+          .TypeConstraint<value_dtype>("value_dtype"),                    \
+      LookupTableOp<lookup::HashTable<key_dtype, value_dtype>, key_dtype, \
+                    value_dtype>)
+
+REGISTER_KERNEL_RPC(string, double);
+REGISTER_KERNEL_RPC(string, float);
+REGISTER_KERNEL_RPC(string, int32);
+REGISTER_KERNEL_RPC(string, int64);
+REGISTER_KERNEL_RPC(int64, string);
+REGISTER_KERNEL_RPC(int64, int64);
+REGISTER_KERNEL_RPC(string, string);
+REGISTER_KERNEL_RPC(string, bool);
+
+#undef REGISTER_KERNEL_RPC
+
 // Register the MutableHashTable op.
 #define REGISTER_KERNEL(key_dtype, value_dtype)                                \
   REGISTER_KERNEL_BUILDER(                                                     \
@@ -902,6 +932,22 @@ REGISTER_KERNEL(string, bool);
 
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(key_dtype, value_dtype)                                \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("MutableHashTable")                                                 \
+          .Device(DEVICE_RPC)                                                  \
+          .TypeConstraint<key_dtype>("key_dtype")                              \
+          .TypeConstraint<value_dtype>("value_dtype"),                         \
+      LookupTableOp<lookup::MutableHashTableOfScalars<key_dtype, value_dtype>, \
+                    key_dtype, value_dtype>)
+
+REGISTER_KERNEL_RPC(string, float);
+REGISTER_KERNEL_RPC(string, int64);
+REGISTER_KERNEL_RPC(int64, string);
+REGISTER_KERNEL_RPC(string, bool);
+
+#undef REGISTER_KERNEL_RPC
+
 // Register the MutableHashTableOfTensors op.
 #define REGISTER_KERNEL(key_dtype, value_dtype)                                \
   REGISTER_KERNEL_BUILDER(                                                     \
@@ -918,6 +964,22 @@ REGISTER_KERNEL(int64, string);
 REGISTER_KERNEL(string, bool);
 
 #undef REGISTER_KERNEL
+
+#define REGISTER_KERNEL_RPC(key_dtype, value_dtype)                                \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("MutableHashTableOfTensors")                                        \
+          .Device(DEVICE_RPC)                                                  \
+          .TypeConstraint<key_dtype>("key_dtype")                              \
+          .TypeConstraint<value_dtype>("value_dtype"),                         \
+      LookupTableOp<lookup::MutableHashTableOfTensors<key_dtype, value_dtype>, \
+                    key_dtype, value_dtype>)
+
+REGISTER_KERNEL_RPC(string, float);
+REGISTER_KERNEL_RPC(string, int64);
+REGISTER_KERNEL_RPC(int64, string);
+REGISTER_KERNEL_RPC(string, bool);
+
+#undef REGISTER_KERNEL_RPC
 
 // Register the MutableDenseHashTable op.
 #define REGISTER_KERNEL(key_dtype, value_dtype)                            \
@@ -937,5 +999,23 @@ REGISTER_KERNEL(string, bool);
 REGISTER_KERNEL(int64, bool);
 
 #undef REGISTER_KERNEL
+
+#define REGISTER_KERNEL_RPC(key_dtype, value_dtype)                            \
+  REGISTER_KERNEL_BUILDER(                                                 \
+      Name("MutableDenseHashTable")                                        \
+          .Device(DEVICE_RPC)                                              \
+          .TypeConstraint<key_dtype>("key_dtype")                          \
+          .TypeConstraint<value_dtype>("value_dtype"),                     \
+      LookupTableOp<lookup::MutableDenseHashTable<key_dtype, value_dtype>, \
+                    key_dtype, value_dtype>)
+
+REGISTER_KERNEL_RPC(int64, int64);
+REGISTER_KERNEL_RPC(int64, float);
+REGISTER_KERNEL_RPC(int64, double);
+REGISTER_KERNEL_RPC(string, float);
+REGISTER_KERNEL_RPC(string, bool);
+REGISTER_KERNEL_RPC(int64, bool);
+
+#undef REGISTER_KERNEL_RPC
 
 }  // namespace tensorflow

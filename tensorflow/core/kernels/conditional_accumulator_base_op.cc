@@ -55,6 +55,8 @@ class AccumulatorSetGlobalStepOp
 
 REGISTER_KERNEL_BUILDER(Name("AccumulatorSetGlobalStep").Device(DEVICE_CPU),
                         AccumulatorSetGlobalStepOp);
+REGISTER_KERNEL_BUILDER(Name("AccumulatorSetGlobalStep").Device(DEVICE_RPC),
+                        AccumulatorSetGlobalStepOp);
 
 /**
  * Defines a AccumulatorNumAccumulatedOp, which returns the number of gradients
@@ -84,6 +86,8 @@ class AccumulatorNumAccumulatedOp
 };
 
 REGISTER_KERNEL_BUILDER(Name("AccumulatorNumAccumulated").Device(DEVICE_CPU),
+                        AccumulatorNumAccumulatedOp);
+REGISTER_KERNEL_BUILDER(Name("AccumulatorNumAccumulated").Device(DEVICE_RPC),
                         AccumulatorNumAccumulatedOp);
 
 }  // namespace tensorflow

@@ -127,6 +127,13 @@ REGISTER_KERNEL_BUILDER(
     Name("MaxPool3D").Device(DEVICE_CPU).TypeConstraint<float>("T"),
     Pooling3DOp<CPUDevice, float, MAX>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("AvgPool3D").Device(DEVICE_RPC).TypeConstraint<float>("T"),
+    Pooling3DOp<CPUDevice, float, AVG>);
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPool3D").Device(DEVICE_RPC).TypeConstraint<float>("T"),
+    Pooling3DOp<CPUDevice, float, MAX>);
+
 template <typename Device, typename T>
 struct LaunchMaxPooling3dGradOp;
 
@@ -286,6 +293,9 @@ class MaxPooling3dGradOp : public OpKernel {
 REGISTER_KERNEL_BUILDER(
     Name("MaxPool3DGrad").Device(DEVICE_CPU).TypeConstraint<float>("T"),
     MaxPooling3dGradOp<CPUDevice, float>);
+REGISTER_KERNEL_BUILDER(
+    Name("MaxPool3DGrad").Device(DEVICE_RPC).TypeConstraint<float>("T"),
+    MaxPooling3dGradOp<CPUDevice, float>);
 
 template <typename Device, typename T>
 struct LaunchAvgPooling3dGradOp;
@@ -430,6 +440,12 @@ class AvgPooling3dGradOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("AvgPool3DGrad")
                             .Device(DEVICE_CPU)
+                            .TypeConstraint<float>("T")
+                            .HostMemory("orig_input_shape"),
+                        AvgPooling3dGradOp<CPUDevice, float>);
+
+REGISTER_KERNEL_BUILDER(Name("AvgPool3DGrad")
+                            .Device(DEVICE_RPC)
                             .TypeConstraint<float>("T")
                             .HostMemory("orig_input_shape"),
                         AvgPooling3dGradOp<CPUDevice, float>);

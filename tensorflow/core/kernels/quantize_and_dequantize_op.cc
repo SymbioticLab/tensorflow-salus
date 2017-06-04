@@ -160,6 +160,18 @@ TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
+#define REGISTER_RPC_KERNEL(T)                                                 \
+  REGISTER_KERNEL_BUILDER(Name("QuantizeAndDequantizeV2")                      \
+                              .Device(DEVICE_RPC)                              \
+                              .TypeConstraint<T>("T"),                         \
+                          QuantizeAndDequantizeV2Op<CPUDevice, T>);            \
+  REGISTER_KERNEL_BUILDER(                                                     \
+      Name("QuantizeAndDequantize").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      QuantizeAndDequantizeOp<CPUDevice, T>);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+#undef REGISTER_RPC_KERNEL
+
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(T)                                                 \
   REGISTER_KERNEL_BUILDER(Name("QuantizeAndDequantizeV2")                      \

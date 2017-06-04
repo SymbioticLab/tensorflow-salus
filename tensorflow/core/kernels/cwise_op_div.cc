@@ -24,6 +24,16 @@ REGISTER5(BinaryOp, CPU, "TruncateDiv", functor::safe_div, uint8, uint16, int16,
           int32, int64);
 REGISTER5(BinaryOp, CPU, "RealDiv", functor::div, float, Eigen::half, double,
           complex64, complex128);
+
+REGISTER_RPC5(BinaryOp, "Div", functor::div, float, Eigen::half, double,
+          complex64, complex128);
+REGISTER_RPC5(BinaryOp, "Div", functor::safe_div, uint8, uint16, int16, int32,
+          int64);
+REGISTER_RPC5(BinaryOp, "TruncateDiv", functor::safe_div, uint8, uint16, int16,
+          int32, int64);
+REGISTER_RPC5(BinaryOp, "RealDiv", functor::div, float, Eigen::half, double,
+          complex64, complex128);
+
 #if TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(TYPE)                                    \
   REGISTER_KERNEL_BUILDER(                                            \

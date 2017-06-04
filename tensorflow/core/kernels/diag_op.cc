@@ -127,6 +127,18 @@ REGISTER_DIAGOP(complex128);
 
 #undef REGISTER_DIAGOP
 
+#define REGISTER_DIAGOP_RPC(T) \
+  REGISTER_KERNEL_BUILDER( \
+      Name("Diag").Device(DEVICE_RPC).TypeConstraint<T>("T"), DiagOp<T>)
+
+REGISTER_DIAGOP_RPC(double);
+REGISTER_DIAGOP_RPC(float);
+REGISTER_DIAGOP_RPC(int32);
+REGISTER_DIAGOP_RPC(int64);
+REGISTER_DIAGOP_RPC(complex64);
+REGISTER_DIAGOP_RPC(complex128);
+
+#undef REGISTER_DIAGOP_RPC
 
 // Generate the diagonal tensor with the diagonal set to the input tensor.
 // It only allows rank 2, 4, or 6 input tensor, so the output tensor is 
@@ -194,5 +206,17 @@ REGISTER_DIAGPARTOP(complex64);
 REGISTER_DIAGPARTOP(complex128);
 
 #undef REGISTER_DIAGPARTOP
-  
+
+#define REGISTER_DIAGPARTOP_RPC(T) \
+  REGISTER_KERNEL_BUILDER( \
+      Name("DiagPart").Device(DEVICE_RPC).TypeConstraint<T>("T"), DiagPartOp<T>)
+
+REGISTER_DIAGPARTOP_RPC(double);
+REGISTER_DIAGPARTOP_RPC(float);
+REGISTER_DIAGPARTOP_RPC(int32);
+REGISTER_DIAGPARTOP_RPC(int64);
+REGISTER_DIAGPARTOP_RPC(complex64);
+REGISTER_DIAGPARTOP_RPC(complex128);
+
+#undef REGISTER_DIAGPARTOP
 }  // namespace tensorflow

@@ -135,6 +135,14 @@ struct DepthToSpaceOpFunctor<CPUDevice, T> {
 TF_CALL_ALL_TYPES(REGISTER);
 #undef REGISTER
 
+#define REGISTER_RPC(type)                                                   \
+  REGISTER_KERNEL_BUILDER(                                               \
+      Name("DepthToSpace").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      DepthToSpaceOp<CPUDevice, type>);
+
+TF_CALL_ALL_TYPES(REGISTER_RPC);
+#undef REGISTER_RPC
+
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(
     Name("DepthToSpace").Device(DEVICE_GPU).TypeConstraint<float>("T"),

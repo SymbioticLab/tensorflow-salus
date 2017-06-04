@@ -18,8 +18,11 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Abs", functor::abs, float, Eigen::half, double, int32,
           int64);
+REGISTER_RPC5(UnaryOp, "Abs", functor::abs, float, Eigen::half, double, int32,
+          int64);
 #if !defined(IS_MOBILE_PLATFORM)
 REGISTER2(UnaryOp, CPU, "ComplexAbs", functor::abs, complex64, complex128);
+REGISTER_RPC2(UnaryOp, "ComplexAbs", functor::abs, complex64, complex128);
 #endif
 
 #if TENSORFLOW_USE_SYCL
