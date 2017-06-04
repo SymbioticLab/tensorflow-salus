@@ -31,6 +31,17 @@
 #include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
+namespace {
+
+tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
+{
+    // create a one time allocator, which will delete itself after DeallocateRaw
+    auto alloc = tensorflow::OneTimeAllocator::create(outdef.int64_val(0)).release();
+    return tensorflow::Tensor(alloc, outdef.dtype(), tensorflow::TensorShape(outdef.tensor_shape()));
+}
+
+}
+
 namespace tensorflow {
 
 RpcClient::RpcClient() { }
@@ -106,20 +117,41 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
     executor::TFOpContextUpdate tfdef;
     tfdef.ParseFromString(def->extra());
 
+    // Emit send on rendezvous
+    LOG(INFO) << "Emit send on rendezvous";
+    for (int i = 0; i != tfdef.rendeztensors_size(); ++i) {
+        const auto &outdef = tfdef.rendeztensors(i);
+        Rendezvous::Args args;
+        // TODO: is it ok to use op device context?
+        args.device_context = context->op_device_context();
+        args.alloc_attrs.value = outdef.allocattributes();
+        Rendezvous::ParsedKey parsed;
+        auto status = Rendezvous::ParseKey(outdef.key(), &parsed);
+        if (!status.ok()) {
+            LOG(ERROR) << "Invalid parsekey " << outdef.key()
+                       << " for rendezvous received: " << status;
+            continue;
+        }
+        LOG(INFO) << "Rendezvous send";
+        status = context->rendezvous()->Send(parsed, args, tensorFromProtoMeta(outdef.val()), outdef.isdead());
+        LOG(INFO) << "Rendezvous send finished";
+        if (!status.ok()) {
+            LOG(ERROR) << "Rendezvous send error: " << status;
+            continue;
+        }
+    }
+
+    LOG(INFO) << "Set outputs";
+    for (int i = 0; i != tfdef.outputs_size(); ++i) {
+        const auto &outdef = tfdef.outputs(i);
+        context->set_output(i, tensorFromProtoMeta(outdef));
+    }
     *context->is_output_dead() = tfdef.is_output_dead();
 
     if (tfdef.status_code() == error::OK) {
         context->SetStatus(Status::OK());
     } else {
         context->SetStatus(Status(tfdef.status_code(), tfdef.status_msg()));
-    }
-
-    for (int i = 0; i != tfdef.outputs_size(); ++i) {
-        const auto &outdef = tfdef.outputs(i);
-        // create a one time allocator, it will delete itself after DeallocateRaw
-        auto alloc = OneTimeAllocator::create(outdef.int64_val(0)).release();
-        Tensor output(alloc, outdef.dtype(), TensorShape(outdef.tensor_shape()));
-        context->set_output(i, output);
     }
 
     LOG(INFO) << "Done";

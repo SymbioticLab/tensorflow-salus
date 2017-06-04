@@ -24,6 +24,8 @@ class TFOpContextDefDefaultTypeInternal : public ::google::protobuf::internal::E
 } _TFOpContextDef_default_instance_;
 class TFOpContextUpdateDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFOpContextUpdate> {
 } _TFOpContextUpdate_default_instance_;
+class TFRendezItemDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFRendezItem> {
+} _TFRendezItem_default_instance_;
 class TFTensorsDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFTensors> {
 } _TFTensors_default_instance_;
 class TFPushRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFPushRequest> {
@@ -34,7 +36,7 @@ namespace protobuf_tfoplibrary_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[5];
+::google::protobuf::Metadata file_level_metadata[6];
 
 }  // namespace
 
@@ -62,8 +64,17 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextUpdate, is_output_dead_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextUpdate, outputs_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextUpdate, rendeztensors_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextUpdate, status_code_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextUpdate, status_msg_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, key_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, allocattributes_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, isdead_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, val_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensors, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -81,14 +92,16 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(TFOpKernelDef)},
   { 8, -1, sizeof(TFOpContextDef)},
   { 17, -1, sizeof(TFOpContextUpdate)},
-  { 25, -1, sizeof(TFTensors)},
-  { 30, -1, sizeof(TFPushRequest)},
+  { 26, -1, sizeof(TFRendezItem)},
+  { 34, -1, sizeof(TFTensors)},
+  { 39, -1, sizeof(TFPushRequest)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpKernelDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextUpdate_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_TFRendezItem_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFTensors_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFPushRequest_default_instance_),
 };
@@ -111,7 +124,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 5);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
 }
 
 }  // namespace
@@ -123,10 +136,12 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[1].reflection;
   _TFOpContextUpdate_default_instance_.Shutdown();
   delete file_level_metadata[2].reflection;
-  _TFTensors_default_instance_.Shutdown();
+  _TFRendezItem_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
-  _TFPushRequest_default_instance_.Shutdown();
+  _TFTensors_default_instance_.Shutdown();
   delete file_level_metadata[4].reflection;
+  _TFPushRequest_default_instance_.Shutdown();
+  delete file_level_metadata[5].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -141,6 +156,7 @@ void TableStruct::InitDefaultsImpl() {
   _TFOpKernelDef_default_instance_.DefaultConstruct();
   _TFOpContextDef_default_instance_.DefaultConstruct();
   _TFOpContextUpdate_default_instance_.DefaultConstruct();
+  _TFRendezItem_default_instance_.DefaultConstruct();
   _TFTensors_default_instance_.DefaultConstruct();
   _TFPushRequest_default_instance_.DefaultConstruct();
   _TFOpKernelDef_default_instance_.get_mutable()->nodedef_ = const_cast< ::tensorflow::NodeDef*>(
@@ -149,6 +165,8 @@ void TableStruct::InitDefaultsImpl() {
       ::tensorflow::ConfigProto::internal_default_instance());
   _TFOpKernelDef_default_instance_.get_mutable()->funcdef_ = const_cast< ::tensorflow::FunctionDefLibrary*>(
       ::tensorflow::FunctionDefLibrary::internal_default_instance());
+  _TFRendezItem_default_instance_.get_mutable()->val_ = const_cast< ::tensorflow::TensorProto*>(
+      ::tensorflow::TensorProto::internal_default_instance());
 }
 
 void InitDefaults() {
@@ -171,18 +189,22 @@ void AddDescriptorsImpl() {
       "nDefLibrary\"\204\001\n\016TFOpContextDef\022\017\n\007step_i"
       "d\030\001 \001(\003\022\020\n\010frame_id\030\002 \001(\004\022\017\n\007iter_id\030\003 \001"
       "(\003\022\025\n\ris_input_dead\030\004 \001(\010\022\'\n\006inputs\030\005 \003("
-      "\0132\027.tensorflow.TensorProto\"\226\001\n\021TFOpConte"
+      "\0132\027.tensorflow.TensorProto\"\305\001\n\021TFOpConte"
       "xtUpdate\022\026\n\016is_output_dead\030\001 \001(\010\022(\n\007outp"
-      "uts\030\002 \003(\0132\027.tensorflow.TensorProto\022+\n\013st"
-      "atus_code\030\004 \001(\0162\026.tensorflow.error.Code\022"
-      "\022\n\nstatus_msg\030\005 \001(\t\"5\n\tTFTensors\022(\n\007tens"
-      "ors\030\001 \003(\0132\027.tensorflow.TensorProto\"`\n\rTF"
-      "PushRequest\022%\n\004data\030\001 \003(\0132\027.tensorflow.T"
-      "ensorProto\022(\n\007tensors\030\002 \003(\0132\027.tensorflow"
-      ".TensorProtob\006proto3"
+      "uts\030\002 \003(\0132\027.tensorflow.TensorProto\022-\n\rre"
+      "ndezTensors\030\003 \003(\0132\026.executor.TFRendezIte"
+      "m\022+\n\013status_code\030\004 \001(\0162\026.tensorflow.erro"
+      "r.Code\022\022\n\nstatus_msg\030\005 \001(\t\"j\n\014TFRendezIt"
+      "em\022\013\n\003key\030\001 \001(\t\022\027\n\017allocAttributes\030\002 \001(\r"
+      "\022\016\n\006isDead\030\003 \001(\010\022$\n\003val\030\004 \001(\0132\027.tensorfl"
+      "ow.TensorProto\"5\n\tTFTensors\022(\n\007tensors\030\001"
+      " \003(\0132\027.tensorflow.TensorProto\"`\n\rTFPushR"
+      "equest\022%\n\004data\030\001 \003(\0132\027.tensorflow.Tensor"
+      "Proto\022(\n\007tensors\030\002 \003(\0132\027.tensorflow.Tens"
+      "orProtob\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 860);
+      descriptor, 1015);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "tfoplibrary.proto", &protobuf_RegisterTypes);
   ::tensorflow::protobuf_tensorflow_2fcore_2fframework_2fnode_5fdef_2eproto::AddDescriptors();
@@ -1160,6 +1182,7 @@ TFOpContextDef::inputs() const {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int TFOpContextUpdate::kIsOutputDeadFieldNumber;
 const int TFOpContextUpdate::kOutputsFieldNumber;
+const int TFOpContextUpdate::kRendezTensorsFieldNumber;
 const int TFOpContextUpdate::kStatusCodeFieldNumber;
 const int TFOpContextUpdate::kStatusMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1176,6 +1199,7 @@ TFOpContextUpdate::TFOpContextUpdate(const TFOpContextUpdate& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       outputs_(from.outputs_),
+      rendeztensors_(from.rendeztensors_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   status_msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -1230,6 +1254,7 @@ TFOpContextUpdate* TFOpContextUpdate::New(::google::protobuf::Arena* arena) cons
 void TFOpContextUpdate::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.TFOpContextUpdate)
   outputs_.Clear();
+  rendeztensors_.Clear();
   status_msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&is_output_dead_, 0, reinterpret_cast<char*>(&status_code_) -
     reinterpret_cast<char*>(&is_output_dead_) + sizeof(status_code_));
@@ -1264,6 +1289,19 @@ bool TFOpContextUpdate::MergePartialFromCodedStream(
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_outputs()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .executor.TFRendezItem rendezTensors = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_rendeztensors()));
         } else {
           goto handle_unusual;
         }
@@ -1335,6 +1373,12 @@ void TFOpContextUpdate::SerializeWithCachedSizes(
       2, this->outputs(i), output);
   }
 
+  // repeated .executor.TFRendezItem rendezTensors = 3;
+  for (unsigned int i = 0, n = this->rendeztensors_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->rendeztensors(i), output);
+  }
+
   // .tensorflow.error.Code status_code = 4;
   if (this->status_code() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
@@ -1370,6 +1414,13 @@ void TFOpContextUpdate::SerializeWithCachedSizes(
         2, this->outputs(i), false, target);
   }
 
+  // repeated .executor.TFRendezItem rendezTensors = 3;
+  for (unsigned int i = 0, n = this->rendeztensors_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        3, this->rendeztensors(i), false, target);
+  }
+
   // .tensorflow.error.Code status_code = 4;
   if (this->status_code() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
@@ -1403,6 +1454,17 @@ size_t TFOpContextUpdate::ByteSizeLong() const {
       total_size +=
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->outputs(i));
+    }
+  }
+
+  // repeated .executor.TFRendezItem rendezTensors = 3;
+  {
+    unsigned int count = this->rendeztensors_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->rendeztensors(i));
     }
   }
 
@@ -1451,6 +1513,7 @@ void TFOpContextUpdate::MergeFrom(const TFOpContextUpdate& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   outputs_.MergeFrom(from.outputs_);
+  rendeztensors_.MergeFrom(from.rendeztensors_);
   if (from.status_msg().size() > 0) {
 
     status_msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.status_msg_);
@@ -1487,6 +1550,7 @@ void TFOpContextUpdate::Swap(TFOpContextUpdate* other) {
 }
 void TFOpContextUpdate::InternalSwap(TFOpContextUpdate* other) {
   outputs_.UnsafeArenaSwap(&other->outputs_);
+  rendeztensors_.UnsafeArenaSwap(&other->rendeztensors_);
   status_msg_.Swap(&other->status_msg_);
   std::swap(is_output_dead_, other->is_output_dead_);
   std::swap(status_code_, other->status_code_);
@@ -1543,6 +1607,36 @@ const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
 TFOpContextUpdate::outputs() const {
   // @@protoc_insertion_point(field_list:executor.TFOpContextUpdate.outputs)
   return outputs_;
+}
+
+// repeated .executor.TFRendezItem rendezTensors = 3;
+int TFOpContextUpdate::rendeztensors_size() const {
+  return rendeztensors_.size();
+}
+void TFOpContextUpdate::clear_rendeztensors() {
+  rendeztensors_.Clear();
+}
+const ::executor::TFRendezItem& TFOpContextUpdate::rendeztensors(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Get(index);
+}
+::executor::TFRendezItem* TFOpContextUpdate::mutable_rendeztensors(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Mutable(index);
+}
+::executor::TFRendezItem* TFOpContextUpdate::add_rendeztensors() {
+  // @@protoc_insertion_point(field_add:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+TFOpContextUpdate::mutable_rendeztensors() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextUpdate.rendezTensors)
+  return &rendeztensors_;
+}
+const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+TFOpContextUpdate::rendeztensors() const {
+  // @@protoc_insertion_point(field_list:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_;
 }
 
 // .tensorflow.error.Code status_code = 4;
@@ -1616,6 +1710,482 @@ void TFOpContextUpdate::set_allocated_status_msg(::std::string* status_msg) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TFRendezItem::kKeyFieldNumber;
+const int TFRendezItem::kAllocAttributesFieldNumber;
+const int TFRendezItem::kIsDeadFieldNumber;
+const int TFRendezItem::kValFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+TFRendezItem::TFRendezItem()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_tfoplibrary_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.TFRendezItem)
+}
+TFRendezItem::TFRendezItem(const TFRendezItem& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  key_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.key().size() > 0) {
+    key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.key_);
+  }
+  if (from.has_val()) {
+    val_ = new ::tensorflow::TensorProto(*from.val_);
+  } else {
+    val_ = NULL;
+  }
+  ::memcpy(&allocattributes_, &from.allocattributes_,
+    reinterpret_cast<char*>(&isdead_) -
+    reinterpret_cast<char*>(&allocattributes_) + sizeof(isdead_));
+  // @@protoc_insertion_point(copy_constructor:executor.TFRendezItem)
+}
+
+void TFRendezItem::SharedCtor() {
+  key_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&val_, 0, reinterpret_cast<char*>(&isdead_) -
+    reinterpret_cast<char*>(&val_) + sizeof(isdead_));
+  _cached_size_ = 0;
+}
+
+TFRendezItem::~TFRendezItem() {
+  // @@protoc_insertion_point(destructor:executor.TFRendezItem)
+  SharedDtor();
+}
+
+void TFRendezItem::SharedDtor() {
+  key_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) {
+    delete val_;
+  }
+}
+
+void TFRendezItem::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* TFRendezItem::descriptor() {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[3].descriptor;
+}
+
+const TFRendezItem& TFRendezItem::default_instance() {
+  protobuf_tfoplibrary_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+TFRendezItem* TFRendezItem::New(::google::protobuf::Arena* arena) const {
+  TFRendezItem* n = new TFRendezItem;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void TFRendezItem::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.TFRendezItem)
+  key_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && val_ != NULL) {
+    delete val_;
+  }
+  val_ = NULL;
+  ::memset(&allocattributes_, 0, reinterpret_cast<char*>(&isdead_) -
+    reinterpret_cast<char*>(&allocattributes_) + sizeof(isdead_));
+}
+
+bool TFRendezItem::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.TFRendezItem)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string key = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_key()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->key().data(), this->key().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.TFRendezItem.key"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 allocAttributes = 2;
+      case 2: {
+        if (tag == 16u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &allocattributes_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool isDead = 3;
+      case 3: {
+        if (tag == 24u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &isdead_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .tensorflow.TensorProto val = 4;
+      case 4: {
+        if (tag == 34u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_val()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.TFRendezItem)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.TFRendezItem)
+  return false;
+#undef DO_
+}
+
+void TFRendezItem::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.TFRendezItem)
+  // string key = 1;
+  if (this->key().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->key().data(), this->key().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.TFRendezItem.key");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->key(), output);
+  }
+
+  // uint32 allocAttributes = 2;
+  if (this->allocattributes() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->allocattributes(), output);
+  }
+
+  // bool isDead = 3;
+  if (this->isdead() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->isdead(), output);
+  }
+
+  // .tensorflow.TensorProto val = 4;
+  if (this->has_val()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, *this->val_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.TFRendezItem)
+}
+
+::google::protobuf::uint8* TFRendezItem::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.TFRendezItem)
+  // string key = 1;
+  if (this->key().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->key().data(), this->key().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.TFRendezItem.key");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->key(), target);
+  }
+
+  // uint32 allocAttributes = 2;
+  if (this->allocattributes() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->allocattributes(), target);
+  }
+
+  // bool isDead = 3;
+  if (this->isdead() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->isdead(), target);
+  }
+
+  // .tensorflow.TensorProto val = 4;
+  if (this->has_val()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        4, *this->val_, false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.TFRendezItem)
+  return target;
+}
+
+size_t TFRendezItem::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.TFRendezItem)
+  size_t total_size = 0;
+
+  // string key = 1;
+  if (this->key().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->key());
+  }
+
+  // .tensorflow.TensorProto val = 4;
+  if (this->has_val()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->val_);
+  }
+
+  // uint32 allocAttributes = 2;
+  if (this->allocattributes() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->allocattributes());
+  }
+
+  // bool isDead = 3;
+  if (this->isdead() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void TFRendezItem::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.TFRendezItem)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TFRendezItem* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const TFRendezItem>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.TFRendezItem)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.TFRendezItem)
+    MergeFrom(*source);
+  }
+}
+
+void TFRendezItem::MergeFrom(const TFRendezItem& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.TFRendezItem)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.key().size() > 0) {
+
+    key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.key_);
+  }
+  if (from.has_val()) {
+    mutable_val()->::tensorflow::TensorProto::MergeFrom(from.val());
+  }
+  if (from.allocattributes() != 0) {
+    set_allocattributes(from.allocattributes());
+  }
+  if (from.isdead() != 0) {
+    set_isdead(from.isdead());
+  }
+}
+
+void TFRendezItem::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.TFRendezItem)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TFRendezItem::CopyFrom(const TFRendezItem& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.TFRendezItem)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TFRendezItem::IsInitialized() const {
+  return true;
+}
+
+void TFRendezItem::Swap(TFRendezItem* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void TFRendezItem::InternalSwap(TFRendezItem* other) {
+  key_.Swap(&other->key_);
+  std::swap(val_, other->val_);
+  std::swap(allocattributes_, other->allocattributes_);
+  std::swap(isdead_, other->isdead_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata TFRendezItem::GetMetadata() const {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[3];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// TFRendezItem
+
+// string key = 1;
+void TFRendezItem::clear_key() {
+  key_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& TFRendezItem::key() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.key)
+  return key_.GetNoArena();
+}
+void TFRendezItem::set_key(const ::std::string& value) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.key)
+}
+#if LANG_CXX11
+void TFRendezItem::set_key(::std::string&& value) {
+  
+  key_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFRendezItem.key)
+}
+#endif
+void TFRendezItem::set_key(const char* value) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFRendezItem.key)
+}
+void TFRendezItem::set_key(const char* value, size_t size) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFRendezItem.key)
+}
+::std::string* TFRendezItem::mutable_key() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezItem.key)
+  return key_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* TFRendezItem::release_key() {
+  // @@protoc_insertion_point(field_release:executor.TFRendezItem.key)
+  
+  return key_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void TFRendezItem::set_allocated_key(::std::string* key) {
+  if (key != NULL) {
+    
+  } else {
+    
+  }
+  key_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), key);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFRendezItem.key)
+}
+
+// uint32 allocAttributes = 2;
+void TFRendezItem::clear_allocattributes() {
+  allocattributes_ = 0u;
+}
+::google::protobuf::uint32 TFRendezItem::allocattributes() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.allocAttributes)
+  return allocattributes_;
+}
+void TFRendezItem::set_allocattributes(::google::protobuf::uint32 value) {
+  
+  allocattributes_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.allocAttributes)
+}
+
+// bool isDead = 3;
+void TFRendezItem::clear_isdead() {
+  isdead_ = false;
+}
+bool TFRendezItem::isdead() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.isDead)
+  return isdead_;
+}
+void TFRendezItem::set_isdead(bool value) {
+  
+  isdead_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.isDead)
+}
+
+// .tensorflow.TensorProto val = 4;
+bool TFRendezItem::has_val() const {
+  return this != internal_default_instance() && val_ != NULL;
+}
+void TFRendezItem::clear_val() {
+  if (GetArenaNoVirtual() == NULL && val_ != NULL) delete val_;
+  val_ = NULL;
+}
+const ::tensorflow::TensorProto& TFRendezItem::val() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.val)
+  return val_ != NULL ? *val_
+                         : *::tensorflow::TensorProto::internal_default_instance();
+}
+::tensorflow::TensorProto* TFRendezItem::mutable_val() {
+  
+  if (val_ == NULL) {
+    val_ = new ::tensorflow::TensorProto;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezItem.val)
+  return val_;
+}
+::tensorflow::TensorProto* TFRendezItem::release_val() {
+  // @@protoc_insertion_point(field_release:executor.TFRendezItem.val)
+  
+  ::tensorflow::TensorProto* temp = val_;
+  val_ = NULL;
+  return temp;
+}
+void TFRendezItem::set_allocated_val(::tensorflow::TensorProto* val) {
+  delete val_;
+  if (val != NULL && val->GetArena() != NULL) {
+    ::tensorflow::TensorProto* new_val = new ::tensorflow::TensorProto;
+    new_val->CopyFrom(*val);
+    val = new_val;
+  }
+  val_ = val;
+  if (val) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.TFRendezItem.val)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int TFTensors::kTensorsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1655,7 +2225,7 @@ void TFTensors::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFTensors::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[3].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
 }
 
 const TFTensors& TFTensors::default_instance() {
@@ -1820,7 +2390,7 @@ void TFTensors::InternalSwap(TFTensors* other) {
 
 ::google::protobuf::Metadata TFTensors::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[3];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1902,7 +2472,7 @@ void TFPushRequest::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFPushRequest::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5].descriptor;
 }
 
 const TFPushRequest& TFPushRequest::default_instance() {
@@ -2107,7 +2677,7 @@ void TFPushRequest::InternalSwap(TFPushRequest* other) {
 
 ::google::protobuf::Metadata TFPushRequest::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

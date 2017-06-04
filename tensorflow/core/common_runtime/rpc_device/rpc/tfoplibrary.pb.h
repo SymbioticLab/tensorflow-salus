@@ -47,6 +47,9 @@ extern TFOpKernelDefDefaultTypeInternal _TFOpKernelDef_default_instance_;
 class TFPushRequest;
 class TFPushRequestDefaultTypeInternal;
 extern TFPushRequestDefaultTypeInternal _TFPushRequest_default_instance_;
+class TFRendezItem;
+class TFRendezItemDefaultTypeInternal;
+extern TFRendezItemDefaultTypeInternal _TFRendezItem_default_instance_;
 class TFTensors;
 class TFTensorsDefaultTypeInternal;
 extern TFTensorsDefaultTypeInternal _TFTensors_default_instance_;
@@ -419,6 +422,18 @@ class TFOpContextUpdate : public ::google::protobuf::Message /* @@protoc_inserti
   const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
       outputs() const;
 
+  // repeated .executor.TFRendezItem rendezTensors = 3;
+  int rendeztensors_size() const;
+  void clear_rendeztensors();
+  static const int kRendezTensorsFieldNumber = 3;
+  const ::executor::TFRendezItem& rendeztensors(int index) const;
+  ::executor::TFRendezItem* mutable_rendeztensors(int index);
+  ::executor::TFRendezItem* add_rendeztensors();
+  ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+      mutable_rendeztensors();
+  const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+      rendeztensors() const;
+
   // string status_msg = 5;
   void clear_status_msg();
   static const int kStatusMsgFieldNumber = 5;
@@ -450,9 +465,125 @@ class TFOpContextUpdate : public ::google::protobuf::Message /* @@protoc_inserti
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > outputs_;
+  ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem > rendeztensors_;
   ::google::protobuf::internal::ArenaStringPtr status_msg_;
   bool is_output_dead_;
   int status_code_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class TFRendezItem : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFRendezItem) */ {
+ public:
+  TFRendezItem();
+  virtual ~TFRendezItem();
+
+  TFRendezItem(const TFRendezItem& from);
+
+  inline TFRendezItem& operator=(const TFRendezItem& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFRendezItem& default_instance();
+
+  static inline const TFRendezItem* internal_default_instance() {
+    return reinterpret_cast<const TFRendezItem*>(
+               &_TFRendezItem_default_instance_);
+  }
+
+  void Swap(TFRendezItem* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFRendezItem* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFRendezItem* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFRendezItem& from);
+  void MergeFrom(const TFRendezItem& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFRendezItem* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string key = 1;
+  void clear_key();
+  static const int kKeyFieldNumber = 1;
+  const ::std::string& key() const;
+  void set_key(const ::std::string& value);
+  #if LANG_CXX11
+  void set_key(::std::string&& value);
+  #endif
+  void set_key(const char* value);
+  void set_key(const char* value, size_t size);
+  ::std::string* mutable_key();
+  ::std::string* release_key();
+  void set_allocated_key(::std::string* key);
+
+  // .tensorflow.TensorProto val = 4;
+  bool has_val() const;
+  void clear_val();
+  static const int kValFieldNumber = 4;
+  const ::tensorflow::TensorProto& val() const;
+  ::tensorflow::TensorProto* mutable_val();
+  ::tensorflow::TensorProto* release_val();
+  void set_allocated_val(::tensorflow::TensorProto* val);
+
+  // uint32 allocAttributes = 2;
+  void clear_allocattributes();
+  static const int kAllocAttributesFieldNumber = 2;
+  ::google::protobuf::uint32 allocattributes() const;
+  void set_allocattributes(::google::protobuf::uint32 value);
+
+  // bool isDead = 3;
+  void clear_isdead();
+  static const int kIsDeadFieldNumber = 3;
+  bool isdead() const;
+  void set_isdead(bool value);
+
+  // @@protoc_insertion_point(class_scope:executor.TFRendezItem)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr key_;
+  ::tensorflow::TensorProto* val_;
+  ::google::protobuf::uint32 allocattributes_;
+  bool isdead_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -939,6 +1070,36 @@ TFOpContextUpdate::outputs() const {
   return outputs_;
 }
 
+// repeated .executor.TFRendezItem rendezTensors = 3;
+inline int TFOpContextUpdate::rendeztensors_size() const {
+  return rendeztensors_.size();
+}
+inline void TFOpContextUpdate::clear_rendeztensors() {
+  rendeztensors_.Clear();
+}
+inline const ::executor::TFRendezItem& TFOpContextUpdate::rendeztensors(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Get(index);
+}
+inline ::executor::TFRendezItem* TFOpContextUpdate::mutable_rendeztensors(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Mutable(index);
+}
+inline ::executor::TFRendezItem* TFOpContextUpdate::add_rendeztensors() {
+  // @@protoc_insertion_point(field_add:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+TFOpContextUpdate::mutable_rendeztensors() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextUpdate.rendezTensors)
+  return &rendeztensors_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+TFOpContextUpdate::rendeztensors() const {
+  // @@protoc_insertion_point(field_list:executor.TFOpContextUpdate.rendezTensors)
+  return rendeztensors_;
+}
+
 // .tensorflow.error.Code status_code = 4;
 inline void TFOpContextUpdate::clear_status_code() {
   status_code_ = 0;
@@ -1003,6 +1164,134 @@ inline void TFOpContextUpdate::set_allocated_status_msg(::std::string* status_ms
   }
   status_msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), status_msg);
   // @@protoc_insertion_point(field_set_allocated:executor.TFOpContextUpdate.status_msg)
+}
+
+// -------------------------------------------------------------------
+
+// TFRendezItem
+
+// string key = 1;
+inline void TFRendezItem::clear_key() {
+  key_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TFRendezItem::key() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.key)
+  return key_.GetNoArena();
+}
+inline void TFRendezItem::set_key(const ::std::string& value) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.key)
+}
+#if LANG_CXX11
+inline void TFRendezItem::set_key(::std::string&& value) {
+  
+  key_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFRendezItem.key)
+}
+#endif
+inline void TFRendezItem::set_key(const char* value) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFRendezItem.key)
+}
+inline void TFRendezItem::set_key(const char* value, size_t size) {
+  
+  key_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFRendezItem.key)
+}
+inline ::std::string* TFRendezItem::mutable_key() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezItem.key)
+  return key_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TFRendezItem::release_key() {
+  // @@protoc_insertion_point(field_release:executor.TFRendezItem.key)
+  
+  return key_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TFRendezItem::set_allocated_key(::std::string* key) {
+  if (key != NULL) {
+    
+  } else {
+    
+  }
+  key_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), key);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFRendezItem.key)
+}
+
+// uint32 allocAttributes = 2;
+inline void TFRendezItem::clear_allocattributes() {
+  allocattributes_ = 0u;
+}
+inline ::google::protobuf::uint32 TFRendezItem::allocattributes() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.allocAttributes)
+  return allocattributes_;
+}
+inline void TFRendezItem::set_allocattributes(::google::protobuf::uint32 value) {
+  
+  allocattributes_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.allocAttributes)
+}
+
+// bool isDead = 3;
+inline void TFRendezItem::clear_isdead() {
+  isdead_ = false;
+}
+inline bool TFRendezItem::isdead() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.isDead)
+  return isdead_;
+}
+inline void TFRendezItem::set_isdead(bool value) {
+  
+  isdead_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezItem.isDead)
+}
+
+// .tensorflow.TensorProto val = 4;
+inline bool TFRendezItem::has_val() const {
+  return this != internal_default_instance() && val_ != NULL;
+}
+inline void TFRendezItem::clear_val() {
+  if (GetArenaNoVirtual() == NULL && val_ != NULL) delete val_;
+  val_ = NULL;
+}
+inline const ::tensorflow::TensorProto& TFRendezItem::val() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezItem.val)
+  return val_ != NULL ? *val_
+                         : *::tensorflow::TensorProto::internal_default_instance();
+}
+inline ::tensorflow::TensorProto* TFRendezItem::mutable_val() {
+  
+  if (val_ == NULL) {
+    val_ = new ::tensorflow::TensorProto;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezItem.val)
+  return val_;
+}
+inline ::tensorflow::TensorProto* TFRendezItem::release_val() {
+  // @@protoc_insertion_point(field_release:executor.TFRendezItem.val)
+  
+  ::tensorflow::TensorProto* temp = val_;
+  val_ = NULL;
+  return temp;
+}
+inline void TFRendezItem::set_allocated_val(::tensorflow::TensorProto* val) {
+  delete val_;
+  if (val != NULL && val->GetArena() != NULL) {
+    ::tensorflow::TensorProto* new_val = new ::tensorflow::TensorProto;
+    new_val->CopyFrom(*val);
+    val = new_val;
+  }
+  val_ = val;
+  if (val) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.TFRendezItem.val)
 }
 
 // -------------------------------------------------------------------
@@ -1104,6 +1393,8 @@ TFPushRequest::tensors() const {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
