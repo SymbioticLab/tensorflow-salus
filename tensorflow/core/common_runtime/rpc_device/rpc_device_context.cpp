@@ -27,23 +27,23 @@
 
 namespace tensorflow {
 
-RpcDeviceContext::RpcDeviceContext(RpcClient &client)
+RPCDeviceContext::RPCDeviceContext(RpcClient &client)
     : m_rpc(client)
 { }
 
-RpcDeviceContext::~RpcDeviceContext()
+RPCDeviceContext::~RPCDeviceContext()
 {
 
 }
 
-void RpcDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device, Tensor *device_tensor,
+void RPCDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device, Tensor *device_tensor,
                                              StatusCallback done) const {
     LOG(INFO) << "RpcDeviceContext::CopyCPUTensorToDevice";
     auto status = m_rpc.push(device_tensor, cpu_tensor);
     done(status);
 }
 
-void RpcDeviceContext::CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
+void RPCDeviceContext::CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
                                              Device *device, Tensor *cpu_tensor, StatusCallback done) {
     LOG(INFO) << "RpcDeviceContext::CopyDeviceTensorToCPU";
 

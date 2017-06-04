@@ -123,6 +123,13 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
         const auto &outdef = tfdef.rendeztensors(i);
         Rendezvous::Args args;
         // TODO: is it ok to use op device context?
+        auto devctx = context->op_device_context<RPCDeviceContext>();
+        LOG(INFO) << "The op device context is " << typeid(devctx).name() << "@" << (uint64_t)devctx;
+        for (int j = 0; j != context->num_inputs(); ++j) {
+            auto d = context->input_device_context(j);
+            LOG(INFO) << "The input[" << j << "] device context is "
+                      << typeid(d).name() << "@" << (uint64_t)d;
+        }
         args.device_context = context->op_device_context();
         args.alloc_attrs.value = outdef.allocattributes();
         Rendezvous::ParsedKey parsed;

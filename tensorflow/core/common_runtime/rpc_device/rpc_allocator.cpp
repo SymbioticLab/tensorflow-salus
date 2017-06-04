@@ -25,23 +25,23 @@
 
 namespace tensorflow {
 
-RpcAllocator::RpcAllocator(RpcClient *rpc)
+RPCAllocator::RPCAllocator(RpcClient *rpc)
     : m_rpc(rpc)
 {
 
 }
 
-RpcAllocator::~RpcAllocator()
+RPCAllocator::~RPCAllocator()
 {
 
 }
 
-string RpcAllocator::Name()
+string RPCAllocator::Name()
 {
     return "rpc";
 }
 
-void *RpcAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
+void *RPCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 {
     uint64_t addr_handle;
 
@@ -52,7 +52,7 @@ void *RpcAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
     return nullptr;
 }
 
-void RpcAllocator::DeallocateRaw(void *ptr)
+void RPCAllocator::DeallocateRaw(void *ptr)
 {
     auto status = m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
     if (!status.ok()) {

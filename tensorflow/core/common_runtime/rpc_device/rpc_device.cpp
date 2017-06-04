@@ -34,26 +34,26 @@
 #include "tensorflow/core/public/session_options.h"
 
 namespace tensorflow {
-RpcDevice::RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+RPCDevice::RPCDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
                      const DeviceLocality &locality, Allocator *allocator, RpcClient &rpc)
-    : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_CPU, memory_limit, locality), allocator)
+    : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_RPC, memory_limit, locality), allocator)
     , m_allocator(allocator)
     , m_rpc(rpc)
     , m_cfgProto(options.config)
 {
 }
 
-RpcDevice::~RpcDevice()
+RPCDevice::~RPCDevice()
 {
 
 }
 
-Status RpcDevice::Sync()
+Status RPCDevice::Sync()
 {
     return Status::OK();
 }
 
-Status RpcDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph)
+Status RPCDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph)
 {
     m_funcDefLib = library;
 
@@ -62,11 +62,11 @@ Status RpcDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
     return Status::OK();
 }
 
-Status RpcDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
+Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
 {
     VLOG(1) << "RpcDevice::FillContextMap";
     device_context_map->resize(graph->num_node_ids());
-    auto* ctx = new RpcDeviceContext(m_rpc);
+    auto* ctx = new RPCDeviceContext(m_rpc);
     for (Node* n : graph->nodes()) {
         VLOG(2) << n->id() << " : " << n->type_string() << " : " << n->name();
         ctx->Ref();
@@ -76,7 +76,7 @@ Status RpcDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_co
     return Status::OK();
 }
 
-void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
+void RPCDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
     auto status = m_rpc.run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
 
@@ -91,13 +91,13 @@ void RpcDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
     LOG(INFO) << "context.num_outputs() " << context->num_outputs();
 }
 
-Allocator *RpcDevice::GetAllocator(AllocatorAttributes attr)
+Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)
 {
     LOG(WARNING) << "!!!!!RpcDevice GetAllocator called";
     return m_allocator;
 }
 
-Status RpcDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
+Status RPCDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
                                       Tensor *tensor)
 {
     LOG(WARNING) << "!!!RpcDevice MakeTensorFromProto";

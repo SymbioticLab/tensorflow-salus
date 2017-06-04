@@ -30,12 +30,12 @@ class RpcClient;
 /**
  * @todo write docs
  */
-class RpcDeviceContext : public DeviceContext
+class RPCDeviceContext : public DeviceContext
 {
 public:
-    RpcDeviceContext(RpcClient &client);
+    RPCDeviceContext(RpcClient &client);
 
-    ~RpcDeviceContext() override;
+    ~RPCDeviceContext() override;
 
     void CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device,
                                Tensor *device_tensor,

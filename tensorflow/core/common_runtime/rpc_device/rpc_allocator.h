@@ -33,12 +33,12 @@ class RpcClient;
 /**
  * @todo write docs
  */
-class RpcAllocator : public Allocator
+class RPCAllocator : public Allocator
 {
 public:
-    RpcAllocator(RpcClient *rpc);
+    RPCAllocator(RpcClient *rpc);
 
-    ~RpcAllocator() override;
+    ~RPCAllocator() override;
 
     string Name() override;
     void *AllocateRaw(size_t alignment, size_t num_bytes) override;
@@ -48,7 +48,7 @@ private:
 
     RpcClient *m_rpc; // not owned
 
-    TF_DISALLOW_COPY_AND_ASSIGN(RpcAllocator);
+    TF_DISALLOW_COPY_AND_ASSIGN(RPCAllocator);
 };
 
 class OneTimeAllocator : public Allocator

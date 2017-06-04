@@ -35,14 +35,14 @@ namespace tensorflow {
  * @todo write docs
  */
 // TODO: derive from Device directly
-class RpcDevice : public LocalDevice
+class RPCDevice : public LocalDevice
 {
 public:
 
-    RpcDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+    RPCDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
               const DeviceLocality &locality, Allocator *allocator, RpcClient &rpc);
 
-    ~RpcDevice() override;
+    ~RPCDevice() override;
 
     void Compute(OpKernel *op_kernel, OpKernelContext *context) override;
     Allocator *GetAllocator(AllocatorAttributes attr) override;
