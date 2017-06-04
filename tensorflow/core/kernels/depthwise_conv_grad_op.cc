@@ -621,7 +621,7 @@ TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
-#define REGISTER_RPC(T)                                       \
+#define REGISTER_RPC_KERNEL(T)                                       \
   REGISTER_KERNEL_BUILDER(Name("DepthwiseConv2dNativeBackpropInput") \
                               .Device(DEVICE_RPC)                    \
                               .TypeConstraint<T>("T"),               \

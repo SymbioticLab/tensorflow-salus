@@ -448,8 +448,8 @@ TF_CALL_double(REGISTER_CPU_KERNEL);
       Name("DepthwiseConv2dNative").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
       DepthwiseConv2dNativeOp<CPUDevice, T>);
 
-TF_CALL_float(REGISTER_RPC);
-TF_CALL_double(REGISTER_RPC);
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
 
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(

@@ -198,7 +198,7 @@ TF_CALL_ALL_TYPES(REGISTER_CPU_REF_SELECT);
 
 #define REGISTER_RPCREF_SELECT(type)                     \
   REGISTER_KERNEL_BUILDER(Name("RefSelect")               \
-                              .Device(DEVICE_RPC         \
+                              .Device(DEVICE_RPC)         \
                               .HostMemory("index")        \
                               .TypeConstraint<type>("T"), \
                           RefSelectOp)

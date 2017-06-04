@@ -175,7 +175,7 @@ REGISTER_KERNEL_BUILDER(
     Name("QuantizeV2").Device(DEVICE_RPC).TypeConstraint<qint8>("T"),
     QuantizeV2Op<CPUDevice, qint8>);
 REGISTER_KERNEL_BUILDER(
-    Name("QuantizeV2").Device(DEVICE__RPC).TypeConstraint<quint16>("T"),
+    Name("QuantizeV2").Device(DEVICE_RPC).TypeConstraint<quint16>("T"),
     QuantizeV2Op<CPUDevice, quint16>);
 REGISTER_KERNEL_BUILDER(
     Name("QuantizeV2").Device(DEVICE_RPC).TypeConstraint<qint16>("T"),

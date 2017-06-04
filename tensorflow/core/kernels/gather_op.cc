@@ -116,8 +116,8 @@ TF_CALL_QUANTIZED_TYPES(REGISTER_GATHER_CPU);
                           GatherOp<CPUDevice, type, index_type>)
 
 #define REGISTER_GATHER_ALL_INDICES_RPC(type) \
-  REGISTER_GATHER_FULL(type, int32);      \
-  REGISTER_GATHER_FULL(type, int64)
+  REGISTER_GATHER_FULL_RPC(type, int32);      \
+  REGISTER_GATHER_FULL_RPC(type, int64)
 
 // Registration of the CPU implementations.
 TF_CALL_ALL_TYPES(REGISTER_GATHER_ALL_INDICES_RPC);

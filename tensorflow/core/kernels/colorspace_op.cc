@@ -120,11 +120,9 @@ TF_CALL_double(REGISTER_CPU);
   REGISTER_KERNEL_BUILDER(Name("RGBToHSV").Device(DEVICE_RPC) \
                               .TypeConstraint<T>("T"),        \
                           RGBToHSVOp<CPUDevice, T>);          \
-  template class RGBToHSVOp<CPUDevice, T>;                    \
   REGISTER_KERNEL_BUILDER(Name("HSVToRGB").Device(DEVICE_RPC) \
                               .TypeConstraint<T>("T"),        \
-                          HSVToRGBOp<CPUDevice, T>);          \
-  template class HSVToRGBOp<CPUDevice, T>;
+                          HSVToRGBOp<CPUDevice, T>);
 TF_CALL_float(REGISTER_RPC);
 TF_CALL_double(REGISTER_RPC);
 

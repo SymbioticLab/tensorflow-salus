@@ -58,7 +58,7 @@ TF_CALL_double(REGISTER_KERNELS_CPU);
 #undef REGISTER_KERNELS_CPU
 #undef REGISTER_KERNELS
 
-#define REGISTER_KERNELS_RPC(type, dev)                       \
+#define REGISTER_KERNELS_RPC(type)                           \
   REGISTER_KERNEL_BUILDER(Name("ConditionalAccumulator")      \
                               .Device(DEVICE_RPC)           \
                               .TypeConstraint<type>("dtype"), \

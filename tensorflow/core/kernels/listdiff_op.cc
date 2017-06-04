@@ -101,7 +101,7 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER_LISTDIFF);
 REGISTER_LISTDIFF(string);
 #undef REGISTER_LISTDIFF
 
-#define REGISTER_LISTDIFF_RPF(type)                                  \
+#define REGISTER_LISTDIFF_RPC(type)                                  \
   REGISTER_KERNEL_BUILDER(Name("ListDiff")                       \
                               .Device(DEVICE_RPC)                \
                               .TypeConstraint<type>("T")         \
