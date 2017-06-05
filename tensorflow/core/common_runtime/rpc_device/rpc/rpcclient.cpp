@@ -35,6 +35,9 @@ namespace {
 
 tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
 {
+    if (outdef.int64_val_size() != 1) {
+        LOG(ERROR) << "The tensorproto is not a valid protometa: " << outdef.DebugString();
+    }
     // create a one time allocator, which will delete itself after DeallocateRaw
     auto alloc = tensorflow::OneTimeAllocator::create(outdef.int64_val(0)).release();
     return tensorflow::Tensor(alloc, outdef.dtype(), tensorflow::TensorShape(outdef.tensor_shape()));

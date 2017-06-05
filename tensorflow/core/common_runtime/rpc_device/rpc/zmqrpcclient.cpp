@@ -177,12 +177,13 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
     LOG(INFO) << "RpcClient::fetch";
 
     rpc::TFTensors tensors;
-    auto proto = tensors.add_tensors();
-    tensorToProto(proto, *dev_tensor);
+    tensorToProto(tensors.add_tensors(), *dev_tensor);
 
     rpc::FetchRequest request;
     request.set_oplibrary(rpc::TENSORFLOW);
-    proto->SerializeToString(request.mutable_extra());
+    tensors.SerializeToString(request.mutable_extra());
+
+    LOG(INFO) << "RpcCLient::fetch actual request: " << request.DebugString();
 
     // Actuall call
     rpc::FetchResponse response;
@@ -195,8 +196,18 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
         return Status(error::ABORTED, oss.str());
     }
 
+    LOG(INFO) << "Got fetch response: " << response.DebugString();
+
     rpc::TFTensors recved;
     recved.ParseFromString(response.extra());
+
+    LOG(INFO) << "Got parsed tftensors: " << recved.DebugString();
+
+    if (recved.tensors_size() != 1) {
+        LOG(ERROR) << "Parsed proto contains wrong number of tensor";
+        return errors::Internal("Failed to parse proto");
+    }
+
     auto recvedproto = recved.tensors(0);
 
     if (!cpu_tensor->FromProto(recvedproto)) {
