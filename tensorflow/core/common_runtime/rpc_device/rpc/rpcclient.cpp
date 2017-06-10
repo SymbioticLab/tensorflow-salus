@@ -149,7 +149,8 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
         }
         LOG(INFO) << "Tensor proto is " << outdef.val().DebugString();
         auto t = tensorFromProtoMeta(outdef.val());
-        LOG(INFO) << "Process tensor " << t.DebugString();
+        // NOTE: never use DebugString on meta tensors, which holds buffer on device memory
+        //LOG(INFO) << "Process tensor " << t.DebugString();
         LOG(INFO) << "Rendezvous send";
         status = context->rendezvous()->Send(parsed, args, t, outdef.isdead());
         LOG(INFO) << "Rendezvous send finished";
