@@ -76,18 +76,19 @@ Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobu
         // TODO: consider remove the copy
         msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
 
-        LOG(INFO) << "Sending body message_t of size: " << zmqmsg.size();
-
-        m_zmqsock.send(evenlop, ZMQ_SNDMORE);
-        m_zmqsock.send(zmqmsg);
-
-        LOG(INFO) << "Sending Returned, waiting for reply";
-
-        // Receive reply
         zmq::message_t rbody;
-        m_zmqsock.recv(&rbody);
+        {
+            mutex_lock locker(m_mu);
+            LOG(INFO) << "Sending body message_t of size: " << zmqmsg.size();
+            m_zmqsock.send(evenlop, ZMQ_SNDMORE);
+            m_zmqsock.send(zmqmsg);
 
-        LOG(INFO) << "Got reply of size: " << rbody.size();
+            LOG(INFO) << "Sending Returned, waiting for reply";
+
+            // Receive reply
+            m_zmqsock.recv(&rbody);
+            LOG(INFO) << "Got reply of size: " << rbody.size();
+        }
 
         // Parse reply
         if(reply.ParseFromArray(rbody.data(), rbody.size())) {

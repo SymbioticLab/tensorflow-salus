@@ -21,6 +21,7 @@
 #define ZMQRPCCLIENT_H
 
 #include "tensorflow/core/common_runtime/rpc_device/rpc/rpcclient.h"
+#include "tensorflow/core/platform/mutex.h"
 
 #include "zmq.hpp"
 
@@ -45,7 +46,9 @@ private:
 
 private:
     zmq::context_t m_zmqctx;
-    zmq::socket_t m_zmqsock;
+    zmq::socket_t m_zmqsock; // guarded by m_mu
+
+    mutex m_mu;
 
     TF_DISALLOW_COPY_AND_ASSIGN(ZmqRpcClient);
 };
