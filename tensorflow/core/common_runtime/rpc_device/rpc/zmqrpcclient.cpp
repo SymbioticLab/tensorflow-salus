@@ -53,7 +53,7 @@ ZmqRpcClient::ZmqRpcClient(Env *env, const std::string &executorAddr)
     : m_execAddr(executorAddr)
     , m_zmqctx(1)
     , m_seq(0)
-    , m_sendSock(m_zmqctx, ZMQ_REQ)
+    , m_sendSock(m_zmqctx, zmq::socket_type::dealer)
 {
     LOG(INFO) << "Created ZeroMQ context";
 
@@ -204,10 +204,11 @@ void ZmqRpcClient::rpcCallAsync(const google::protobuf::Message& msg,
         // Send out message
         {
             mutex_lock locker(m_mu);
+            m_sendSock.send(zmq::message_t(), ZMQ_SNDMORE);
             m_sendSock.send(evenlop, ZMQ_SNDMORE);
             m_sendSock.send(zmqmsg);
-            LOG(INFO) << "Sent body message_t of size: " << zmqmsg.size();
         }
+        LOG(INFO) << "Message sent for seq: " << edef.seq();
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "Error when sending message seq " << seq << ": " << err.what();
         // cleanup callback if any
