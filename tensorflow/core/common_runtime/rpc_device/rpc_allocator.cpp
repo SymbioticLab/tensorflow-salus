@@ -25,7 +25,7 @@
 
 namespace tensorflow {
 
-RPCAllocator::RPCAllocator(RpcClient *rpc)
+RPCAllocator::RPCAllocator(RpcClient &rpc)
     : m_rpc(rpc)
 {
 
@@ -46,7 +46,7 @@ void *RPCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
     uint64_t addr_handle;
     LOG(INFO) << "RpcAllocateRaw with alignment " << alignment << " num_bytes " << num_bytes;
 
-    auto status = m_rpc->allocate(alignment, num_bytes, &addr_handle);
+    auto status = m_rpc.allocate(alignment, num_bytes, &addr_handle);
     if (status.ok()) {
         return reinterpret_cast<void*>(addr_handle);
     }
@@ -56,7 +56,7 @@ void *RPCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 void RPCAllocator::DeallocateRaw(void *ptr)
 {
     LOG(INFO) << "RpcDeallocateRaw with ptr " << reinterpret_cast<uint64_t>(ptr);
-    auto status = m_rpc->deallocate(reinterpret_cast<uint64_t>(ptr));
+    auto status = m_rpc.deallocate(reinterpret_cast<uint64_t>(ptr));
     if (!status.ok()) {
         LOG(ERROR) << "Error in RpcAllocator::DeallocateRaw";
     }

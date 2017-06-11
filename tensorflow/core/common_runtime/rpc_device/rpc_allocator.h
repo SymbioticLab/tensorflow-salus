@@ -36,7 +36,7 @@ class RpcClient;
 class RPCAllocator : public Allocator
 {
 public:
-    RPCAllocator(RpcClient *rpc);
+    RPCAllocator(RpcClient &rpc);
 
     ~RPCAllocator() override;
 
@@ -46,7 +46,7 @@ public:
 
 private:
 
-    RpcClient *m_rpc; // not owned
+    RpcClient &m_rpc;
 
     TF_DISALLOW_COPY_AND_ASSIGN(RPCAllocator);
 };

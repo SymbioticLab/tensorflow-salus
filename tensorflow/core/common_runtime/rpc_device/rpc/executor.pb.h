@@ -43,6 +43,9 @@ extern DeallocRequestDefaultTypeInternal _DeallocRequest_default_instance_;
 class DeallocResponse;
 class DeallocResponseDefaultTypeInternal;
 extern DeallocResponseDefaultTypeInternal _DeallocResponse_default_instance_;
+class EvenlopDef;
+class EvenlopDefDefaultTypeInternal;
+extern EvenlopDefDefaultTypeInternal _EvenlopDef_default_instance_;
 class FetchRequest;
 class FetchRequestDefaultTypeInternal;
 extern FetchRequestDefaultTypeInternal _FetchRequest_default_instance_;
@@ -1334,6 +1337,119 @@ class Status : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   mutable int _cached_size_;
   friend struct  protobuf_executor_2eproto::TableStruct;
 };
+// -------------------------------------------------------------------
+
+class EvenlopDef : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.EvenlopDef) */ {
+ public:
+  EvenlopDef();
+  virtual ~EvenlopDef();
+
+  EvenlopDef(const EvenlopDef& from);
+
+  inline EvenlopDef& operator=(const EvenlopDef& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const EvenlopDef& default_instance();
+
+  static inline const EvenlopDef* internal_default_instance() {
+    return reinterpret_cast<const EvenlopDef*>(
+               &_EvenlopDef_default_instance_);
+  }
+
+  void Swap(EvenlopDef* other);
+
+  // implements Message ----------------------------------------------
+
+  inline EvenlopDef* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  EvenlopDef* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const EvenlopDef& from);
+  void MergeFrom(const EvenlopDef& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(EvenlopDef* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string type = 1;
+  void clear_type();
+  static const int kTypeFieldNumber = 1;
+  const ::std::string& type() const;
+  void set_type(const ::std::string& value);
+  #if LANG_CXX11
+  void set_type(::std::string&& value);
+  #endif
+  void set_type(const char* value);
+  void set_type(const char* value, size_t size);
+  ::std::string* mutable_type();
+  ::std::string* release_type();
+  void set_allocated_type(::std::string* type);
+
+  // bytes recvIdentity = 3;
+  void clear_recvidentity();
+  static const int kRecvIdentityFieldNumber = 3;
+  const ::std::string& recvidentity() const;
+  void set_recvidentity(const ::std::string& value);
+  #if LANG_CXX11
+  void set_recvidentity(::std::string&& value);
+  #endif
+  void set_recvidentity(const char* value);
+  void set_recvidentity(const void* value, size_t size);
+  ::std::string* mutable_recvidentity();
+  ::std::string* release_recvidentity();
+  void set_allocated_recvidentity(::std::string* recvidentity);
+
+  // uint64 seq = 2;
+  void clear_seq();
+  static const int kSeqFieldNumber = 2;
+  ::google::protobuf::uint64 seq() const;
+  void set_seq(::google::protobuf::uint64 value);
+
+  // @@protoc_insertion_point(class_scope:executor.EvenlopDef)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr type_;
+  ::google::protobuf::internal::ArenaStringPtr recvidentity_;
+  ::google::protobuf::uint64 seq_;
+  mutable int _cached_size_;
+  friend struct  protobuf_executor_2eproto::TableStruct;
+};
 // ===================================================================
 
 
@@ -2178,7 +2294,131 @@ inline void Status::set_code(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:executor.Status.code)
 }
 
+// -------------------------------------------------------------------
+
+// EvenlopDef
+
+// string type = 1;
+inline void EvenlopDef::clear_type() {
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& EvenlopDef::type() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.type)
+  return type_.GetNoArena();
+}
+inline void EvenlopDef::set_type(const ::std::string& value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.type)
+}
+#if LANG_CXX11
+inline void EvenlopDef::set_type(::std::string&& value) {
+  
+  type_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.EvenlopDef.type)
+}
+#endif
+inline void EvenlopDef::set_type(const char* value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.EvenlopDef.type)
+}
+inline void EvenlopDef::set_type(const char* value, size_t size) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.EvenlopDef.type)
+}
+inline ::std::string* EvenlopDef::mutable_type() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.EvenlopDef.type)
+  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* EvenlopDef::release_type() {
+  // @@protoc_insertion_point(field_release:executor.EvenlopDef.type)
+  
+  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void EvenlopDef::set_allocated_type(::std::string* type) {
+  if (type != NULL) {
+    
+  } else {
+    
+  }
+  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
+  // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.type)
+}
+
+// uint64 seq = 2;
+inline void EvenlopDef::clear_seq() {
+  seq_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 EvenlopDef::seq() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.seq)
+  return seq_;
+}
+inline void EvenlopDef::set_seq(::google::protobuf::uint64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.seq)
+}
+
+// bytes recvIdentity = 3;
+inline void EvenlopDef::clear_recvidentity() {
+  recvidentity_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& EvenlopDef::recvidentity() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.recvIdentity)
+  return recvidentity_.GetNoArena();
+}
+inline void EvenlopDef::set_recvidentity(const ::std::string& value) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.recvIdentity)
+}
+#if LANG_CXX11
+inline void EvenlopDef::set_recvidentity(::std::string&& value) {
+  
+  recvidentity_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.EvenlopDef.recvIdentity)
+}
+#endif
+inline void EvenlopDef::set_recvidentity(const char* value) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.EvenlopDef.recvIdentity)
+}
+inline void EvenlopDef::set_recvidentity(const void* value, size_t size) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.EvenlopDef.recvIdentity)
+}
+inline ::std::string* EvenlopDef::mutable_recvidentity() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.EvenlopDef.recvIdentity)
+  return recvidentity_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* EvenlopDef::release_recvidentity() {
+  // @@protoc_insertion_point(field_release:executor.EvenlopDef.recvIdentity)
+  
+  return recvidentity_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void EvenlopDef::set_allocated_recvidentity(::std::string* recvidentity) {
+  if (recvidentity != NULL) {
+    
+  } else {
+    
+  }
+  recvidentity_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), recvidentity);
+  // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.recvIdentity)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

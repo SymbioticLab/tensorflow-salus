@@ -55,9 +55,6 @@ public:
     virtual Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) = 0;
     virtual Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) = 0;
 
-    // default instance always connect to localhost:5501
-    static RpcClient &instance();
-
     void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel,
                            Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
     void serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,

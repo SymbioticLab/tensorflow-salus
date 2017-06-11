@@ -22,14 +22,16 @@
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/platform/env.h"
 
 #include <sstream>
 #include <cstring>
+#include <random>
+#include <memory>
 
 namespace rpc = ::executor;
-using std::shared_ptr;
-using std::unique_ptr;
 using std::ostringstream;
+using random_bytes_engine = std::independent_bits_engine<std::random_device, sizeof(uint8_t), uint8_t>;
 
 namespace {
 void tensorToProto(tensorflow::TensorProto *proto, const tensorflow::Tensor &tensor)
@@ -47,59 +49,185 @@ void tensorToProto(tensorflow::TensorProto *proto, const tensorflow::Tensor &ten
 
 namespace tensorflow {
 
-ZmqRpcClient::ZmqRpcClient()
+ZmqRpcClient::ZmqRpcClient(Env *env)
     : m_zmqctx(1)
-    , m_zmqsock(m_zmqctx, ZMQ_REQ)
+    , m_seq(0)
+    , m_sendSock(m_zmqctx, ZMQ_REQ)
 {
     LOG(INFO) << "Created ZeroMQ context";
+
+    random_bytes_engine rbe;
+    m_recvId = "tensorflow::recv::";
+    m_recvId += rbe();
+    m_recvId += rbe();
+    m_recvId += rbe();
+    m_recvThread = env->StartThread(ThreadOptions(), "ZmqRpcClient::recvLoop",
+                                    std::bind(&ZmqRpcClient::recvLoop, this));
+
     try {
-        m_zmqsock.connect("tcp://localhost:5501");
+        m_sendSock.connect("tcp://localhost:5501");
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
     }
 }
 
-ZmqRpcClient::~ZmqRpcClient() { }
-
-Status ZmqRpcClient::rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply)
+ZmqRpcClient::~ZmqRpcClient()
 {
+    // close context first, so that recv thread will return.
+    m_zmqctx.close();
+
+    delete m_recvThread;
+}
+
+ZmqRpcClient::Args::Args() {}
+
+ZmqRpcClient::Args::Args(Args &&other) : reply(std::move(other.reply)) , done(std::move(other.done)) {}
+
+ZmqRpcClient::Args::Args(ProtoPtr &&rep, DoneCallback done) : reply(std::move(rep)), done(done) {}
+
+ZmqRpcClient::Args &ZmqRpcClient::Args::operator=(Args &&other)
+{
+    std::swap(this->reply, other.reply);
+    std::swap(this->done, other.done);
+    return *this;
+}
+
+void ZmqRpcClient::recvLoop()
+{
+    LOG(INFO) << "Started zmq recving thread, using ZMQ_IDENTITY: " << m_recvId;
+
+    zmq::socket_t recvSock(m_zmqctx, zmq::socket_type::dealer);
+    try {
+        recvSock.setsockopt(ZMQ_IDENTITY, m_recvId.c_str(), m_recvId.size());
+    } catch (zmq::error_t &err) {
+        LOG(ERROR) << "ZeroMQ recving socket creation failed: " << err.what();
+        return;
+    }
+
+    while (true) {
+        try {
+            zmq::message_t msg;
+            // Receive and skip identification frames
+            do {
+                recvSock.recv(&msg);
+            } while (msg.size() != 0 && recvSock.getsockopt<int64_t>(ZMQ_RCVMORE));
+
+            // Now receive our message evenlop
+            if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
+                LOG(ERROR) << "Skipped one iteration due to no evenlop message part found after identity frames";
+                continue;
+            }
+            recvSock.recv(&msg);
+            rpc::EvenlopDef edef;
+            if(!edef.ParseFromArray(msg.data(), msg.size())) {
+                LOG(ERROR) << "Received un-identifiable malformatted message. Dropping";
+                continue;
+            }
+
+            LOG(INFO) << "Received evenlop: seq=" << edef.seq();
+
+            // Find corresonding item in table
+            Args item;
+            {
+                mutex_lock locker(m_mtable);
+                auto it = m_recvCallbacks.find(edef.seq());
+                if (it == m_recvCallbacks.end()) {
+                    LOG(ERROR) << "Skipped one iteration due to seq not found in table: " << edef.seq();
+                    continue;
+                }
+                std::swap(item ,it->second);
+                m_recvCallbacks.erase(it);
+            }
+
+            if (!item.done) {
+                LOG(WARNING) << "Skipped one iteration due to no callback";
+                continue;
+            }
+
+            // Now receive our message body
+            if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
+                LOG(ERROR) << "Skipped one iteration due to no body message part found after identity frames";
+                item.done(errors::Internal("No body message found"), std::move(item.reply));
+                continue;
+            }
+            recvSock.recv(&msg);
+            if(!item.reply->ParseFromArray(msg.data(), msg.size())) {
+                LOG(ERROR) << "Received malformatted message body. Dropping";
+                item.done(errors::Internal("Body message malformatted"), std::move(item.reply));
+                continue;
+            }
+
+            item.done(Status::OK(), std::move(item.reply));
+        } catch (zmq::error_t &err) {
+            if (err.num() == ETERM || err.num() == EINTR) {
+                break;
+            }
+            LOG(ERROR) << "Caught zmq error during recving loop: " << err.what();
+        } catch (std::exception &err) {
+            LOG(ERROR) << "Caught exception during recving loop: " << err.what();
+        }
+    }
+}
+
+template<typename ResponseType>
+void ZmqRpcClient::rpcCallAsync(const google::protobuf::Message& msg, Args &&args)
+{
+    auto seq = m_seq.fetch_add(1);
     try {
         // Create evenlop message
-        auto type = msg.GetTypeName();
-        zmq::message_t evenlop(type.size());
-        memcpy(evenlop.data(), type.c_str(), evenlop.size());
+        rpc::EvenlopDef edef;
+        edef.set_type(msg.GetTypeName());
+        edef.set_seq(seq);
+        edef.set_recvidentity(m_recvId);
+        zmq::message_t evenlop(edef.ByteSizeLong());
+        edef.SerializeToArray(evenlop.data(), evenlop.size());
 
-        LOG(INFO) << "Sending evenlop message_t: " << type;
+        LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
 
         // Create body message
         zmq::message_t zmqmsg(msg.ByteSizeLong());
-        // TODO: consider remove the copy
         msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
 
-        zmq::message_t rbody;
+        // Register callback first
+        if (!args.reply) {
+            args.reply.reset(new ResponseType);
+        }
+        {
+            mutex_lock locker(m_mtable);
+            m_recvCallbacks[seq] = std::move(args);
+        }
+
+        // Send out message
         {
             mutex_lock locker(m_mu);
-            LOG(INFO) << "Sending body message_t of size: " << zmqmsg.size();
-            m_zmqsock.send(evenlop, ZMQ_SNDMORE);
-            m_zmqsock.send(zmqmsg);
-
-            LOG(INFO) << "Sending Returned, waiting for reply";
-
-            // Receive reply
-            m_zmqsock.recv(&rbody);
-            LOG(INFO) << "Got reply of size: " << rbody.size();
-        }
-
-        // Parse reply
-        if(reply.ParseFromArray(rbody.data(), rbody.size())) {
-            return Status::OK();
-        } else {
-            return Status(error::INTERNAL, "Malformated message");
+            m_sendSock.send(evenlop, ZMQ_SNDMORE);
+            m_sendSock.send(zmqmsg);
+            LOG(INFO) << "Sent body message_t of size: " << zmqmsg.size();
         }
     } catch (zmq::error_t &err) {
-        LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
-        return Status(error::INTERNAL, err.what());
+        LOG(ERROR) << "Error when sending message seq " << seq << ": " << err.what();
+        // cleanup callback if any
+        mutex_lock locker(m_mtable);
+        m_recvCallbacks.erase(seq);
     }
+}
+
+template<typename ResponseType>
+Status ZmqRpcClient::rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &reply)
+{
+    Status status;
+    Notification n;
+    Args args;
+    args.done = [&n, &status, &reply](const Status &s, ProtoPtr &&rep){
+        status = s;
+        reply.reset(static_cast<ResponseType*>(rep.release()));
+        n.Notify();
+    };
+    rpcCallAsync<ResponseType>(msg, std::move(args));
+
+    n.WaitForNotification();
+
+    return status;
 }
 
 Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
@@ -112,20 +240,18 @@ Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &
     serializeOpKernel(request.mutable_opkernel(), kernel, graph, library, cfgProto);
     serializeOpContext(request.mutable_context(), context, graph, library, cfgProto);
 
-    rpc::RunResponse response;
+    std::unique_ptr<rpc::RunResponse> pResponse;
     LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";
-    auto status = rpcCall(request, response);
+    auto status = rpcCall(request, pResponse);
     LOG(INFO) << "RpcClient::run    rpc returned with status: "
               << status.code() << " " << status.error_message();
 
     // TODO: better error handling
-    if (!status.ok() || response.result().code() != 0) {
-        ostringstream oss;
-        oss << "ExecEngine returned " << response.result().code();
-        return Status(error::ABORTED, oss.str());
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        return status;
     }
 
-    deserializeOpContext(context, &response.context());
+    deserializeOpContext(context, &pResponse->context());
 
     return context->status();
 }
@@ -138,17 +264,15 @@ Status ZmqRpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *
     request.set_alignment(alignment);
     request.set_num_bytes(num_bytes);
 
-    rpc::AllocResponse response;
-    auto status = rpcCall(request, response);
+    std::unique_ptr<rpc::AllocResponse> pResponse;
+    auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling
-    if (!status.ok() || response.result().code() != 0) {
-        ostringstream oss;
-        oss << "ExecEngine returned " << response.result().code();
-        return Status(error::ABORTED, oss.str());
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        return status;
     }
 
-    *addr_handle = response.addr_handle();
+    *addr_handle = pResponse->addr_handle();
     LOG(INFO) << "RpcClient::allocate returned addr_handle=" << addr_handle;
     return Status::OK();
 }
@@ -160,14 +284,12 @@ Status ZmqRpcClient::deallocate(uint64_t addr_handle)
     rpc::DeallocRequest request;
     request.set_addr_handle(addr_handle);
 
-    rpc::DeallocResponse response;
-    auto status = rpcCall(request, response);
+    std::unique_ptr<rpc::DeallocResponse> pResponse;
+    auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling
-    if (!status.ok() || response.result().code() != 0) {
-        ostringstream oss;
-        oss << "ExecEngine returned " << response.result().code();
-        return Status(error::ABORTED, oss.str());
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        return status;
     }
 
     return Status::OK();
@@ -187,20 +309,18 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
     LOG(INFO) << "RpcCLient::fetch actual request: " << request.DebugString();
 
     // Actuall call
-    rpc::FetchResponse response;
-    auto status = rpcCall(request, response);
+    std::unique_ptr<rpc::FetchResponse> pResponse;
+    auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling
-    if (!status.ok() || response.result().code() != 0) {
-        ostringstream oss;
-        oss << "ExecEngine returned " << response.result().code();
-        return Status(error::ABORTED, oss.str());
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        return status;
     }
 
-    LOG(INFO) << "Got fetch response: " << response.DebugString();
+    LOG(INFO) << "Got fetch response: " << pResponse->DebugString();
 
     rpc::TFTensors recved;
-    recved.ParseFromString(response.extra());
+    recved.ParseFromString(pResponse->extra());
 
     LOG(INFO) << "Got parsed tftensors: " << recved.DebugString();
 
@@ -232,14 +352,12 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
     push.SerializeToString(request.mutable_extra());
 
     // Actuall call
-    rpc::PushResponse response;
-    auto status = rpcCall(request, response);
+    std::unique_ptr<rpc::PushResponse> pResponse;
+    auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling
-    if (!status.ok() || response.result().code() != 0) {
-        ostringstream oss;
-        oss << "ExecEngine returned " << response.result().code();
-        return Status(error::ABORTED, oss.str());
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        return status;
     }
 
     return Status::OK();

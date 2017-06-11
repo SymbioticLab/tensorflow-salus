@@ -25,12 +25,18 @@
 
 #include "zmq.hpp"
 
+#include <atomic>
+#include <unordered_map>
+#include <memory>
+
 namespace tensorflow {
+class Env;
+class Thread;
 
 class ZmqRpcClient : public RpcClient
 {
 public:
-    ZmqRpcClient();
+    ZmqRpcClient(Env *env);
 
     ~ZmqRpcClient() override;
 
@@ -42,13 +48,39 @@ public:
     Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) override;
 
 private:
-    Status rpcCall(::google::protobuf::Message &msg, ::google::protobuf::Message &reply);
+    using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
+    using DoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
+    struct Args
+    {
+        ProtoPtr reply;
+        DoneCallback done;
+
+        Args();
+        Args(Args &&other);
+        Args(ProtoPtr &&rep, DoneCallback d);
+        Args &operator=(Args &&other);
+    };
+
+    template<typename ResponseType>
+    Status rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &pReply);
+
+    template<typename ResponseType>
+    void rpcCallAsync(const ::google::protobuf::Message &msg, Args &&args);
+
+    void recvLoop();
 
 private:
     zmq::context_t m_zmqctx;
-    zmq::socket_t m_zmqsock; // guarded by m_mu
+
+    std::atomic_uint64_t m_seq;
 
     mutex m_mu;
+    zmq::socket_t m_sendSock GUARDED_BY(m_mu);
+
+    mutex m_mtable;
+    std::unordered_map<uint64_t, Args> m_recvCallbacks GUARDED_BY(m_mtable);
+    std::string m_recvId;
+    Thread *m_recvThread;
 
     TF_DISALLOW_COPY_AND_ASSIGN(ZmqRpcClient);
 };

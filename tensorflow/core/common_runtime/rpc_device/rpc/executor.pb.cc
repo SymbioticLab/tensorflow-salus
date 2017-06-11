@@ -44,13 +44,15 @@ class OpContextDefDefaultTypeInternal : public ::google::protobuf::internal::Exp
 } _OpContextDef_default_instance_;
 class StatusDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Status> {
 } _Status_default_instance_;
+class EvenlopDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<EvenlopDef> {
+} _EvenlopDef_default_instance_;
 
 namespace protobuf_executor_2eproto {
 
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[13];
+::google::protobuf::Metadata file_level_metadata[14];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 }  // namespace
@@ -131,6 +133,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Status, code_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, type_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, seq_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, recvidentity_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
@@ -147,6 +156,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 58, -1, sizeof(OpKernelDef)},
   { 65, -1, sizeof(OpContextDef)},
   { 70, -1, sizeof(Status)},
+  { 75, -1, sizeof(EvenlopDef)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -163,6 +173,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpKernelDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpContextDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Status_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_EvenlopDef_default_instance_),
 };
 
 namespace {
@@ -183,7 +194,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 13);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 14);
 }
 
 }  // namespace
@@ -215,6 +226,8 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[11].reflection;
   _Status_default_instance_.Shutdown();
   delete file_level_metadata[12].reflection;
+  _EvenlopDef_default_instance_.Shutdown();
+  delete file_level_metadata[13].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -234,6 +247,7 @@ void TableStruct::InitDefaultsImpl() {
   _OpKernelDef_default_instance_.DefaultConstruct();
   _OpContextDef_default_instance_.DefaultConstruct();
   _Status_default_instance_.DefaultConstruct();
+  _EvenlopDef_default_instance_.DefaultConstruct();
   _PushResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
       ::executor::Status::internal_default_instance());
   _FetchResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
@@ -280,16 +294,17 @@ void AddDescriptorsImpl() {
       "elDef\022*\n\toplibrary\030\001 \001(\0162\027.executor.OpLi"
       "braryType\022\n\n\002id\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"\035\n\014"
       "OpContextDef\022\r\n\005extra\030\001 \001(\014\"\026\n\006Status\022\014\n"
-      "\004code\030\001 \001(\005*\037\n\rOpLibraryType\022\016\n\nTENSORFL"
-      "OW\020\0002\307\001\n\013IExecEngine\0224\n\003run\022\024.executor.R"
-      "unRequest\032\025.executor.RunResponse\"\000\022=\n\010al"
-      "locate\022\026.executor.AllocRequest\032\027.executo"
-      "r.AllocResponse\"\000\022C\n\ndeallocate\022\030.execut"
-      "or.DeallocRequest\032\031.executor.DeallocResp"
-      "onse\"\000b\006proto3"
+      "\004code\030\001 \001(\005\"=\n\nEvenlopDef\022\014\n\004type\030\001 \001(\t\022"
+      "\013\n\003seq\030\002 \001(\004\022\024\n\014recvIdentity\030\003 \001(\014*\037\n\rOp"
+      "LibraryType\022\016\n\nTENSORFLOW\020\0002\307\001\n\013IExecEng"
+      "ine\0224\n\003run\022\024.executor.RunRequest\032\025.execu"
+      "tor.RunResponse\"\000\022=\n\010allocate\022\026.executor"
+      ".AllocRequest\032\027.executor.AllocResponse\"\000"
+      "\022C\n\ndeallocate\022\030.executor.DeallocRequest"
+      "\032\031.executor.DeallocResponse\"\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1094);
+      descriptor, 1157);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -4378,6 +4393,435 @@ void Status::set_code(::google::protobuf::int32 value) {
   
   code_ = value;
   // @@protoc_insertion_point(field_set:executor.Status.code)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int EvenlopDef::kTypeFieldNumber;
+const int EvenlopDef::kSeqFieldNumber;
+const int EvenlopDef::kRecvIdentityFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+EvenlopDef::EvenlopDef()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_executor_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.EvenlopDef)
+}
+EvenlopDef::EvenlopDef(const EvenlopDef& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.type().size() > 0) {
+    type_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.type_);
+  }
+  recvidentity_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.recvidentity().size() > 0) {
+    recvidentity_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.recvidentity_);
+  }
+  seq_ = from.seq_;
+  // @@protoc_insertion_point(copy_constructor:executor.EvenlopDef)
+}
+
+void EvenlopDef::SharedCtor() {
+  type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  recvidentity_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  seq_ = GOOGLE_ULONGLONG(0);
+  _cached_size_ = 0;
+}
+
+EvenlopDef::~EvenlopDef() {
+  // @@protoc_insertion_point(destructor:executor.EvenlopDef)
+  SharedDtor();
+}
+
+void EvenlopDef::SharedDtor() {
+  type_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  recvidentity_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void EvenlopDef::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* EvenlopDef::descriptor() {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[13].descriptor;
+}
+
+const EvenlopDef& EvenlopDef::default_instance() {
+  protobuf_executor_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+EvenlopDef* EvenlopDef::New(::google::protobuf::Arena* arena) const {
+  EvenlopDef* n = new EvenlopDef;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void EvenlopDef::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.EvenlopDef)
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  recvidentity_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  seq_ = GOOGLE_ULONGLONG(0);
+}
+
+bool EvenlopDef::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.EvenlopDef)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string type = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_type()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->type().data(), this->type().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.EvenlopDef.type"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 seq = 2;
+      case 2: {
+        if (tag == 16u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &seq_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes recvIdentity = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_recvidentity()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.EvenlopDef)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.EvenlopDef)
+  return false;
+#undef DO_
+}
+
+void EvenlopDef::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.EvenlopDef)
+  // string type = 1;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.EvenlopDef.type");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->type(), output);
+  }
+
+  // uint64 seq = 2;
+  if (this->seq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->seq(), output);
+  }
+
+  // bytes recvIdentity = 3;
+  if (this->recvidentity().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->recvidentity(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.EvenlopDef)
+}
+
+::google::protobuf::uint8* EvenlopDef::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.EvenlopDef)
+  // string type = 1;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.EvenlopDef.type");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->type(), target);
+  }
+
+  // uint64 seq = 2;
+  if (this->seq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->seq(), target);
+  }
+
+  // bytes recvIdentity = 3;
+  if (this->recvidentity().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->recvidentity(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.EvenlopDef)
+  return target;
+}
+
+size_t EvenlopDef::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.EvenlopDef)
+  size_t total_size = 0;
+
+  // string type = 1;
+  if (this->type().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->type());
+  }
+
+  // bytes recvIdentity = 3;
+  if (this->recvidentity().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->recvidentity());
+  }
+
+  // uint64 seq = 2;
+  if (this->seq() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->seq());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void EvenlopDef::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.EvenlopDef)
+  GOOGLE_DCHECK_NE(&from, this);
+  const EvenlopDef* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const EvenlopDef>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.EvenlopDef)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.EvenlopDef)
+    MergeFrom(*source);
+  }
+}
+
+void EvenlopDef::MergeFrom(const EvenlopDef& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.EvenlopDef)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.type().size() > 0) {
+
+    type_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.type_);
+  }
+  if (from.recvidentity().size() > 0) {
+
+    recvidentity_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.recvidentity_);
+  }
+  if (from.seq() != 0) {
+    set_seq(from.seq());
+  }
+}
+
+void EvenlopDef::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.EvenlopDef)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void EvenlopDef::CopyFrom(const EvenlopDef& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.EvenlopDef)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EvenlopDef::IsInitialized() const {
+  return true;
+}
+
+void EvenlopDef::Swap(EvenlopDef* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void EvenlopDef::InternalSwap(EvenlopDef* other) {
+  type_.Swap(&other->type_);
+  recvidentity_.Swap(&other->recvidentity_);
+  std::swap(seq_, other->seq_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata EvenlopDef::GetMetadata() const {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[13];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// EvenlopDef
+
+// string type = 1;
+void EvenlopDef::clear_type() {
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& EvenlopDef::type() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.type)
+  return type_.GetNoArena();
+}
+void EvenlopDef::set_type(const ::std::string& value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.type)
+}
+#if LANG_CXX11
+void EvenlopDef::set_type(::std::string&& value) {
+  
+  type_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.EvenlopDef.type)
+}
+#endif
+void EvenlopDef::set_type(const char* value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.EvenlopDef.type)
+}
+void EvenlopDef::set_type(const char* value, size_t size) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.EvenlopDef.type)
+}
+::std::string* EvenlopDef::mutable_type() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.EvenlopDef.type)
+  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* EvenlopDef::release_type() {
+  // @@protoc_insertion_point(field_release:executor.EvenlopDef.type)
+  
+  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void EvenlopDef::set_allocated_type(::std::string* type) {
+  if (type != NULL) {
+    
+  } else {
+    
+  }
+  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
+  // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.type)
+}
+
+// uint64 seq = 2;
+void EvenlopDef::clear_seq() {
+  seq_ = GOOGLE_ULONGLONG(0);
+}
+::google::protobuf::uint64 EvenlopDef::seq() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.seq)
+  return seq_;
+}
+void EvenlopDef::set_seq(::google::protobuf::uint64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.seq)
+}
+
+// bytes recvIdentity = 3;
+void EvenlopDef::clear_recvidentity() {
+  recvidentity_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& EvenlopDef::recvidentity() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.recvIdentity)
+  return recvidentity_.GetNoArena();
+}
+void EvenlopDef::set_recvidentity(const ::std::string& value) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.recvIdentity)
+}
+#if LANG_CXX11
+void EvenlopDef::set_recvidentity(::std::string&& value) {
+  
+  recvidentity_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.EvenlopDef.recvIdentity)
+}
+#endif
+void EvenlopDef::set_recvidentity(const char* value) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.EvenlopDef.recvIdentity)
+}
+void EvenlopDef::set_recvidentity(const void* value, size_t size) {
+  
+  recvidentity_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.EvenlopDef.recvIdentity)
+}
+::std::string* EvenlopDef::mutable_recvidentity() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.EvenlopDef.recvIdentity)
+  return recvidentity_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* EvenlopDef::release_recvidentity() {
+  // @@protoc_insertion_point(field_release:executor.EvenlopDef.recvIdentity)
+  
+  return recvidentity_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void EvenlopDef::set_allocated_recvidentity(::std::string* recvidentity) {
+  if (recvidentity != NULL) {
+    
+  } else {
+    
+  }
+  recvidentity_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), recvidentity);
+  // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.recvIdentity)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

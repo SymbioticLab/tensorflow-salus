@@ -54,13 +54,6 @@ RpcClient::RpcClient() { }
 
 RpcClient::~RpcClient() { }
 
-RpcClient &RpcClient::instance()
-{
-    static ZmqRpcClient client;
-
-    return client;
-}
-
 void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::OpKernel *kernel,
                                   Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
 {
