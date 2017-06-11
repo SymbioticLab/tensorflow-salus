@@ -74,7 +74,9 @@ ZmqRpcClient::ZmqRpcClient(Env *env, const std::string &executorAddr)
 
 ZmqRpcClient::~ZmqRpcClient()
 {
-    // close context first, so that recv thread will return.
+    // close socket before context, otherwise context close blocks
+    m_sendSock.close();
+    // close context before delete recv thread, so that recv thread will return.
     m_zmqctx.close();
 
     delete m_recvThread;
