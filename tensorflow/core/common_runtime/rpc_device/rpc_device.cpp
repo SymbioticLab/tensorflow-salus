@@ -91,6 +91,12 @@ void RPCDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
     LOG(INFO) << "context.num_outputs() " << context->num_outputs();
 }
 
+void ComputeAsync(AsyncOpKernel* op_kernel, OpKernelContext* context, AsyncOpKernel::DoneCallback done)
+{
+    // FIXME: RPC
+    op_kernel->ComputeAsync(context, std::move(done));
+}
+
 Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)
 {
     return m_allocator;

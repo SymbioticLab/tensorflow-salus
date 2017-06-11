@@ -23,6 +23,7 @@
 #include "tensorflow/core/lib/core/status.h"
 
 #include <memory>
+#include <atomic>
 
 namespace executor {
 class OpKernelDef;
@@ -48,12 +49,19 @@ public:
 
     virtual ~RpcClient();
 
+    virtual void createSession(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph) = 0;
+
+    using RunCallback = std::function<void()>;
+    virtual void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+                          OpKernel *kernel, OpKernelContext *context, RunCallback done) = 0;
     virtual Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                        OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
     virtual Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) = 0;
     virtual Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) = 0;
+
+    void maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph);
 
     void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel,
                            Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
@@ -62,6 +70,7 @@ public:
     void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 
 private:
+    std::atomic_flag m_initialized;
 
     TF_DISALLOW_COPY_AND_ASSIGN(RpcClient);
 };

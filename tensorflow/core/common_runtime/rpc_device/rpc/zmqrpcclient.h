@@ -40,6 +40,11 @@ public:
 
     ~ZmqRpcClient() override;
 
+    void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library, Graph *graph) override;
+
+    void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+                  OpKernel *kernel, OpKernelContext *context, RunCallback done);
+
     Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
@@ -49,23 +54,12 @@ public:
 
 private:
     using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
-    using DoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
-    struct Args
-    {
-        ProtoPtr reply;
-        DoneCallback done;
-
-        Args();
-        Args(Args &&other);
-        Args(ProtoPtr &&rep, DoneCallback d);
-        Args &operator=(Args &&other);
-    };
-
     template<typename ResponseType>
     Status rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &pReply);
 
     template<typename ResponseType>
-    void rpcCallAsync(const ::google::protobuf::Message &msg, Args &&args);
+    void rpcCallAsync(const ::google::protobuf::Message &msg,
+                      std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done);
 
     void recvLoop();
 
@@ -77,8 +71,20 @@ private:
     mutex m_mu;
     zmq::socket_t m_sendSock GUARDED_BY(m_mu);
 
+    using RawDoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
+    struct Item
+    {
+        ProtoPtr reply;
+        RawDoneCallback done;
+
+        Item();
+        Item(Item &&other);
+        Item(ProtoPtr &&rep, RawDoneCallback d);
+        Item &operator=(Item &&other);
+    };
+
     mutex m_mtable;
-    std::unordered_map<uint64_t, Args> m_recvCallbacks GUARDED_BY(m_mtable);
+    std::unordered_map<uint64_t, Item> m_recvCallbacks GUARDED_BY(m_mtable);
     std::string m_recvId;
     Thread *m_recvThread;
 

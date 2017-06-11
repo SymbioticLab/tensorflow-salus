@@ -45,6 +45,9 @@ public:
     ~RPCDevice() override;
 
     void Compute(OpKernel *op_kernel, OpKernelContext *context) override;
+    void ComputeAsync(AsyncOpKernel* op_kernel, OpKernelContext* context,
+                      AsyncOpKernel::DoneCallback done) override;
+
     Allocator *GetAllocator(AllocatorAttributes attr) override;
     Status MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
                                Tensor *tensor) override;

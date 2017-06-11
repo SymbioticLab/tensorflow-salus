@@ -50,9 +50,16 @@ tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
 
 namespace tensorflow {
 
-RpcClient::RpcClient() { }
+RpcClient::RpcClient() : m_initialized(ATOMIC_FLAG_INIT) { }
 
 RpcClient::~RpcClient() { }
+
+void RpcClient::maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph)
+{
+    if (!m_initialized.test_and_set()) {
+        createSession(cfgProto, library, graph);
+    }
+}
 
 void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::OpKernel *kernel,
                                   Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
