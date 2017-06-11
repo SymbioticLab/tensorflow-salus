@@ -27,7 +27,6 @@
 
 #include "tensorflow/core/graph/graph.h"
 #include "tensorflow/core/platform/logging.h"
-#include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/node_def.pb.h"
 #include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/protobuf/config.pb.h"

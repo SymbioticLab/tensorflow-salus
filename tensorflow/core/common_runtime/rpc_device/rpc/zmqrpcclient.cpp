@@ -49,8 +49,9 @@ void tensorToProto(tensorflow::TensorProto *proto, const tensorflow::Tensor &ten
 
 namespace tensorflow {
 
-ZmqRpcClient::ZmqRpcClient(Env *env)
-    : m_zmqctx(1)
+ZmqRpcClient::ZmqRpcClient(Env *env, const std::string &executorAddr)
+    : m_execAddr(executorAddr)
+    , m_zmqctx(1)
     , m_seq(0)
     , m_sendSock(m_zmqctx, ZMQ_REQ)
 {
@@ -65,7 +66,7 @@ ZmqRpcClient::ZmqRpcClient(Env *env)
                                     std::bind(&ZmqRpcClient::recvLoop, this));
 
     try {
-        m_sendSock.connect("tcp://localhost:5501");
+        m_sendSock.connect(m_execAddr);
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
     }
@@ -99,6 +100,7 @@ void ZmqRpcClient::recvLoop()
     zmq::socket_t recvSock(m_zmqctx, zmq::socket_type::dealer);
     try {
         recvSock.setsockopt(ZMQ_IDENTITY, m_recvId.c_str(), m_recvId.size());
+        recvSock.connect(m_execAddr);
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "ZeroMQ recving socket creation failed: " << err.what();
         return;
@@ -240,7 +242,7 @@ void ZmqRpcClient::createSession(const ConfigProto & cfgProto,
 }
 
 void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
-                            OpKernel *kernel, OpKernelContext *context, RunCallback done)
+                            AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done)
 {
     LOG(INFO) << "===================================================================";
     LOG(INFO) << "RpcClient::runAsync";

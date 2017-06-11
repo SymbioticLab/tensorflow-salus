@@ -36,14 +36,14 @@ class Thread;
 class ZmqRpcClient : public RpcClient
 {
 public:
-    ZmqRpcClient(Env *env);
+    ZmqRpcClient(Env *env, const std::string &executorAddr);
 
     ~ZmqRpcClient() override;
 
     void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library, Graph *graph) override;
 
     void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
-                  OpKernel *kernel, OpKernelContext *context, RunCallback done);
+                  AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done);
 
     Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                OpKernel *kernel, OpKernelContext *context) override;
@@ -64,9 +64,11 @@ private:
     void recvLoop();
 
 private:
+    std::string m_execAddr;
+
     zmq::context_t m_zmqctx;
 
-    std::atomic_uint64_t m_seq;
+    std::atomic<uint64_t> m_seq;
 
     mutex m_mu;
     zmq::socket_t m_sendSock GUARDED_BY(m_mu);

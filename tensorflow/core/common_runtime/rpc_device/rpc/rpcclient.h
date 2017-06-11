@@ -21,6 +21,7 @@
 #define RPCCLIENT_H
 
 #include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/framework/op_kernel.h"
 
 #include <memory>
 #include <atomic>
@@ -32,8 +33,6 @@ class OpContextDef;
 
 namespace tensorflow {
 
-class OpKernel;
-class OpKernelContext;
 class Graph;
 class FunctionDefLibrary;
 class ConfigProto;
@@ -51,9 +50,8 @@ public:
 
     virtual void createSession(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph) = 0;
 
-    using RunCallback = std::function<void()>;
     virtual void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
-                          OpKernel *kernel, OpKernelContext *context, RunCallback done) = 0;
+                          AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done) = 0;
     virtual Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                        OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;

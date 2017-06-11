@@ -9,7 +9,7 @@ class RPCDeviceFactory : public DeviceFactory {
 public:
     Status CreateDevices(const SessionOptions &options, const string &name_prefix,
                          std::vector<Device *> *devices) override {
-        static ZmqRpcClient rpc;
+        static ZmqRpcClient rpc(options.env, "tcp://localhost:5501");
 
         int n = 1;
         auto iter = options.config.device_count().find("RPC");
