@@ -513,6 +513,52 @@ TF_CALL_int64(REGISTER_INT);
 #undef REGISTER
 #undef REGISTER_INT
 
+#define REGISTER_RPC(TYPE)                                                  \
+  REGISTER_KERNEL_BUILDER(                                                  \
+      Name("RandomUniform")                                                 \
+          .Device(DEVICE_RPC)                                               \
+          .HostMemory("shape")                                              \
+          .TypeConstraint<TYPE>("dtype"),                                   \
+      PhiloxRandomOp<CPUDevice, random::UniformDistribution<                \
+                                    random::PhiloxRandom, TYPE> >);         \
+  REGISTER_KERNEL_BUILDER(                                                  \
+      Name("RandomStandardNormal")                                          \
+          .Device(DEVICE_RPC)                                               \
+          .HostMemory("shape")                                              \
+          .TypeConstraint<TYPE>("dtype"),                                   \
+      PhiloxRandomOp<CPUDevice, random::NormalDistribution<                 \
+                                    random::PhiloxRandom, TYPE> >);         \
+  REGISTER_KERNEL_BUILDER(                                                  \
+      Name("TruncatedNormal")                                               \
+          .Device(DEVICE_RPC)                                               \
+          .HostMemory("shape")                                              \
+          .TypeConstraint<TYPE>("dtype"),                                   \
+      PhiloxRandomOp<                                                       \
+          CPUDevice,                                                        \
+          random::TruncatedNormalDistribution<                              \
+              random::SingleSampleAdapter<random::PhiloxRandom>, TYPE> >);  \
+  REGISTER_KERNEL_BUILDER(                                                  \
+      Name("RandomGamma").Device(DEVICE_RPC).TypeConstraint<TYPE>("T"),     \
+      RandomGammaOp<TYPE>)
+
+#define REGISTER_RPC_INT(IntType)                               \
+  REGISTER_KERNEL_BUILDER(Name("RandomUniformInt")              \
+                              .Device(DEVICE_RPC)               \
+                              .HostMemory("shape")              \
+                              .HostMemory("minval")             \
+                              .HostMemory("maxval")             \
+                              .TypeConstraint<IntType>("Tout"), \
+                          RandomUniformIntOp<CPUDevice, IntType>);
+
+TF_CALL_half(REGISTER_RPC);
+TF_CALL_float(REGISTER_RPC);
+TF_CALL_double(REGISTER_RPC);
+TF_CALL_int32(REGISTER_RPC_INT);
+TF_CALL_int64(REGISTER_RPC_INT);
+
+#undef REGISTER_RPC
+#undef REGISTER_INT_RPC
+
 #if GOOGLE_CUDA
 
 #define REGISTER(TYPE)                                              \
