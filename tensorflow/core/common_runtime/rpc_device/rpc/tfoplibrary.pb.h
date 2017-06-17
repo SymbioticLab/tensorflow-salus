@@ -50,6 +50,12 @@ extern TFPushRequestDefaultTypeInternal _TFPushRequest_default_instance_;
 class TFRendezItem;
 class TFRendezItemDefaultTypeInternal;
 extern TFRendezItemDefaultTypeInternal _TFRendezItem_default_instance_;
+class TFRendezRecvRequests;
+class TFRendezRecvRequestsDefaultTypeInternal;
+extern TFRendezRecvRequestsDefaultTypeInternal _TFRendezRecvRequests_default_instance_;
+class TFRendezRecvResponse;
+class TFRendezRecvResponseDefaultTypeInternal;
+extern TFRendezRecvResponseDefaultTypeInternal _TFRendezRecvResponse_default_instance_;
 class TFTensors;
 class TFTensorsDefaultTypeInternal;
 extern TFTensorsDefaultTypeInternal _TFTensors_default_instance_;
@@ -213,6 +219,12 @@ class TFOpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::int32 graph_def_version() const;
   void set_graph_def_version(::google::protobuf::int32 value);
 
+  // bool isAsync = 5;
+  void clear_isasync();
+  static const int kIsAsyncFieldNumber = 5;
+  bool isasync() const;
+  void set_isasync(bool value);
+
   // @@protoc_insertion_point(class_scope:executor.TFOpKernelDef)
  private:
 
@@ -221,6 +233,7 @@ class TFOpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::tensorflow::ConfigProto* cfgproto_;
   ::tensorflow::FunctionDefLibrary* funcdef_;
   ::google::protobuf::int32 graph_def_version_;
+  bool isasync_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -589,6 +602,202 @@ class TFRendezItem : public ::google::protobuf::Message /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
+class TFRendezRecvRequests : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFRendezRecvRequests) */ {
+ public:
+  TFRendezRecvRequests();
+  virtual ~TFRendezRecvRequests();
+
+  TFRendezRecvRequests(const TFRendezRecvRequests& from);
+
+  inline TFRendezRecvRequests& operator=(const TFRendezRecvRequests& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFRendezRecvRequests& default_instance();
+
+  static inline const TFRendezRecvRequests* internal_default_instance() {
+    return reinterpret_cast<const TFRendezRecvRequests*>(
+               &_TFRendezRecvRequests_default_instance_);
+  }
+
+  void Swap(TFRendezRecvRequests* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFRendezRecvRequests* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFRendezRecvRequests* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFRendezRecvRequests& from);
+  void MergeFrom(const TFRendezRecvRequests& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFRendezRecvRequests* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string key = 1;
+  int key_size() const;
+  void clear_key();
+  static const int kKeyFieldNumber = 1;
+  const ::std::string& key(int index) const;
+  ::std::string* mutable_key(int index);
+  void set_key(int index, const ::std::string& value);
+  void set_key(int index, const char* value);
+  void set_key(int index, const char* value, size_t size);
+  ::std::string* add_key();
+  void add_key(const ::std::string& value);
+  void add_key(const char* value);
+  void add_key(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& key() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_key();
+
+  // repeated uint32 allocAttributes = 2;
+  int allocattributes_size() const;
+  void clear_allocattributes();
+  static const int kAllocAttributesFieldNumber = 2;
+  ::google::protobuf::uint32 allocattributes(int index) const;
+  void set_allocattributes(int index, ::google::protobuf::uint32 value);
+  void add_allocattributes(::google::protobuf::uint32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      allocattributes() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_allocattributes();
+
+  // @@protoc_insertion_point(class_scope:executor.TFRendezRecvRequests)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> key_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > allocattributes_;
+  mutable int _allocattributes_cached_byte_size_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFRendezRecvResponse) */ {
+ public:
+  TFRendezRecvResponse();
+  virtual ~TFRendezRecvResponse();
+
+  TFRendezRecvResponse(const TFRendezRecvResponse& from);
+
+  inline TFRendezRecvResponse& operator=(const TFRendezRecvResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFRendezRecvResponse& default_instance();
+
+  static inline const TFRendezRecvResponse* internal_default_instance() {
+    return reinterpret_cast<const TFRendezRecvResponse*>(
+               &_TFRendezRecvResponse_default_instance_);
+  }
+
+  void Swap(TFRendezRecvResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFRendezRecvResponse* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFRendezRecvResponse* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFRendezRecvResponse& from);
+  void MergeFrom(const TFRendezRecvResponse& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFRendezRecvResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .executor.TFRendezItem items = 1;
+  int items_size() const;
+  void clear_items();
+  static const int kItemsFieldNumber = 1;
+  const ::executor::TFRendezItem& items(int index) const;
+  ::executor::TFRendezItem* mutable_items(int index);
+  ::executor::TFRendezItem* add_items();
+  ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+      mutable_items();
+  const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+      items() const;
+
+  // @@protoc_insertion_point(class_scope:executor.TFRendezRecvResponse)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem > items_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class TFTensors : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFTensors) */ {
  public:
   TFTensors();
@@ -930,6 +1139,20 @@ inline void TFOpKernelDef::set_allocated_funcdef(::tensorflow::FunctionDefLibrar
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFOpKernelDef.funcDef)
+}
+
+// bool isAsync = 5;
+inline void TFOpKernelDef::clear_isasync() {
+  isasync_ = false;
+}
+inline bool TFOpKernelDef::isasync() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpKernelDef.isAsync)
+  return isasync_;
+}
+inline void TFOpKernelDef::set_isasync(bool value) {
+  
+  isasync_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpKernelDef.isAsync)
 }
 
 // -------------------------------------------------------------------
@@ -1296,6 +1519,129 @@ inline void TFRendezItem::set_allocated_val(::tensorflow::TensorProto* val) {
 
 // -------------------------------------------------------------------
 
+// TFRendezRecvRequests
+
+// repeated string key = 1;
+inline int TFRendezRecvRequests::key_size() const {
+  return key_.size();
+}
+inline void TFRendezRecvRequests::clear_key() {
+  key_.Clear();
+}
+inline const ::std::string& TFRendezRecvRequests::key(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvRequests.key)
+  return key_.Get(index);
+}
+inline ::std::string* TFRendezRecvRequests::mutable_key(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvRequests.key)
+  return key_.Mutable(index);
+}
+inline void TFRendezRecvRequests::set_key(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvRequests.key)
+  key_.Mutable(index)->assign(value);
+}
+inline void TFRendezRecvRequests::set_key(int index, const char* value) {
+  key_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:executor.TFRendezRecvRequests.key)
+}
+inline void TFRendezRecvRequests::set_key(int index, const char* value, size_t size) {
+  key_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:executor.TFRendezRecvRequests.key)
+}
+inline ::std::string* TFRendezRecvRequests::add_key() {
+  // @@protoc_insertion_point(field_add_mutable:executor.TFRendezRecvRequests.key)
+  return key_.Add();
+}
+inline void TFRendezRecvRequests::add_key(const ::std::string& value) {
+  key_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvRequests.key)
+}
+inline void TFRendezRecvRequests::add_key(const char* value) {
+  key_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:executor.TFRendezRecvRequests.key)
+}
+inline void TFRendezRecvRequests::add_key(const char* value, size_t size) {
+  key_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:executor.TFRendezRecvRequests.key)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+TFRendezRecvRequests::key() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvRequests.key)
+  return key_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+TFRendezRecvRequests::mutable_key() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvRequests.key)
+  return &key_;
+}
+
+// repeated uint32 allocAttributes = 2;
+inline int TFRendezRecvRequests::allocattributes_size() const {
+  return allocattributes_.size();
+}
+inline void TFRendezRecvRequests::clear_allocattributes() {
+  allocattributes_.Clear();
+}
+inline ::google::protobuf::uint32 TFRendezRecvRequests::allocattributes(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvRequests.allocAttributes)
+  return allocattributes_.Get(index);
+}
+inline void TFRendezRecvRequests::set_allocattributes(int index, ::google::protobuf::uint32 value) {
+  allocattributes_.Set(index, value);
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvRequests.allocAttributes)
+}
+inline void TFRendezRecvRequests::add_allocattributes(::google::protobuf::uint32 value) {
+  allocattributes_.Add(value);
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvRequests.allocAttributes)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+TFRendezRecvRequests::allocattributes() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvRequests.allocAttributes)
+  return allocattributes_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+TFRendezRecvRequests::mutable_allocattributes() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvRequests.allocAttributes)
+  return &allocattributes_;
+}
+
+// -------------------------------------------------------------------
+
+// TFRendezRecvResponse
+
+// repeated .executor.TFRendezItem items = 1;
+inline int TFRendezRecvResponse::items_size() const {
+  return items_.size();
+}
+inline void TFRendezRecvResponse::clear_items() {
+  items_.Clear();
+}
+inline const ::executor::TFRendezItem& TFRendezRecvResponse::items(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.items)
+  return items_.Get(index);
+}
+inline ::executor::TFRendezItem* TFRendezRecvResponse::mutable_items(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvResponse.items)
+  return items_.Mutable(index);
+}
+inline ::executor::TFRendezItem* TFRendezRecvResponse::add_items() {
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvResponse.items)
+  return items_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+TFRendezRecvResponse::mutable_items() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvResponse.items)
+  return &items_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+TFRendezRecvResponse::items() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvResponse.items)
+  return items_;
+}
+
+// -------------------------------------------------------------------
+
 // TFTensors
 
 // repeated .tensorflow.TensorProto tensors = 1;
@@ -1393,6 +1739,10 @@ TFPushRequest::tensors() const {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

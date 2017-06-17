@@ -18,14 +18,10 @@
 // @@protoc_insertion_point(includes)
 
 namespace executor {
-class PushRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PushRequest> {
-} _PushRequest_default_instance_;
-class PushResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PushResponse> {
-} _PushResponse_default_instance_;
-class FetchRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<FetchRequest> {
-} _FetchRequest_default_instance_;
-class FetchResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<FetchResponse> {
-} _FetchResponse_default_instance_;
+class CustomRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<CustomRequest> {
+} _CustomRequest_default_instance_;
+class CustomResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<CustomResponse> {
+} _CustomResponse_default_instance_;
 class RunRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunRequest> {
 } _RunRequest_default_instance_;
 class RunResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunResponse> {
@@ -52,36 +48,24 @@ namespace protobuf_executor_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[14];
+::google::protobuf::Metadata file_level_metadata[12];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 }  // namespace
 
 const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushRequest, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushRequest, oplibrary_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushRequest, extra_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomRequest, type_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomRequest, extra_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushResponse, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushResponse, result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PushResponse, extra_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchRequest, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchRequest, oplibrary_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchRequest, extra_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchResponse, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchResponse, result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FetchResponse, extra_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomResponse, result_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomResponse, extra_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunRequest, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -140,30 +124,27 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, type_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, seq_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, recvidentity_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EvenlopDef, oplibrary_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
-  { 0, -1, sizeof(PushRequest)},
-  { 6, -1, sizeof(PushResponse)},
-  { 12, -1, sizeof(FetchRequest)},
-  { 18, -1, sizeof(FetchResponse)},
-  { 24, -1, sizeof(RunRequest)},
-  { 30, -1, sizeof(RunResponse)},
-  { 36, -1, sizeof(DeallocRequest)},
-  { 41, -1, sizeof(DeallocResponse)},
-  { 46, -1, sizeof(AllocRequest)},
-  { 52, -1, sizeof(AllocResponse)},
-  { 58, -1, sizeof(OpKernelDef)},
-  { 65, -1, sizeof(OpContextDef)},
-  { 70, -1, sizeof(Status)},
-  { 75, -1, sizeof(EvenlopDef)},
+  { 0, -1, sizeof(CustomRequest)},
+  { 6, -1, sizeof(CustomResponse)},
+  { 12, -1, sizeof(RunRequest)},
+  { 18, -1, sizeof(RunResponse)},
+  { 24, -1, sizeof(DeallocRequest)},
+  { 29, -1, sizeof(DeallocResponse)},
+  { 34, -1, sizeof(AllocRequest)},
+  { 40, -1, sizeof(AllocResponse)},
+  { 46, -1, sizeof(OpKernelDef)},
+  { 53, -1, sizeof(OpContextDef)},
+  { 58, -1, sizeof(Status)},
+  { 63, -1, sizeof(EvenlopDef)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&_PushRequest_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_PushResponse_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_FetchRequest_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_FetchResponse_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_CustomRequest_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_CustomResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_RunRequest_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_RunResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_DeallocRequest_default_instance_),
@@ -194,50 +175,44 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 14);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 12);
 }
 
 }  // namespace
 
 void TableStruct::Shutdown() {
-  _PushRequest_default_instance_.Shutdown();
+  _CustomRequest_default_instance_.Shutdown();
   delete file_level_metadata[0].reflection;
-  _PushResponse_default_instance_.Shutdown();
+  _CustomResponse_default_instance_.Shutdown();
   delete file_level_metadata[1].reflection;
-  _FetchRequest_default_instance_.Shutdown();
-  delete file_level_metadata[2].reflection;
-  _FetchResponse_default_instance_.Shutdown();
-  delete file_level_metadata[3].reflection;
   _RunRequest_default_instance_.Shutdown();
-  delete file_level_metadata[4].reflection;
+  delete file_level_metadata[2].reflection;
   _RunResponse_default_instance_.Shutdown();
-  delete file_level_metadata[5].reflection;
+  delete file_level_metadata[3].reflection;
   _DeallocRequest_default_instance_.Shutdown();
-  delete file_level_metadata[6].reflection;
+  delete file_level_metadata[4].reflection;
   _DeallocResponse_default_instance_.Shutdown();
-  delete file_level_metadata[7].reflection;
+  delete file_level_metadata[5].reflection;
   _AllocRequest_default_instance_.Shutdown();
-  delete file_level_metadata[8].reflection;
+  delete file_level_metadata[6].reflection;
   _AllocResponse_default_instance_.Shutdown();
-  delete file_level_metadata[9].reflection;
+  delete file_level_metadata[7].reflection;
   _OpKernelDef_default_instance_.Shutdown();
-  delete file_level_metadata[10].reflection;
+  delete file_level_metadata[8].reflection;
   _OpContextDef_default_instance_.Shutdown();
-  delete file_level_metadata[11].reflection;
+  delete file_level_metadata[9].reflection;
   _Status_default_instance_.Shutdown();
-  delete file_level_metadata[12].reflection;
+  delete file_level_metadata[10].reflection;
   _EvenlopDef_default_instance_.Shutdown();
-  delete file_level_metadata[13].reflection;
+  delete file_level_metadata[11].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::internal::InitProtobufDefaults();
-  _PushRequest_default_instance_.DefaultConstruct();
-  _PushResponse_default_instance_.DefaultConstruct();
-  _FetchRequest_default_instance_.DefaultConstruct();
-  _FetchResponse_default_instance_.DefaultConstruct();
+  _CustomRequest_default_instance_.DefaultConstruct();
+  _CustomResponse_default_instance_.DefaultConstruct();
   _RunRequest_default_instance_.DefaultConstruct();
   _RunResponse_default_instance_.DefaultConstruct();
   _DeallocRequest_default_instance_.DefaultConstruct();
@@ -248,9 +223,7 @@ void TableStruct::InitDefaultsImpl() {
   _OpContextDef_default_instance_.DefaultConstruct();
   _Status_default_instance_.DefaultConstruct();
   _EvenlopDef_default_instance_.DefaultConstruct();
-  _PushResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
-      ::executor::Status::internal_default_instance());
-  _FetchResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
+  _CustomResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
       ::executor::Status::internal_default_instance());
   _RunRequest_default_instance_.get_mutable()->opkernel_ = const_cast< ::executor::OpKernelDef*>(
       ::executor::OpKernelDef::internal_default_instance());
@@ -273,38 +246,30 @@ void InitDefaults() {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] = {
-      "\n\016executor.proto\022\010executor\"H\n\013PushReques"
-      "t\022*\n\toplibrary\030\001 \001(\0162\027.executor.OpLibrar"
-      "yType\022\r\n\005extra\030\002 \001(\014\"\?\n\014PushResponse\022 \n\006"
-      "result\030\001 \001(\0132\020.executor.Status\022\r\n\005extra\030"
-      "\002 \001(\014\"I\n\014FetchRequest\022*\n\toplibrary\030\001 \001(\016"
-      "2\027.executor.OpLibraryType\022\r\n\005extra\030\002 \001(\014"
-      "\"@\n\rFetchResponse\022 \n\006result\030\001 \001(\0132\020.exec"
-      "utor.Status\022\r\n\005extra\030\002 \001(\014\"^\n\nRunRequest"
-      "\022\'\n\010opkernel\030\001 \001(\0132\025.executor.OpKernelDe"
-      "f\022\'\n\007context\030\002 \001(\0132\026.executor.OpContextD"
-      "ef\"X\n\013RunResponse\022 \n\006result\030\001 \001(\0132\020.exec"
-      "utor.Status\022\'\n\007context\030\002 \001(\0132\026.executor."
-      "OpContextDef\"%\n\016DeallocRequest\022\023\n\013addr_h"
-      "andle\030\001 \001(\004\"3\n\017DeallocResponse\022 \n\006result"
-      "\030\001 \001(\0132\020.executor.Status\"4\n\014AllocRequest"
-      "\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_bytes\030\002 \001(\004\"F"
-      "\n\rAllocResponse\022 \n\006result\030\001 \001(\0132\020.execut"
-      "or.Status\022\023\n\013addr_handle\030\002 \001(\004\"T\n\013OpKern"
-      "elDef\022*\n\toplibrary\030\001 \001(\0162\027.executor.OpLi"
-      "braryType\022\n\n\002id\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"\035\n\014"
-      "OpContextDef\022\r\n\005extra\030\001 \001(\014\"\026\n\006Status\022\014\n"
-      "\004code\030\001 \001(\005\"=\n\nEvenlopDef\022\014\n\004type\030\001 \001(\t\022"
-      "\013\n\003seq\030\002 \001(\004\022\024\n\014recvIdentity\030\003 \001(\014*\037\n\rOp"
-      "LibraryType\022\016\n\nTENSORFLOW\020\0002\307\001\n\013IExecEng"
-      "ine\0224\n\003run\022\024.executor.RunRequest\032\025.execu"
-      "tor.RunResponse\"\000\022=\n\010allocate\022\026.executor"
-      ".AllocRequest\032\027.executor.AllocResponse\"\000"
-      "\022C\n\ndeallocate\022\030.executor.DeallocRequest"
-      "\032\031.executor.DeallocResponse\"\000b\006proto3"
+      "\n\016executor.proto\022\010executor\",\n\rCustomRequ"
+      "est\022\014\n\004type\030\001 \001(\t\022\r\n\005extra\030\002 \001(\014\"A\n\016Cust"
+      "omResponse\022 \n\006result\030\001 \001(\0132\020.executor.St"
+      "atus\022\r\n\005extra\030\002 \001(\014\"^\n\nRunRequest\022\'\n\010opk"
+      "ernel\030\001 \001(\0132\025.executor.OpKernelDef\022\'\n\007co"
+      "ntext\030\002 \001(\0132\026.executor.OpContextDef\"X\n\013R"
+      "unResponse\022 \n\006result\030\001 \001(\0132\020.executor.St"
+      "atus\022\'\n\007context\030\002 \001(\0132\026.executor.OpConte"
+      "xtDef\"%\n\016DeallocRequest\022\023\n\013addr_handle\030\001"
+      " \001(\004\"3\n\017DeallocResponse\022 \n\006result\030\001 \001(\0132"
+      "\020.executor.Status\"4\n\014AllocRequest\022\021\n\tali"
+      "gnment\030\001 \001(\004\022\021\n\tnum_bytes\030\002 \001(\004\"F\n\rAlloc"
+      "Response\022 \n\006result\030\001 \001(\0132\020.executor.Stat"
+      "us\022\023\n\013addr_handle\030\002 \001(\004\"T\n\013OpKernelDef\022*"
+      "\n\toplibrary\030\001 \001(\0162\027.executor.OpLibraryTy"
+      "pe\022\n\n\002id\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"\035\n\014OpConte"
+      "xtDef\022\r\n\005extra\030\001 \001(\014\"\026\n\006Status\022\014\n\004code\030\001"
+      " \001(\005\"i\n\nEvenlopDef\022\014\n\004type\030\001 \001(\t\022\013\n\003seq\030"
+      "\002 \001(\004\022\024\n\014recvIdentity\030\003 \001(\014\022*\n\toplibrary"
+      "\030\004 \001(\0162\027.executor.OpLibraryType*\037\n\rOpLib"
+      "raryType\022\016\n\nTENSORFLOW\020\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1157);
+      descriptor, 832);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -340,93 +305,98 @@ bool OpLibraryType_IsValid(int value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PushRequest::kOplibraryFieldNumber;
-const int PushRequest::kExtraFieldNumber;
+const int CustomRequest::kTypeFieldNumber;
+const int CustomRequest::kExtraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-PushRequest::PushRequest()
+CustomRequest::CustomRequest()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.PushRequest)
+  // @@protoc_insertion_point(constructor:executor.CustomRequest)
 }
-PushRequest::PushRequest(const PushRequest& from)
+CustomRequest::CustomRequest(const CustomRequest& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.type().size() > 0) {
+    type_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.type_);
+  }
   extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.extra().size() > 0) {
     extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
   }
-  oplibrary_ = from.oplibrary_;
-  // @@protoc_insertion_point(copy_constructor:executor.PushRequest)
+  // @@protoc_insertion_point(copy_constructor:executor.CustomRequest)
 }
 
-void PushRequest::SharedCtor() {
+void CustomRequest::SharedCtor() {
+  type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
   _cached_size_ = 0;
 }
 
-PushRequest::~PushRequest() {
-  // @@protoc_insertion_point(destructor:executor.PushRequest)
+CustomRequest::~CustomRequest() {
+  // @@protoc_insertion_point(destructor:executor.CustomRequest)
   SharedDtor();
 }
 
-void PushRequest::SharedDtor() {
+void CustomRequest::SharedDtor() {
+  type_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void PushRequest::SetCachedSize(int size) const {
+void CustomRequest::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* PushRequest::descriptor() {
+const ::google::protobuf::Descriptor* CustomRequest::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[0].descriptor;
 }
 
-const PushRequest& PushRequest::default_instance() {
+const CustomRequest& CustomRequest::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-PushRequest* PushRequest::New(::google::protobuf::Arena* arena) const {
-  PushRequest* n = new PushRequest;
+CustomRequest* CustomRequest::New(::google::protobuf::Arena* arena) const {
+  CustomRequest* n = new CustomRequest;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void PushRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.PushRequest)
+void CustomRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.CustomRequest)
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
 }
 
-bool PushRequest::MergePartialFromCodedStream(
+bool CustomRequest::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.PushRequest)
+  // @@protoc_insertion_point(parse_start:executor.CustomRequest)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.OpLibraryType oplibrary = 1;
+      // string type = 1;
       case 1: {
-        if (tag == 8u) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          set_oplibrary(static_cast< ::executor::OpLibraryType >(value));
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_type()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->type().data(), this->type().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.CustomRequest.type"));
         } else {
           goto handle_unusual;
         }
@@ -457,21 +427,25 @@ bool PushRequest::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.PushRequest)
+  // @@protoc_insertion_point(parse_success:executor.CustomRequest)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.PushRequest)
+  // @@protoc_insertion_point(parse_failure:executor.CustomRequest)
   return false;
 #undef DO_
 }
 
-void PushRequest::SerializeWithCachedSizes(
+void CustomRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.PushRequest)
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->oplibrary(), output);
+  // @@protoc_insertion_point(serialize_start:executor.CustomRequest)
+  // string type = 1;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.CustomRequest.type");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->type(), output);
   }
 
   // bytes extra = 2;
@@ -480,17 +454,22 @@ void PushRequest::SerializeWithCachedSizes(
       2, this->extra(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.PushRequest)
+  // @@protoc_insertion_point(serialize_end:executor.CustomRequest)
 }
 
-::google::protobuf::uint8* PushRequest::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* CustomRequest::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.PushRequest)
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->oplibrary(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:executor.CustomRequest)
+  // string type = 1;
+  if (this->type().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.CustomRequest.type");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->type(), target);
   }
 
   // bytes extra = 2;
@@ -500,25 +479,26 @@ void PushRequest::SerializeWithCachedSizes(
         2, this->extra(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.PushRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.CustomRequest)
   return target;
 }
 
-size_t PushRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.PushRequest)
+size_t CustomRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.CustomRequest)
   size_t total_size = 0;
+
+  // string type = 1;
+  if (this->type().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->type());
+  }
 
   // bytes extra = 2;
   if (this->extra().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->extra());
-  }
-
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -528,134 +508,173 @@ size_t PushRequest::ByteSizeLong() const {
   return total_size;
 }
 
-void PushRequest::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.PushRequest)
+void CustomRequest::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.CustomRequest)
   GOOGLE_DCHECK_NE(&from, this);
-  const PushRequest* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const PushRequest>(
+  const CustomRequest* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CustomRequest>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.PushRequest)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.CustomRequest)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.PushRequest)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.CustomRequest)
     MergeFrom(*source);
   }
 }
 
-void PushRequest::MergeFrom(const PushRequest& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.PushRequest)
+void CustomRequest::MergeFrom(const CustomRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.CustomRequest)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.type().size() > 0) {
+
+    type_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.type_);
+  }
   if (from.extra().size() > 0) {
 
     extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
   }
-  if (from.oplibrary() != 0) {
-    set_oplibrary(from.oplibrary());
-  }
 }
 
-void PushRequest::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.PushRequest)
+void CustomRequest::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.CustomRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void PushRequest::CopyFrom(const PushRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.PushRequest)
+void CustomRequest::CopyFrom(const CustomRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.CustomRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool PushRequest::IsInitialized() const {
+bool CustomRequest::IsInitialized() const {
   return true;
 }
 
-void PushRequest::Swap(PushRequest* other) {
+void CustomRequest::Swap(CustomRequest* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void PushRequest::InternalSwap(PushRequest* other) {
+void CustomRequest::InternalSwap(CustomRequest* other) {
+  type_.Swap(&other->type_);
   extra_.Swap(&other->extra_);
-  std::swap(oplibrary_, other->oplibrary_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata PushRequest::GetMetadata() const {
+::google::protobuf::Metadata CustomRequest::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[0];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PushRequest
+// CustomRequest
 
-// .executor.OpLibraryType oplibrary = 1;
-void PushRequest::clear_oplibrary() {
-  oplibrary_ = 0;
+// string type = 1;
+void CustomRequest::clear_type() {
+  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::executor::OpLibraryType PushRequest::oplibrary() const {
-  // @@protoc_insertion_point(field_get:executor.PushRequest.oplibrary)
-  return static_cast< ::executor::OpLibraryType >(oplibrary_);
+const ::std::string& CustomRequest::type() const {
+  // @@protoc_insertion_point(field_get:executor.CustomRequest.type)
+  return type_.GetNoArena();
 }
-void PushRequest::set_oplibrary(::executor::OpLibraryType value) {
+void CustomRequest::set_type(const ::std::string& value) {
   
-  oplibrary_ = value;
-  // @@protoc_insertion_point(field_set:executor.PushRequest.oplibrary)
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.CustomRequest.type)
+}
+#if LANG_CXX11
+void CustomRequest::set_type(::std::string&& value) {
+  
+  type_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.CustomRequest.type)
+}
+#endif
+void CustomRequest::set_type(const char* value) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.CustomRequest.type)
+}
+void CustomRequest::set_type(const char* value, size_t size) {
+  
+  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.CustomRequest.type)
+}
+::std::string* CustomRequest::mutable_type() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.CustomRequest.type)
+  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* CustomRequest::release_type() {
+  // @@protoc_insertion_point(field_release:executor.CustomRequest.type)
+  
+  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void CustomRequest::set_allocated_type(::std::string* type) {
+  if (type != NULL) {
+    
+  } else {
+    
+  }
+  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
+  // @@protoc_insertion_point(field_set_allocated:executor.CustomRequest.type)
 }
 
 // bytes extra = 2;
-void PushRequest::clear_extra() {
+void CustomRequest::clear_extra() {
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& PushRequest::extra() const {
-  // @@protoc_insertion_point(field_get:executor.PushRequest.extra)
+const ::std::string& CustomRequest::extra() const {
+  // @@protoc_insertion_point(field_get:executor.CustomRequest.extra)
   return extra_.GetNoArena();
 }
-void PushRequest::set_extra(const ::std::string& value) {
+void CustomRequest::set_extra(const ::std::string& value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_set:executor.CustomRequest.extra)
 }
 #if LANG_CXX11
-void PushRequest::set_extra(::std::string&& value) {
+void CustomRequest::set_extra(::std::string&& value) {
   
   extra_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_set_rvalue:executor.CustomRequest.extra)
 }
 #endif
-void PushRequest::set_extra(const char* value) {
+void CustomRequest::set_extra(const char* value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_set_char:executor.CustomRequest.extra)
 }
-void PushRequest::set_extra(const void* value, size_t size) {
+void CustomRequest::set_extra(const void* value, size_t size) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_set_pointer:executor.CustomRequest.extra)
 }
-::std::string* PushRequest::mutable_extra() {
+::std::string* CustomRequest::mutable_extra() {
   
-  // @@protoc_insertion_point(field_mutable:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_mutable:executor.CustomRequest.extra)
   return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* PushRequest::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.PushRequest.extra)
+::std::string* CustomRequest::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.CustomRequest.extra)
   
   return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void PushRequest::set_allocated_extra(::std::string* extra) {
+void CustomRequest::set_allocated_extra(::std::string* extra) {
   if (extra != NULL) {
     
   } else {
     
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.PushRequest.extra)
+  // @@protoc_insertion_point(field_set_allocated:executor.CustomRequest.extra)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -663,19 +682,19 @@ void PushRequest::set_allocated_extra(::std::string* extra) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PushResponse::kResultFieldNumber;
-const int PushResponse::kExtraFieldNumber;
+const int CustomResponse::kResultFieldNumber;
+const int CustomResponse::kExtraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-PushResponse::PushResponse()
+CustomResponse::CustomResponse()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.PushResponse)
+  // @@protoc_insertion_point(constructor:executor.CustomResponse)
 }
-PushResponse::PushResponse(const PushResponse& from)
+CustomResponse::CustomResponse(const CustomResponse& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
@@ -689,52 +708,52 @@ PushResponse::PushResponse(const PushResponse& from)
   } else {
     result_ = NULL;
   }
-  // @@protoc_insertion_point(copy_constructor:executor.PushResponse)
+  // @@protoc_insertion_point(copy_constructor:executor.CustomResponse)
 }
 
-void PushResponse::SharedCtor() {
+void CustomResponse::SharedCtor() {
   extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   result_ = NULL;
   _cached_size_ = 0;
 }
 
-PushResponse::~PushResponse() {
-  // @@protoc_insertion_point(destructor:executor.PushResponse)
+CustomResponse::~CustomResponse() {
+  // @@protoc_insertion_point(destructor:executor.CustomResponse)
   SharedDtor();
 }
 
-void PushResponse::SharedDtor() {
+void CustomResponse::SharedDtor() {
   extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) {
     delete result_;
   }
 }
 
-void PushResponse::SetCachedSize(int size) const {
+void CustomResponse::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* PushResponse::descriptor() {
+const ::google::protobuf::Descriptor* CustomResponse::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[1].descriptor;
 }
 
-const PushResponse& PushResponse::default_instance() {
+const CustomResponse& CustomResponse::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-PushResponse* PushResponse::New(::google::protobuf::Arena* arena) const {
-  PushResponse* n = new PushResponse;
+CustomResponse* CustomResponse::New(::google::protobuf::Arena* arena) const {
+  CustomResponse* n = new CustomResponse;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void PushResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.PushResponse)
+void CustomResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.CustomResponse)
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && result_ != NULL) {
     delete result_;
@@ -742,11 +761,11 @@ void PushResponse::Clear() {
   result_ = NULL;
 }
 
-bool PushResponse::MergePartialFromCodedStream(
+bool CustomResponse::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.PushResponse)
+  // @@protoc_insertion_point(parse_start:executor.CustomResponse)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -787,17 +806,17 @@ bool PushResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.PushResponse)
+  // @@protoc_insertion_point(parse_success:executor.CustomResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.PushResponse)
+  // @@protoc_insertion_point(parse_failure:executor.CustomResponse)
   return false;
 #undef DO_
 }
 
-void PushResponse::SerializeWithCachedSizes(
+void CustomResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.PushResponse)
+  // @@protoc_insertion_point(serialize_start:executor.CustomResponse)
   // .executor.Status result = 1;
   if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
@@ -810,13 +829,13 @@ void PushResponse::SerializeWithCachedSizes(
       2, this->extra(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.PushResponse)
+  // @@protoc_insertion_point(serialize_end:executor.CustomResponse)
 }
 
-::google::protobuf::uint8* PushResponse::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* CustomResponse::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.PushResponse)
+  // @@protoc_insertion_point(serialize_to_array_start:executor.CustomResponse)
   // .executor.Status result = 1;
   if (this->has_result()) {
     target = ::google::protobuf::internal::WireFormatLite::
@@ -831,12 +850,12 @@ void PushResponse::SerializeWithCachedSizes(
         2, this->extra(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.PushResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.CustomResponse)
   return target;
 }
 
-size_t PushResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.PushResponse)
+size_t CustomResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.CustomResponse)
   size_t total_size = 0;
 
   // bytes extra = 2;
@@ -860,23 +879,23 @@ size_t PushResponse::ByteSizeLong() const {
   return total_size;
 }
 
-void PushResponse::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.PushResponse)
+void CustomResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.CustomResponse)
   GOOGLE_DCHECK_NE(&from, this);
-  const PushResponse* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const PushResponse>(
+  const CustomResponse* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CustomResponse>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.PushResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.CustomResponse)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.PushResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.CustomResponse)
     MergeFrom(*source);
   }
 }
 
-void PushResponse::MergeFrom(const PushResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.PushResponse)
+void CustomResponse::MergeFrom(const CustomResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.CustomResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.extra().size() > 0) {
@@ -888,71 +907,71 @@ void PushResponse::MergeFrom(const PushResponse& from) {
   }
 }
 
-void PushResponse::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.PushResponse)
+void CustomResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.CustomResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void PushResponse::CopyFrom(const PushResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.PushResponse)
+void CustomResponse::CopyFrom(const CustomResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.CustomResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool PushResponse::IsInitialized() const {
+bool CustomResponse::IsInitialized() const {
   return true;
 }
 
-void PushResponse::Swap(PushResponse* other) {
+void CustomResponse::Swap(CustomResponse* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void PushResponse::InternalSwap(PushResponse* other) {
+void CustomResponse::InternalSwap(CustomResponse* other) {
   extra_.Swap(&other->extra_);
   std::swap(result_, other->result_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata PushResponse::GetMetadata() const {
+::google::protobuf::Metadata CustomResponse::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[1];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PushResponse
+// CustomResponse
 
 // .executor.Status result = 1;
-bool PushResponse::has_result() const {
+bool CustomResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
-void PushResponse::clear_result() {
+void CustomResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-const ::executor::Status& PushResponse::result() const {
-  // @@protoc_insertion_point(field_get:executor.PushResponse.result)
+const ::executor::Status& CustomResponse::result() const {
+  // @@protoc_insertion_point(field_get:executor.CustomResponse.result)
   return result_ != NULL ? *result_
                          : *::executor::Status::internal_default_instance();
 }
-::executor::Status* PushResponse::mutable_result() {
+::executor::Status* CustomResponse::mutable_result() {
   
   if (result_ == NULL) {
     result_ = new ::executor::Status;
   }
-  // @@protoc_insertion_point(field_mutable:executor.PushResponse.result)
+  // @@protoc_insertion_point(field_mutable:executor.CustomResponse.result)
   return result_;
 }
-::executor::Status* PushResponse::release_result() {
-  // @@protoc_insertion_point(field_release:executor.PushResponse.result)
+::executor::Status* CustomResponse::release_result() {
+  // @@protoc_insertion_point(field_release:executor.CustomResponse.result)
   
   ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-void PushResponse::set_allocated_result(::executor::Status* result) {
+void CustomResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -960,739 +979,59 @@ void PushResponse::set_allocated_result(::executor::Status* result) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:executor.PushResponse.result)
+  // @@protoc_insertion_point(field_set_allocated:executor.CustomResponse.result)
 }
 
 // bytes extra = 2;
-void PushResponse::clear_extra() {
+void CustomResponse::clear_extra() {
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& PushResponse::extra() const {
-  // @@protoc_insertion_point(field_get:executor.PushResponse.extra)
+const ::std::string& CustomResponse::extra() const {
+  // @@protoc_insertion_point(field_get:executor.CustomResponse.extra)
   return extra_.GetNoArena();
 }
-void PushResponse::set_extra(const ::std::string& value) {
+void CustomResponse::set_extra(const ::std::string& value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.PushResponse.extra)
+  // @@protoc_insertion_point(field_set:executor.CustomResponse.extra)
 }
 #if LANG_CXX11
-void PushResponse::set_extra(::std::string&& value) {
+void CustomResponse::set_extra(::std::string&& value) {
   
   extra_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.PushResponse.extra)
+  // @@protoc_insertion_point(field_set_rvalue:executor.CustomResponse.extra)
 }
 #endif
-void PushResponse::set_extra(const char* value) {
+void CustomResponse::set_extra(const char* value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.PushResponse.extra)
+  // @@protoc_insertion_point(field_set_char:executor.CustomResponse.extra)
 }
-void PushResponse::set_extra(const void* value, size_t size) {
+void CustomResponse::set_extra(const void* value, size_t size) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.PushResponse.extra)
+  // @@protoc_insertion_point(field_set_pointer:executor.CustomResponse.extra)
 }
-::std::string* PushResponse::mutable_extra() {
+::std::string* CustomResponse::mutable_extra() {
   
-  // @@protoc_insertion_point(field_mutable:executor.PushResponse.extra)
+  // @@protoc_insertion_point(field_mutable:executor.CustomResponse.extra)
   return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* PushResponse::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.PushResponse.extra)
+::std::string* CustomResponse::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.CustomResponse.extra)
   
   return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void PushResponse::set_allocated_extra(::std::string* extra) {
+void CustomResponse::set_allocated_extra(::std::string* extra) {
   if (extra != NULL) {
     
   } else {
     
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.PushResponse.extra)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int FetchRequest::kOplibraryFieldNumber;
-const int FetchRequest::kExtraFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-FetchRequest::FetchRequest()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_executor_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.FetchRequest)
-}
-FetchRequest::FetchRequest(const FetchRequest& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.extra().size() > 0) {
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-  oplibrary_ = from.oplibrary_;
-  // @@protoc_insertion_point(copy_constructor:executor.FetchRequest)
-}
-
-void FetchRequest::SharedCtor() {
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
-  _cached_size_ = 0;
-}
-
-FetchRequest::~FetchRequest() {
-  // @@protoc_insertion_point(destructor:executor.FetchRequest)
-  SharedDtor();
-}
-
-void FetchRequest::SharedDtor() {
-  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void FetchRequest::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* FetchRequest::descriptor() {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[2].descriptor;
-}
-
-const FetchRequest& FetchRequest::default_instance() {
-  protobuf_executor_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-FetchRequest* FetchRequest::New(::google::protobuf::Arena* arena) const {
-  FetchRequest* n = new FetchRequest;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void FetchRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.FetchRequest)
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  oplibrary_ = 0;
-}
-
-bool FetchRequest::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.FetchRequest)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.OpLibraryType oplibrary = 1;
-      case 1: {
-        if (tag == 8u) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          set_oplibrary(static_cast< ::executor::OpLibraryType >(value));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bytes extra = 2;
-      case 2: {
-        if (tag == 18u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_extra()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:executor.FetchRequest)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:executor.FetchRequest)
-  return false;
-#undef DO_
-}
-
-void FetchRequest::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.FetchRequest)
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->oplibrary(), output);
-  }
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      2, this->extra(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:executor.FetchRequest)
-}
-
-::google::protobuf::uint8* FetchRequest::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.FetchRequest)
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->oplibrary(), target);
-  }
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->extra(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:executor.FetchRequest)
-  return target;
-}
-
-size_t FetchRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.FetchRequest)
-  size_t total_size = 0;
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->extra());
-  }
-
-  // .executor.OpLibraryType oplibrary = 1;
-  if (this->oplibrary() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void FetchRequest::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.FetchRequest)
-  GOOGLE_DCHECK_NE(&from, this);
-  const FetchRequest* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const FetchRequest>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.FetchRequest)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.FetchRequest)
-    MergeFrom(*source);
-  }
-}
-
-void FetchRequest::MergeFrom(const FetchRequest& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.FetchRequest)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.extra().size() > 0) {
-
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-  if (from.oplibrary() != 0) {
-    set_oplibrary(from.oplibrary());
-  }
-}
-
-void FetchRequest::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.FetchRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void FetchRequest::CopyFrom(const FetchRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.FetchRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool FetchRequest::IsInitialized() const {
-  return true;
-}
-
-void FetchRequest::Swap(FetchRequest* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void FetchRequest::InternalSwap(FetchRequest* other) {
-  extra_.Swap(&other->extra_);
-  std::swap(oplibrary_, other->oplibrary_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata FetchRequest::GetMetadata() const {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[2];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// FetchRequest
-
-// .executor.OpLibraryType oplibrary = 1;
-void FetchRequest::clear_oplibrary() {
-  oplibrary_ = 0;
-}
-::executor::OpLibraryType FetchRequest::oplibrary() const {
-  // @@protoc_insertion_point(field_get:executor.FetchRequest.oplibrary)
-  return static_cast< ::executor::OpLibraryType >(oplibrary_);
-}
-void FetchRequest::set_oplibrary(::executor::OpLibraryType value) {
-  
-  oplibrary_ = value;
-  // @@protoc_insertion_point(field_set:executor.FetchRequest.oplibrary)
-}
-
-// bytes extra = 2;
-void FetchRequest::clear_extra() {
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& FetchRequest::extra() const {
-  // @@protoc_insertion_point(field_get:executor.FetchRequest.extra)
-  return extra_.GetNoArena();
-}
-void FetchRequest::set_extra(const ::std::string& value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.FetchRequest.extra)
-}
-#if LANG_CXX11
-void FetchRequest::set_extra(::std::string&& value) {
-  
-  extra_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.FetchRequest.extra)
-}
-#endif
-void FetchRequest::set_extra(const char* value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.FetchRequest.extra)
-}
-void FetchRequest::set_extra(const void* value, size_t size) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.FetchRequest.extra)
-}
-::std::string* FetchRequest::mutable_extra() {
-  
-  // @@protoc_insertion_point(field_mutable:executor.FetchRequest.extra)
-  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* FetchRequest::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.FetchRequest.extra)
-  
-  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void FetchRequest::set_allocated_extra(::std::string* extra) {
-  if (extra != NULL) {
-    
-  } else {
-    
-  }
-  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.FetchRequest.extra)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int FetchResponse::kResultFieldNumber;
-const int FetchResponse::kExtraFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-FetchResponse::FetchResponse()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_executor_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.FetchResponse)
-}
-FetchResponse::FetchResponse(const FetchResponse& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.extra().size() > 0) {
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-  if (from.has_result()) {
-    result_ = new ::executor::Status(*from.result_);
-  } else {
-    result_ = NULL;
-  }
-  // @@protoc_insertion_point(copy_constructor:executor.FetchResponse)
-}
-
-void FetchResponse::SharedCtor() {
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  result_ = NULL;
-  _cached_size_ = 0;
-}
-
-FetchResponse::~FetchResponse() {
-  // @@protoc_insertion_point(destructor:executor.FetchResponse)
-  SharedDtor();
-}
-
-void FetchResponse::SharedDtor() {
-  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) {
-    delete result_;
-  }
-}
-
-void FetchResponse::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* FetchResponse::descriptor() {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[3].descriptor;
-}
-
-const FetchResponse& FetchResponse::default_instance() {
-  protobuf_executor_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-FetchResponse* FetchResponse::New(::google::protobuf::Arena* arena) const {
-  FetchResponse* n = new FetchResponse;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void FetchResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.FetchResponse)
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (GetArenaNoVirtual() == NULL && result_ != NULL) {
-    delete result_;
-  }
-  result_ = NULL;
-}
-
-bool FetchResponse::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.FetchResponse)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.Status result = 1;
-      case 1: {
-        if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_result()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bytes extra = 2;
-      case 2: {
-        if (tag == 18u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_extra()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:executor.FetchResponse)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:executor.FetchResponse)
-  return false;
-#undef DO_
-}
-
-void FetchResponse::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.FetchResponse)
-  // .executor.Status result = 1;
-  if (this->has_result()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->result_, output);
-  }
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      2, this->extra(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:executor.FetchResponse)
-}
-
-::google::protobuf::uint8* FetchResponse::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.FetchResponse)
-  // .executor.Status result = 1;
-  if (this->has_result()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        1, *this->result_, false, target);
-  }
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->extra(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:executor.FetchResponse)
-  return target;
-}
-
-size_t FetchResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.FetchResponse)
-  size_t total_size = 0;
-
-  // bytes extra = 2;
-  if (this->extra().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->extra());
-  }
-
-  // .executor.Status result = 1;
-  if (this->has_result()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->result_);
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void FetchResponse::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.FetchResponse)
-  GOOGLE_DCHECK_NE(&from, this);
-  const FetchResponse* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const FetchResponse>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.FetchResponse)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.FetchResponse)
-    MergeFrom(*source);
-  }
-}
-
-void FetchResponse::MergeFrom(const FetchResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.FetchResponse)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.extra().size() > 0) {
-
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-  if (from.has_result()) {
-    mutable_result()->::executor::Status::MergeFrom(from.result());
-  }
-}
-
-void FetchResponse::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.FetchResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void FetchResponse::CopyFrom(const FetchResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.FetchResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool FetchResponse::IsInitialized() const {
-  return true;
-}
-
-void FetchResponse::Swap(FetchResponse* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void FetchResponse::InternalSwap(FetchResponse* other) {
-  extra_.Swap(&other->extra_);
-  std::swap(result_, other->result_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata FetchResponse::GetMetadata() const {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[3];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// FetchResponse
-
-// .executor.Status result = 1;
-bool FetchResponse::has_result() const {
-  return this != internal_default_instance() && result_ != NULL;
-}
-void FetchResponse::clear_result() {
-  if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
-  result_ = NULL;
-}
-const ::executor::Status& FetchResponse::result() const {
-  // @@protoc_insertion_point(field_get:executor.FetchResponse.result)
-  return result_ != NULL ? *result_
-                         : *::executor::Status::internal_default_instance();
-}
-::executor::Status* FetchResponse::mutable_result() {
-  
-  if (result_ == NULL) {
-    result_ = new ::executor::Status;
-  }
-  // @@protoc_insertion_point(field_mutable:executor.FetchResponse.result)
-  return result_;
-}
-::executor::Status* FetchResponse::release_result() {
-  // @@protoc_insertion_point(field_release:executor.FetchResponse.result)
-  
-  ::executor::Status* temp = result_;
-  result_ = NULL;
-  return temp;
-}
-void FetchResponse::set_allocated_result(::executor::Status* result) {
-  delete result_;
-  result_ = result;
-  if (result) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:executor.FetchResponse.result)
-}
-
-// bytes extra = 2;
-void FetchResponse::clear_extra() {
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& FetchResponse::extra() const {
-  // @@protoc_insertion_point(field_get:executor.FetchResponse.extra)
-  return extra_.GetNoArena();
-}
-void FetchResponse::set_extra(const ::std::string& value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.FetchResponse.extra)
-}
-#if LANG_CXX11
-void FetchResponse::set_extra(::std::string&& value) {
-  
-  extra_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.FetchResponse.extra)
-}
-#endif
-void FetchResponse::set_extra(const char* value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.FetchResponse.extra)
-}
-void FetchResponse::set_extra(const void* value, size_t size) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.FetchResponse.extra)
-}
-::std::string* FetchResponse::mutable_extra() {
-  
-  // @@protoc_insertion_point(field_mutable:executor.FetchResponse.extra)
-  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* FetchResponse::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.FetchResponse.extra)
-  
-  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void FetchResponse::set_allocated_extra(::std::string* extra) {
-  if (extra != NULL) {
-    
-  } else {
-    
-  }
-  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.FetchResponse.extra)
+  // @@protoc_insertion_point(field_set_allocated:executor.CustomResponse.extra)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1757,7 +1096,7 @@ void RunRequest::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* RunRequest::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[4].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[2].descriptor;
 }
 
 const RunRequest& RunRequest::default_instance() {
@@ -1960,7 +1299,7 @@ void RunRequest::InternalSwap(RunRequest* other) {
 
 ::google::protobuf::Metadata RunRequest::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[4];
+  return protobuf_executor_2eproto::file_level_metadata[2];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2106,7 +1445,7 @@ void RunResponse::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* RunResponse::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[5].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[3].descriptor;
 }
 
 const RunResponse& RunResponse::default_instance() {
@@ -2309,7 +1648,7 @@ void RunResponse::InternalSwap(RunResponse* other) {
 
 ::google::protobuf::Metadata RunResponse::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[5];
+  return protobuf_executor_2eproto::file_level_metadata[3];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2438,7 +1777,7 @@ void DeallocRequest::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* DeallocRequest::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[6].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[4].descriptor;
 }
 
 const DeallocRequest& DeallocRequest::default_instance() {
@@ -2598,7 +1937,7 @@ void DeallocRequest::InternalSwap(DeallocRequest* other) {
 
 ::google::protobuf::Metadata DeallocRequest::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[6];
+  return protobuf_executor_2eproto::file_level_metadata[4];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2670,7 +2009,7 @@ void DeallocResponse::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* DeallocResponse::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[7].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[5].descriptor;
 }
 
 const DeallocResponse& DeallocResponse::default_instance() {
@@ -2834,7 +2173,7 @@ void DeallocResponse::InternalSwap(DeallocResponse* other) {
 
 ::google::protobuf::Metadata DeallocResponse::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[7];
+  return protobuf_executor_2eproto::file_level_metadata[5];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2928,7 +2267,7 @@ void AllocRequest::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* AllocRequest::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[8].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[6].descriptor;
 }
 
 const AllocRequest& AllocRequest::default_instance() {
@@ -3123,7 +2462,7 @@ void AllocRequest::InternalSwap(AllocRequest* other) {
 
 ::google::protobuf::Metadata AllocRequest::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[8];
+  return protobuf_executor_2eproto::file_level_metadata[6];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3212,7 +2551,7 @@ void AllocResponse::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* AllocResponse::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[9].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[7].descriptor;
 }
 
 const AllocResponse& AllocResponse::default_instance() {
@@ -3411,7 +2750,7 @@ void AllocResponse::InternalSwap(AllocResponse* other) {
 
 ::google::protobuf::Metadata AllocResponse::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[9];
+  return protobuf_executor_2eproto::file_level_metadata[7];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3529,7 +2868,7 @@ void OpKernelDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* OpKernelDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[10].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[8].descriptor;
 }
 
 const OpKernelDef& OpKernelDef::default_instance() {
@@ -3777,7 +3116,7 @@ void OpKernelDef::InternalSwap(OpKernelDef* other) {
 
 ::google::protobuf::Metadata OpKernelDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[10];
+  return protobuf_executor_2eproto::file_level_metadata[8];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3950,7 +3289,7 @@ void OpContextDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* OpContextDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[11].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[9].descriptor;
 }
 
 const OpContextDef& OpContextDef::default_instance() {
@@ -4112,7 +3451,7 @@ void OpContextDef::InternalSwap(OpContextDef* other) {
 
 ::google::protobuf::Metadata OpContextDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[11];
+  return protobuf_executor_2eproto::file_level_metadata[9];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4215,7 +3554,7 @@ void Status::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Status::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[12].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[10].descriptor;
 }
 
 const Status& Status::default_instance() {
@@ -4375,7 +3714,7 @@ void Status::InternalSwap(Status* other) {
 
 ::google::protobuf::Metadata Status::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[12];
+  return protobuf_executor_2eproto::file_level_metadata[10];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4403,6 +3742,7 @@ void Status::set_code(::google::protobuf::int32 value) {
 const int EvenlopDef::kTypeFieldNumber;
 const int EvenlopDef::kSeqFieldNumber;
 const int EvenlopDef::kRecvIdentityFieldNumber;
+const int EvenlopDef::kOplibraryFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 EvenlopDef::EvenlopDef()
@@ -4426,14 +3766,17 @@ EvenlopDef::EvenlopDef(const EvenlopDef& from)
   if (from.recvidentity().size() > 0) {
     recvidentity_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.recvidentity_);
   }
-  seq_ = from.seq_;
+  ::memcpy(&seq_, &from.seq_,
+    reinterpret_cast<char*>(&oplibrary_) -
+    reinterpret_cast<char*>(&seq_) + sizeof(oplibrary_));
   // @@protoc_insertion_point(copy_constructor:executor.EvenlopDef)
 }
 
 void EvenlopDef::SharedCtor() {
   type_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   recvidentity_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  seq_ = GOOGLE_ULONGLONG(0);
+  ::memset(&seq_, 0, reinterpret_cast<char*>(&oplibrary_) -
+    reinterpret_cast<char*>(&seq_) + sizeof(oplibrary_));
   _cached_size_ = 0;
 }
 
@@ -4454,7 +3797,7 @@ void EvenlopDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* EvenlopDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[13].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[11].descriptor;
 }
 
 const EvenlopDef& EvenlopDef::default_instance() {
@@ -4474,7 +3817,8 @@ void EvenlopDef::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.EvenlopDef)
   type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   recvidentity_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  seq_ = GOOGLE_ULONGLONG(0);
+  ::memset(&seq_, 0, reinterpret_cast<char*>(&oplibrary_) -
+    reinterpret_cast<char*>(&seq_) + sizeof(oplibrary_));
 }
 
 bool EvenlopDef::MergePartialFromCodedStream(
@@ -4526,6 +3870,20 @@ bool EvenlopDef::MergePartialFromCodedStream(
         break;
       }
 
+      // .executor.OpLibraryType oplibrary = 4;
+      case 4: {
+        if (tag == 32u) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_oplibrary(static_cast< ::executor::OpLibraryType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -4571,6 +3929,12 @@ void EvenlopDef::SerializeWithCachedSizes(
       3, this->recvidentity(), output);
   }
 
+  // .executor.OpLibraryType oplibrary = 4;
+  if (this->oplibrary() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->oplibrary(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:executor.EvenlopDef)
 }
 
@@ -4601,6 +3965,12 @@ void EvenlopDef::SerializeWithCachedSizes(
         3, this->recvidentity(), target);
   }
 
+  // .executor.OpLibraryType oplibrary = 4;
+  if (this->oplibrary() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      4, this->oplibrary(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:executor.EvenlopDef)
   return target;
 }
@@ -4628,6 +3998,12 @@ size_t EvenlopDef::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->seq());
+  }
+
+  // .executor.OpLibraryType oplibrary = 4;
+  if (this->oplibrary() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -4667,6 +4043,9 @@ void EvenlopDef::MergeFrom(const EvenlopDef& from) {
   if (from.seq() != 0) {
     set_seq(from.seq());
   }
+  if (from.oplibrary() != 0) {
+    set_oplibrary(from.oplibrary());
+  }
 }
 
 void EvenlopDef::CopyFrom(const ::google::protobuf::Message& from) {
@@ -4695,12 +4074,13 @@ void EvenlopDef::InternalSwap(EvenlopDef* other) {
   type_.Swap(&other->type_);
   recvidentity_.Swap(&other->recvidentity_);
   std::swap(seq_, other->seq_);
+  std::swap(oplibrary_, other->oplibrary_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata EvenlopDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[13];
+  return protobuf_executor_2eproto::file_level_metadata[11];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4822,6 +4202,20 @@ void EvenlopDef::set_allocated_recvidentity(::std::string* recvidentity) {
   }
   recvidentity_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), recvidentity);
   // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.recvIdentity)
+}
+
+// .executor.OpLibraryType oplibrary = 4;
+void EvenlopDef::clear_oplibrary() {
+  oplibrary_ = 0;
+}
+::executor::OpLibraryType EvenlopDef::oplibrary() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.oplibrary)
+  return static_cast< ::executor::OpLibraryType >(oplibrary_);
+}
+void EvenlopDef::set_oplibrary(::executor::OpLibraryType value) {
+  
+  oplibrary_ = value;
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.oplibrary)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -19,6 +19,8 @@
 
 #include "rpc_device.h"
 
+#include "rpc/tfoplibrary.pb.h"
+
 #include "tensorflow/core/common_runtime/local_device.h"
 #include "tensorflow/core/framework/allocator.h"
 #include "tensorflow/core/framework/allocator_registry.h"

@@ -26,6 +26,10 @@ class TFOpContextUpdateDefaultTypeInternal : public ::google::protobuf::internal
 } _TFOpContextUpdate_default_instance_;
 class TFRendezItemDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFRendezItem> {
 } _TFRendezItem_default_instance_;
+class TFRendezRecvRequestsDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFRendezRecvRequests> {
+} _TFRendezRecvRequests_default_instance_;
+class TFRendezRecvResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFRendezRecvResponse> {
+} _TFRendezRecvResponse_default_instance_;
 class TFTensorsDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFTensors> {
 } _TFTensors_default_instance_;
 class TFPushRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFPushRequest> {
@@ -36,7 +40,7 @@ namespace protobuf_tfoplibrary_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[6];
+::google::protobuf::Metadata file_level_metadata[8];
 
 }  // namespace
 
@@ -49,6 +53,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpKernelDef, nodedef_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpKernelDef, cfgproto_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpKernelDef, funcdef_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpKernelDef, isasync_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpContextDef, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -76,6 +81,17 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, isdead_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezItem, val_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvRequests, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvRequests, key_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvRequests, allocattributes_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvResponse, items_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensors, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -90,11 +106,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(TFOpKernelDef)},
-  { 8, -1, sizeof(TFOpContextDef)},
-  { 17, -1, sizeof(TFOpContextUpdate)},
-  { 26, -1, sizeof(TFRendezItem)},
-  { 34, -1, sizeof(TFTensors)},
-  { 39, -1, sizeof(TFPushRequest)},
+  { 9, -1, sizeof(TFOpContextDef)},
+  { 18, -1, sizeof(TFOpContextUpdate)},
+  { 27, -1, sizeof(TFRendezItem)},
+  { 35, -1, sizeof(TFRendezRecvRequests)},
+  { 41, -1, sizeof(TFRendezRecvResponse)},
+  { 46, -1, sizeof(TFTensors)},
+  { 51, -1, sizeof(TFPushRequest)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -102,6 +120,8 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextUpdate_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFRendezItem_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_TFRendezRecvRequests_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_TFRendezRecvResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFTensors_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFPushRequest_default_instance_),
 };
@@ -124,7 +144,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 6);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 8);
 }
 
 }  // namespace
@@ -138,10 +158,14 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[2].reflection;
   _TFRendezItem_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
-  _TFTensors_default_instance_.Shutdown();
+  _TFRendezRecvRequests_default_instance_.Shutdown();
   delete file_level_metadata[4].reflection;
-  _TFPushRequest_default_instance_.Shutdown();
+  _TFRendezRecvResponse_default_instance_.Shutdown();
   delete file_level_metadata[5].reflection;
+  _TFTensors_default_instance_.Shutdown();
+  delete file_level_metadata[6].reflection;
+  _TFPushRequest_default_instance_.Shutdown();
+  delete file_level_metadata[7].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -157,6 +181,8 @@ void TableStruct::InitDefaultsImpl() {
   _TFOpContextDef_default_instance_.DefaultConstruct();
   _TFOpContextUpdate_default_instance_.DefaultConstruct();
   _TFRendezItem_default_instance_.DefaultConstruct();
+  _TFRendezRecvRequests_default_instance_.DefaultConstruct();
+  _TFRendezRecvResponse_default_instance_.DefaultConstruct();
   _TFTensors_default_instance_.DefaultConstruct();
   _TFPushRequest_default_instance_.DefaultConstruct();
   _TFOpKernelDef_default_instance_.get_mutable()->nodedef_ = const_cast< ::tensorflow::NodeDef*>(
@@ -181,30 +207,33 @@ void AddDescriptorsImpl() {
       "low/core/framework/function.proto\032&tenso"
       "rflow/core/framework/tensor.proto\032%tenso"
       "rflow/core/protobuf/config.proto\032*tensor"
-      "flow/core/lib/core/error_codes.proto\"\254\001\n"
+      "flow/core/lib/core/error_codes.proto\"\275\001\n"
       "\rTFOpKernelDef\022\031\n\021graph_def_version\030\001 \001("
       "\005\022$\n\007nodedef\030\002 \001(\0132\023.tensorflow.NodeDef\022"
       ")\n\010cfgProto\030\003 \001(\0132\027.tensorflow.ConfigPro"
       "to\022/\n\007funcDef\030\004 \001(\0132\036.tensorflow.Functio"
-      "nDefLibrary\"\204\001\n\016TFOpContextDef\022\017\n\007step_i"
-      "d\030\001 \001(\003\022\020\n\010frame_id\030\002 \001(\004\022\017\n\007iter_id\030\003 \001"
-      "(\003\022\025\n\ris_input_dead\030\004 \001(\010\022\'\n\006inputs\030\005 \003("
-      "\0132\027.tensorflow.TensorProto\"\305\001\n\021TFOpConte"
-      "xtUpdate\022\026\n\016is_output_dead\030\001 \001(\010\022(\n\007outp"
-      "uts\030\002 \003(\0132\027.tensorflow.TensorProto\022-\n\rre"
-      "ndezTensors\030\003 \003(\0132\026.executor.TFRendezIte"
-      "m\022+\n\013status_code\030\004 \001(\0162\026.tensorflow.erro"
-      "r.Code\022\022\n\nstatus_msg\030\005 \001(\t\"j\n\014TFRendezIt"
-      "em\022\013\n\003key\030\001 \001(\t\022\027\n\017allocAttributes\030\002 \001(\r"
-      "\022\016\n\006isDead\030\003 \001(\010\022$\n\003val\030\004 \001(\0132\027.tensorfl"
-      "ow.TensorProto\"5\n\tTFTensors\022(\n\007tensors\030\001"
-      " \003(\0132\027.tensorflow.TensorProto\"`\n\rTFPushR"
-      "equest\022%\n\004data\030\001 \003(\0132\027.tensorflow.Tensor"
-      "Proto\022(\n\007tensors\030\002 \003(\0132\027.tensorflow.Tens"
-      "orProtob\006proto3"
+      "nDefLibrary\022\017\n\007isAsync\030\005 \001(\010\"\204\001\n\016TFOpCon"
+      "textDef\022\017\n\007step_id\030\001 \001(\003\022\020\n\010frame_id\030\002 \001"
+      "(\004\022\017\n\007iter_id\030\003 \001(\003\022\025\n\ris_input_dead\030\004 \001"
+      "(\010\022\'\n\006inputs\030\005 \003(\0132\027.tensorflow.TensorPr"
+      "oto\"\305\001\n\021TFOpContextUpdate\022\026\n\016is_output_d"
+      "ead\030\001 \001(\010\022(\n\007outputs\030\002 \003(\0132\027.tensorflow."
+      "TensorProto\022-\n\rrendezTensors\030\003 \003(\0132\026.exe"
+      "cutor.TFRendezItem\022+\n\013status_code\030\004 \001(\0162"
+      "\026.tensorflow.error.Code\022\022\n\nstatus_msg\030\005 "
+      "\001(\t\"j\n\014TFRendezItem\022\013\n\003key\030\001 \001(\t\022\027\n\017allo"
+      "cAttributes\030\002 \001(\r\022\016\n\006isDead\030\003 \001(\010\022$\n\003val"
+      "\030\004 \001(\0132\027.tensorflow.TensorProto\"<\n\024TFRen"
+      "dezRecvRequests\022\013\n\003key\030\001 \003(\t\022\027\n\017allocAtt"
+      "ributes\030\002 \003(\r\"=\n\024TFRendezRecvResponse\022%\n"
+      "\005items\030\001 \003(\0132\026.executor.TFRendezItem\"5\n\t"
+      "TFTensors\022(\n\007tensors\030\001 \003(\0132\027.tensorflow."
+      "TensorProto\"`\n\rTFPushRequest\022%\n\004data\030\001 \003"
+      "(\0132\027.tensorflow.TensorProto\022(\n\007tensors\030\002"
+      " \003(\0132\027.tensorflow.TensorProtob\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1015);
+      descriptor, 1157);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "tfoplibrary.proto", &protobuf_RegisterTypes);
   ::tensorflow::protobuf_tensorflow_2fcore_2fframework_2fnode_5fdef_2eproto::AddDescriptors();
@@ -236,6 +265,7 @@ const int TFOpKernelDef::kGraphDefVersionFieldNumber;
 const int TFOpKernelDef::kNodedefFieldNumber;
 const int TFOpKernelDef::kCfgProtoFieldNumber;
 const int TFOpKernelDef::kFuncDefFieldNumber;
+const int TFOpKernelDef::kIsAsyncFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 TFOpKernelDef::TFOpKernelDef()
@@ -266,13 +296,15 @@ TFOpKernelDef::TFOpKernelDef(const TFOpKernelDef& from)
   } else {
     funcdef_ = NULL;
   }
-  graph_def_version_ = from.graph_def_version_;
+  ::memcpy(&graph_def_version_, &from.graph_def_version_,
+    reinterpret_cast<char*>(&isasync_) -
+    reinterpret_cast<char*>(&graph_def_version_) + sizeof(isasync_));
   // @@protoc_insertion_point(copy_constructor:executor.TFOpKernelDef)
 }
 
 void TFOpKernelDef::SharedCtor() {
-  ::memset(&nodedef_, 0, reinterpret_cast<char*>(&graph_def_version_) -
-    reinterpret_cast<char*>(&nodedef_) + sizeof(graph_def_version_));
+  ::memset(&nodedef_, 0, reinterpret_cast<char*>(&isasync_) -
+    reinterpret_cast<char*>(&nodedef_) + sizeof(isasync_));
   _cached_size_ = 0;
 }
 
@@ -330,7 +362,8 @@ void TFOpKernelDef::Clear() {
     delete funcdef_;
   }
   funcdef_ = NULL;
-  graph_def_version_ = 0;
+  ::memset(&graph_def_version_, 0, reinterpret_cast<char*>(&isasync_) -
+    reinterpret_cast<char*>(&graph_def_version_) + sizeof(isasync_));
 }
 
 bool TFOpKernelDef::MergePartialFromCodedStream(
@@ -389,6 +422,19 @@ bool TFOpKernelDef::MergePartialFromCodedStream(
         break;
       }
 
+      // bool isAsync = 5;
+      case 5: {
+        if (tag == 40u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &isasync_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -436,6 +482,11 @@ void TFOpKernelDef::SerializeWithCachedSizes(
       4, *this->funcdef_, output);
   }
 
+  // bool isAsync = 5;
+  if (this->isasync() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->isasync(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:executor.TFOpKernelDef)
 }
 
@@ -467,6 +518,11 @@ void TFOpKernelDef::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         4, *this->funcdef_, false, target);
+  }
+
+  // bool isAsync = 5;
+  if (this->isasync() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->isasync(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:executor.TFOpKernelDef)
@@ -503,6 +559,11 @@ size_t TFOpKernelDef::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->graph_def_version());
+  }
+
+  // bool isAsync = 5;
+  if (this->isasync() != 0) {
+    total_size += 1 + 1;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -543,6 +604,9 @@ void TFOpKernelDef::MergeFrom(const TFOpKernelDef& from) {
   if (from.graph_def_version() != 0) {
     set_graph_def_version(from.graph_def_version());
   }
+  if (from.isasync() != 0) {
+    set_isasync(from.isasync());
+  }
 }
 
 void TFOpKernelDef::CopyFrom(const ::google::protobuf::Message& from) {
@@ -572,6 +636,7 @@ void TFOpKernelDef::InternalSwap(TFOpKernelDef* other) {
   std::swap(cfgproto_, other->cfgproto_);
   std::swap(funcdef_, other->funcdef_);
   std::swap(graph_def_version_, other->graph_def_version_);
+  std::swap(isasync_, other->isasync_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -727,6 +792,20 @@ void TFOpKernelDef::set_allocated_funcdef(::tensorflow::FunctionDefLibrary* func
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFOpKernelDef.funcDef)
+}
+
+// bool isAsync = 5;
+void TFOpKernelDef::clear_isasync() {
+  isasync_ = false;
+}
+bool TFOpKernelDef::isasync() const {
+  // @@protoc_insertion_point(field_get:executor.TFOpKernelDef.isAsync)
+  return isasync_;
+}
+void TFOpKernelDef::set_isasync(bool value) {
+  
+  isasync_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFOpKernelDef.isAsync)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2186,6 +2265,618 @@ void TFRendezItem::set_allocated_val(::tensorflow::TensorProto* val) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TFRendezRecvRequests::kKeyFieldNumber;
+const int TFRendezRecvRequests::kAllocAttributesFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+TFRendezRecvRequests::TFRendezRecvRequests()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_tfoplibrary_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.TFRendezRecvRequests)
+}
+TFRendezRecvRequests::TFRendezRecvRequests(const TFRendezRecvRequests& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      key_(from.key_),
+      allocattributes_(from.allocattributes_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:executor.TFRendezRecvRequests)
+}
+
+void TFRendezRecvRequests::SharedCtor() {
+  _cached_size_ = 0;
+}
+
+TFRendezRecvRequests::~TFRendezRecvRequests() {
+  // @@protoc_insertion_point(destructor:executor.TFRendezRecvRequests)
+  SharedDtor();
+}
+
+void TFRendezRecvRequests::SharedDtor() {
+}
+
+void TFRendezRecvRequests::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* TFRendezRecvRequests::descriptor() {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
+}
+
+const TFRendezRecvRequests& TFRendezRecvRequests::default_instance() {
+  protobuf_tfoplibrary_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+TFRendezRecvRequests* TFRendezRecvRequests::New(::google::protobuf::Arena* arena) const {
+  TFRendezRecvRequests* n = new TFRendezRecvRequests;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void TFRendezRecvRequests::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.TFRendezRecvRequests)
+  key_.Clear();
+  allocattributes_.Clear();
+}
+
+bool TFRendezRecvRequests::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.TFRendezRecvRequests)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated string key = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_key()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->key(this->key_size() - 1).data(),
+            this->key(this->key_size() - 1).length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.TFRendezRecvRequests.key"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated uint32 allocAttributes = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, this->mutable_allocattributes())));
+        } else if (tag == 16u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 1, 18u, input, this->mutable_allocattributes())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.TFRendezRecvRequests)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.TFRendezRecvRequests)
+  return false;
+#undef DO_
+}
+
+void TFRendezRecvRequests::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.TFRendezRecvRequests)
+  // repeated string key = 1;
+  for (int i = 0; i < this->key_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->key(i).data(), this->key(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.TFRendezRecvRequests.key");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->key(i), output);
+  }
+
+  // repeated uint32 allocAttributes = 2;
+  if (this->allocattributes_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(2, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_allocattributes_cached_byte_size_);
+  }
+  for (int i = 0; i < this->allocattributes_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32NoTag(
+      this->allocattributes(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.TFRendezRecvRequests)
+}
+
+::google::protobuf::uint8* TFRendezRecvRequests::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.TFRendezRecvRequests)
+  // repeated string key = 1;
+  for (int i = 0; i < this->key_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->key(i).data(), this->key(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.TFRendezRecvRequests.key");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(1, this->key(i), target);
+  }
+
+  // repeated uint32 allocAttributes = 2;
+  if (this->allocattributes_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      2,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+      _allocattributes_cached_byte_size_, target);
+  }
+  for (int i = 0; i < this->allocattributes_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteUInt32NoTagToArray(this->allocattributes(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.TFRendezRecvRequests)
+  return target;
+}
+
+size_t TFRendezRecvRequests::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.TFRendezRecvRequests)
+  size_t total_size = 0;
+
+  // repeated string key = 1;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->key_size());
+  for (int i = 0; i < this->key_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->key(i));
+  }
+
+  // repeated uint32 allocAttributes = 2;
+  {
+    size_t data_size = ::google::protobuf::internal::WireFormatLite::
+      UInt32Size(this->allocattributes_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _allocattributes_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void TFRendezRecvRequests::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.TFRendezRecvRequests)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TFRendezRecvRequests* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const TFRendezRecvRequests>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.TFRendezRecvRequests)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.TFRendezRecvRequests)
+    MergeFrom(*source);
+  }
+}
+
+void TFRendezRecvRequests::MergeFrom(const TFRendezRecvRequests& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.TFRendezRecvRequests)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  key_.MergeFrom(from.key_);
+  allocattributes_.MergeFrom(from.allocattributes_);
+}
+
+void TFRendezRecvRequests::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.TFRendezRecvRequests)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TFRendezRecvRequests::CopyFrom(const TFRendezRecvRequests& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.TFRendezRecvRequests)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TFRendezRecvRequests::IsInitialized() const {
+  return true;
+}
+
+void TFRendezRecvRequests::Swap(TFRendezRecvRequests* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void TFRendezRecvRequests::InternalSwap(TFRendezRecvRequests* other) {
+  key_.UnsafeArenaSwap(&other->key_);
+  allocattributes_.UnsafeArenaSwap(&other->allocattributes_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata TFRendezRecvRequests::GetMetadata() const {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// TFRendezRecvRequests
+
+// repeated string key = 1;
+int TFRendezRecvRequests::key_size() const {
+  return key_.size();
+}
+void TFRendezRecvRequests::clear_key() {
+  key_.Clear();
+}
+const ::std::string& TFRendezRecvRequests::key(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvRequests.key)
+  return key_.Get(index);
+}
+::std::string* TFRendezRecvRequests::mutable_key(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvRequests.key)
+  return key_.Mutable(index);
+}
+void TFRendezRecvRequests::set_key(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvRequests.key)
+  key_.Mutable(index)->assign(value);
+}
+void TFRendezRecvRequests::set_key(int index, const char* value) {
+  key_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:executor.TFRendezRecvRequests.key)
+}
+void TFRendezRecvRequests::set_key(int index, const char* value, size_t size) {
+  key_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:executor.TFRendezRecvRequests.key)
+}
+::std::string* TFRendezRecvRequests::add_key() {
+  // @@protoc_insertion_point(field_add_mutable:executor.TFRendezRecvRequests.key)
+  return key_.Add();
+}
+void TFRendezRecvRequests::add_key(const ::std::string& value) {
+  key_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvRequests.key)
+}
+void TFRendezRecvRequests::add_key(const char* value) {
+  key_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:executor.TFRendezRecvRequests.key)
+}
+void TFRendezRecvRequests::add_key(const char* value, size_t size) {
+  key_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:executor.TFRendezRecvRequests.key)
+}
+const ::google::protobuf::RepeatedPtrField< ::std::string>&
+TFRendezRecvRequests::key() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvRequests.key)
+  return key_;
+}
+::google::protobuf::RepeatedPtrField< ::std::string>*
+TFRendezRecvRequests::mutable_key() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvRequests.key)
+  return &key_;
+}
+
+// repeated uint32 allocAttributes = 2;
+int TFRendezRecvRequests::allocattributes_size() const {
+  return allocattributes_.size();
+}
+void TFRendezRecvRequests::clear_allocattributes() {
+  allocattributes_.Clear();
+}
+::google::protobuf::uint32 TFRendezRecvRequests::allocattributes(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvRequests.allocAttributes)
+  return allocattributes_.Get(index);
+}
+void TFRendezRecvRequests::set_allocattributes(int index, ::google::protobuf::uint32 value) {
+  allocattributes_.Set(index, value);
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvRequests.allocAttributes)
+}
+void TFRendezRecvRequests::add_allocattributes(::google::protobuf::uint32 value) {
+  allocattributes_.Add(value);
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvRequests.allocAttributes)
+}
+const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+TFRendezRecvRequests::allocattributes() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvRequests.allocAttributes)
+  return allocattributes_;
+}
+::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+TFRendezRecvRequests::mutable_allocattributes() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvRequests.allocAttributes)
+  return &allocattributes_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TFRendezRecvResponse::kItemsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+TFRendezRecvResponse::TFRendezRecvResponse()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_tfoplibrary_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.TFRendezRecvResponse)
+}
+TFRendezRecvResponse::TFRendezRecvResponse(const TFRendezRecvResponse& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      items_(from.items_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:executor.TFRendezRecvResponse)
+}
+
+void TFRendezRecvResponse::SharedCtor() {
+  _cached_size_ = 0;
+}
+
+TFRendezRecvResponse::~TFRendezRecvResponse() {
+  // @@protoc_insertion_point(destructor:executor.TFRendezRecvResponse)
+  SharedDtor();
+}
+
+void TFRendezRecvResponse::SharedDtor() {
+}
+
+void TFRendezRecvResponse::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* TFRendezRecvResponse::descriptor() {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5].descriptor;
+}
+
+const TFRendezRecvResponse& TFRendezRecvResponse::default_instance() {
+  protobuf_tfoplibrary_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+TFRendezRecvResponse* TFRendezRecvResponse::New(::google::protobuf::Arena* arena) const {
+  TFRendezRecvResponse* n = new TFRendezRecvResponse;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void TFRendezRecvResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.TFRendezRecvResponse)
+  items_.Clear();
+}
+
+bool TFRendezRecvResponse::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.TFRendezRecvResponse)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .executor.TFRendezItem items = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_items()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.TFRendezRecvResponse)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.TFRendezRecvResponse)
+  return false;
+#undef DO_
+}
+
+void TFRendezRecvResponse::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.TFRendezRecvResponse)
+  // repeated .executor.TFRendezItem items = 1;
+  for (unsigned int i = 0, n = this->items_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->items(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.TFRendezRecvResponse)
+}
+
+::google::protobuf::uint8* TFRendezRecvResponse::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.TFRendezRecvResponse)
+  // repeated .executor.TFRendezItem items = 1;
+  for (unsigned int i = 0, n = this->items_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, this->items(i), false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.TFRendezRecvResponse)
+  return target;
+}
+
+size_t TFRendezRecvResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.TFRendezRecvResponse)
+  size_t total_size = 0;
+
+  // repeated .executor.TFRendezItem items = 1;
+  {
+    unsigned int count = this->items_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->items(i));
+    }
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void TFRendezRecvResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.TFRendezRecvResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TFRendezRecvResponse* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const TFRendezRecvResponse>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.TFRendezRecvResponse)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.TFRendezRecvResponse)
+    MergeFrom(*source);
+  }
+}
+
+void TFRendezRecvResponse::MergeFrom(const TFRendezRecvResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.TFRendezRecvResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  items_.MergeFrom(from.items_);
+}
+
+void TFRendezRecvResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.TFRendezRecvResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TFRendezRecvResponse::CopyFrom(const TFRendezRecvResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.TFRendezRecvResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TFRendezRecvResponse::IsInitialized() const {
+  return true;
+}
+
+void TFRendezRecvResponse::Swap(TFRendezRecvResponse* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void TFRendezRecvResponse::InternalSwap(TFRendezRecvResponse* other) {
+  items_.UnsafeArenaSwap(&other->items_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata TFRendezRecvResponse::GetMetadata() const {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// TFRendezRecvResponse
+
+// repeated .executor.TFRendezItem items = 1;
+int TFRendezRecvResponse::items_size() const {
+  return items_.size();
+}
+void TFRendezRecvResponse::clear_items() {
+  items_.Clear();
+}
+const ::executor::TFRendezItem& TFRendezRecvResponse::items(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.items)
+  return items_.Get(index);
+}
+::executor::TFRendezItem* TFRendezRecvResponse::mutable_items(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvResponse.items)
+  return items_.Mutable(index);
+}
+::executor::TFRendezItem* TFRendezRecvResponse::add_items() {
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvResponse.items)
+  return items_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
+TFRendezRecvResponse::mutable_items() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvResponse.items)
+  return &items_;
+}
+const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
+TFRendezRecvResponse::items() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvResponse.items)
+  return items_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int TFTensors::kTensorsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2225,7 +2916,7 @@ void TFTensors::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFTensors::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[6].descriptor;
 }
 
 const TFTensors& TFTensors::default_instance() {
@@ -2390,7 +3081,7 @@ void TFTensors::InternalSwap(TFTensors* other) {
 
 ::google::protobuf::Metadata TFTensors::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[6];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2472,7 +3163,7 @@ void TFPushRequest::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFPushRequest::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[5].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[7].descriptor;
 }
 
 const TFPushRequest& TFPushRequest::default_instance() {
@@ -2677,7 +3368,7 @@ void TFPushRequest::InternalSwap(TFPushRequest* other) {
 
 ::google::protobuf::Metadata TFPushRequest::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[5];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[7];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -43,7 +43,7 @@ public:
     void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library, Graph *graph) override;
 
     void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
-                  AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done);
+                  AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done) override;
 
     Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
                OpKernel *kernel, OpKernelContext *context) override;
@@ -51,16 +51,62 @@ public:
     Status deallocate(uint64_t addr_handle) override;
     Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) override;
     Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) override;
-
 private:
     using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
     template<typename ResponseType>
     Status rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &pReply);
 
-    template<typename ResponseType>
-    void rpcCallAsync(const ::google::protobuf::Message &msg,
-                      std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done);
+    struct AsyncCallStarter
+    {
+        AsyncCallStarter(const AsyncCallStarter &other) = delete;
+        AsyncCallStarter &operator=(const AsyncCallStarter &other) = delete;
 
+        AsyncCallStarter(AsyncCallStarter &&other)
+            : m_typedCallbacks(other.m_typedCallbacks)
+            , m_client(other.m_client)
+            , m_seq(other.m_seq)
+            , m_evenlop(std::move(other.m_evenlop))
+            , m_zmqmsg(std::move(other.m_zmqmsg))
+            , m_started(std::move(other.m_started))
+        {
+            other.m_started = true;
+        }
+
+        AsyncCallStarter(std::unordered_map<std::string, DoneCallback> &typedCallbacks,
+                         ZmqRpcClient &client, uint64_t seq, zmq::message_t &&evenlop, zmq::message_t &&zmqmsg)
+            : m_typedCallbacks(typedCallbacks)
+            , m_client(client)
+            , m_seq(seq)
+            , m_evenlop(std::move(evenlop))
+            , m_zmqmsg(std::move(zmqmsg))
+            , m_started(false)
+        {}
+
+        ~AsyncCallStarter()
+        {
+            start();
+        }
+
+        void start();
+
+        void add(const std::string &type, DoneCallback cb)
+        {
+            m_typedCallbacks[type] = std::move(cb);
+        }
+    private:
+        std::unordered_map<std::string, DoneCallback> &m_typedCallbacks;
+        ZmqRpcClient &m_client;
+        uint64_t m_seq;
+        zmq::message_t m_evenlop;
+        zmq::message_t m_zmqmsg;
+        bool m_started;
+    };
+
+    template<typename ResponseType>
+    AsyncCallStarter rpcCallAsync(const ::google::protobuf::Message &msg,
+                                  std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done);
+
+    AsyncCallStarter rpcCallAsync(const ::google::protobuf::Message &msg);
     void recvLoop();
 
 private:
@@ -73,15 +119,15 @@ private:
     mutex m_mu;
     zmq::socket_t m_sendSock GUARDED_BY(m_mu);
 
-    using RawDoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
     struct Item
     {
         ProtoPtr reply;
-        RawDoneCallback done;
+        DoneCallback done;
+        std::unordered_map<std::string, DoneCallback> typedCallbacks;
 
         Item();
         Item(Item &&other);
-        Item(ProtoPtr &&rep, RawDoneCallback d);
+        Item(ProtoPtr &&rep, DoneCallback d);
         Item &operator=(Item &&other);
     };
 

@@ -84,14 +84,19 @@ ZmqRpcClient::~ZmqRpcClient()
 
 ZmqRpcClient::Item::Item() {}
 
-ZmqRpcClient::Item::Item(Item &&other) : reply(std::move(other.reply)) , done(std::move(other.done)) {}
+ZmqRpcClient::Item::Item(Item &&other)
+    : reply(std::move(other.reply))
+    , done(std::move(other.done))
+    , typedCallbacks(std::move(other.typedCallbacks))
+{}
 
-ZmqRpcClient::Item::Item(ProtoPtr &&rep, RawDoneCallback done) : reply(std::move(rep)), done(done) {}
+ZmqRpcClient::Item::Item(ProtoPtr &&rep, DoneCallback done) : reply(std::move(rep)), done(done) {}
 
 ZmqRpcClient::Item &ZmqRpcClient::Item::operator=(Item &&other)
 {
     std::swap(this->reply, other.reply);
     std::swap(this->done, other.done);
+    std::swap(this->typedCallbacks, other.typedCallbacks);
     return *this;
 }
 
@@ -128,10 +133,11 @@ void ZmqRpcClient::recvLoop()
                 continue;
             }
 
-            LOG(INFO) << "Received evenlop: seq=" << edef.seq();
+            LOG(INFO) << "Received evenlop: seq=" << edef.seq() << " type=" << edef.type();
 
             // Find corresonding item in table
-            Item item;
+            DoneCallback cb;
+            ProtoPtr reply;
             {
                 mutex_lock locker(m_mtable);
                 auto it = m_recvCallbacks.find(edef.seq());
@@ -139,29 +145,53 @@ void ZmqRpcClient::recvLoop()
                     LOG(ERROR) << "Skipped one iteration due to seq not found in table: " << edef.seq();
                     continue;
                 }
-                std::swap(item ,it->second);
-                m_recvCallbacks.erase(it);
-            }
-
-            if (!item.done) {
-                LOG(WARNING) << "Skipped one iteration due to no callback";
-                continue;
+                auto itt = it->second.typedCallbacks.find(edef.type());
+                if (itt != it->second.typedCallbacks.end()) {
+                    cb = itt->second;
+                    // we have a typed callback
+                    if (!cb) {
+                        LOG(WARNING) << "Skipped one iteration due to no callback";
+                        continue;
+                    }
+                    auto desc = ::google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(edef.type());
+                    if (!desc) {
+                        LOG(ERROR) << "Protobuf descriptor not found for type name: " << edef.type();
+                        cb(errors::Internal("Protobuf descriptor not found for type"), nullptr);
+                        continue;
+                    }
+                    auto message = ::google::protobuf::MessageFactory::generated_factory()->GetPrototype(desc)->New();
+                    if (!message) {
+                        LOG(ERROR) << "Failed to create message object from descriptor of type name: {}" << edef.type();
+                        cb(errors::Internal("Failed to create message object from descriptor of type"), nullptr);
+                        continue;
+                    }
+                    reply.reset(message);
+                } else {
+                    if (!it->second.done) {
+                        LOG(WARNING) << "Skipped one iteration due to no callback";
+                        continue;
+                    }
+                    std::swap(cb ,it->second.done);
+                    std::swap(reply ,it->second.reply);
+                    m_recvCallbacks.erase(it);
+                }
             }
 
             // Now receive our message body
-            if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
-                LOG(ERROR) << "Skipped one iteration due to no body message part found after identity frames";
-                item.done(errors::Internal("No body message found"), std::move(item.reply));
-                continue;
+            if (reply) {
+                if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
+                    LOG(ERROR) << "Skipped one iteration due to no body message part found after identity frames";
+                    cb(errors::Internal("No body message found"), std::move(reply));
+                    continue;
+                }
+                recvSock.recv(&msg);
+                if(!reply->ParseFromArray(msg.data(), msg.size())) {
+                    LOG(ERROR) << "Received malformatted message body. Dropping";
+                    cb(errors::Internal("Body message malformatted"), std::move(reply));
+                    continue;
+                }
             }
-            recvSock.recv(&msg);
-            if(!item.reply->ParseFromArray(msg.data(), msg.size())) {
-                LOG(ERROR) << "Received malformatted message body. Dropping";
-                item.done(errors::Internal("Body message malformatted"), std::move(item.reply));
-                continue;
-            }
-
-            item.done(Status::OK(), std::move(item.reply));
+            cb(Status::OK(), std::move(reply));
         } catch (zmq::error_t &err) {
             if (err.num() == ETERM || err.num() == EINTR) {
                 break;
@@ -174,48 +204,84 @@ void ZmqRpcClient::recvLoop()
 }
 
 template<typename ResponseType>
-void ZmqRpcClient::rpcCallAsync(const google::protobuf::Message& msg,
-                                std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done)
+ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const google::protobuf::Message& msg,
+                                                          std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done)
 {
     auto seq = m_seq.fetch_add(1);
-    try {
-        // Create evenlop message
-        rpc::EvenlopDef edef;
-        edef.set_type(msg.GetTypeName());
-        edef.set_seq(seq);
-        edef.set_recvidentity(m_recvId);
-        zmq::message_t evenlop(edef.ByteSizeLong());
-        edef.SerializeToArray(evenlop.data(), evenlop.size());
+    // Create evenlop message
+    rpc::EvenlopDef edef;
+    edef.set_type(msg.GetTypeName());
+    edef.set_seq(seq);
+    edef.set_recvidentity(m_recvId);
+    edef.set_oplibrary(executor::TENSORFLOW);
+    zmq::message_t evenlop(edef.ByteSizeLong());
+    edef.SerializeToArray(evenlop.data(), evenlop.size());
 
-        LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
+    LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
 
-        // Create body message
-        zmq::message_t zmqmsg(msg.ByteSizeLong());
-        msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
+    // Create body message
+    zmq::message_t zmqmsg(msg.ByteSizeLong());
+    msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
 
-        // Register callback first
-        using ResponsePtr = std::unique_ptr<ResponseType>;
-        Item args { ResponsePtr(new ResponseType), [done](const Status &s, ProtoPtr &&rep){
+    // Register callback first
+    using ResponsePtr = std::unique_ptr<ResponseType>;
+    Item args;
+    if (done) {
+        args = Item { ResponsePtr(new ResponseType), [done](const Status &s, ProtoPtr &&rep){
             done(s, ResponsePtr(static_cast<ResponseType*>(rep.release())));
         }};
-        {
-            mutex_lock locker(m_mtable);
-            m_recvCallbacks[seq] = std::move(args);
-        }
-
-        // Send out message
-        {
-            mutex_lock locker(m_mu);
-            m_sendSock.send(zmq::message_t(), ZMQ_SNDMORE);
-            m_sendSock.send(evenlop, ZMQ_SNDMORE);
-            m_sendSock.send(zmqmsg);
-        }
-        LOG(INFO) << "Message sent for seq: " << edef.seq();
-    } catch (zmq::error_t &err) {
-        LOG(ERROR) << "Error when sending message seq " << seq << ": " << err.what();
-        // cleanup callback if any
+    }
+    {
         mutex_lock locker(m_mtable);
-        m_recvCallbacks.erase(seq);
+        m_recvCallbacks[seq] = std::move(args);
+        return AsyncCallStarter(m_recvCallbacks[seq].typedCallbacks,
+                                *this, seq, std::move(evenlop), std::move(zmqmsg));
+    }
+}
+
+ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const ::google::protobuf::Message &msg)
+{
+    auto seq = m_seq.fetch_add(1);
+    // Create evenlop message
+    rpc::EvenlopDef edef;
+    edef.set_type(msg.GetTypeName());
+    edef.set_seq(seq);
+    edef.set_recvidentity(m_recvId);
+    edef.set_oplibrary(executor::TENSORFLOW);
+    zmq::message_t evenlop(edef.ByteSizeLong());
+    edef.SerializeToArray(evenlop.data(), evenlop.size());
+
+    LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
+
+    // Create body message
+    zmq::message_t zmqmsg(msg.ByteSizeLong());
+    msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
+
+    {
+        mutex_lock locker(m_mtable);
+        m_recvCallbacks.emplace(seq, Item {});
+        return AsyncCallStarter(m_recvCallbacks[seq].typedCallbacks,
+                                *this, seq, std::move(evenlop), std::move(zmqmsg));
+    }
+}
+
+void ZmqRpcClient::AsyncCallStarter::start()
+{
+    if (m_started) return;
+    m_started = true;
+    try {
+        {
+            mutex_lock locker(m_client.m_mu);
+            m_client.m_sendSock.send(zmq::message_t(), ZMQ_SNDMORE);
+            m_client.m_sendSock.send(m_evenlop, ZMQ_SNDMORE);
+            m_client.m_sendSock.send(m_zmqmsg);
+        }
+        LOG(INFO) << "Message sent for seq: " << m_seq;
+    } catch (zmq::error_t &err) {
+        LOG(ERROR) << "Error when sending message seq " << m_seq << ": " << err.what();
+        // cleanup callback if any
+        mutex_lock locker(m_client.m_mtable);
+        m_client.m_recvCallbacks.erase(m_seq);
     }
 }
 
@@ -258,8 +324,9 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
     Item args;
     LOG(INFO) << "RpcClient::runAsync    calling rpc using rpc stub";
     using ResponsePtr = std::unique_ptr<rpc::RunResponse>;
-    rpcCallAsync<rpc::RunResponse>(request,
-                                   [done, context, this](const Status &status, ResponsePtr &&pResponse) {
+    auto starter = rpcCallAsync<rpc::RunResponse>(request,
+                                                  [done, context, this](const Status &status,
+                                                                        ResponsePtr &&pResponse) {
         LOG(INFO) << "RpcClient::runAsync    rpc returned with status: "
                   << status.code() << " " << status.error_message();
 
@@ -271,6 +338,37 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
         deserializeOpContext(context, &pResponse->context());
         done();
     });
+    starter.add("executor.TFRendezRecvRequests",
+                [context, this](const Status &s, ProtoPtr &&msg){
+        std::unique_ptr<executor::TFRendezRecvRequests> pReq(static_cast<executor::TFRendezRecvRequests*>(msg.release()));
+        for (size_t i = 0; i != pReq->key_size(); ++i) {
+            Rendezvous::ParsedKey parsed;
+            auto s = context->rendezvous()->ParseKey(pReq->key(i), &parsed);
+            if (!s.ok()) {
+                LOG(ERROR) << "Invalid rendezvous key in TFRendezRecvRequests: " << pReq->key(i);
+                continue;
+            }
+            LOG(INFO) << "Got executor.TFRendezRecvRequests for " << pReq->key(i);
+            Rendezvous::Args args;
+            args.alloc_attrs.value = pReq->allocattributes(i);
+            args.device_context = context->op_device_context();
+            context->rendezvous()->RecvAsync(parsed, args,
+                                            [this, parsed](const Status &s,
+                                                           const Rendezvous::Args &send_args,
+                                                           const Rendezvous::Args &recv_args,
+                                                           const Tensor &val, bool is_dead){
+                LOG(INFO) << "Send out executor.TFRendezRecvResponse for " << parsed.FullKey();
+                rpc::TFRendezRecvResponse resp;
+                auto item = resp.add_items();
+                item->set_key(parsed.FullKey().ToString());
+                item->set_allocattributes(send_args.alloc_attrs.value);
+                val.AsProtoTensorContent(item->mutable_val());
+
+                rpcCallAsync(resp);
+            });
+        }
+    });
+    starter.start();
 }
 
 Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
@@ -346,14 +444,13 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
     rpc::TFTensors tensors;
     tensorToProto(tensors.add_tensors(), *dev_tensor);
 
-    rpc::FetchRequest request;
-    request.set_oplibrary(rpc::TENSORFLOW);
+    rpc::CustomRequest request;
     tensors.SerializeToString(request.mutable_extra());
 
     LOG(INFO) << "RpcCLient::fetch actual request: " << request.DebugString();
 
     // Actuall call
-    std::unique_ptr<rpc::FetchResponse> pResponse;
+    std::unique_ptr<rpc::CustomResponse> pResponse;
     auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling
@@ -391,12 +488,11 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
     cpu_tensor->AsProtoTensorContent(push.add_data());
     tensorToProto(push.add_tensors(), *dev_tensor);
 
-    rpc::PushRequest request;
-    request.set_oplibrary(rpc::TENSORFLOW);
+    rpc::CustomRequest request;
     push.SerializeToString(request.mutable_extra());
 
     // Actuall call
-    std::unique_ptr<rpc::PushResponse> pResponse;
+    std::unique_ptr<rpc::CustomResponse> pResponse;
     auto status = rpcCall(request, pResponse);
 
     // TODO: better error handling

@@ -25,6 +25,9 @@
 
 #include <memory>
 #include <atomic>
+#include <functional>
+
+using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
 
 namespace executor {
 class OpKernelDef;
@@ -48,6 +51,8 @@ public:
 
     virtual ~RpcClient();
 
+    using DoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
+
     virtual void createSession(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph) = 0;
 
     virtual void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
@@ -61,7 +66,7 @@ public:
 
     void maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph);
 
-    void serializeOpKernel(executor::OpKernelDef *def, const OpKernel *kernel,
+    void serializeOpKernel(executor::OpKernelDef *def, OpKernel *kernel,
                            Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
     void serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,
                             Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);

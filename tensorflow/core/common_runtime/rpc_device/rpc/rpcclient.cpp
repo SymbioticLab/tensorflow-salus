@@ -60,7 +60,7 @@ void RpcClient::maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLi
     }
 }
 
-void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::OpKernel *kernel,
+void RpcClient::serializeOpKernel(executor::OpKernelDef *def, tensorflow::OpKernel *kernel,
                                   Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
 {
     LOG(INFO) << "About to serialize OpKernel";
@@ -78,6 +78,7 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, const tensorflow::
     *tfdef.mutable_nodedef() = kernel->def();
     *tfdef.mutable_cfgproto() = cfgProto;
     *tfdef.mutable_funcdef() = library;
+    tfdef.set_isasync(kernel->AsAsync() != nullptr);
 
     tfdef.SerializeToString(def->mutable_extra());
 
