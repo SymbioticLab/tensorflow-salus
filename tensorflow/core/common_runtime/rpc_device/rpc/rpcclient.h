@@ -72,6 +72,10 @@ public:
                             Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
     void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
 
+protected:
+    Tensor tensorFromProtoMeta(const TensorProto &outdef);
+    void tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref);
+
 private:
     std::atomic_flag m_initialized;
 

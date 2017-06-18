@@ -526,6 +526,22 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
         return status;
     }
 
+    LOG(INFO) << "Got push response: " << pResponse->DebugString();
+
+    rpc::TFTensors recved;
+    recved.ParseFromString(pResponse->extra());
+
+    LOG(INFO) << "Got parsed tftensors: " << recved.DebugString();
+
+    if (recved.tensors_size() != 1) {
+        LOG(ERROR) << "Parsed proto contains wrong number of tensor";
+        return errors::Internal("Failed to parse proto");
+    }
+
+    auto recvedproto = recved.tensors(0);
+
+    *dev_tensor = tensorFromProtoMeta(recvedproto);
+
     return Status::OK();
 }
 

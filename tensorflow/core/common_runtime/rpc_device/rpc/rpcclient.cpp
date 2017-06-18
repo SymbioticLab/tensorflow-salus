@@ -33,9 +33,9 @@
 
 #include <typeinfo>
 
-namespace {
+namespace tensorflow {
 
-tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
+Tensor RpcClient::tensorFromProtoMeta(const TensorProto &outdef)
 {
     if (outdef.int64_val_size() != 1) {
         LOG(ERROR) << "The tensorproto is not a valid protometa: " << outdef.DebugString();
@@ -46,13 +46,27 @@ tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
         dtype = RemoveRefType(dtype);
     }
     // create a one time allocator, which will delete itself after DeallocateRaw
-    auto alloc = tensorflow::OneTimeAllocator::create(outdef.int64_val(0)).release();
-    return tensorflow::Tensor(alloc, dtype, tensorflow::TensorShape(outdef.tensor_shape()));
+    auto alloc = OneTimeAllocator::create(outdef.int64_val(0)).release();
+    return Tensor(alloc, dtype, TensorShape(outdef.tensor_shape()));
 }
 
-}
+void RpcClient::tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref)
+{
+    auto dtype = tensor.dtype();
+    if (is_ref) {
+        dtype = MakeRefType(dtype);
+    }
+    meta->set_dtype(dtype);
 
-namespace tensorflow {
+    tensor.shape().AsProto(meta->mutable_tensor_shape());
+
+    if (tensor.IsInitialized() && tensor.shape().num_elements() > 0) {
+        auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
+        // HACK: use a int64 val entry to store the addr handle for simplicity,
+        // idealy should store this in tensor_content with proper encoding.
+        meta->add_int64_val(addr_handle);
+    }
+}
 
 class TensorResource : public ResourceBase
 {
@@ -125,29 +139,12 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, OpKernelContext 
 
     for (int i = 0; i != context->num_inputs(); i++) {
         auto indef = tfdef.add_inputs();
-        // NOTE: use context->input_dtype to take into account ref types
-        indef->set_dtype(context->input_dtype(i));
-        if (!context->input_is_ref(i)) {
-            auto in = context->input(i);
-
-            in.shape().AsProto(indef->mutable_tensor_shape());
-
-            auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
-            // HACK: use a int64 val entry to store the addr handle for simplicity,
-            // idealy should store this in tensor_content with proper encoding.
-            indef->add_int64_val(addr_handle);
-        } else {
+        auto isref = context->input_is_ref(i);
+        if (isref) {
             mutex_lock l(*context->input_ref_mutex(i));
-            const auto &in = context->mutable_input(i, true);
-            // This is a ref to another tensor, which must be already on executor and registered.
-            // Thus we only need to send out the addr_handle, which identifies the reffed tensor.
-            // WARNING: since we cannot forward the mutex across RPC boundaries, there might be data
-            // races if devices other than RPC is used at the same time. However this is not the
-            // use case we wanted to support.
-            auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
-            // HACK: use a int64 val entry to store the addr handle for simplicity,
-            // idealy should store this in tensor_content with proper encoding.
-            indef->add_int64_val(addr_handle);
+            tensorToProtoMeta(indef, context->mutable_input(i, true), isref);
+        } else {
+            tensorToProtoMeta(indef, context->input(i), isref);
         }
     }
 
