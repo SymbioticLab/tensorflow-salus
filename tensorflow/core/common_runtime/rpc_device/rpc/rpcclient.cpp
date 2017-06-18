@@ -60,6 +60,8 @@ void RpcClient::tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool 
 
     tensor.shape().AsProto(meta->mutable_tensor_shape());
 
+    LOG(INFO) << "Serialize tensor to proto meta, initialized: " << tensor.IsInitialized();
+    LOG(INFO) << "Serialize tensor to proto meta, shape.num_elements: " << tensor.shape().num_elements();
     if (tensor.IsInitialized() && tensor.shape().num_elements() > 0) {
         auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
         // HACK: use a int64 val entry to store the addr handle for simplicity,
