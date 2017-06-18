@@ -39,8 +39,8 @@ void tensorToProtoMeta(tensorflow::TensorProto *proto, const tensorflow::Tensor 
     proto->set_dtype(tensor.dtype());
     tensor.shape().AsProto(proto->mutable_tensor_shape());
 
+    LOG(INFO) << "Serialize tensor to proto meta, initialized: " << tensor.IsInitialized();
     LOG(INFO) << "Serialize tensor to proto meta, shape.num_elements: " << tensor.shape().num_elements();
-    LOG(INFO) << "Serialize tensor to proto meta, total bytes: " << tensor.TotalBytes();
     if (tensor.IsInitialized() && tensor.shape().num_elements() != 0) {
         auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
         // HACK: use a int64 val entry to store the addr handle for simplicity,
@@ -495,8 +495,14 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
     LOG(INFO) << "RpcClient::push";
 
     rpc::TFPushRequest push;
-    cpu_tensor->AsProtoTensorContent(push.add_data());
     tensorToProtoMeta(push.add_tensors(), *dev_tensor);
+    LOG(INFO) << "cpu tensor isinitialized: " << cpu_tensor->IsInitialized();
+    LOG(INFO) << "cpu tensor shape.num_elements: " << cpu_tensor->shape().num_elements();
+    auto data = push.add_data();
+    if (cpu_tensor->IsInitialized() && cpu_tensor->shape().num_elements() > 0) {
+        cpu_tensor->AsProtoTensorContent(data);
+    }
+    LOG(INFO) << "cpu tensor serialized to byte size long: " << data->ByteSizeLong();
 
     rpc::CustomRequest request;
     request.set_type(push.GetTypeName());

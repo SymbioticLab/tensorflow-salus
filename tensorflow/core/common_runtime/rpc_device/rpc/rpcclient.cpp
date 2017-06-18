@@ -207,8 +207,8 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
         auto tensor = tensorFromProtoMeta(outdef);
         if (IsRefType(outdef.dtype())) {
             auto name = strings::StrCat("_", counter.fetch_add(1), "_", "reftensor");
-            TensorResource *tr;
-            auto ok = context->resource_manager()->LookupOrCreate<TensorResource>("rpcclient", "reftensor",
+            TensorResource *tr = nullptr;
+            auto ok = context->resource_manager()->LookupOrCreate<TensorResource>("rpcclient", name,
                                                                   &tr, [&tensor](TensorResource **tr){
                 *tr = new TensorResource(tensor);
                 return Status::OK();
