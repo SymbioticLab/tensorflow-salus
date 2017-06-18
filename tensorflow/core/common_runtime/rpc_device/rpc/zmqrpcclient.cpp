@@ -34,15 +34,17 @@ using std::ostringstream;
 using random_bytes_engine = std::independent_bits_engine<std::random_device, sizeof(uint8_t), uint8_t>;
 
 namespace {
-void tensorToProto(tensorflow::TensorProto *proto, const tensorflow::Tensor &tensor)
+void tensorToProtoMeta(tensorflow::TensorProto *proto, const tensorflow::Tensor &tensor)
 {
     proto->set_dtype(tensor.dtype());
     tensor.shape().AsProto(proto->mutable_tensor_shape());
 
-    auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
-    // HACK: use a int64 val entry to store the addr handle for simplicity,
-    // idealy should store this in tensor_content with proper encoding.
-    proto->add_int64_val(addr_handle);
+    if (tensor.IsInitialized()) {
+        auto addr_handle = reinterpret_cast<uint64_t>(tensor.tensor_data().data());
+        // HACK: use a int64 val entry to store the addr handle for simplicity,
+        // idealy should store this in tensor_content with proper encoding.
+        proto->add_int64_val(addr_handle);
+    }
 }
 
 }
@@ -447,7 +449,7 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
     LOG(INFO) << "RpcClient::fetch";
 
     rpc::TFTensors tensors;
-    tensorToProto(tensors.add_tensors(), *dev_tensor);
+    tensorToProtoMeta(tensors.add_tensors(), *dev_tensor);
 
     rpc::CustomRequest request;
     request.set_type(tensors.GetTypeName());
@@ -492,7 +494,7 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
 
     rpc::TFPushRequest push;
     cpu_tensor->AsProtoTensorContent(push.add_data());
-    tensorToProto(push.add_tensors(), *dev_tensor);
+    tensorToProtoMeta(push.add_tensors(), *dev_tensor);
 
     rpc::CustomRequest request;
     request.set_type(push.GetTypeName());
