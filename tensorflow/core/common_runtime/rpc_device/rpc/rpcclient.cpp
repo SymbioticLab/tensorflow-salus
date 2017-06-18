@@ -40,14 +40,39 @@ tensorflow::Tensor tensorFromProtoMeta(const tensorflow::TensorProto &outdef)
     if (outdef.int64_val_size() != 1) {
         LOG(ERROR) << "The tensorproto is not a valid protometa: " << outdef.DebugString();
     }
+
+    auto dtype = outdef.dtype();
+    if (IsRefType(dtype)) {
+        dtype = RemoveRefType(dtype);
+    }
     // create a one time allocator, which will delete itself after DeallocateRaw
     auto alloc = tensorflow::OneTimeAllocator::create(outdef.int64_val(0)).release();
-    return tensorflow::Tensor(alloc, outdef.dtype(), tensorflow::TensorShape(outdef.tensor_shape()));
+    return tensorflow::Tensor(alloc, dtype, tensorflow::TensorShape(outdef.tensor_shape()));
 }
 
 }
 
 namespace tensorflow {
+
+class TensorResource : public ResourceBase
+{
+public:
+    explicit TensorResource(const Tensor&t) : m_tensor(t) {}
+
+    string DebugString() override {
+        return strings::StrCat(DataTypeString(m_tensor.dtype()), "/", m_tensor.shape().DebugString());
+    }
+
+    inline Tensor *tensor() { return &m_tensor; }
+    inline mutex *mu() { return &m_mu; }
+
+private:
+    ~TensorResource() override {}
+    TF_DISALLOW_COPY_AND_ASSIGN(TensorResource);
+
+    Tensor m_tensor;
+    mutex m_mu;
+};
 
 RpcClient::RpcClient() : m_initialized(ATOMIC_FLAG_INIT) { }
 
@@ -99,16 +124,31 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, OpKernelContext 
     tfdef.set_is_input_dead(params->is_input_dead);
 
     for (int i = 0; i != context->num_inputs(); i++) {
-        auto in = context->input(i);
         auto indef = tfdef.add_inputs();
+        // NOTE: use context->input_dtype to take into account ref types
+        indef->set_dtype(context->input_dtype(i));
+        if (!context->input_is_ref(i)) {
+            auto in = context->input(i);
 
-        indef->set_dtype(in.dtype());
-        in.shape().AsProto(indef->mutable_tensor_shape());
+            in.shape().AsProto(indef->mutable_tensor_shape());
 
-        auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
-        // HACK: use a int64 val entry to store the addr handle for simplicity,
-        // idealy should store this in tensor_content with proper encoding.
-        indef->add_int64_val(addr_handle);
+            auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
+            // HACK: use a int64 val entry to store the addr handle for simplicity,
+            // idealy should store this in tensor_content with proper encoding.
+            indef->add_int64_val(addr_handle);
+        } else {
+            mutex_lock l(*context->input_ref_mutex(i));
+            const auto &in = context->mutable_input(i, true);
+            // This is a ref to another tensor, which must be already on executor and registered.
+            // Thus we only need to send out the addr_handle, which identifies the reffed tensor.
+            // WARNING: since we cannot forward the mutex across RPC boundaries, there might be data
+            // races if devices other than RPC is used at the same time. However this is not the
+            // use case we wanted to support.
+            auto addr_handle = reinterpret_cast<uint64_t>(in.tensor_data().data());
+            // HACK: use a int64 val entry to store the addr handle for simplicity,
+            // idealy should store this in tensor_content with proper encoding.
+            indef->add_int64_val(addr_handle);
+        }
     }
 
     tfdef.SerializeToString(def->mutable_extra());
@@ -161,9 +201,28 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
     }
 
     LOG(INFO) << "Set outputs";
+    static std::atomic<int64> counter(0);
     for (int i = 0; i != tfdef.outputs_size(); ++i) {
         const auto &outdef = tfdef.outputs(i);
-        context->set_output(i, tensorFromProtoMeta(outdef));
+        auto tensor = tensorFromProtoMeta(outdef);
+        if (IsRefType(outdef.dtype())) {
+            auto name = strings::StrCat("_", counter.fetch_add(1), "_", "reftensor");
+            TensorResource *tr;
+            auto ok = context->resource_manager()->LookupOrCreate<TensorResource>("rpcclient", "reftensor",
+                                                                  &tr, [&tensor](TensorResource **tr){
+                *tr = new TensorResource(tensor);
+                return Status::OK();
+            });
+            if (!ok.ok()) {
+                LOG(ERROR) << "Creation of reftensor resource failed";
+                continue;
+            }
+            // NOTE: This only works for reference on the same device. And should not be used other than in
+            // executor.
+            context->set_output_ref(i, tr->mu(), tr->tensor());
+        } else {
+            context->set_output(i, tensor);
+        }
     }
     *context->is_output_dead() = tfdef.is_output_dead();
 
