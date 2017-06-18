@@ -90,6 +90,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvResponse, forseq_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFRendezRecvResponse, items_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensors, _internal_metadata_),
@@ -111,8 +112,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 27, -1, sizeof(TFRendezItem)},
   { 35, -1, sizeof(TFRendezRecvRequests)},
   { 41, -1, sizeof(TFRendezRecvResponse)},
-  { 46, -1, sizeof(TFTensors)},
-  { 51, -1, sizeof(TFPushRequest)},
+  { 47, -1, sizeof(TFTensors)},
+  { 52, -1, sizeof(TFPushRequest)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -225,15 +226,16 @@ void AddDescriptorsImpl() {
       "cAttributes\030\002 \001(\r\022\016\n\006isDead\030\003 \001(\010\022$\n\003val"
       "\030\004 \001(\0132\027.tensorflow.TensorProto\"<\n\024TFRen"
       "dezRecvRequests\022\013\n\003key\030\001 \003(\t\022\027\n\017allocAtt"
-      "ributes\030\002 \003(\r\"=\n\024TFRendezRecvResponse\022%\n"
-      "\005items\030\001 \003(\0132\026.executor.TFRendezItem\"5\n\t"
-      "TFTensors\022(\n\007tensors\030\001 \003(\0132\027.tensorflow."
-      "TensorProto\"`\n\rTFPushRequest\022%\n\004data\030\001 \003"
-      "(\0132\027.tensorflow.TensorProto\022(\n\007tensors\030\002"
-      " \003(\0132\027.tensorflow.TensorProtob\006proto3"
+      "ributes\030\002 \003(\r\"M\n\024TFRendezRecvResponse\022\016\n"
+      "\006forSeq\030\001 \001(\004\022%\n\005items\030\002 \003(\0132\026.executor."
+      "TFRendezItem\"5\n\tTFTensors\022(\n\007tensors\030\001 \003"
+      "(\0132\027.tensorflow.TensorProto\"`\n\rTFPushReq"
+      "uest\022%\n\004data\030\001 \003(\0132\027.tensorflow.TensorPr"
+      "oto\022(\n\007tensors\030\002 \003(\0132\027.tensorflow.Tensor"
+      "Protob\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1157);
+      descriptor, 1173);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "tfoplibrary.proto", &protobuf_RegisterTypes);
   ::tensorflow::protobuf_tensorflow_2fcore_2fframework_2fnode_5fdef_2eproto::AddDescriptors();
@@ -2632,6 +2634,7 @@ TFRendezRecvRequests::mutable_allocattributes() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TFRendezRecvResponse::kForSeqFieldNumber;
 const int TFRendezRecvResponse::kItemsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2649,10 +2652,12 @@ TFRendezRecvResponse::TFRendezRecvResponse(const TFRendezRecvResponse& from)
       items_(from.items_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  forseq_ = from.forseq_;
   // @@protoc_insertion_point(copy_constructor:executor.TFRendezRecvResponse)
 }
 
 void TFRendezRecvResponse::SharedCtor() {
+  forseq_ = GOOGLE_ULONGLONG(0);
   _cached_size_ = 0;
 }
 
@@ -2690,6 +2695,7 @@ TFRendezRecvResponse* TFRendezRecvResponse::New(::google::protobuf::Arena* arena
 void TFRendezRecvResponse::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.TFRendezRecvResponse)
   items_.Clear();
+  forseq_ = GOOGLE_ULONGLONG(0);
 }
 
 bool TFRendezRecvResponse::MergePartialFromCodedStream(
@@ -2702,9 +2708,22 @@ bool TFRendezRecvResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .executor.TFRendezItem items = 1;
+      // uint64 forSeq = 1;
       case 1: {
-        if (tag == 10u) {
+        if (tag == 8u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &forseq_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .executor.TFRendezItem items = 2;
+      case 2: {
+        if (tag == 18u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_items()));
@@ -2739,10 +2758,15 @@ failure:
 void TFRendezRecvResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.TFRendezRecvResponse)
-  // repeated .executor.TFRendezItem items = 1;
+  // uint64 forSeq = 1;
+  if (this->forseq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->forseq(), output);
+  }
+
+  // repeated .executor.TFRendezItem items = 2;
   for (unsigned int i = 0, n = this->items_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->items(i), output);
+      2, this->items(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:executor.TFRendezRecvResponse)
@@ -2752,11 +2776,16 @@ void TFRendezRecvResponse::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.TFRendezRecvResponse)
-  // repeated .executor.TFRendezItem items = 1;
+  // uint64 forSeq = 1;
+  if (this->forseq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->forseq(), target);
+  }
+
+  // repeated .executor.TFRendezItem items = 2;
   for (unsigned int i = 0, n = this->items_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        1, this->items(i), false, target);
+        2, this->items(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:executor.TFRendezRecvResponse)
@@ -2767,7 +2796,7 @@ size_t TFRendezRecvResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.TFRendezRecvResponse)
   size_t total_size = 0;
 
-  // repeated .executor.TFRendezItem items = 1;
+  // repeated .executor.TFRendezItem items = 2;
   {
     unsigned int count = this->items_size();
     total_size += 1UL * count;
@@ -2776,6 +2805,13 @@ size_t TFRendezRecvResponse::ByteSizeLong() const {
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->items(i));
     }
+  }
+
+  // uint64 forSeq = 1;
+  if (this->forseq() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->forseq());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2805,6 +2841,9 @@ void TFRendezRecvResponse::MergeFrom(const TFRendezRecvResponse& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   items_.MergeFrom(from.items_);
+  if (from.forseq() != 0) {
+    set_forseq(from.forseq());
+  }
 }
 
 void TFRendezRecvResponse::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2831,6 +2870,7 @@ void TFRendezRecvResponse::Swap(TFRendezRecvResponse* other) {
 }
 void TFRendezRecvResponse::InternalSwap(TFRendezRecvResponse* other) {
   items_.UnsafeArenaSwap(&other->items_);
+  std::swap(forseq_, other->forseq_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -2842,7 +2882,21 @@ void TFRendezRecvResponse::InternalSwap(TFRendezRecvResponse* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // TFRendezRecvResponse
 
-// repeated .executor.TFRendezItem items = 1;
+// uint64 forSeq = 1;
+void TFRendezRecvResponse::clear_forseq() {
+  forseq_ = GOOGLE_ULONGLONG(0);
+}
+::google::protobuf::uint64 TFRendezRecvResponse::forseq() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.forSeq)
+  return forseq_;
+}
+void TFRendezRecvResponse::set_forseq(::google::protobuf::uint64 value) {
+  
+  forseq_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvResponse.forSeq)
+}
+
+// repeated .executor.TFRendezItem items = 2;
 int TFRendezRecvResponse::items_size() const {
   return items_.size();
 }

@@ -338,8 +338,9 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
         deserializeOpContext(context, &pResponse->context());
         done();
     });
+    auto seq = starter.seq();
     starter.add("executor.TFRendezRecvRequests",
-                [context, this](const Status &s, ProtoPtr &&msg){
+                [context, seq, this](const Status &s, ProtoPtr &&msg){
         std::unique_ptr<executor::TFRendezRecvRequests> pReq(static_cast<executor::TFRendezRecvRequests*>(msg.release()));
         for (size_t i = 0; i != pReq->key_size(); ++i) {
             Rendezvous::ParsedKey parsed;
@@ -353,18 +354,22 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
             args.alloc_attrs.value = pReq->allocattributes(i);
             args.device_context = context->op_device_context();
             context->rendezvous()->RecvAsync(parsed, args,
-                                            [this, parsed](const Status &s,
+                                            [this, seq, parsed](const Status &s,
                                                            const Rendezvous::Args &send_args,
                                                            const Rendezvous::Args &recv_args,
                                                            const Tensor &val, bool is_dead){
                 LOG(INFO) << "Send out executor.TFRendezRecvResponse for " << parsed.FullKey();
                 rpc::TFRendezRecvResponse resp;
+                resp.set_forseq(seq);
                 auto item = resp.add_items();
                 item->set_key(parsed.FullKey().ToString());
                 item->set_allocattributes(send_args.alloc_attrs.value);
                 val.AsProtoTensorContent(item->mutable_val());
 
-                rpcCallAsync(resp);
+                rpc::CustomRequest request;
+                request.set_type(resp.GetTypeName());
+                resp.SerializeToString(request.mutable_extra());
+                rpcCallAsync(request);
             });
         }
     });
@@ -445,6 +450,7 @@ Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Ten
     tensorToProto(tensors.add_tensors(), *dev_tensor);
 
     rpc::CustomRequest request;
+    request.set_type(tensors.GetTypeName());
     tensors.SerializeToString(request.mutable_extra());
 
     LOG(INFO) << "RpcCLient::fetch actual request: " << request.DebugString();
@@ -489,6 +495,7 @@ Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tens
     tensorToProto(push.add_tensors(), *dev_tensor);
 
     rpc::CustomRequest request;
+    request.set_type(push.GetTypeName());
     push.SerializeToString(request.mutable_extra());
 
     // Actuall call

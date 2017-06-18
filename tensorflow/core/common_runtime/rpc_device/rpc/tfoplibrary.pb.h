@@ -776,10 +776,10 @@ class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_inse
 
   // accessors -------------------------------------------------------
 
-  // repeated .executor.TFRendezItem items = 1;
+  // repeated .executor.TFRendezItem items = 2;
   int items_size() const;
   void clear_items();
-  static const int kItemsFieldNumber = 1;
+  static const int kItemsFieldNumber = 2;
   const ::executor::TFRendezItem& items(int index) const;
   ::executor::TFRendezItem* mutable_items(int index);
   ::executor::TFRendezItem* add_items();
@@ -788,11 +788,18 @@ class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_inse
   const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
       items() const;
 
+  // uint64 forSeq = 1;
+  void clear_forseq();
+  static const int kForSeqFieldNumber = 1;
+  ::google::protobuf::uint64 forseq() const;
+  void set_forseq(::google::protobuf::uint64 value);
+
   // @@protoc_insertion_point(class_scope:executor.TFRendezRecvResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem > items_;
+  ::google::protobuf::uint64 forseq_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -1610,7 +1617,21 @@ TFRendezRecvRequests::mutable_allocattributes() {
 
 // TFRendezRecvResponse
 
-// repeated .executor.TFRendezItem items = 1;
+// uint64 forSeq = 1;
+inline void TFRendezRecvResponse::clear_forseq() {
+  forseq_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 TFRendezRecvResponse::forseq() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.forSeq)
+  return forseq_;
+}
+inline void TFRendezRecvResponse::set_forseq(::google::protobuf::uint64 value) {
+  
+  forseq_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvResponse.forSeq)
+}
+
+// repeated .executor.TFRendezItem items = 2;
 inline int TFRendezRecvResponse::items_size() const {
   return items_.size();
 }

@@ -93,6 +93,8 @@ private:
         {
             m_typedCallbacks[type] = std::move(cb);
         }
+
+        uint64_t seq() const { return m_seq; };
     private:
         std::unordered_map<std::string, DoneCallback> &m_typedCallbacks;
         ZmqRpcClient &m_client;
