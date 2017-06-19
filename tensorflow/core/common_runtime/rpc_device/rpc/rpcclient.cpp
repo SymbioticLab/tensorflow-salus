@@ -37,7 +37,10 @@ namespace tensorflow {
 
 Tensor RpcClient::tensorFromProtoMeta(const TensorProto &outdef)
 {
-    if (outdef.int64_val_size() != 1) {
+    uint64_t addr_handle = 0;
+    if (outdef.int64_val_size() == 1) {
+        addr_handle = outdef.int64_val(0);
+    } else if (outdef.int64_val_size() > 1){
         LOG(ERROR) << "The tensorproto is not a valid protometa: " << outdef.DebugString();
     }
 
@@ -46,12 +49,13 @@ Tensor RpcClient::tensorFromProtoMeta(const TensorProto &outdef)
         dtype = RemoveRefType(dtype);
     }
     // create a one time allocator, which will delete itself after DeallocateRaw
-    auto alloc = OneTimeAllocator::create(outdef.int64_val(0)).release();
+    auto alloc = OneTimeAllocator::create(addr_handle).release();
     return Tensor(alloc, dtype, TensorShape(outdef.tensor_shape()));
 }
 
 void RpcClient::tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref)
 {
+    LOG(WARNING) << "Do not use this !!!!!!!!!!!!!!!!!!!!!!";
     auto dtype = tensor.dtype();
     if (is_ref) {
         dtype = MakeRefType(dtype);
@@ -140,14 +144,9 @@ void RpcClient::serializeOpContext(executor::OpContextDef *def, OpKernelContext 
     tfdef.set_is_input_dead(params->is_input_dead);
 
     for (int i = 0; i != context->num_inputs(); i++) {
-        auto indef = tfdef.add_inputs();
-        auto isref = context->input_is_ref(i);
-        if (isref) {
-            mutex_lock l(*context->input_ref_mutex(i));
-            tensorToProtoMeta(indef, context->mutable_input(i, true), isref);
-        } else {
-            tensorToProtoMeta(indef, context->input(i), isref);
-        }
+        auto initem = tfdef.add_inputs();
+        initem->set_is_ref(context->input_is_ref(i));
+        initem->set_name(context->op_kernel().def().input(i));
     }
 
     tfdef.SerializeToString(def->mutable_extra());
@@ -168,13 +167,6 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
         const auto &outdef = tfdef.rendeztensors(i);
         Rendezvous::Args args;
         // TODO: is it ok to use op device context?
-        auto devctx = context->op_device_context<RPCDeviceContext>();
-        LOG(INFO) << "The op device context is " << typeid(devctx).name() << "@" << (uint64_t)devctx;
-        for (int j = 0; j != context->num_inputs(); ++j) {
-            auto d = context->input_device_context(j);
-            LOG(INFO) << "The input[" << j << "] device context is "
-                      << typeid(d).name() << "@" << (uint64_t)d;
-        }
         args.device_context = context->op_device_context();
         args.alloc_attrs.value = outdef.allocattributes();
 
@@ -187,10 +179,18 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
             continue;
         }
         LOG(INFO) << "Tensor proto is " << outdef.val().DebugString();
-        auto t = tensorFromProtoMeta(outdef.val());
-        // NOTE: never use DebugString on meta tensors, which holds buffer on device memory
-        //LOG(INFO) << "Process tensor " << t.DebugString();
-        LOG(INFO) << "Rendezvous send";
+
+        // Directly create tensor on CPU
+        args.alloc_attrs.set_on_host(true);
+        if (parsed.dst.type != "CPU") {
+            LOG(ERROR) << "Rendez from RPC to non CPU device is not supported";
+            continue;
+        }
+        Tensor t;
+        if (!t.FromProto(cpu_allocator(), outdef.val())) {
+            LOG(ERROR) << "Rendezvous tensors invalid";
+        }
+        LOG(INFO) << "Rendezvous send tensor " << t.DebugString();
         status = context->rendezvous()->Send(parsed, args, t, outdef.isdead());
         LOG(INFO) << "Rendezvous send finished";
         if (!status.ok()) {
@@ -203,9 +203,9 @@ void RpcClient::deserializeOpContext(OpKernelContext *context, const executor::O
     static std::atomic<int64> counter(0);
     for (int i = 0; i != tfdef.outputs_size(); ++i) {
         const auto &outdef = tfdef.outputs(i);
-        auto tensor = tensorFromProtoMeta(outdef);
-        if (IsRefType(outdef.dtype())) {
-            auto name = strings::StrCat("_", counter.fetch_add(1), "_", "reftensor");
+        auto tensor = tensorFromProtoMeta(outdef.meta());
+        if (outdef.is_ref()) {
+            auto name = strings::StrCat(outdef.name(), "_", counter.fetch_add(1));
             TensorResource *tr = nullptr;
             auto ok = context->resource_manager()->LookupOrCreate<TensorResource>("rpcclient", name,
                                                                   &tr, [&tensor](TensorResource **tr){

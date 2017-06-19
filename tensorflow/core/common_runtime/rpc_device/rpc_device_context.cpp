@@ -38,18 +38,14 @@ RPCDeviceContext::~RPCDeviceContext()
 
 void RPCDeviceContext::CopyCPUTensorToDevice(const Tensor *cpu_tensor, Device *device, Tensor *device_tensor,
                                              StatusCallback done) const {
-    LOG(INFO) << "RpcDeviceContext::CopyCPUTensorToDevice";
-    auto status = m_rpc.push(device_tensor, cpu_tensor);
-    done(status);
+    LOG(ERROR) << "RpcDeviceContext::CopyCPUTensorToDevice is not supported";
+    done(errors::Internal("RpcDeviceContext::CopyCPUTensorToDevice is not supported"));
 }
 
 void RPCDeviceContext::CopyDeviceTensorToCPU(const Tensor *device_tensor, StringPiece edge_name,
                                              Device *device, Tensor *cpu_tensor, StatusCallback done) {
     LOG(INFO) << "RpcDeviceContext::CopyDeviceTensorToCPU";
-
-    auto status = m_rpc.fetch(cpu_tensor, device_tensor);
-
-    done(status);
+    done(errors::Internal("RpcDeviceContext::CopyDeviceTensorToCPU is not supported"));
 }
 
 } // namespace tensorflow

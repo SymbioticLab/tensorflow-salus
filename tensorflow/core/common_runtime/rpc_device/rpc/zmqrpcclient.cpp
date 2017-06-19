@@ -349,6 +349,7 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
         LOG(INFO) << "Got executor.TFRendezRecvRequests for " << pReq->key(i);
         Rendezvous::Args args;
         args.alloc_attrs.value = pReq->allocattributes(i);
+        args.alloc_attrs.set_on_host(true); // we want tensor to on CPU, because we send them out ourselves
         args.device_context = context->op_device_context();
         context->rendezvous()->RecvAsync(parsed, args,
                                         [this, seq, parsed](const Status &s,
@@ -360,7 +361,7 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
             resp.set_forseq(seq);
             auto item = resp.add_items();
             item->set_key(parsed.FullKey().ToString());
-            item->set_allocattributes(send_args.alloc_attrs.value);
+//             item->set_allocattributes(send_args.alloc_attrs.value);
             val.AsProtoTensorContent(item->mutable_val());
 
             rpc::CustomRequest request;
@@ -436,95 +437,4 @@ Status ZmqRpcClient::deallocate(uint64_t addr_handle)
 
     return Status::OK();
 }
-
-Status ZmqRpcClient::fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor)
-{
-    LOG(INFO) << "RpcClient::fetch";
-
-    rpc::TFTensors tensors;
-    tensorToProtoMeta(tensors.add_tensors(), *dev_tensor, false);
-
-    rpc::CustomRequest request;
-    request.set_type(tensors.GetTypeName());
-    tensors.SerializeToString(request.mutable_extra());
-
-    LOG(INFO) << "RpcCLient::fetch actual request: " << request.DebugString();
-
-    // Actuall call
-    std::unique_ptr<rpc::CustomResponse> pResponse;
-    auto status = rpcCall(request, pResponse);
-
-    // TODO: better error handling
-    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
-        return status;
-    }
-
-    LOG(INFO) << "Got fetch response: " << pResponse->DebugString();
-
-    rpc::TFTensors recved;
-    recved.ParseFromString(pResponse->extra());
-
-    LOG(INFO) << "Got parsed tftensors: " << recved.DebugString();
-
-    if (recved.tensors_size() != 1) {
-        LOG(ERROR) << "Parsed proto contains wrong number of tensor";
-        return errors::Internal("Failed to parse proto");
-    }
-
-    auto recvedproto = recved.tensors(0);
-
-    if (!cpu_tensor->FromProto(recvedproto)) {
-        LOG(ERROR) << "Failed to parse proto: " << recvedproto.DebugString();
-        return errors::Internal("Failed to parse proto");
-    }
-
-    return Status::OK();
-}
-
-Status ZmqRpcClient::push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor)
-{
-    LOG(INFO) << "RpcClient::push";
-
-    rpc::TFPushRequest push;
-    tensorToProtoMeta(push.add_tensors(), *dev_tensor, false);
-    LOG(INFO) << "cpu tensor isinitialized: " << cpu_tensor->IsInitialized();
-    LOG(INFO) << "cpu tensor shape.num_elements: " << cpu_tensor->shape().num_elements();
-    auto data = push.add_data();
-    if (cpu_tensor->IsInitialized() && cpu_tensor->shape().num_elements() > 0) {
-        cpu_tensor->AsProtoTensorContent(data);
-    }
-    LOG(INFO) << "cpu tensor serialized to byte size long: " << data->ByteSizeLong();
-
-    rpc::CustomRequest request;
-    request.set_type(push.GetTypeName());
-    push.SerializeToString(request.mutable_extra());
-
-    // Actuall call
-    std::unique_ptr<rpc::CustomResponse> pResponse;
-    auto status = rpcCall(request, pResponse);
-
-    // TODO: better error handling
-    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
-        return status;
-    }
-
-    LOG(INFO) << "Got push response: " << pResponse->DebugString();
-
-    rpc::TFTensors recved;
-    recved.ParseFromString(pResponse->extra());
-
-    LOG(INFO) << "Got parsed tftensors: " << recved.DebugString();
-
-    if (recved.tensors_size() != 1) {
-        LOG(ERROR) << "Parsed proto contains wrong number of tensor";
-        return errors::Internal("Failed to parse proto");
-    }
-
-    auto recvedproto = recved.tensors(0);
-
-    *dev_tensor = tensorFromProtoMeta(recvedproto);
-
-    return Status::OK();
-}
-
 } // namespace tensorflow

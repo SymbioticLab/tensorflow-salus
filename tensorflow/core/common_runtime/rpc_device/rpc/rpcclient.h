@@ -61,8 +61,6 @@ public:
                        OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
-    virtual Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) = 0;
-    virtual Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) = 0;
 
     void maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph);
 

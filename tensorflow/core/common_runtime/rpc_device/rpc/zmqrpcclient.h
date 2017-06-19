@@ -49,8 +49,6 @@ public:
                OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
     Status deallocate(uint64_t addr_handle) override;
-    Status fetch(tensorflow::Tensor *cpu_tensor, const tensorflow::Tensor *dev_tensor) override;
-    Status push(tensorflow::Tensor *dev_tensor, const tensorflow::Tensor *cpu_tensor) override;
 private:
     using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
     template<typename ResponseType>

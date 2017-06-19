@@ -44,9 +44,6 @@ extern TFOpContextUpdateDefaultTypeInternal _TFOpContextUpdate_default_instance_
 class TFOpKernelDef;
 class TFOpKernelDefDefaultTypeInternal;
 extern TFOpKernelDefDefaultTypeInternal _TFOpKernelDef_default_instance_;
-class TFPushRequest;
-class TFPushRequestDefaultTypeInternal;
-extern TFPushRequestDefaultTypeInternal _TFPushRequest_default_instance_;
 class TFRendezItem;
 class TFRendezItemDefaultTypeInternal;
 extern TFRendezItemDefaultTypeInternal _TFRendezItem_default_instance_;
@@ -56,9 +53,9 @@ extern TFRendezRecvRequestsDefaultTypeInternal _TFRendezRecvRequests_default_ins
 class TFRendezRecvResponse;
 class TFRendezRecvResponseDefaultTypeInternal;
 extern TFRendezRecvResponseDefaultTypeInternal _TFRendezRecvResponse_default_instance_;
-class TFTensors;
-class TFTensorsDefaultTypeInternal;
-extern TFTensorsDefaultTypeInternal _TFTensors_default_instance_;
+class TFTensorItem;
+class TFTensorItemDefaultTypeInternal;
+extern TFTensorItemDefaultTypeInternal _TFTensorItem_default_instance_;
 }  // namespace executor
 namespace tensorflow {
 class ConfigProto;
@@ -306,16 +303,16 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // repeated .tensorflow.TensorProto inputs = 5;
+  // repeated .executor.TFTensorItem inputs = 5;
   int inputs_size() const;
   void clear_inputs();
   static const int kInputsFieldNumber = 5;
-  const ::tensorflow::TensorProto& inputs(int index) const;
-  ::tensorflow::TensorProto* mutable_inputs(int index);
-  ::tensorflow::TensorProto* add_inputs();
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
+  const ::executor::TFTensorItem& inputs(int index) const;
+  ::executor::TFTensorItem* mutable_inputs(int index);
+  ::executor::TFTensorItem* add_inputs();
+  ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >*
       mutable_inputs();
-  const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
+  const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
       inputs() const;
 
   // int64 step_id = 1;
@@ -346,7 +343,7 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > inputs_;
+  ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem > inputs_;
   ::google::protobuf::int64 step_id_;
   ::google::protobuf::uint64 frame_id_;
   ::google::protobuf::int64 iter_id_;
@@ -423,16 +420,16 @@ class TFOpContextUpdate : public ::google::protobuf::Message /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
-  // repeated .tensorflow.TensorProto outputs = 2;
+  // repeated .executor.TFTensorItem outputs = 2;
   int outputs_size() const;
   void clear_outputs();
   static const int kOutputsFieldNumber = 2;
-  const ::tensorflow::TensorProto& outputs(int index) const;
-  ::tensorflow::TensorProto* mutable_outputs(int index);
-  ::tensorflow::TensorProto* add_outputs();
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
+  const ::executor::TFTensorItem& outputs(int index) const;
+  ::executor::TFTensorItem* mutable_outputs(int index);
+  ::executor::TFTensorItem* add_outputs();
+  ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >*
       mutable_outputs();
-  const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
+  const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
       outputs() const;
 
   // repeated .executor.TFRendezItem rendezTensors = 3;
@@ -477,7 +474,7 @@ class TFOpContextUpdate : public ::google::protobuf::Message /* @@protoc_inserti
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > outputs_;
+  ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem > outputs_;
   ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem > rendeztensors_;
   ::google::protobuf::internal::ArenaStringPtr status_msg_;
   bool is_output_dead_;
@@ -805,37 +802,37 @@ class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_inse
 };
 // -------------------------------------------------------------------
 
-class TFTensors : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFTensors) */ {
+class TFTensorItem : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFTensorItem) */ {
  public:
-  TFTensors();
-  virtual ~TFTensors();
+  TFTensorItem();
+  virtual ~TFTensorItem();
 
-  TFTensors(const TFTensors& from);
+  TFTensorItem(const TFTensorItem& from);
 
-  inline TFTensors& operator=(const TFTensors& from) {
+  inline TFTensorItem& operator=(const TFTensorItem& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const TFTensors& default_instance();
+  static const TFTensorItem& default_instance();
 
-  static inline const TFTensors* internal_default_instance() {
-    return reinterpret_cast<const TFTensors*>(
-               &_TFTensors_default_instance_);
+  static inline const TFTensorItem* internal_default_instance() {
+    return reinterpret_cast<const TFTensorItem*>(
+               &_TFTensorItem_default_instance_);
   }
 
-  void Swap(TFTensors* other);
+  void Swap(TFTensorItem* other);
 
   // implements Message ----------------------------------------------
 
-  inline TFTensors* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline TFTensorItem* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  TFTensors* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  TFTensorItem* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const TFTensors& from);
-  void MergeFrom(const TFTensors& from);
+  void CopyFrom(const TFTensorItem& from);
+  void MergeFrom(const TFTensorItem& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -856,7 +853,7 @@ class TFTensors : public ::google::protobuf::Message /* @@protoc_insertion_point
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(TFTensors* other);
+  void InternalSwap(TFTensorItem* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -872,125 +869,42 @@ class TFTensors : public ::google::protobuf::Message /* @@protoc_insertion_point
 
   // accessors -------------------------------------------------------
 
-  // repeated .tensorflow.TensorProto tensors = 1;
-  int tensors_size() const;
-  void clear_tensors();
-  static const int kTensorsFieldNumber = 1;
-  const ::tensorflow::TensorProto& tensors(int index) const;
-  ::tensorflow::TensorProto* mutable_tensors(int index);
-  ::tensorflow::TensorProto* add_tensors();
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-      mutable_tensors();
-  const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-      tensors() const;
+  // string name = 2;
+  void clear_name();
+  static const int kNameFieldNumber = 2;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
 
-  // @@protoc_insertion_point(class_scope:executor.TFTensors)
+  // .tensorflow.TensorProto meta = 3;
+  bool has_meta() const;
+  void clear_meta();
+  static const int kMetaFieldNumber = 3;
+  const ::tensorflow::TensorProto& meta() const;
+  ::tensorflow::TensorProto* mutable_meta();
+  ::tensorflow::TensorProto* release_meta();
+  void set_allocated_meta(::tensorflow::TensorProto* meta);
+
+  // bool is_ref = 1;
+  void clear_is_ref();
+  static const int kIsRefFieldNumber = 1;
+  bool is_ref() const;
+  void set_is_ref(bool value);
+
+  // @@protoc_insertion_point(class_scope:executor.TFTensorItem)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > tensors_;
-  mutable int _cached_size_;
-  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
-};
-// -------------------------------------------------------------------
-
-class TFPushRequest : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFPushRequest) */ {
- public:
-  TFPushRequest();
-  virtual ~TFPushRequest();
-
-  TFPushRequest(const TFPushRequest& from);
-
-  inline TFPushRequest& operator=(const TFPushRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const TFPushRequest& default_instance();
-
-  static inline const TFPushRequest* internal_default_instance() {
-    return reinterpret_cast<const TFPushRequest*>(
-               &_TFPushRequest_default_instance_);
-  }
-
-  void Swap(TFPushRequest* other);
-
-  // implements Message ----------------------------------------------
-
-  inline TFPushRequest* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  TFPushRequest* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const TFPushRequest& from);
-  void MergeFrom(const TFPushRequest& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
-      const PROTOBUF_FINAL {
-    return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
-  }
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(TFPushRequest* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // repeated .tensorflow.TensorProto data = 1;
-  int data_size() const;
-  void clear_data();
-  static const int kDataFieldNumber = 1;
-  const ::tensorflow::TensorProto& data(int index) const;
-  ::tensorflow::TensorProto* mutable_data(int index);
-  ::tensorflow::TensorProto* add_data();
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-      mutable_data();
-  const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-      data() const;
-
-  // repeated .tensorflow.TensorProto tensors = 2;
-  int tensors_size() const;
-  void clear_tensors();
-  static const int kTensorsFieldNumber = 2;
-  const ::tensorflow::TensorProto& tensors(int index) const;
-  ::tensorflow::TensorProto* mutable_tensors(int index);
-  ::tensorflow::TensorProto* add_tensors();
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-      mutable_tensors();
-  const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-      tensors() const;
-
-  // @@protoc_insertion_point(class_scope:executor.TFPushRequest)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > data_;
-  ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto > tensors_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::tensorflow::TensorProto* meta_;
+  bool is_ref_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -1222,31 +1136,31 @@ inline void TFOpContextDef::set_is_input_dead(bool value) {
   // @@protoc_insertion_point(field_set:executor.TFOpContextDef.is_input_dead)
 }
 
-// repeated .tensorflow.TensorProto inputs = 5;
+// repeated .executor.TFTensorItem inputs = 5;
 inline int TFOpContextDef::inputs_size() const {
   return inputs_.size();
 }
 inline void TFOpContextDef::clear_inputs() {
   inputs_.Clear();
 }
-inline const ::tensorflow::TensorProto& TFOpContextDef::inputs(int index) const {
+inline const ::executor::TFTensorItem& TFOpContextDef::inputs(int index) const {
   // @@protoc_insertion_point(field_get:executor.TFOpContextDef.inputs)
   return inputs_.Get(index);
 }
-inline ::tensorflow::TensorProto* TFOpContextDef::mutable_inputs(int index) {
+inline ::executor::TFTensorItem* TFOpContextDef::mutable_inputs(int index) {
   // @@protoc_insertion_point(field_mutable:executor.TFOpContextDef.inputs)
   return inputs_.Mutable(index);
 }
-inline ::tensorflow::TensorProto* TFOpContextDef::add_inputs() {
+inline ::executor::TFTensorItem* TFOpContextDef::add_inputs() {
   // @@protoc_insertion_point(field_add:executor.TFOpContextDef.inputs)
   return inputs_.Add();
 }
-inline ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
+inline ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >*
 TFOpContextDef::mutable_inputs() {
   // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextDef.inputs)
   return &inputs_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
+inline const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
 TFOpContextDef::inputs() const {
   // @@protoc_insertion_point(field_list:executor.TFOpContextDef.inputs)
   return inputs_;
@@ -1270,31 +1184,31 @@ inline void TFOpContextUpdate::set_is_output_dead(bool value) {
   // @@protoc_insertion_point(field_set:executor.TFOpContextUpdate.is_output_dead)
 }
 
-// repeated .tensorflow.TensorProto outputs = 2;
+// repeated .executor.TFTensorItem outputs = 2;
 inline int TFOpContextUpdate::outputs_size() const {
   return outputs_.size();
 }
 inline void TFOpContextUpdate::clear_outputs() {
   outputs_.Clear();
 }
-inline const ::tensorflow::TensorProto& TFOpContextUpdate::outputs(int index) const {
+inline const ::executor::TFTensorItem& TFOpContextUpdate::outputs(int index) const {
   // @@protoc_insertion_point(field_get:executor.TFOpContextUpdate.outputs)
   return outputs_.Get(index);
 }
-inline ::tensorflow::TensorProto* TFOpContextUpdate::mutable_outputs(int index) {
+inline ::executor::TFTensorItem* TFOpContextUpdate::mutable_outputs(int index) {
   // @@protoc_insertion_point(field_mutable:executor.TFOpContextUpdate.outputs)
   return outputs_.Mutable(index);
 }
-inline ::tensorflow::TensorProto* TFOpContextUpdate::add_outputs() {
+inline ::executor::TFTensorItem* TFOpContextUpdate::add_outputs() {
   // @@protoc_insertion_point(field_add:executor.TFOpContextUpdate.outputs)
   return outputs_.Add();
 }
-inline ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
+inline ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >*
 TFOpContextUpdate::mutable_outputs() {
   // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextUpdate.outputs)
   return &outputs_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
+inline const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
 TFOpContextUpdate::outputs() const {
   // @@protoc_insertion_point(field_list:executor.TFOpContextUpdate.outputs)
   return outputs_;
@@ -1663,105 +1577,119 @@ TFRendezRecvResponse::items() const {
 
 // -------------------------------------------------------------------
 
-// TFTensors
+// TFTensorItem
 
-// repeated .tensorflow.TensorProto tensors = 1;
-inline int TFTensors::tensors_size() const {
-  return tensors_.size();
+// bool is_ref = 1;
+inline void TFTensorItem::clear_is_ref() {
+  is_ref_ = false;
 }
-inline void TFTensors::clear_tensors() {
-  tensors_.Clear();
+inline bool TFTensorItem::is_ref() const {
+  // @@protoc_insertion_point(field_get:executor.TFTensorItem.is_ref)
+  return is_ref_;
 }
-inline const ::tensorflow::TensorProto& TFTensors::tensors(int index) const {
-  // @@protoc_insertion_point(field_get:executor.TFTensors.tensors)
-  return tensors_.Get(index);
-}
-inline ::tensorflow::TensorProto* TFTensors::mutable_tensors(int index) {
-  // @@protoc_insertion_point(field_mutable:executor.TFTensors.tensors)
-  return tensors_.Mutable(index);
-}
-inline ::tensorflow::TensorProto* TFTensors::add_tensors() {
-  // @@protoc_insertion_point(field_add:executor.TFTensors.tensors)
-  return tensors_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-TFTensors::mutable_tensors() {
-  // @@protoc_insertion_point(field_mutable_list:executor.TFTensors.tensors)
-  return &tensors_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-TFTensors::tensors() const {
-  // @@protoc_insertion_point(field_list:executor.TFTensors.tensors)
-  return tensors_;
+inline void TFTensorItem::set_is_ref(bool value) {
+  
+  is_ref_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFTensorItem.is_ref)
 }
 
-// -------------------------------------------------------------------
+// string name = 2;
+inline void TFTensorItem::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TFTensorItem::name() const {
+  // @@protoc_insertion_point(field_get:executor.TFTensorItem.name)
+  return name_.GetNoArena();
+}
+inline void TFTensorItem::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFTensorItem.name)
+}
+#if LANG_CXX11
+inline void TFTensorItem::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFTensorItem.name)
+}
+#endif
+inline void TFTensorItem::set_name(const char* value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFTensorItem.name)
+}
+inline void TFTensorItem::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFTensorItem.name)
+}
+inline ::std::string* TFTensorItem::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFTensorItem.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TFTensorItem::release_name() {
+  // @@protoc_insertion_point(field_release:executor.TFTensorItem.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TFTensorItem::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFTensorItem.name)
+}
 
-// TFPushRequest
-
-// repeated .tensorflow.TensorProto data = 1;
-inline int TFPushRequest::data_size() const {
-  return data_.size();
+// .tensorflow.TensorProto meta = 3;
+inline bool TFTensorItem::has_meta() const {
+  return this != internal_default_instance() && meta_ != NULL;
 }
-inline void TFPushRequest::clear_data() {
-  data_.Clear();
+inline void TFTensorItem::clear_meta() {
+  if (GetArenaNoVirtual() == NULL && meta_ != NULL) delete meta_;
+  meta_ = NULL;
 }
-inline const ::tensorflow::TensorProto& TFPushRequest::data(int index) const {
-  // @@protoc_insertion_point(field_get:executor.TFPushRequest.data)
-  return data_.Get(index);
+inline const ::tensorflow::TensorProto& TFTensorItem::meta() const {
+  // @@protoc_insertion_point(field_get:executor.TFTensorItem.meta)
+  return meta_ != NULL ? *meta_
+                         : *::tensorflow::TensorProto::internal_default_instance();
 }
-inline ::tensorflow::TensorProto* TFPushRequest::mutable_data(int index) {
-  // @@protoc_insertion_point(field_mutable:executor.TFPushRequest.data)
-  return data_.Mutable(index);
+inline ::tensorflow::TensorProto* TFTensorItem::mutable_meta() {
+  
+  if (meta_ == NULL) {
+    meta_ = new ::tensorflow::TensorProto;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.TFTensorItem.meta)
+  return meta_;
 }
-inline ::tensorflow::TensorProto* TFPushRequest::add_data() {
-  // @@protoc_insertion_point(field_add:executor.TFPushRequest.data)
-  return data_.Add();
+inline ::tensorflow::TensorProto* TFTensorItem::release_meta() {
+  // @@protoc_insertion_point(field_release:executor.TFTensorItem.meta)
+  
+  ::tensorflow::TensorProto* temp = meta_;
+  meta_ = NULL;
+  return temp;
 }
-inline ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-TFPushRequest::mutable_data() {
-  // @@protoc_insertion_point(field_mutable_list:executor.TFPushRequest.data)
-  return &data_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-TFPushRequest::data() const {
-  // @@protoc_insertion_point(field_list:executor.TFPushRequest.data)
-  return data_;
-}
-
-// repeated .tensorflow.TensorProto tensors = 2;
-inline int TFPushRequest::tensors_size() const {
-  return tensors_.size();
-}
-inline void TFPushRequest::clear_tensors() {
-  tensors_.Clear();
-}
-inline const ::tensorflow::TensorProto& TFPushRequest::tensors(int index) const {
-  // @@protoc_insertion_point(field_get:executor.TFPushRequest.tensors)
-  return tensors_.Get(index);
-}
-inline ::tensorflow::TensorProto* TFPushRequest::mutable_tensors(int index) {
-  // @@protoc_insertion_point(field_mutable:executor.TFPushRequest.tensors)
-  return tensors_.Mutable(index);
-}
-inline ::tensorflow::TensorProto* TFPushRequest::add_tensors() {
-  // @@protoc_insertion_point(field_add:executor.TFPushRequest.tensors)
-  return tensors_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >*
-TFPushRequest::mutable_tensors() {
-  // @@protoc_insertion_point(field_mutable_list:executor.TFPushRequest.tensors)
-  return &tensors_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::tensorflow::TensorProto >&
-TFPushRequest::tensors() const {
-  // @@protoc_insertion_point(field_list:executor.TFPushRequest.tensors)
-  return tensors_;
+inline void TFTensorItem::set_allocated_meta(::tensorflow::TensorProto* meta) {
+  delete meta_;
+  if (meta != NULL && meta->GetArena() != NULL) {
+    ::tensorflow::TensorProto* new_meta = new ::tensorflow::TensorProto;
+    new_meta->CopyFrom(*meta);
+    meta = new_meta;
+  }
+  meta_ = meta;
+  if (meta) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.TFTensorItem.meta)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
