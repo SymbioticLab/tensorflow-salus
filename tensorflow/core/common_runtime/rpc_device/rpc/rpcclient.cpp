@@ -25,6 +25,7 @@
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
 
+#include "tensorflow/core/common_runtime/function.h"
 #include "tensorflow/core/graph/graph.h"
 #include "tensorflow/core/platform/logging.h"
 #include "tensorflow/core/framework/node_def.pb.h"
@@ -98,21 +99,30 @@ RpcClient::RpcClient() : m_initialized(ATOMIC_FLAG_INIT) { }
 
 RpcClient::~RpcClient() { }
 
-void RpcClient::maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph)
+void RpcClient::maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library,
+                                const Graph *graph)
 {
-    if (!m_initialized.test_and_set()) {
-        createSession(cfgProto, library, graph);
+    if (m_initialized.test_and_set()) {
+        return;
     }
+
+    DumpGraph("RpcClient::maybeInitialize", graph);
+    // Create and cache the GraphDef, and build an index from node name to NodeDef
+    // Because node->def() can be out of sync for inputs
+    graph->ToGraphDef(&m_graphdef);
+    for (int i = 0; i != m_graphdef.node_size(); ++i) {
+        auto &ndef = m_graphdef.node(i);
+        m_name2defidx[ndef.name()] = i;
+    }
+
+    createSession(cfgProto, library, m_graphdef);
 }
 
 void RpcClient::serializeOpKernel(executor::OpKernelDef *def, tensorflow::OpKernel *kernel,
-                                  Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
+                                  const Graph *graph, const FunctionDefLibrary &library,
+                                  const ConfigProto &cfgProto)
 {
-    LOG(INFO) << "About to serialize OpKernel";
-
-    LOG(INFO) << "def " << def;
-    LOG(INFO) << "kernel " << kernel;
-    LOG(INFO) << "graph " << graph;
+    LOG(INFO) << "About to serialize OpKernel: " << kernel->name();
 
     def->set_id(kernel->name());
     def->set_oplibrary(executor::TENSORFLOW);
@@ -120,7 +130,8 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, tensorflow::OpKern
     executor::TFOpKernelDef tfdef;
     tfdef.set_graph_def_version(graph->versions().producer());
 
-    *tfdef.mutable_nodedef() = kernel->def();
+    // NOTE: kernel->def() might be outdated due to optimizations. Find nodedef from m_graphdef
+    *tfdef.mutable_nodedef() = m_graphdef.node(m_name2defidx[kernel->name()]);
     *tfdef.mutable_cfgproto() = cfgProto;
     *tfdef.mutable_funcdef() = library;
     tfdef.set_isasync(kernel->AsAsync() != nullptr);
@@ -131,7 +142,8 @@ void RpcClient::serializeOpKernel(executor::OpKernelDef *def, tensorflow::OpKern
 }
 
 void RpcClient::serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,
-                                   Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto)
+                                   const Graph *graph, const FunctionDefLibrary &library,
+                                   const ConfigProto &cfgProto)
 {
     LOG(INFO) << "About to serialize OpContext";
 

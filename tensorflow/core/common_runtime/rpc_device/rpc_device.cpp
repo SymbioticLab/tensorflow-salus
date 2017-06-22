@@ -59,13 +59,17 @@ Status RPCDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
 {
     m_funcDefLib = library;
 
-    m_graph = (*graph).get();
+    // NOTE: this is called before rewrite optimizations
+//     m_graph = (*graph).get();
 
     return Status::OK();
 }
 
 Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
 {
+    // Save the graph here, which is after erwrite optimizations
+    m_graph = graph;
+
     LOG(INFO) << "RpcDevice::FillContextMap";
     device_context_map->resize(graph->num_node_ids());
     auto* ctx = new RPCDeviceContext(m_rpc);

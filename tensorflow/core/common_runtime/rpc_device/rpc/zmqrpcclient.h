@@ -40,12 +40,13 @@ public:
 
     ~ZmqRpcClient() override;
 
-    void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library, Graph *graph) override;
+    void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library,
+                       const GraphDef &graphdef) override;
 
-    void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+    void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
                   AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done) override;
 
-    Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+    Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
                OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
     Status deallocate(uint64_t addr_handle) override;

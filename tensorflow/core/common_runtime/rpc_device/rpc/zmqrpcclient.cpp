@@ -292,12 +292,12 @@ Status ZmqRpcClient::rpcCall(const ::google::protobuf::Message &msg, std::unique
 }
 
 void ZmqRpcClient::createSession(const ConfigProto & cfgProto,
-                                 const FunctionDefLibrary & library, Graph *graph)
+                                 const FunctionDefLibrary & library, const GraphDef &graphdef)
 {
     // FIXME: separate session creation on executor side
 }
 
-void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
                             AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done)
 {
     LOG(INFO) << "===================================================================";
@@ -372,7 +372,7 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
     }
 }
 
-Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, Graph *graph,
+Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
                          OpKernel *kernel, OpKernelContext *context)
 {
     LOG(INFO) << "===================================================================";
