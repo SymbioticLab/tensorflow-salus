@@ -63,7 +63,6 @@ private:
     RpcClient &m_rpc;
 
     FunctionDefLibrary m_funcDefLib;
-    const Graph *m_graph;
     ConfigProto m_cfgProto;
 };
 

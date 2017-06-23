@@ -11,6 +11,7 @@ public:
                          std::vector<Device *> *devices) override {
         static ZmqRpcClient rpc(options.env, "tcp://localhost:5501");
 
+        LOG(INFO) << "Creating RPC devices";
         int n = 1;
         auto iter = options.config.device_count().find("RPC");
         if (iter != options.config.device_count().end()) {

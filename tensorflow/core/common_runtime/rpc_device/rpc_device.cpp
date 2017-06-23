@@ -43,11 +43,12 @@ RPCDevice::RPCDevice(const SessionOptions &options, const string &name, Bytes me
     , m_rpc(rpc)
     , m_cfgProto(options.config)
 {
+    LOG(INFO) << "Created RPCDevice: " << name;
 }
 
 RPCDevice::~RPCDevice()
 {
-
+    LOG(INFO) << "Destroyed RPCDevice: " << name();
 }
 
 Status RPCDevice::Sync()
@@ -98,15 +99,19 @@ Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)
 Status RPCDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
                                       Tensor *tensor)
 {
-    LOG(WARNING) << "!!!RpcDevice MakeTensorFromProto";
+    LOG(WARNING) << "!!!RpcDevice MakeTensorFromProto" << ProtoDebugString(tensor_proto);
 
-    // TODO: implement make tensor from proto through rpc
-    if (tensor_proto.dtype() > 0 && tensor_proto.dtype() <= DataType_MAX) {
-        Tensor parsed(tensor_proto.dtype());
-        if (parsed.FromProto(cpu_allocator(), tensor_proto)) {
-            *tensor = parsed;
-            return Status::OK();
+    if (alloc_attrs.on_host()) {
+        if (tensor_proto.dtype() > 0 && tensor_proto.dtype() <= DataType_MAX) {
+            Tensor parsed(tensor_proto.dtype());
+            if (parsed.FromProto(cpu_allocator(), tensor_proto)) {
+                *tensor = parsed;
+                return Status::OK();
+            }
         }
+    } else {
+        // TODO: implement make tensor from proto through rpc
+        return errors::Internal("Parse to device memory not implemented: ", ProtoDebugString(tensor_proto));
     }
     return errors::InvalidArgument("Cannot parse tensor from proto: ",
                                    ProtoDebugString(tensor_proto));

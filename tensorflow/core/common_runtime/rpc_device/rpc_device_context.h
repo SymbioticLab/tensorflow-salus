@@ -59,6 +59,10 @@ public:
     void tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref);
 
     std::string sessionId() const;
+
+private:
+    const NodeDef &findNodeDefFor(const OpKernel *kernel) const;
+
 private:
     RpcClient &m_rpc;
 
