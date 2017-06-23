@@ -19,6 +19,7 @@
 
 #include "zmqrpcclient.h"
 
+#include "tensorflow/core/common_runtime/rpc_device/rpc_device_context.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/tfoplibrary.pb.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -192,26 +193,10 @@ void ZmqRpcClient::recvLoop()
 }
 
 template<typename ResponseType>
-ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const google::protobuf::Message& msg,
+ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const std::string &sessionId,
+                                                          const google::protobuf::Message& msg,
                                                           std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done)
 {
-    auto seq = m_seq.fetch_add(1);
-    // Create evenlop message
-    rpc::EvenlopDef edef;
-    edef.set_type(msg.GetTypeName());
-    edef.set_seq(seq);
-    edef.set_recvidentity(m_recvId);
-    edef.set_oplibrary(executor::TENSORFLOW);
-    zmq::message_t evenlop(edef.ByteSizeLong());
-    edef.SerializeToArray(evenlop.data(), evenlop.size());
-
-    LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
-
-    // Create body message
-    zmq::message_t zmqmsg(msg.ByteSizeLong());
-    msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
-
-    // Register callback first
     using ResponsePtr = std::unique_ptr<ResponseType>;
     Item args;
     if (done) {
@@ -219,21 +204,28 @@ ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const google::protobuf
             done(s, ResponsePtr(static_cast<ResponseType*>(rep.release())));
         }};
     }
-    {
-        mutex_lock locker(m_mtable);
-        m_recvCallbacks[seq] = std::move(args);
-        return AsyncCallStarter(m_recvCallbacks[seq].typedCallbacks,
-                                *this, seq, std::move(evenlop), std::move(zmqmsg));
-    }
+
+    return makeStarter(sessionId, msg, std::move(args));
 }
 
-ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const ::google::protobuf::Message &msg)
+ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const std::string &sessionId,
+                                                          const ::google::protobuf::Message &msg)
+{
+    return makeStarter(sessionId, msg, {});
+}
+
+ZmqRpcClient::AsyncCallStarter ZmqRpcClient::makeStarter(const std::string &sessionId,
+                                                         const ::google::protobuf::Message &msg,
+                                                         Item &&cbitem)
 {
     auto seq = m_seq.fetch_add(1);
     // Create evenlop message
     rpc::EvenlopDef edef;
     edef.set_type(msg.GetTypeName());
     edef.set_seq(seq);
+    if (!sessionId.empty()) {
+        edef.set_sessionid(sessionId);
+    }
     edef.set_recvidentity(m_recvId);
     edef.set_oplibrary(executor::TENSORFLOW);
     zmq::message_t evenlop(edef.ByteSizeLong());
@@ -247,7 +239,7 @@ ZmqRpcClient::AsyncCallStarter ZmqRpcClient::rpcCallAsync(const ::google::protob
 
     {
         mutex_lock locker(m_mtable);
-        m_recvCallbacks.emplace(seq, Item {});
+        m_recvCallbacks.emplace(seq, std::move(cbitem));
         return AsyncCallStarter(m_recvCallbacks[seq].typedCallbacks,
                                 *this, seq, std::move(evenlop), std::move(zmqmsg));
     }
@@ -274,13 +266,14 @@ void ZmqRpcClient::AsyncCallStarter::start()
 }
 
 template<typename ResponseType>
-Status ZmqRpcClient::rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &reply)
+Status ZmqRpcClient::rpcCall(const std::string &sessionId, const ::google::protobuf::Message &msg,
+                             std::unique_ptr<ResponseType> &reply)
 {
     using ResponsePtr = std::unique_ptr<ResponseType>;
 
     Status status;
     Notification n;
-    rpcCallAsync<ResponseType>(msg, [&n, &status, &reply](const Status &s, ResponsePtr &&rep){
+    rpcCallAsync<ResponseType>(sessionId, msg, [&n, &status, &reply](const Status &s, ResponsePtr &&rep){
         status = s;
         reply = std::move(rep);
         n.Notify();
@@ -291,29 +284,54 @@ Status ZmqRpcClient::rpcCall(const ::google::protobuf::Message &msg, std::unique
     return status;
 }
 
-void ZmqRpcClient::createSession(const ConfigProto & cfgProto,
-                                 const FunctionDefLibrary & library, const GraphDef &graphdef)
+void ZmqRpcClient::createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library,
+                                 const GraphDef &graphdef, std::string &sessionId)
 {
-    // FIXME: separate session creation on executor side
+    LOG(INFO) << "===================================================================";
+    LOG(INFO) << "RpcClient::createSession";
+    rpc::TFSessionArgs args;
+    args.set_graph_def_version(graphdef.versions().producer());
+    *args.mutable_cfgproto() = cfgProto;
+    *args.mutable_funcdef() = library;
+
+    rpc::InitSessionRequest request;
+    args.SerializeToString(request.mutable_extra());
+
+    std::unique_ptr<rpc::InitSessionResponse> pResponse;
+    auto status = rpcCall("", request, pResponse);
+
+    // TODO: better error handling
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        LOG(ERROR) << "RpcClient::createSession failed";
+        return;
+    }
+
+    rpc::TFSessionCreated sesscreated;
+    if (!sesscreated.ParseFromString(pResponse->extra())) {
+        LOG(ERROR) << "Response->extra is not a valid TFSessionCreated object";
+        return;
+    }
+
+    sessionId = sesscreated.sessionid();
+    LOG(INFO) << "RpcClient created session with id " << sessionId;
 }
 
-void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-                            AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done)
+void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
+                            AsyncOpKernel::DoneCallback done)
 {
     LOG(INFO) << "===================================================================";
     LOG(INFO) << "RpcClient::runAsync";
-    maybeInitialize(cfgProto, library, graph);
 
     rpc::RunRequest request;
-    serializeOpKernel(request.mutable_opkernel(), kernel, graph, library, cfgProto);
-    serializeOpContext(request.mutable_context(), context, graph, library, cfgProto);
+    devCtx->serializeOpKernel(request.mutable_opkernel(), kernel);
+    devCtx->serializeOpContext(request.mutable_context(), context);
 
     Item args;
     LOG(INFO) << "RpcClient::runAsync    calling rpc using rpc stub";
     using ResponsePtr = std::unique_ptr<rpc::RunResponse>;
-    auto starter = rpcCallAsync<rpc::RunResponse>(request,
-                                                  [done, context, this](const Status &status,
-                                                                        ResponsePtr &&pResponse) {
+    auto starter = rpcCallAsync<rpc::RunResponse>(devCtx->sessionId(), request,
+                                                  [done, devCtx, context, this](const Status &status,
+                                                                                ResponsePtr &&pResponse) {
         LOG(INFO) << "RpcClient::runAsync    rpc returned with status: "
                   << status.code() << " " << status.error_message();
 
@@ -322,7 +340,7 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
             return;
         }
 
-        deserializeOpContext(context, &pResponse->context());
+        devCtx->deserializeOpContext(context, &pResponse->context());
         done();
     });
 
@@ -338,6 +356,7 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
     starter.start();
 
     auto seq = starter.seq();
+    auto sessionId = devCtx->sessionId();
     n.WaitForNotification();
     for (size_t i = 0; i != pReq->key_size(); ++i) {
         Rendezvous::ParsedKey parsed;
@@ -352,12 +371,12 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
         args.alloc_attrs.set_on_host(true); // we want tensor to on CPU, because we send them out ourselves
         args.device_context = context->op_device_context();
         context->rendezvous()->RecvAsync(parsed, args,
-                                        [this, seq, parsed](const Status &s,
-                                                        const Rendezvous::Args &send_args,
-                                                        const Rendezvous::Args &recv_args,
-                                                        const Tensor &val, bool is_dead){
-            LOG(INFO) << "Send out executor.TFRendezRecvResponse for " << parsed.FullKey();
-            rpc::TFRendezRecvResponse resp;
+                                        [this, seq, sessionId, parsed](const Status &s,
+                                                                       const Rendezvous::Args &send_args,
+                                                                       const Rendezvous::Args &recv_args,
+                                                                       const Tensor &val, bool is_dead){
+            LOG(INFO) << "Send out executor.TFRendezRecvUpdate for " << parsed.FullKey();
+            rpc::TFRendezRecvUpdate resp;
             resp.set_forseq(seq);
             auto item = resp.add_items();
             item->set_key(parsed.FullKey().ToString());
@@ -367,25 +386,23 @@ void ZmqRpcClient::runAsync(const ConfigProto &cfgProto, const FunctionDefLibrar
             rpc::CustomRequest request;
             request.set_type(resp.GetTypeName());
             resp.SerializeToString(request.mutable_extra());
-            rpcCallAsync(request);
+            rpcCallAsync(sessionId, request);
         });
     }
 }
 
-Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-                         OpKernel *kernel, OpKernelContext *context)
+Status ZmqRpcClient::run(RPCDeviceContext *devCtx, OpKernel *kernel, OpKernelContext *context)
 {
     LOG(INFO) << "===================================================================";
     LOG(INFO) << "RpcClient::run";
-    maybeInitialize(cfgProto, library, graph);
 
     rpc::RunRequest request;
-    serializeOpKernel(request.mutable_opkernel(), kernel, graph, library, cfgProto);
-    serializeOpContext(request.mutable_context(), context, graph, library, cfgProto);
+    devCtx->serializeOpKernel(request.mutable_opkernel(), kernel);
+    devCtx->serializeOpContext(request.mutable_context(), context);
 
     std::unique_ptr<rpc::RunResponse> pResponse;
     LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";
-    auto status = rpcCall(request, pResponse);
+    auto status = rpcCall(devCtx->sessionId(), request, pResponse);
     LOG(INFO) << "RpcClient::run    rpc returned with status: "
               << status.code() << " " << status.error_message();
 
@@ -394,7 +411,7 @@ Status ZmqRpcClient::run(const ConfigProto &cfgProto, const FunctionDefLibrary &
         return status;
     }
 
-    deserializeOpContext(context, &pResponse->context());
+    devCtx->deserializeOpContext(context, &pResponse->context());
 
     return context->status();
 }
@@ -408,7 +425,7 @@ Status ZmqRpcClient::allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *
     request.set_num_bytes(num_bytes);
 
     std::unique_ptr<rpc::AllocResponse> pResponse;
-    auto status = rpcCall(request, pResponse);
+    auto status = rpcCall("", request, pResponse);
 
     // TODO: better error handling
     if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
@@ -428,7 +445,7 @@ Status ZmqRpcClient::deallocate(uint64_t addr_handle)
     request.set_addr_handle(addr_handle);
 
     std::unique_ptr<rpc::DeallocResponse> pResponse;
-    auto status = rpcCall(request, pResponse);
+    auto status = rpcCall("", request, pResponse);
 
     // TODO: better error handling
     if (!status.ok() || !pResponse || pResponse->result().code() != 0) {

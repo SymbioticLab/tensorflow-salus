@@ -59,20 +59,16 @@ Status RPCDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::uniq
 {
     m_funcDefLib = library;
 
-    // NOTE: this is called before rewrite optimizations
-//     m_graph = (*graph).get();
+    // NOTE: this is called before rewrite optimizations, so we don't save graph here.
 
     return Status::OK();
 }
 
 Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_context_map)
 {
-    // Save the graph here, which is after erwrite optimizations
-    m_graph = graph;
-
     LOG(INFO) << "RpcDevice::FillContextMap";
     device_context_map->resize(graph->num_node_ids());
-    auto* ctx = new RPCDeviceContext(m_rpc);
+    auto* ctx = new RPCDeviceContext(m_rpc, graph, m_funcDefLib, m_cfgProto);
     for (Node* n : graph->nodes()) {
         LOG(INFO) << n->id() << " : " << n->type_string() << " : " << n->name();
         ctx->Ref();
@@ -84,23 +80,14 @@ Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_co
 
 void RPCDevice::Compute(OpKernel *op_kernel, OpKernelContext *context)
 {
-    auto status = m_rpc.run(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context);
-
-    if (!status.ok()) {
-        LOG(ERROR) << "RPC call failed with " << status;
-    }
-
-//     op_kernel->Compute(context);
-
-    LOG(INFO) << "context.status() " << context->status();
-    LOG(INFO) << "context.is_output_dead() " << *context->is_output_dead();
-    LOG(INFO) << "context.num_outputs() " << context->num_outputs();
+    auto rpcContext = context->op_device_context<RPCDeviceContext>();
+    rpcContext->Compute(op_kernel, context);
 }
 
 void RPCDevice::ComputeAsync(AsyncOpKernel* op_kernel, OpKernelContext* context, AsyncOpKernel::DoneCallback done)
 {
-    m_rpc.runAsync(m_cfgProto, m_funcDefLib, m_graph, op_kernel, context, std::move(done));
-//     op_kernel->ComputeAsync(context, std::move(done));
+    auto rpcContext = context->op_device_context<RPCDeviceContext>();
+    rpcContext->ComputeAsync(op_kernel, context, std::move(done));
 }
 
 Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)

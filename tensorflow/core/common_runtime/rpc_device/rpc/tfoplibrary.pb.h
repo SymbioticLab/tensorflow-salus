@@ -50,9 +50,15 @@ extern TFRendezItemDefaultTypeInternal _TFRendezItem_default_instance_;
 class TFRendezRecvRequests;
 class TFRendezRecvRequestsDefaultTypeInternal;
 extern TFRendezRecvRequestsDefaultTypeInternal _TFRendezRecvRequests_default_instance_;
-class TFRendezRecvResponse;
-class TFRendezRecvResponseDefaultTypeInternal;
-extern TFRendezRecvResponseDefaultTypeInternal _TFRendezRecvResponse_default_instance_;
+class TFRendezRecvUpdate;
+class TFRendezRecvUpdateDefaultTypeInternal;
+extern TFRendezRecvUpdateDefaultTypeInternal _TFRendezRecvUpdate_default_instance_;
+class TFSessionArgs;
+class TFSessionArgsDefaultTypeInternal;
+extern TFSessionArgsDefaultTypeInternal _TFSessionArgs_default_instance_;
+class TFSessionCreated;
+class TFSessionCreatedDefaultTypeInternal;
+extern TFSessionCreatedDefaultTypeInternal _TFSessionCreated_default_instance_;
 class TFTensorItem;
 class TFTensorItemDefaultTypeInternal;
 extern TFTensorItemDefaultTypeInternal _TFTensorItem_default_instance_;
@@ -115,6 +121,200 @@ void InitDefaults();
 }  // namespace protobuf_tfoplibrary_2eproto
 
 // ===================================================================
+
+class TFSessionArgs : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFSessionArgs) */ {
+ public:
+  TFSessionArgs();
+  virtual ~TFSessionArgs();
+
+  TFSessionArgs(const TFSessionArgs& from);
+
+  inline TFSessionArgs& operator=(const TFSessionArgs& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFSessionArgs& default_instance();
+
+  static inline const TFSessionArgs* internal_default_instance() {
+    return reinterpret_cast<const TFSessionArgs*>(
+               &_TFSessionArgs_default_instance_);
+  }
+
+  void Swap(TFSessionArgs* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFSessionArgs* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFSessionArgs* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFSessionArgs& from);
+  void MergeFrom(const TFSessionArgs& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFSessionArgs* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .tensorflow.ConfigProto cfgProto = 3;
+  bool has_cfgproto() const;
+  void clear_cfgproto();
+  static const int kCfgProtoFieldNumber = 3;
+  const ::tensorflow::ConfigProto& cfgproto() const;
+  ::tensorflow::ConfigProto* mutable_cfgproto();
+  ::tensorflow::ConfigProto* release_cfgproto();
+  void set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto);
+
+  // .tensorflow.FunctionDefLibrary funcDef = 4;
+  bool has_funcdef() const;
+  void clear_funcdef();
+  static const int kFuncDefFieldNumber = 4;
+  const ::tensorflow::FunctionDefLibrary& funcdef() const;
+  ::tensorflow::FunctionDefLibrary* mutable_funcdef();
+  ::tensorflow::FunctionDefLibrary* release_funcdef();
+  void set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef);
+
+  // int32 graph_def_version = 1;
+  void clear_graph_def_version();
+  static const int kGraphDefVersionFieldNumber = 1;
+  ::google::protobuf::int32 graph_def_version() const;
+  void set_graph_def_version(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:executor.TFSessionArgs)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::tensorflow::ConfigProto* cfgproto_;
+  ::tensorflow::FunctionDefLibrary* funcdef_;
+  ::google::protobuf::int32 graph_def_version_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class TFSessionCreated : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFSessionCreated) */ {
+ public:
+  TFSessionCreated();
+  virtual ~TFSessionCreated();
+
+  TFSessionCreated(const TFSessionCreated& from);
+
+  inline TFSessionCreated& operator=(const TFSessionCreated& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFSessionCreated& default_instance();
+
+  static inline const TFSessionCreated* internal_default_instance() {
+    return reinterpret_cast<const TFSessionCreated*>(
+               &_TFSessionCreated_default_instance_);
+  }
+
+  void Swap(TFSessionCreated* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFSessionCreated* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFSessionCreated* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFSessionCreated& from);
+  void MergeFrom(const TFSessionCreated& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFSessionCreated* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes sessionId = 2;
+  void clear_sessionid();
+  static const int kSessionIdFieldNumber = 2;
+  const ::std::string& sessionid() const;
+  void set_sessionid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_sessionid(::std::string&& value);
+  #endif
+  void set_sessionid(const char* value);
+  void set_sessionid(const void* value, size_t size);
+  ::std::string* mutable_sessionid();
+  ::std::string* release_sessionid();
+  void set_allocated_sessionid(::std::string* sessionid);
+
+  // @@protoc_insertion_point(class_scope:executor.TFSessionCreated)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr sessionid_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
 
 class TFOpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFOpKernelDef) */ {
  public:
@@ -192,30 +392,6 @@ class TFOpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::tensorflow::NodeDef* release_nodedef();
   void set_allocated_nodedef(::tensorflow::NodeDef* nodedef);
 
-  // .tensorflow.ConfigProto cfgProto = 3;
-  bool has_cfgproto() const;
-  void clear_cfgproto();
-  static const int kCfgProtoFieldNumber = 3;
-  const ::tensorflow::ConfigProto& cfgproto() const;
-  ::tensorflow::ConfigProto* mutable_cfgproto();
-  ::tensorflow::ConfigProto* release_cfgproto();
-  void set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto);
-
-  // .tensorflow.FunctionDefLibrary funcDef = 4;
-  bool has_funcdef() const;
-  void clear_funcdef();
-  static const int kFuncDefFieldNumber = 4;
-  const ::tensorflow::FunctionDefLibrary& funcdef() const;
-  ::tensorflow::FunctionDefLibrary* mutable_funcdef();
-  ::tensorflow::FunctionDefLibrary* release_funcdef();
-  void set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef);
-
-  // int32 graph_def_version = 1;
-  void clear_graph_def_version();
-  static const int kGraphDefVersionFieldNumber = 1;
-  ::google::protobuf::int32 graph_def_version() const;
-  void set_graph_def_version(::google::protobuf::int32 value);
-
   // bool isAsync = 5;
   void clear_isasync();
   static const int kIsAsyncFieldNumber = 5;
@@ -227,9 +403,6 @@ class TFOpKernelDef : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::tensorflow::NodeDef* nodedef_;
-  ::tensorflow::ConfigProto* cfgproto_;
-  ::tensorflow::FunctionDefLibrary* funcdef_;
-  ::google::protobuf::int32 graph_def_version_;
   bool isasync_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
@@ -706,37 +879,37 @@ class TFRendezRecvRequests : public ::google::protobuf::Message /* @@protoc_inse
 };
 // -------------------------------------------------------------------
 
-class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFRendezRecvResponse) */ {
+class TFRendezRecvUpdate : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFRendezRecvUpdate) */ {
  public:
-  TFRendezRecvResponse();
-  virtual ~TFRendezRecvResponse();
+  TFRendezRecvUpdate();
+  virtual ~TFRendezRecvUpdate();
 
-  TFRendezRecvResponse(const TFRendezRecvResponse& from);
+  TFRendezRecvUpdate(const TFRendezRecvUpdate& from);
 
-  inline TFRendezRecvResponse& operator=(const TFRendezRecvResponse& from) {
+  inline TFRendezRecvUpdate& operator=(const TFRendezRecvUpdate& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const TFRendezRecvResponse& default_instance();
+  static const TFRendezRecvUpdate& default_instance();
 
-  static inline const TFRendezRecvResponse* internal_default_instance() {
-    return reinterpret_cast<const TFRendezRecvResponse*>(
-               &_TFRendezRecvResponse_default_instance_);
+  static inline const TFRendezRecvUpdate* internal_default_instance() {
+    return reinterpret_cast<const TFRendezRecvUpdate*>(
+               &_TFRendezRecvUpdate_default_instance_);
   }
 
-  void Swap(TFRendezRecvResponse* other);
+  void Swap(TFRendezRecvUpdate* other);
 
   // implements Message ----------------------------------------------
 
-  inline TFRendezRecvResponse* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline TFRendezRecvUpdate* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  TFRendezRecvResponse* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  TFRendezRecvUpdate* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const TFRendezRecvResponse& from);
-  void MergeFrom(const TFRendezRecvResponse& from);
+  void CopyFrom(const TFRendezRecvUpdate& from);
+  void MergeFrom(const TFRendezRecvUpdate& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -757,7 +930,7 @@ class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_inse
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(TFRendezRecvResponse* other);
+  void InternalSwap(TFRendezRecvUpdate* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -791,7 +964,7 @@ class TFRendezRecvResponse : public ::google::protobuf::Message /* @@protoc_inse
   ::google::protobuf::uint64 forseq() const;
   void set_forseq(::google::protobuf::uint64 value);
 
-  // @@protoc_insertion_point(class_scope:executor.TFRendezRecvResponse)
+  // @@protoc_insertion_point(class_scope:executor.TFRendezRecvUpdate)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -914,21 +1087,169 @@ class TFTensorItem : public ::google::protobuf::Message /* @@protoc_insertion_po
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// TFOpKernelDef
+// TFSessionArgs
 
 // int32 graph_def_version = 1;
-inline void TFOpKernelDef::clear_graph_def_version() {
+inline void TFSessionArgs::clear_graph_def_version() {
   graph_def_version_ = 0;
 }
-inline ::google::protobuf::int32 TFOpKernelDef::graph_def_version() const {
-  // @@protoc_insertion_point(field_get:executor.TFOpKernelDef.graph_def_version)
+inline ::google::protobuf::int32 TFSessionArgs::graph_def_version() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.graph_def_version)
   return graph_def_version_;
 }
-inline void TFOpKernelDef::set_graph_def_version(::google::protobuf::int32 value) {
+inline void TFSessionArgs::set_graph_def_version(::google::protobuf::int32 value) {
   
   graph_def_version_ = value;
-  // @@protoc_insertion_point(field_set:executor.TFOpKernelDef.graph_def_version)
+  // @@protoc_insertion_point(field_set:executor.TFSessionArgs.graph_def_version)
 }
+
+// .tensorflow.ConfigProto cfgProto = 3;
+inline bool TFSessionArgs::has_cfgproto() const {
+  return this != internal_default_instance() && cfgproto_ != NULL;
+}
+inline void TFSessionArgs::clear_cfgproto() {
+  if (GetArenaNoVirtual() == NULL && cfgproto_ != NULL) delete cfgproto_;
+  cfgproto_ = NULL;
+}
+inline const ::tensorflow::ConfigProto& TFSessionArgs::cfgproto() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.cfgProto)
+  return cfgproto_ != NULL ? *cfgproto_
+                         : *::tensorflow::ConfigProto::internal_default_instance();
+}
+inline ::tensorflow::ConfigProto* TFSessionArgs::mutable_cfgproto() {
+  
+  if (cfgproto_ == NULL) {
+    cfgproto_ = new ::tensorflow::ConfigProto;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.TFSessionArgs.cfgProto)
+  return cfgproto_;
+}
+inline ::tensorflow::ConfigProto* TFSessionArgs::release_cfgproto() {
+  // @@protoc_insertion_point(field_release:executor.TFSessionArgs.cfgProto)
+  
+  ::tensorflow::ConfigProto* temp = cfgproto_;
+  cfgproto_ = NULL;
+  return temp;
+}
+inline void TFSessionArgs::set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto) {
+  delete cfgproto_;
+  if (cfgproto != NULL && cfgproto->GetArena() != NULL) {
+    ::tensorflow::ConfigProto* new_cfgproto = new ::tensorflow::ConfigProto;
+    new_cfgproto->CopyFrom(*cfgproto);
+    cfgproto = new_cfgproto;
+  }
+  cfgproto_ = cfgproto;
+  if (cfgproto) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.cfgProto)
+}
+
+// .tensorflow.FunctionDefLibrary funcDef = 4;
+inline bool TFSessionArgs::has_funcdef() const {
+  return this != internal_default_instance() && funcdef_ != NULL;
+}
+inline void TFSessionArgs::clear_funcdef() {
+  if (GetArenaNoVirtual() == NULL && funcdef_ != NULL) delete funcdef_;
+  funcdef_ = NULL;
+}
+inline const ::tensorflow::FunctionDefLibrary& TFSessionArgs::funcdef() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.funcDef)
+  return funcdef_ != NULL ? *funcdef_
+                         : *::tensorflow::FunctionDefLibrary::internal_default_instance();
+}
+inline ::tensorflow::FunctionDefLibrary* TFSessionArgs::mutable_funcdef() {
+  
+  if (funcdef_ == NULL) {
+    funcdef_ = new ::tensorflow::FunctionDefLibrary;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.TFSessionArgs.funcDef)
+  return funcdef_;
+}
+inline ::tensorflow::FunctionDefLibrary* TFSessionArgs::release_funcdef() {
+  // @@protoc_insertion_point(field_release:executor.TFSessionArgs.funcDef)
+  
+  ::tensorflow::FunctionDefLibrary* temp = funcdef_;
+  funcdef_ = NULL;
+  return temp;
+}
+inline void TFSessionArgs::set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef) {
+  delete funcdef_;
+  if (funcdef != NULL && funcdef->GetArena() != NULL) {
+    ::tensorflow::FunctionDefLibrary* new_funcdef = new ::tensorflow::FunctionDefLibrary;
+    new_funcdef->CopyFrom(*funcdef);
+    funcdef = new_funcdef;
+  }
+  funcdef_ = funcdef;
+  if (funcdef) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.funcDef)
+}
+
+// -------------------------------------------------------------------
+
+// TFSessionCreated
+
+// bytes sessionId = 2;
+inline void TFSessionCreated::clear_sessionid() {
+  sessionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TFSessionCreated::sessionid() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionCreated.sessionId)
+  return sessionid_.GetNoArena();
+}
+inline void TFSessionCreated::set_sessionid(const ::std::string& value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFSessionCreated.sessionId)
+}
+#if LANG_CXX11
+inline void TFSessionCreated::set_sessionid(::std::string&& value) {
+  
+  sessionid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFSessionCreated.sessionId)
+}
+#endif
+inline void TFSessionCreated::set_sessionid(const char* value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFSessionCreated.sessionId)
+}
+inline void TFSessionCreated::set_sessionid(const void* value, size_t size) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFSessionCreated.sessionId)
+}
+inline ::std::string* TFSessionCreated::mutable_sessionid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFSessionCreated.sessionId)
+  return sessionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TFSessionCreated::release_sessionid() {
+  // @@protoc_insertion_point(field_release:executor.TFSessionCreated.sessionId)
+  
+  return sessionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TFSessionCreated::set_allocated_sessionid(::std::string* sessionid) {
+  if (sessionid != NULL) {
+    
+  } else {
+    
+  }
+  sessionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sessionid);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionCreated.sessionId)
+}
+
+// -------------------------------------------------------------------
+
+// TFOpKernelDef
 
 // .tensorflow.NodeDef nodedef = 2;
 inline bool TFOpKernelDef::has_nodedef() const {
@@ -972,94 +1293,6 @@ inline void TFOpKernelDef::set_allocated_nodedef(::tensorflow::NodeDef* nodedef)
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFOpKernelDef.nodedef)
-}
-
-// .tensorflow.ConfigProto cfgProto = 3;
-inline bool TFOpKernelDef::has_cfgproto() const {
-  return this != internal_default_instance() && cfgproto_ != NULL;
-}
-inline void TFOpKernelDef::clear_cfgproto() {
-  if (GetArenaNoVirtual() == NULL && cfgproto_ != NULL) delete cfgproto_;
-  cfgproto_ = NULL;
-}
-inline const ::tensorflow::ConfigProto& TFOpKernelDef::cfgproto() const {
-  // @@protoc_insertion_point(field_get:executor.TFOpKernelDef.cfgProto)
-  return cfgproto_ != NULL ? *cfgproto_
-                         : *::tensorflow::ConfigProto::internal_default_instance();
-}
-inline ::tensorflow::ConfigProto* TFOpKernelDef::mutable_cfgproto() {
-  
-  if (cfgproto_ == NULL) {
-    cfgproto_ = new ::tensorflow::ConfigProto;
-  }
-  // @@protoc_insertion_point(field_mutable:executor.TFOpKernelDef.cfgProto)
-  return cfgproto_;
-}
-inline ::tensorflow::ConfigProto* TFOpKernelDef::release_cfgproto() {
-  // @@protoc_insertion_point(field_release:executor.TFOpKernelDef.cfgProto)
-  
-  ::tensorflow::ConfigProto* temp = cfgproto_;
-  cfgproto_ = NULL;
-  return temp;
-}
-inline void TFOpKernelDef::set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto) {
-  delete cfgproto_;
-  if (cfgproto != NULL && cfgproto->GetArena() != NULL) {
-    ::tensorflow::ConfigProto* new_cfgproto = new ::tensorflow::ConfigProto;
-    new_cfgproto->CopyFrom(*cfgproto);
-    cfgproto = new_cfgproto;
-  }
-  cfgproto_ = cfgproto;
-  if (cfgproto) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:executor.TFOpKernelDef.cfgProto)
-}
-
-// .tensorflow.FunctionDefLibrary funcDef = 4;
-inline bool TFOpKernelDef::has_funcdef() const {
-  return this != internal_default_instance() && funcdef_ != NULL;
-}
-inline void TFOpKernelDef::clear_funcdef() {
-  if (GetArenaNoVirtual() == NULL && funcdef_ != NULL) delete funcdef_;
-  funcdef_ = NULL;
-}
-inline const ::tensorflow::FunctionDefLibrary& TFOpKernelDef::funcdef() const {
-  // @@protoc_insertion_point(field_get:executor.TFOpKernelDef.funcDef)
-  return funcdef_ != NULL ? *funcdef_
-                         : *::tensorflow::FunctionDefLibrary::internal_default_instance();
-}
-inline ::tensorflow::FunctionDefLibrary* TFOpKernelDef::mutable_funcdef() {
-  
-  if (funcdef_ == NULL) {
-    funcdef_ = new ::tensorflow::FunctionDefLibrary;
-  }
-  // @@protoc_insertion_point(field_mutable:executor.TFOpKernelDef.funcDef)
-  return funcdef_;
-}
-inline ::tensorflow::FunctionDefLibrary* TFOpKernelDef::release_funcdef() {
-  // @@protoc_insertion_point(field_release:executor.TFOpKernelDef.funcDef)
-  
-  ::tensorflow::FunctionDefLibrary* temp = funcdef_;
-  funcdef_ = NULL;
-  return temp;
-}
-inline void TFOpKernelDef::set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef) {
-  delete funcdef_;
-  if (funcdef != NULL && funcdef->GetArena() != NULL) {
-    ::tensorflow::FunctionDefLibrary* new_funcdef = new ::tensorflow::FunctionDefLibrary;
-    new_funcdef->CopyFrom(*funcdef);
-    funcdef = new_funcdef;
-  }
-  funcdef_ = funcdef;
-  if (funcdef) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:executor.TFOpKernelDef.funcDef)
 }
 
 // bool isAsync = 5;
@@ -1529,49 +1762,49 @@ TFRendezRecvRequests::mutable_allocattributes() {
 
 // -------------------------------------------------------------------
 
-// TFRendezRecvResponse
+// TFRendezRecvUpdate
 
 // uint64 forSeq = 1;
-inline void TFRendezRecvResponse::clear_forseq() {
+inline void TFRendezRecvUpdate::clear_forseq() {
   forseq_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint64 TFRendezRecvResponse::forseq() const {
-  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.forSeq)
+inline ::google::protobuf::uint64 TFRendezRecvUpdate::forseq() const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvUpdate.forSeq)
   return forseq_;
 }
-inline void TFRendezRecvResponse::set_forseq(::google::protobuf::uint64 value) {
+inline void TFRendezRecvUpdate::set_forseq(::google::protobuf::uint64 value) {
   
   forseq_ = value;
-  // @@protoc_insertion_point(field_set:executor.TFRendezRecvResponse.forSeq)
+  // @@protoc_insertion_point(field_set:executor.TFRendezRecvUpdate.forSeq)
 }
 
 // repeated .executor.TFRendezItem items = 2;
-inline int TFRendezRecvResponse::items_size() const {
+inline int TFRendezRecvUpdate::items_size() const {
   return items_.size();
 }
-inline void TFRendezRecvResponse::clear_items() {
+inline void TFRendezRecvUpdate::clear_items() {
   items_.Clear();
 }
-inline const ::executor::TFRendezItem& TFRendezRecvResponse::items(int index) const {
-  // @@protoc_insertion_point(field_get:executor.TFRendezRecvResponse.items)
+inline const ::executor::TFRendezItem& TFRendezRecvUpdate::items(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFRendezRecvUpdate.items)
   return items_.Get(index);
 }
-inline ::executor::TFRendezItem* TFRendezRecvResponse::mutable_items(int index) {
-  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvResponse.items)
+inline ::executor::TFRendezItem* TFRendezRecvUpdate::mutable_items(int index) {
+  // @@protoc_insertion_point(field_mutable:executor.TFRendezRecvUpdate.items)
   return items_.Mutable(index);
 }
-inline ::executor::TFRendezItem* TFRendezRecvResponse::add_items() {
-  // @@protoc_insertion_point(field_add:executor.TFRendezRecvResponse.items)
+inline ::executor::TFRendezItem* TFRendezRecvUpdate::add_items() {
+  // @@protoc_insertion_point(field_add:executor.TFRendezRecvUpdate.items)
   return items_.Add();
 }
 inline ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >*
-TFRendezRecvResponse::mutable_items() {
-  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvResponse.items)
+TFRendezRecvUpdate::mutable_items() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFRendezRecvUpdate.items)
   return &items_;
 }
 inline const ::google::protobuf::RepeatedPtrField< ::executor::TFRendezItem >&
-TFRendezRecvResponse::items() const {
-  // @@protoc_insertion_point(field_list:executor.TFRendezRecvResponse.items)
+TFRendezRecvUpdate::items() const {
+  // @@protoc_insertion_point(field_list:executor.TFRendezRecvUpdate.items)
   return items_;
 }
 
@@ -1690,6 +1923,10 @@ inline void TFTensorItem::set_allocated_meta(::tensorflow::TensorProto* meta) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

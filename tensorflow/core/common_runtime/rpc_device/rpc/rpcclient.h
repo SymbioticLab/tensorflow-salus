@@ -22,27 +22,18 @@
 
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/graph.pb.h"
 
 #include <memory>
-#include <atomic>
 #include <functional>
-#include <unordered_map>
-
 
 using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
 
-namespace executor {
-class OpKernelDef;
-class OpContextDef;
-}
-
 namespace tensorflow {
 
-class Graph;
 class FunctionDefLibrary;
 class ConfigProto;
-class Tensor;
+class GraphDef;
+class RPCDeviceContext;
 
 /**
  * @todo write docs
@@ -57,32 +48,16 @@ public:
     using DoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
 
     virtual void createSession(const ConfigProto &cfgProto, const FunctionDefLibrary &library,
-                               const GraphDef &graphdef) = 0;
+                               const GraphDef &graphdef,
+                               std::string &sessionId) = 0;
 
-    virtual void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-                          AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done) = 0;
-    virtual Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-                       OpKernel *kernel, OpKernelContext *context) = 0;
+    virtual void runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
+                          AsyncOpKernel::DoneCallback done) = 0;
+    virtual Status run(RPCDeviceContext *devCtx, OpKernel *kernel, OpKernelContext *context) = 0;
     virtual Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) = 0;
     virtual Status deallocate(uint64_t addr_handle) = 0;
 
-    void maybeInitialize(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph);
-
-    void serializeOpKernel(executor::OpKernelDef *def, OpKernel *kernel,
-                           const Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
-    void serializeOpContext(executor::OpContextDef *def, OpKernelContext *context,
-                            const Graph *graph, const FunctionDefLibrary &library, const ConfigProto &cfgProto);
-    void deserializeOpContext(OpKernelContext *context, const executor::OpContextDef *def);
-
-protected:
-    Tensor tensorFromProtoMeta(const TensorProto &outdef);
-    void tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref);
-
 private:
-    std::atomic_flag m_initialized;
-    GraphDef m_graphdef;
-    std::unordered_map<std::string, int> m_name2defidx;
-
     TF_DISALLOW_COPY_AND_ASSIGN(RpcClient);
 };
 

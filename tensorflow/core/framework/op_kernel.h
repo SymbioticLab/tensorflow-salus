@@ -455,7 +455,7 @@ struct TensorValue {
   Tensor* tensor;
 };
 
-class RpcClient;
+class RPCDeviceContext;
 class OpKernelContext {
  public:
   // The first element of a WrappedAllocator is a "base" Allocator and
@@ -1089,8 +1089,8 @@ class OpKernelContext {
   friend class PersistentTensor;
   void NotifyUseOfPersistentTensor(const Tensor& tensor);
 
-  // Such that RpcClient can read out needed values and manipulate context directly.
-  friend class RpcClient;
+  // Such that RPCDeviceContext can read out needed values and manipulate context directly.
+  friend class RPCDeviceContext;
 
   Status status_;
   Params* params_;    // not owned

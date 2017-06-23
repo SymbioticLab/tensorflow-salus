@@ -52,6 +52,12 @@ extern DeallocResponseDefaultTypeInternal _DeallocResponse_default_instance_;
 class EvenlopDef;
 class EvenlopDefDefaultTypeInternal;
 extern EvenlopDefDefaultTypeInternal _EvenlopDef_default_instance_;
+class InitSessionRequest;
+class InitSessionRequestDefaultTypeInternal;
+extern InitSessionRequestDefaultTypeInternal _InitSessionRequest_default_instance_;
+class InitSessionResponse;
+class InitSessionResponseDefaultTypeInternal;
+extern InitSessionResponseDefaultTypeInternal _InitSessionResponse_default_instance_;
 class OpContextDef;
 class OpContextDefDefaultTypeInternal;
 extern OpContextDefDefaultTypeInternal _OpContextDef_default_instance_;
@@ -301,6 +307,198 @@ class CustomResponse : public ::google::protobuf::Message /* @@protoc_insertion_
   void set_allocated_result(::executor::Status* result);
 
   // @@protoc_insertion_point(class_scope:executor.CustomResponse)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr extra_;
+  ::executor::Status* result_;
+  mutable int _cached_size_;
+  friend struct  protobuf_executor_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class InitSessionRequest : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.InitSessionRequest) */ {
+ public:
+  InitSessionRequest();
+  virtual ~InitSessionRequest();
+
+  InitSessionRequest(const InitSessionRequest& from);
+
+  inline InitSessionRequest& operator=(const InitSessionRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const InitSessionRequest& default_instance();
+
+  static inline const InitSessionRequest* internal_default_instance() {
+    return reinterpret_cast<const InitSessionRequest*>(
+               &_InitSessionRequest_default_instance_);
+  }
+
+  void Swap(InitSessionRequest* other);
+
+  // implements Message ----------------------------------------------
+
+  inline InitSessionRequest* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  InitSessionRequest* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const InitSessionRequest& from);
+  void MergeFrom(const InitSessionRequest& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(InitSessionRequest* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes extra = 1;
+  void clear_extra();
+  static const int kExtraFieldNumber = 1;
+  const ::std::string& extra() const;
+  void set_extra(const ::std::string& value);
+  #if LANG_CXX11
+  void set_extra(::std::string&& value);
+  #endif
+  void set_extra(const char* value);
+  void set_extra(const void* value, size_t size);
+  ::std::string* mutable_extra();
+  ::std::string* release_extra();
+  void set_allocated_extra(::std::string* extra);
+
+  // @@protoc_insertion_point(class_scope:executor.InitSessionRequest)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr extra_;
+  mutable int _cached_size_;
+  friend struct  protobuf_executor_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class InitSessionResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.InitSessionResponse) */ {
+ public:
+  InitSessionResponse();
+  virtual ~InitSessionResponse();
+
+  InitSessionResponse(const InitSessionResponse& from);
+
+  inline InitSessionResponse& operator=(const InitSessionResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const InitSessionResponse& default_instance();
+
+  static inline const InitSessionResponse* internal_default_instance() {
+    return reinterpret_cast<const InitSessionResponse*>(
+               &_InitSessionResponse_default_instance_);
+  }
+
+  void Swap(InitSessionResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline InitSessionResponse* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  InitSessionResponse* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const InitSessionResponse& from);
+  void MergeFrom(const InitSessionResponse& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(InitSessionResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes extra = 2;
+  void clear_extra();
+  static const int kExtraFieldNumber = 2;
+  const ::std::string& extra() const;
+  void set_extra(const ::std::string& value);
+  #if LANG_CXX11
+  void set_extra(::std::string&& value);
+  #endif
+  void set_extra(const char* value);
+  void set_extra(const void* value, size_t size);
+  ::std::string* mutable_extra();
+  ::std::string* release_extra();
+  void set_allocated_extra(::std::string* extra);
+
+  // .executor.Status result = 1;
+  bool has_result() const;
+  void clear_result();
+  static const int kResultFieldNumber = 1;
+  const ::executor::Status& result() const;
+  ::executor::Status* mutable_result();
+  ::executor::Status* release_result();
+  void set_allocated_result(::executor::Status* result);
+
+  // @@protoc_insertion_point(class_scope:executor.InitSessionResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -1237,15 +1435,29 @@ class EvenlopDef : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::std::string* release_recvidentity();
   void set_allocated_recvidentity(::std::string* recvidentity);
 
+  // bytes sessionId = 4;
+  void clear_sessionid();
+  static const int kSessionIdFieldNumber = 4;
+  const ::std::string& sessionid() const;
+  void set_sessionid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_sessionid(::std::string&& value);
+  #endif
+  void set_sessionid(const char* value);
+  void set_sessionid(const void* value, size_t size);
+  ::std::string* mutable_sessionid();
+  ::std::string* release_sessionid();
+  void set_allocated_sessionid(::std::string* sessionid);
+
   // uint64 seq = 2;
   void clear_seq();
   static const int kSeqFieldNumber = 2;
   ::google::protobuf::uint64 seq() const;
   void set_seq(::google::protobuf::uint64 value);
 
-  // .executor.OpLibraryType oplibrary = 4;
+  // .executor.OpLibraryType oplibrary = 5;
   void clear_oplibrary();
-  static const int kOplibraryFieldNumber = 4;
+  static const int kOplibraryFieldNumber = 5;
   ::executor::OpLibraryType oplibrary() const;
   void set_oplibrary(::executor::OpLibraryType value);
 
@@ -1255,6 +1467,7 @@ class EvenlopDef : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr type_;
   ::google::protobuf::internal::ArenaStringPtr recvidentity_;
+  ::google::protobuf::internal::ArenaStringPtr sessionid_;
   ::google::protobuf::uint64 seq_;
   int oplibrary_;
   mutable int _cached_size_;
@@ -1465,6 +1678,157 @@ inline void CustomResponse::set_allocated_extra(::std::string* extra) {
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
   // @@protoc_insertion_point(field_set_allocated:executor.CustomResponse.extra)
+}
+
+// -------------------------------------------------------------------
+
+// InitSessionRequest
+
+// bytes extra = 1;
+inline void InitSessionRequest::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& InitSessionRequest::extra() const {
+  // @@protoc_insertion_point(field_get:executor.InitSessionRequest.extra)
+  return extra_.GetNoArena();
+}
+inline void InitSessionRequest::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.InitSessionRequest.extra)
+}
+#if LANG_CXX11
+inline void InitSessionRequest::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionRequest.extra)
+}
+#endif
+inline void InitSessionRequest::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.InitSessionRequest.extra)
+}
+inline void InitSessionRequest::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionRequest.extra)
+}
+inline ::std::string* InitSessionRequest::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.InitSessionRequest.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* InitSessionRequest::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.InitSessionRequest.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void InitSessionRequest::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionRequest.extra)
+}
+
+// -------------------------------------------------------------------
+
+// InitSessionResponse
+
+// .executor.Status result = 1;
+inline bool InitSessionResponse::has_result() const {
+  return this != internal_default_instance() && result_ != NULL;
+}
+inline void InitSessionResponse::clear_result() {
+  if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
+  result_ = NULL;
+}
+inline const ::executor::Status& InitSessionResponse::result() const {
+  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.result)
+  return result_ != NULL ? *result_
+                         : *::executor::Status::internal_default_instance();
+}
+inline ::executor::Status* InitSessionResponse::mutable_result() {
+  
+  if (result_ == NULL) {
+    result_ = new ::executor::Status;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.result)
+  return result_;
+}
+inline ::executor::Status* InitSessionResponse::release_result() {
+  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.result)
+  
+  ::executor::Status* temp = result_;
+  result_ = NULL;
+  return temp;
+}
+inline void InitSessionResponse::set_allocated_result(::executor::Status* result) {
+  delete result_;
+  result_ = result;
+  if (result) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.result)
+}
+
+// bytes extra = 2;
+inline void InitSessionResponse::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& InitSessionResponse::extra() const {
+  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.extra)
+  return extra_.GetNoArena();
+}
+inline void InitSessionResponse::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.InitSessionResponse.extra)
+}
+#if LANG_CXX11
+inline void InitSessionResponse::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionResponse.extra)
+}
+#endif
+inline void InitSessionResponse::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.InitSessionResponse.extra)
+}
+inline void InitSessionResponse::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionResponse.extra)
+}
+inline ::std::string* InitSessionResponse::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* InitSessionResponse::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void InitSessionResponse::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.extra)
 }
 
 // -------------------------------------------------------------------
@@ -2099,7 +2463,59 @@ inline void EvenlopDef::set_allocated_recvidentity(::std::string* recvidentity) 
   // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.recvIdentity)
 }
 
-// .executor.OpLibraryType oplibrary = 4;
+// bytes sessionId = 4;
+inline void EvenlopDef::clear_sessionid() {
+  sessionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& EvenlopDef::sessionid() const {
+  // @@protoc_insertion_point(field_get:executor.EvenlopDef.sessionId)
+  return sessionid_.GetNoArena();
+}
+inline void EvenlopDef::set_sessionid(const ::std::string& value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.EvenlopDef.sessionId)
+}
+#if LANG_CXX11
+inline void EvenlopDef::set_sessionid(::std::string&& value) {
+  
+  sessionid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.EvenlopDef.sessionId)
+}
+#endif
+inline void EvenlopDef::set_sessionid(const char* value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.EvenlopDef.sessionId)
+}
+inline void EvenlopDef::set_sessionid(const void* value, size_t size) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.EvenlopDef.sessionId)
+}
+inline ::std::string* EvenlopDef::mutable_sessionid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.EvenlopDef.sessionId)
+  return sessionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* EvenlopDef::release_sessionid() {
+  // @@protoc_insertion_point(field_release:executor.EvenlopDef.sessionId)
+  
+  return sessionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void EvenlopDef::set_allocated_sessionid(::std::string* sessionid) {
+  if (sessionid != NULL) {
+    
+  } else {
+    
+  }
+  sessionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sessionid);
+  // @@protoc_insertion_point(field_set_allocated:executor.EvenlopDef.sessionId)
+}
+
+// .executor.OpLibraryType oplibrary = 5;
 inline void EvenlopDef::clear_oplibrary() {
   oplibrary_ = 0;
 }
@@ -2114,6 +2530,10 @@ inline void EvenlopDef::set_oplibrary(::executor::OpLibraryType value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

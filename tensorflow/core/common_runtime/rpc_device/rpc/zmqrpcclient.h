@@ -41,19 +41,20 @@ public:
     ~ZmqRpcClient() override;
 
     void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library,
-                       const GraphDef &graphdef) override;
+                       const GraphDef &graphdef,
+                       std::string &sessionId) override;
 
-    void runAsync(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-                  AsyncOpKernel *kernel, OpKernelContext *context, AsyncOpKernel::DoneCallback done) override;
+    void runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
+                  AsyncOpKernel::DoneCallback done) override;
 
-    Status run(const ConfigProto &cfgProto, const FunctionDefLibrary &library, const Graph *graph,
-               OpKernel *kernel, OpKernelContext *context) override;
+    Status run(RPCDeviceContext *devCtx, OpKernel *kernel, OpKernelContext *context) override;
     Status allocate(uint64_t alignment, uint64_t num_bytes, uint64_t *addr_handle) override;
     Status deallocate(uint64_t addr_handle) override;
 private:
     using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
     template<typename ResponseType>
-    Status rpcCall(const ::google::protobuf::Message &msg, std::unique_ptr<ResponseType> &pReply);
+    Status rpcCall(const std::string &sessionId, const ::google::protobuf::Message &msg,
+                   std::unique_ptr<ResponseType> &pReply);
 
     struct AsyncCallStarter
     {
@@ -104,11 +105,16 @@ private:
     };
 
     template<typename ResponseType>
-    AsyncCallStarter rpcCallAsync(const ::google::protobuf::Message &msg,
+    AsyncCallStarter rpcCallAsync(const std::string &sessionId, const ::google::protobuf::Message &msg,
                                   std::function<void(const Status&, std::unique_ptr<ResponseType>&&)> done);
 
-    AsyncCallStarter rpcCallAsync(const ::google::protobuf::Message &msg);
+    AsyncCallStarter rpcCallAsync(const std::string &sessionId, const ::google::protobuf::Message &msg);
+
     void recvLoop();
+
+    struct Item;
+    AsyncCallStarter makeStarter(const std::string &sessionId, const ::google::protobuf::Message &msg,
+                                 Item &&cbitem);
 
 private:
     std::string m_execAddr;
