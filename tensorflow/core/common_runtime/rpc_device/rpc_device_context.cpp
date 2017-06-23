@@ -40,6 +40,7 @@ RPCDeviceContext::RPCDeviceContext(RpcClient &client, const Graph *graph,
     for (int i = 0; i != m_graphdef.node_size(); ++i) {
         auto &ndef = m_graphdef.node(i);
         m_name2defidx[ndef.name()] = i;
+        LOG(INFO) << "K->N Mapping: " << ndef.name() << " -> " << i;
     }
     m_rpc.createSession(cfgProto, fdef, m_graphdef, m_sessionId);
 }
@@ -121,7 +122,14 @@ void RPCDeviceContext::serializeOpKernel(executor::OpKernelDef *def, tensorflow:
     executor::TFOpKernelDef tfdef;
 
     // NOTE: kernel->def() might be outdated due to optimizations. Find nodedef from m_graphdef
-    *tfdef.mutable_nodedef() = m_graphdef.node(m_name2defidx[kernel->name()]);
+    auto it = m_name2defidx.find(kernel->name());
+    if (it != m_name2defidx.end()) {
+        *tfdef.mutable_nodedef() = m_graphdef.node(it->second);
+    } else {
+        // fallback to node->def(), this may happen for _SOURCE or other special nodes
+        *tfdef.mutable_nodedef() = kernel->def();
+    }
+    LOG(INFO) << "Serialized OpKernel: " << tfdef.nodedef().DebugString();
     tfdef.set_isasync(kernel->AsAsync() != nullptr);
 
     tfdef.SerializeToString(def->mutable_extra());
