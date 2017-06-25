@@ -56,6 +56,9 @@ extern TFRendezRecvUpdateDefaultTypeInternal _TFRendezRecvUpdate_default_instanc
 class TFSessionArgs;
 class TFSessionArgsDefaultTypeInternal;
 extern TFSessionArgsDefaultTypeInternal _TFSessionArgs_default_instance_;
+class TFSessionClose;
+class TFSessionCloseDefaultTypeInternal;
+extern TFSessionCloseDefaultTypeInternal _TFSessionClose_default_instance_;
 class TFSessionCreated;
 class TFSessionCreatedDefaultTypeInternal;
 extern TFSessionCreatedDefaultTypeInternal _TFSessionCreated_default_instance_;
@@ -189,37 +192,20 @@ class TFSessionArgs : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   // accessors -------------------------------------------------------
 
-  // .tensorflow.ConfigProto cfgProto = 3;
+  // .tensorflow.ConfigProto cfgProto = 1;
   bool has_cfgproto() const;
   void clear_cfgproto();
-  static const int kCfgProtoFieldNumber = 3;
+  static const int kCfgProtoFieldNumber = 1;
   const ::tensorflow::ConfigProto& cfgproto() const;
   ::tensorflow::ConfigProto* mutable_cfgproto();
   ::tensorflow::ConfigProto* release_cfgproto();
   void set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto);
-
-  // .tensorflow.FunctionDefLibrary funcDef = 4;
-  bool has_funcdef() const;
-  void clear_funcdef();
-  static const int kFuncDefFieldNumber = 4;
-  const ::tensorflow::FunctionDefLibrary& funcdef() const;
-  ::tensorflow::FunctionDefLibrary* mutable_funcdef();
-  ::tensorflow::FunctionDefLibrary* release_funcdef();
-  void set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef);
-
-  // int32 graph_def_version = 1;
-  void clear_graph_def_version();
-  static const int kGraphDefVersionFieldNumber = 1;
-  ::google::protobuf::int32 graph_def_version() const;
-  void set_graph_def_version(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:executor.TFSessionArgs)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::tensorflow::ConfigProto* cfgproto_;
-  ::tensorflow::FunctionDefLibrary* funcdef_;
-  ::google::protobuf::int32 graph_def_version_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -307,6 +293,97 @@ class TFSessionCreated : public ::google::protobuf::Message /* @@protoc_insertio
   void set_allocated_sessionid(::std::string* sessionid);
 
   // @@protoc_insertion_point(class_scope:executor.TFSessionCreated)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr sessionid_;
+  mutable int _cached_size_;
+  friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class TFSessionClose : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.TFSessionClose) */ {
+ public:
+  TFSessionClose();
+  virtual ~TFSessionClose();
+
+  TFSessionClose(const TFSessionClose& from);
+
+  inline TFSessionClose& operator=(const TFSessionClose& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TFSessionClose& default_instance();
+
+  static inline const TFSessionClose* internal_default_instance() {
+    return reinterpret_cast<const TFSessionClose*>(
+               &_TFSessionClose_default_instance_);
+  }
+
+  void Swap(TFSessionClose* other);
+
+  // implements Message ----------------------------------------------
+
+  inline TFSessionClose* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  TFSessionClose* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const TFSessionClose& from);
+  void MergeFrom(const TFSessionClose& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(TFSessionClose* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes sessionId = 1;
+  void clear_sessionid();
+  static const int kSessionIdFieldNumber = 1;
+  const ::std::string& sessionid() const;
+  void set_sessionid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_sessionid(::std::string&& value);
+  #endif
+  void set_sessionid(const char* value);
+  void set_sessionid(const void* value, size_t size);
+  ::std::string* mutable_sessionid();
+  ::std::string* release_sessionid();
+  void set_allocated_sessionid(::std::string* sessionid);
+
+  // @@protoc_insertion_point(class_scope:executor.TFSessionClose)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -1089,21 +1166,7 @@ class TFTensorItem : public ::google::protobuf::Message /* @@protoc_insertion_po
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
 // TFSessionArgs
 
-// int32 graph_def_version = 1;
-inline void TFSessionArgs::clear_graph_def_version() {
-  graph_def_version_ = 0;
-}
-inline ::google::protobuf::int32 TFSessionArgs::graph_def_version() const {
-  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.graph_def_version)
-  return graph_def_version_;
-}
-inline void TFSessionArgs::set_graph_def_version(::google::protobuf::int32 value) {
-  
-  graph_def_version_ = value;
-  // @@protoc_insertion_point(field_set:executor.TFSessionArgs.graph_def_version)
-}
-
-// .tensorflow.ConfigProto cfgProto = 3;
+// .tensorflow.ConfigProto cfgProto = 1;
 inline bool TFSessionArgs::has_cfgproto() const {
   return this != internal_default_instance() && cfgproto_ != NULL;
 }
@@ -1145,50 +1208,6 @@ inline void TFSessionArgs::set_allocated_cfgproto(::tensorflow::ConfigProto* cfg
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.cfgProto)
-}
-
-// .tensorflow.FunctionDefLibrary funcDef = 4;
-inline bool TFSessionArgs::has_funcdef() const {
-  return this != internal_default_instance() && funcdef_ != NULL;
-}
-inline void TFSessionArgs::clear_funcdef() {
-  if (GetArenaNoVirtual() == NULL && funcdef_ != NULL) delete funcdef_;
-  funcdef_ = NULL;
-}
-inline const ::tensorflow::FunctionDefLibrary& TFSessionArgs::funcdef() const {
-  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.funcDef)
-  return funcdef_ != NULL ? *funcdef_
-                         : *::tensorflow::FunctionDefLibrary::internal_default_instance();
-}
-inline ::tensorflow::FunctionDefLibrary* TFSessionArgs::mutable_funcdef() {
-  
-  if (funcdef_ == NULL) {
-    funcdef_ = new ::tensorflow::FunctionDefLibrary;
-  }
-  // @@protoc_insertion_point(field_mutable:executor.TFSessionArgs.funcDef)
-  return funcdef_;
-}
-inline ::tensorflow::FunctionDefLibrary* TFSessionArgs::release_funcdef() {
-  // @@protoc_insertion_point(field_release:executor.TFSessionArgs.funcDef)
-  
-  ::tensorflow::FunctionDefLibrary* temp = funcdef_;
-  funcdef_ = NULL;
-  return temp;
-}
-inline void TFSessionArgs::set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef) {
-  delete funcdef_;
-  if (funcdef != NULL && funcdef->GetArena() != NULL) {
-    ::tensorflow::FunctionDefLibrary* new_funcdef = new ::tensorflow::FunctionDefLibrary;
-    new_funcdef->CopyFrom(*funcdef);
-    funcdef = new_funcdef;
-  }
-  funcdef_ = funcdef;
-  if (funcdef) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.funcDef)
 }
 
 // -------------------------------------------------------------------
@@ -1245,6 +1264,62 @@ inline void TFSessionCreated::set_allocated_sessionid(::std::string* sessionid) 
   }
   sessionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sessionid);
   // @@protoc_insertion_point(field_set_allocated:executor.TFSessionCreated.sessionId)
+}
+
+// -------------------------------------------------------------------
+
+// TFSessionClose
+
+// bytes sessionId = 1;
+inline void TFSessionClose::clear_sessionid() {
+  sessionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TFSessionClose::sessionid() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionClose.sessionId)
+  return sessionid_.GetNoArena();
+}
+inline void TFSessionClose::set_sessionid(const ::std::string& value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFSessionClose.sessionId)
+}
+#if LANG_CXX11
+inline void TFSessionClose::set_sessionid(::std::string&& value) {
+  
+  sessionid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFSessionClose.sessionId)
+}
+#endif
+inline void TFSessionClose::set_sessionid(const char* value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFSessionClose.sessionId)
+}
+inline void TFSessionClose::set_sessionid(const void* value, size_t size) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFSessionClose.sessionId)
+}
+inline ::std::string* TFSessionClose::mutable_sessionid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFSessionClose.sessionId)
+  return sessionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TFSessionClose::release_sessionid() {
+  // @@protoc_insertion_point(field_release:executor.TFSessionClose.sessionId)
+  
+  return sessionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TFSessionClose::set_allocated_sessionid(::std::string* sessionid) {
+  if (sessionid != NULL) {
+    
+  } else {
+    
+  }
+  sessionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sessionid);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionClose.sessionId)
 }
 
 // -------------------------------------------------------------------
@@ -1923,6 +1998,8 @@ inline void TFTensorItem::set_allocated_meta(::tensorflow::TensorProto* meta) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

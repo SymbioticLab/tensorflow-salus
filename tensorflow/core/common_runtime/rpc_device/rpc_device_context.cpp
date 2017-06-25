@@ -19,6 +19,8 @@
 
 #include "rpc_device_context.h"
 
+#include "rpc_device.h"
+
 #include "tensorflow/core/common_runtime/rpc_device/rpc_allocator.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/rpcclient.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/executor.pb.h"
@@ -26,12 +28,13 @@
 
 #include "tensorflow/core/common_runtime/function.h"
 #include "tensorflow/core/platform/logging.h"
+#include "tensorflow/core/framework/function.pb.h"
 
 namespace tensorflow {
 
-RPCDeviceContext::RPCDeviceContext(RpcClient &client, const Graph *graph,
-                                   const FunctionDefLibrary &fdef, const ConfigProto &cfgProto)
+RPCDeviceContext::RPCDeviceContext(RPCDevice &device, RpcClient &client, const Graph *graph)
     : m_rpc(client)
+    , m_device(device)
 {
     DumpGraph("RPCDeviceContext::initialize", graph);
     // Create and cache the GraphDef, and build an index from node name to NodeDef
@@ -42,7 +45,9 @@ RPCDeviceContext::RPCDeviceContext(RpcClient &client, const Graph *graph,
         m_name2defidx[ndef.name()] = i;
         LOG(INFO) << "K->N Mapping: " << ndef.name() << " -> " << i;
     }
-    m_rpc.createSession(cfgProto, fdef, m_graphdef, m_sessionId);
+    *m_graphdef.mutable_library() = graph->flib_def().ToProto();
+
+    m_rpc.execSetup(this, m_execId);
 }
 
 RPCDeviceContext::~RPCDeviceContext() { }
@@ -58,9 +63,19 @@ const NodeDef &RPCDeviceContext::findNodeDefFor(const OpKernel *kernel) const
     return kernel->def();
 }
 
-std::string RPCDeviceContext::sessionId() const
+const std::string &RPCDeviceContext::sessionId() const
 {
-    return m_sessionId;
+    return m_device.sessionId();
+}
+
+const std::string &RPCDeviceContext::execId() const
+{
+    return m_execId;
+}
+
+const GraphDef &RPCDeviceContext::graphDef() const
+{
+    return m_graphdef;
 }
 
 Tensor RPCDeviceContext::tensorFromProtoMeta(const TensorProto &outdef)

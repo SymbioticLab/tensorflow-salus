@@ -40,9 +40,10 @@ public:
 
     ~ZmqRpcClient() override;
 
-    void createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library,
-                       const GraphDef &graphdef,
-                       std::string &sessionId) override;
+    void createSession(const ConfigProto &cfgProto, std::string &sessionId) override;
+    void closeSession(const std::string &sessionId) override;
+
+    void execSetup(RPCDeviceContext *devCtx, std::string &execId) override;
 
     void runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
                   AsyncOpKernel::DoneCallback done) override;

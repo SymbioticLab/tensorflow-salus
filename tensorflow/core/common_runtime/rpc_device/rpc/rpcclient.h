@@ -47,9 +47,10 @@ public:
 
     using DoneCallback = std::function<void(const Status&, ProtoPtr&&)>;
 
-    virtual void createSession(const ConfigProto &cfgProto, const FunctionDefLibrary &library,
-                               const GraphDef &graphdef,
-                               std::string &sessionId) = 0;
+    virtual void createSession(const ConfigProto &cfgProto, std::string &sessionId) = 0;
+    virtual void closeSession(const std::string &sessionId) = 0;
+
+    virtual void execSetup(RPCDeviceContext *devCtx, std::string &execId) = 0;
 
     virtual void runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
                           AsyncOpKernel::DoneCallback done) = 0;

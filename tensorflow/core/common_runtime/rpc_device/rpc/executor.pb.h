@@ -37,6 +37,9 @@ extern AllocRequestDefaultTypeInternal _AllocRequest_default_instance_;
 class AllocResponse;
 class AllocResponseDefaultTypeInternal;
 extern AllocResponseDefaultTypeInternal _AllocResponse_default_instance_;
+class ComputeDef;
+class ComputeDefDefaultTypeInternal;
+extern ComputeDefDefaultTypeInternal _ComputeDef_default_instance_;
 class CustomRequest;
 class CustomRequestDefaultTypeInternal;
 extern CustomRequestDefaultTypeInternal _CustomRequest_default_instance_;
@@ -52,18 +55,18 @@ extern DeallocResponseDefaultTypeInternal _DeallocResponse_default_instance_;
 class EvenlopDef;
 class EvenlopDefDefaultTypeInternal;
 extern EvenlopDefDefaultTypeInternal _EvenlopDef_default_instance_;
-class InitSessionRequest;
-class InitSessionRequestDefaultTypeInternal;
-extern InitSessionRequestDefaultTypeInternal _InitSessionRequest_default_instance_;
-class InitSessionResponse;
-class InitSessionResponseDefaultTypeInternal;
-extern InitSessionResponseDefaultTypeInternal _InitSessionResponse_default_instance_;
 class OpContextDef;
 class OpContextDefDefaultTypeInternal;
 extern OpContextDefDefaultTypeInternal _OpContextDef_default_instance_;
 class OpKernelDef;
 class OpKernelDefDefaultTypeInternal;
 extern OpKernelDefDefaultTypeInternal _OpKernelDef_default_instance_;
+class RunGraphRequest;
+class RunGraphRequestDefaultTypeInternal;
+extern RunGraphRequestDefaultTypeInternal _RunGraphRequest_default_instance_;
+class RunGraphResponse;
+class RunGraphResponseDefaultTypeInternal;
+extern RunGraphResponseDefaultTypeInternal _RunGraphResponse_default_instance_;
 class RunRequest;
 class RunRequestDefaultTypeInternal;
 extern RunRequestDefaultTypeInternal _RunRequest_default_instance_;
@@ -317,37 +320,37 @@ class CustomResponse : public ::google::protobuf::Message /* @@protoc_insertion_
 };
 // -------------------------------------------------------------------
 
-class InitSessionRequest : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.InitSessionRequest) */ {
+class RunGraphRequest : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.RunGraphRequest) */ {
  public:
-  InitSessionRequest();
-  virtual ~InitSessionRequest();
+  RunGraphRequest();
+  virtual ~RunGraphRequest();
 
-  InitSessionRequest(const InitSessionRequest& from);
+  RunGraphRequest(const RunGraphRequest& from);
 
-  inline InitSessionRequest& operator=(const InitSessionRequest& from) {
+  inline RunGraphRequest& operator=(const RunGraphRequest& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const InitSessionRequest& default_instance();
+  static const RunGraphRequest& default_instance();
 
-  static inline const InitSessionRequest* internal_default_instance() {
-    return reinterpret_cast<const InitSessionRequest*>(
-               &_InitSessionRequest_default_instance_);
+  static inline const RunGraphRequest* internal_default_instance() {
+    return reinterpret_cast<const RunGraphRequest*>(
+               &_RunGraphRequest_default_instance_);
   }
 
-  void Swap(InitSessionRequest* other);
+  void Swap(RunGraphRequest* other);
 
   // implements Message ----------------------------------------------
 
-  inline InitSessionRequest* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline RunGraphRequest* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  InitSessionRequest* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  RunGraphRequest* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const InitSessionRequest& from);
-  void MergeFrom(const InitSessionRequest& from);
+  void CopyFrom(const RunGraphRequest& from);
+  void MergeFrom(const RunGraphRequest& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -368,98 +371,7 @@ class InitSessionRequest : public ::google::protobuf::Message /* @@protoc_insert
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(InitSessionRequest* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // bytes extra = 1;
-  void clear_extra();
-  static const int kExtraFieldNumber = 1;
-  const ::std::string& extra() const;
-  void set_extra(const ::std::string& value);
-  #if LANG_CXX11
-  void set_extra(::std::string&& value);
-  #endif
-  void set_extra(const char* value);
-  void set_extra(const void* value, size_t size);
-  ::std::string* mutable_extra();
-  ::std::string* release_extra();
-  void set_allocated_extra(::std::string* extra);
-
-  // @@protoc_insertion_point(class_scope:executor.InitSessionRequest)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr extra_;
-  mutable int _cached_size_;
-  friend struct  protobuf_executor_2eproto::TableStruct;
-};
-// -------------------------------------------------------------------
-
-class InitSessionResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.InitSessionResponse) */ {
- public:
-  InitSessionResponse();
-  virtual ~InitSessionResponse();
-
-  InitSessionResponse(const InitSessionResponse& from);
-
-  inline InitSessionResponse& operator=(const InitSessionResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const InitSessionResponse& default_instance();
-
-  static inline const InitSessionResponse* internal_default_instance() {
-    return reinterpret_cast<const InitSessionResponse*>(
-               &_InitSessionResponse_default_instance_);
-  }
-
-  void Swap(InitSessionResponse* other);
-
-  // implements Message ----------------------------------------------
-
-  inline InitSessionResponse* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  InitSessionResponse* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const InitSessionResponse& from);
-  void MergeFrom(const InitSessionResponse& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
-      const PROTOBUF_FINAL {
-    return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
-  }
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(InitSessionResponse* other);
+  void InternalSwap(RunGraphRequest* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -489,6 +401,121 @@ class InitSessionResponse : public ::google::protobuf::Message /* @@protoc_inser
   ::std::string* release_extra();
   void set_allocated_extra(::std::string* extra);
 
+  // .executor.ComputeDef computation = 1;
+  bool has_computation() const;
+  void clear_computation();
+  static const int kComputationFieldNumber = 1;
+  const ::executor::ComputeDef& computation() const;
+  ::executor::ComputeDef* mutable_computation();
+  ::executor::ComputeDef* release_computation();
+  void set_allocated_computation(::executor::ComputeDef* computation);
+
+  // @@protoc_insertion_point(class_scope:executor.RunGraphRequest)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr extra_;
+  ::executor::ComputeDef* computation_;
+  mutable int _cached_size_;
+  friend struct  protobuf_executor_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class RunGraphResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.RunGraphResponse) */ {
+ public:
+  RunGraphResponse();
+  virtual ~RunGraphResponse();
+
+  RunGraphResponse(const RunGraphResponse& from);
+
+  inline RunGraphResponse& operator=(const RunGraphResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RunGraphResponse& default_instance();
+
+  static inline const RunGraphResponse* internal_default_instance() {
+    return reinterpret_cast<const RunGraphResponse*>(
+               &_RunGraphResponse_default_instance_);
+  }
+
+  void Swap(RunGraphResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline RunGraphResponse* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  RunGraphResponse* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const RunGraphResponse& from);
+  void MergeFrom(const RunGraphResponse& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(RunGraphResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string execId = 2;
+  void clear_execid();
+  static const int kExecIdFieldNumber = 2;
+  const ::std::string& execid() const;
+  void set_execid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_execid(::std::string&& value);
+  #endif
+  void set_execid(const char* value);
+  void set_execid(const char* value, size_t size);
+  ::std::string* mutable_execid();
+  ::std::string* release_execid();
+  void set_allocated_execid(::std::string* execid);
+
+  // bytes extra = 3;
+  void clear_extra();
+  static const int kExtraFieldNumber = 3;
+  const ::std::string& extra() const;
+  void set_extra(const ::std::string& value);
+  #if LANG_CXX11
+  void set_extra(::std::string&& value);
+  #endif
+  void set_extra(const char* value);
+  void set_extra(const void* value, size_t size);
+  ::std::string* mutable_extra();
+  ::std::string* release_extra();
+  void set_allocated_extra(::std::string* extra);
+
   // .executor.Status result = 1;
   bool has_result() const;
   void clear_result();
@@ -498,10 +525,11 @@ class InitSessionResponse : public ::google::protobuf::Message /* @@protoc_inser
   ::executor::Status* release_result();
   void set_allocated_result(::executor::Status* result);
 
-  // @@protoc_insertion_point(class_scope:executor.InitSessionResponse)
+  // @@protoc_insertion_point(class_scope:executor.RunGraphResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr execid_;
   ::google::protobuf::internal::ArenaStringPtr extra_;
   ::executor::Status* result_;
   mutable int _cached_size_;
@@ -576,6 +604,20 @@ class RunRequest : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
+  // string execId = 3;
+  void clear_execid();
+  static const int kExecIdFieldNumber = 3;
+  const ::std::string& execid() const;
+  void set_execid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_execid(::std::string&& value);
+  #endif
+  void set_execid(const char* value);
+  void set_execid(const char* value, size_t size);
+  ::std::string* mutable_execid();
+  ::std::string* release_execid();
+  void set_allocated_execid(::std::string* execid);
+
   // .executor.OpKernelDef opkernel = 1;
   bool has_opkernel() const;
   void clear_opkernel();
@@ -598,6 +640,7 @@ class RunRequest : public ::google::protobuf::Message /* @@protoc_insertion_poin
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr execid_;
   ::executor::OpKernelDef* opkernel_;
   ::executor::OpContextDef* context_;
   mutable int _cached_size_;
@@ -1257,6 +1300,104 @@ class OpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
+class ComputeDef : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.ComputeDef) */ {
+ public:
+  ComputeDef();
+  virtual ~ComputeDef();
+
+  ComputeDef(const ComputeDef& from);
+
+  inline ComputeDef& operator=(const ComputeDef& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ComputeDef& default_instance();
+
+  static inline const ComputeDef* internal_default_instance() {
+    return reinterpret_cast<const ComputeDef*>(
+               &_ComputeDef_default_instance_);
+  }
+
+  void Swap(ComputeDef* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ComputeDef* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  ComputeDef* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const ComputeDef& from);
+  void MergeFrom(const ComputeDef& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(ComputeDef* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bytes extra = 2;
+  void clear_extra();
+  static const int kExtraFieldNumber = 2;
+  const ::std::string& extra() const;
+  void set_extra(const ::std::string& value);
+  #if LANG_CXX11
+  void set_extra(::std::string&& value);
+  #endif
+  void set_extra(const char* value);
+  void set_extra(const void* value, size_t size);
+  ::std::string* mutable_extra();
+  ::std::string* release_extra();
+  void set_allocated_extra(::std::string* extra);
+
+  // .executor.OpLibraryType oplibrary = 1;
+  void clear_oplibrary();
+  static const int kOplibraryFieldNumber = 1;
+  ::executor::OpLibraryType oplibrary() const;
+  void set_oplibrary(::executor::OpLibraryType value);
+
+  // @@protoc_insertion_point(class_scope:executor.ComputeDef)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr extra_;
+  int oplibrary_;
+  mutable int _cached_size_;
+  friend struct  protobuf_executor_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class Status : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:executor.Status) */ {
  public:
   Status();
@@ -1682,93 +1823,132 @@ inline void CustomResponse::set_allocated_extra(::std::string* extra) {
 
 // -------------------------------------------------------------------
 
-// InitSessionRequest
+// RunGraphRequest
 
-// bytes extra = 1;
-inline void InitSessionRequest::clear_extra() {
+// .executor.ComputeDef computation = 1;
+inline bool RunGraphRequest::has_computation() const {
+  return this != internal_default_instance() && computation_ != NULL;
+}
+inline void RunGraphRequest::clear_computation() {
+  if (GetArenaNoVirtual() == NULL && computation_ != NULL) delete computation_;
+  computation_ = NULL;
+}
+inline const ::executor::ComputeDef& RunGraphRequest::computation() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphRequest.computation)
+  return computation_ != NULL ? *computation_
+                         : *::executor::ComputeDef::internal_default_instance();
+}
+inline ::executor::ComputeDef* RunGraphRequest::mutable_computation() {
+  
+  if (computation_ == NULL) {
+    computation_ = new ::executor::ComputeDef;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphRequest.computation)
+  return computation_;
+}
+inline ::executor::ComputeDef* RunGraphRequest::release_computation() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphRequest.computation)
+  
+  ::executor::ComputeDef* temp = computation_;
+  computation_ = NULL;
+  return temp;
+}
+inline void RunGraphRequest::set_allocated_computation(::executor::ComputeDef* computation) {
+  delete computation_;
+  computation_ = computation;
+  if (computation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphRequest.computation)
+}
+
+// bytes extra = 2;
+inline void RunGraphRequest::clear_extra() {
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& InitSessionRequest::extra() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionRequest.extra)
+inline const ::std::string& RunGraphRequest::extra() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphRequest.extra)
   return extra_.GetNoArena();
 }
-inline void InitSessionRequest::set_extra(const ::std::string& value) {
+inline void RunGraphRequest::set_extra(const ::std::string& value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_set:executor.RunGraphRequest.extra)
 }
 #if LANG_CXX11
-inline void InitSessionRequest::set_extra(::std::string&& value) {
+inline void RunGraphRequest::set_extra(::std::string&& value) {
   
   extra_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphRequest.extra)
 }
 #endif
-inline void InitSessionRequest::set_extra(const char* value) {
+inline void RunGraphRequest::set_extra(const char* value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphRequest.extra)
 }
-inline void InitSessionRequest::set_extra(const void* value, size_t size) {
+inline void RunGraphRequest::set_extra(const void* value, size_t size) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphRequest.extra)
 }
-inline ::std::string* InitSessionRequest::mutable_extra() {
+inline ::std::string* RunGraphRequest::mutable_extra() {
   
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphRequest.extra)
   return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* InitSessionRequest::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionRequest.extra)
+inline ::std::string* RunGraphRequest::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphRequest.extra)
   
   return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void InitSessionRequest::set_allocated_extra(::std::string* extra) {
+inline void RunGraphRequest::set_allocated_extra(::std::string* extra) {
   if (extra != NULL) {
     
   } else {
     
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionRequest.extra)
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphRequest.extra)
 }
 
 // -------------------------------------------------------------------
 
-// InitSessionResponse
+// RunGraphResponse
 
 // .executor.Status result = 1;
-inline bool InitSessionResponse::has_result() const {
+inline bool RunGraphResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
-inline void InitSessionResponse::clear_result() {
+inline void RunGraphResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-inline const ::executor::Status& InitSessionResponse::result() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.result)
+inline const ::executor::Status& RunGraphResponse::result() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.result)
   return result_ != NULL ? *result_
                          : *::executor::Status::internal_default_instance();
 }
-inline ::executor::Status* InitSessionResponse::mutable_result() {
+inline ::executor::Status* RunGraphResponse::mutable_result() {
   
   if (result_ == NULL) {
     result_ = new ::executor::Status;
   }
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.result)
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.result)
   return result_;
 }
-inline ::executor::Status* InitSessionResponse::release_result() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.result)
+inline ::executor::Status* RunGraphResponse::release_result() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.result)
   
   ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-inline void InitSessionResponse::set_allocated_result(::executor::Status* result) {
+inline void RunGraphResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1776,59 +1956,111 @@ inline void InitSessionResponse::set_allocated_result(::executor::Status* result
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.result)
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.result)
 }
 
-// bytes extra = 2;
-inline void InitSessionResponse::clear_extra() {
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string execId = 2;
+inline void RunGraphResponse::clear_execid() {
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& InitSessionResponse::extra() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.extra)
-  return extra_.GetNoArena();
+inline const ::std::string& RunGraphResponse::execid() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.execId)
+  return execid_.GetNoArena();
 }
-inline void InitSessionResponse::set_extra(const ::std::string& value) {
+inline void RunGraphResponse::set_execid(const ::std::string& value) {
   
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.InitSessionResponse.extra)
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunGraphResponse.execId)
 }
 #if LANG_CXX11
-inline void InitSessionResponse::set_extra(::std::string&& value) {
+inline void RunGraphResponse::set_execid(::std::string&& value) {
+  
+  execid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphResponse.execId)
+}
+#endif
+inline void RunGraphResponse::set_execid(const char* value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphResponse.execId)
+}
+inline void RunGraphResponse::set_execid(const char* value, size_t size) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphResponse.execId)
+}
+inline ::std::string* RunGraphResponse::mutable_execid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.execId)
+  return execid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RunGraphResponse::release_execid() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.execId)
+  
+  return execid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RunGraphResponse::set_allocated_execid(::std::string* execid) {
+  if (execid != NULL) {
+    
+  } else {
+    
+  }
+  execid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), execid);
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.execId)
+}
+
+// bytes extra = 3;
+inline void RunGraphResponse::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RunGraphResponse::extra() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.extra)
+  return extra_.GetNoArena();
+}
+inline void RunGraphResponse::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunGraphResponse.extra)
+}
+#if LANG_CXX11
+inline void RunGraphResponse::set_extra(::std::string&& value) {
   
   extra_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphResponse.extra)
 }
 #endif
-inline void InitSessionResponse::set_extra(const char* value) {
+inline void RunGraphResponse::set_extra(const char* value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphResponse.extra)
 }
-inline void InitSessionResponse::set_extra(const void* value, size_t size) {
+inline void RunGraphResponse::set_extra(const void* value, size_t size) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphResponse.extra)
 }
-inline ::std::string* InitSessionResponse::mutable_extra() {
+inline ::std::string* RunGraphResponse::mutable_extra() {
   
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.extra)
   return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* InitSessionResponse::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.extra)
+inline ::std::string* RunGraphResponse::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.extra)
   
   return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void InitSessionResponse::set_allocated_extra(::std::string* extra) {
+inline void RunGraphResponse::set_allocated_extra(::std::string* extra) {
   if (extra != NULL) {
     
   } else {
     
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.extra)
 }
 
 // -------------------------------------------------------------------
@@ -1911,6 +2143,58 @@ inline void RunRequest::set_allocated_context(::executor::OpContextDef* context)
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.context)
+}
+
+// string execId = 3;
+inline void RunRequest::clear_execid() {
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RunRequest::execid() const {
+  // @@protoc_insertion_point(field_get:executor.RunRequest.execId)
+  return execid_.GetNoArena();
+}
+inline void RunRequest::set_execid(const ::std::string& value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunRequest.execId)
+}
+#if LANG_CXX11
+inline void RunRequest::set_execid(::std::string&& value) {
+  
+  execid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunRequest.execId)
+}
+#endif
+inline void RunRequest::set_execid(const char* value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.RunRequest.execId)
+}
+inline void RunRequest::set_execid(const char* value, size_t size) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.RunRequest.execId)
+}
+inline ::std::string* RunRequest::mutable_execid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.RunRequest.execId)
+  return execid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RunRequest::release_execid() {
+  // @@protoc_insertion_point(field_release:executor.RunRequest.execId)
+  
+  return execid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RunRequest::set_allocated_execid(::std::string* execid) {
+  if (execid != NULL) {
+    
+  } else {
+    
+  }
+  execid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), execid);
+  // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.execId)
 }
 
 // -------------------------------------------------------------------
@@ -2325,6 +2609,76 @@ inline void OpContextDef::set_allocated_extra(::std::string* extra) {
 
 // -------------------------------------------------------------------
 
+// ComputeDef
+
+// .executor.OpLibraryType oplibrary = 1;
+inline void ComputeDef::clear_oplibrary() {
+  oplibrary_ = 0;
+}
+inline ::executor::OpLibraryType ComputeDef::oplibrary() const {
+  // @@protoc_insertion_point(field_get:executor.ComputeDef.oplibrary)
+  return static_cast< ::executor::OpLibraryType >(oplibrary_);
+}
+inline void ComputeDef::set_oplibrary(::executor::OpLibraryType value) {
+  
+  oplibrary_ = value;
+  // @@protoc_insertion_point(field_set:executor.ComputeDef.oplibrary)
+}
+
+// bytes extra = 2;
+inline void ComputeDef::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ComputeDef::extra() const {
+  // @@protoc_insertion_point(field_get:executor.ComputeDef.extra)
+  return extra_.GetNoArena();
+}
+inline void ComputeDef::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.ComputeDef.extra)
+}
+#if LANG_CXX11
+inline void ComputeDef::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.ComputeDef.extra)
+}
+#endif
+inline void ComputeDef::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.ComputeDef.extra)
+}
+inline void ComputeDef::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.ComputeDef.extra)
+}
+inline ::std::string* ComputeDef::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.ComputeDef.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ComputeDef::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.ComputeDef.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ComputeDef::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.ComputeDef.extra)
+}
+
+// -------------------------------------------------------------------
+
 // Status
 
 // int32 code = 1;
@@ -2530,6 +2884,8 @@ inline void EvenlopDef::set_oplibrary(::executor::OpLibraryType value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

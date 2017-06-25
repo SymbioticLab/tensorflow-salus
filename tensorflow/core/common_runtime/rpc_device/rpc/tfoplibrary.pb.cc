@@ -22,6 +22,8 @@ class TFSessionArgsDefaultTypeInternal : public ::google::protobuf::internal::Ex
 } _TFSessionArgs_default_instance_;
 class TFSessionCreatedDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFSessionCreated> {
 } _TFSessionCreated_default_instance_;
+class TFSessionCloseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFSessionClose> {
+} _TFSessionClose_default_instance_;
 class TFOpKernelDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFOpKernelDef> {
 } _TFOpKernelDef_default_instance_;
 class TFOpContextDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TFOpContextDef> {
@@ -42,7 +44,7 @@ namespace protobuf_tfoplibrary_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[9];
+::google::protobuf::Metadata file_level_metadata[10];
 
 }  // namespace
 
@@ -51,14 +53,17 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionArgs, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionArgs, graph_def_version_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionArgs, cfgproto_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionArgs, funcdef_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionCreated, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionCreated, sessionid_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionClose, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFSessionClose, sessionid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFOpKernelDef, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -114,19 +119,21 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(TFSessionArgs)},
-  { 7, -1, sizeof(TFSessionCreated)},
-  { 12, -1, sizeof(TFOpKernelDef)},
-  { 18, -1, sizeof(TFOpContextDef)},
-  { 27, -1, sizeof(TFOpContextUpdate)},
-  { 36, -1, sizeof(TFRendezItem)},
-  { 44, -1, sizeof(TFRendezRecvRequests)},
-  { 50, -1, sizeof(TFRendezRecvUpdate)},
-  { 56, -1, sizeof(TFTensorItem)},
+  { 5, -1, sizeof(TFSessionCreated)},
+  { 10, -1, sizeof(TFSessionClose)},
+  { 15, -1, sizeof(TFOpKernelDef)},
+  { 21, -1, sizeof(TFOpContextDef)},
+  { 30, -1, sizeof(TFOpContextUpdate)},
+  { 39, -1, sizeof(TFRendezItem)},
+  { 47, -1, sizeof(TFRendezRecvRequests)},
+  { 53, -1, sizeof(TFRendezRecvUpdate)},
+  { 59, -1, sizeof(TFTensorItem)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFSessionArgs_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFSessionCreated_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_TFSessionClose_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpKernelDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TFOpContextUpdate_default_instance_),
@@ -154,7 +161,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 9);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 10);
 }
 
 }  // namespace
@@ -164,20 +171,22 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[0].reflection;
   _TFSessionCreated_default_instance_.Shutdown();
   delete file_level_metadata[1].reflection;
-  _TFOpKernelDef_default_instance_.Shutdown();
+  _TFSessionClose_default_instance_.Shutdown();
   delete file_level_metadata[2].reflection;
-  _TFOpContextDef_default_instance_.Shutdown();
+  _TFOpKernelDef_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
-  _TFOpContextUpdate_default_instance_.Shutdown();
+  _TFOpContextDef_default_instance_.Shutdown();
   delete file_level_metadata[4].reflection;
-  _TFRendezItem_default_instance_.Shutdown();
+  _TFOpContextUpdate_default_instance_.Shutdown();
   delete file_level_metadata[5].reflection;
-  _TFRendezRecvRequests_default_instance_.Shutdown();
+  _TFRendezItem_default_instance_.Shutdown();
   delete file_level_metadata[6].reflection;
-  _TFRendezRecvUpdate_default_instance_.Shutdown();
+  _TFRendezRecvRequests_default_instance_.Shutdown();
   delete file_level_metadata[7].reflection;
-  _TFTensorItem_default_instance_.Shutdown();
+  _TFRendezRecvUpdate_default_instance_.Shutdown();
   delete file_level_metadata[8].reflection;
+  _TFTensorItem_default_instance_.Shutdown();
+  delete file_level_metadata[9].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -191,6 +200,7 @@ void TableStruct::InitDefaultsImpl() {
   ::tensorflow::error::protobuf_tensorflow_2fcore_2flib_2fcore_2ferror_5fcodes_2eproto::InitDefaults();
   _TFSessionArgs_default_instance_.DefaultConstruct();
   _TFSessionCreated_default_instance_.DefaultConstruct();
+  _TFSessionClose_default_instance_.DefaultConstruct();
   _TFOpKernelDef_default_instance_.DefaultConstruct();
   _TFOpContextDef_default_instance_.DefaultConstruct();
   _TFOpContextUpdate_default_instance_.DefaultConstruct();
@@ -200,8 +210,6 @@ void TableStruct::InitDefaultsImpl() {
   _TFTensorItem_default_instance_.DefaultConstruct();
   _TFSessionArgs_default_instance_.get_mutable()->cfgproto_ = const_cast< ::tensorflow::ConfigProto*>(
       ::tensorflow::ConfigProto::internal_default_instance());
-  _TFSessionArgs_default_instance_.get_mutable()->funcdef_ = const_cast< ::tensorflow::FunctionDefLibrary*>(
-      ::tensorflow::FunctionDefLibrary::internal_default_instance());
   _TFOpKernelDef_default_instance_.get_mutable()->nodedef_ = const_cast< ::tensorflow::NodeDef*>(
       ::tensorflow::NodeDef::internal_default_instance());
   _TFRendezItem_default_instance_.get_mutable()->val_ = const_cast< ::tensorflow::TensorProto*>(
@@ -222,12 +230,11 @@ void AddDescriptorsImpl() {
       "low/core/framework/function.proto\032&tenso"
       "rflow/core/framework/tensor.proto\032%tenso"
       "rflow/core/protobuf/config.proto\032*tensor"
-      "flow/core/lib/core/error_codes.proto\"\206\001\n"
-      "\rTFSessionArgs\022\031\n\021graph_def_version\030\001 \001("
-      "\005\022)\n\010cfgProto\030\003 \001(\0132\027.tensorflow.ConfigP"
-      "roto\022/\n\007funcDef\030\004 \001(\0132\036.tensorflow.Funct"
-      "ionDefLibrary\"%\n\020TFSessionCreated\022\021\n\tses"
-      "sionId\030\002 \001(\014\"F\n\rTFOpKernelDef\022$\n\007nodedef"
+      "flow/core/lib/core/error_codes.proto\":\n\r"
+      "TFSessionArgs\022)\n\010cfgProto\030\001 \001(\0132\027.tensor"
+      "flow.ConfigProto\"%\n\020TFSessionCreated\022\021\n\t"
+      "sessionId\030\002 \001(\014\"#\n\016TFSessionClose\022\021\n\tses"
+      "sionId\030\001 \001(\014\"F\n\rTFOpKernelDef\022$\n\007nodedef"
       "\030\002 \001(\0132\023.tensorflow.NodeDef\022\017\n\007isAsync\030\005"
       " \001(\010\"\203\001\n\016TFOpContextDef\022\017\n\007step_id\030\001 \001(\003"
       "\022\020\n\010frame_id\030\002 \001(\004\022\017\n\007iter_id\030\003 \001(\003\022\025\n\ri"
@@ -248,7 +255,7 @@ void AddDescriptorsImpl() {
       " \001(\0132\027.tensorflow.TensorProtob\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1157);
+      descriptor, 1117);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "tfoplibrary.proto", &protobuf_RegisterTypes);
   ::tensorflow::protobuf_tensorflow_2fcore_2fframework_2fnode_5fdef_2eproto::AddDescriptors();
@@ -276,9 +283,7 @@ struct StaticDescriptorInitializer {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int TFSessionArgs::kGraphDefVersionFieldNumber;
 const int TFSessionArgs::kCfgProtoFieldNumber;
-const int TFSessionArgs::kFuncDefFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 TFSessionArgs::TFSessionArgs()
@@ -299,18 +304,11 @@ TFSessionArgs::TFSessionArgs(const TFSessionArgs& from)
   } else {
     cfgproto_ = NULL;
   }
-  if (from.has_funcdef()) {
-    funcdef_ = new ::tensorflow::FunctionDefLibrary(*from.funcdef_);
-  } else {
-    funcdef_ = NULL;
-  }
-  graph_def_version_ = from.graph_def_version_;
   // @@protoc_insertion_point(copy_constructor:executor.TFSessionArgs)
 }
 
 void TFSessionArgs::SharedCtor() {
-  ::memset(&cfgproto_, 0, reinterpret_cast<char*>(&graph_def_version_) -
-    reinterpret_cast<char*>(&cfgproto_) + sizeof(graph_def_version_));
+  cfgproto_ = NULL;
   _cached_size_ = 0;
 }
 
@@ -322,9 +320,6 @@ TFSessionArgs::~TFSessionArgs() {
 void TFSessionArgs::SharedDtor() {
   if (this != internal_default_instance()) {
     delete cfgproto_;
-  }
-  if (this != internal_default_instance()) {
-    delete funcdef_;
   }
 }
 
@@ -357,11 +352,6 @@ void TFSessionArgs::Clear() {
     delete cfgproto_;
   }
   cfgproto_ = NULL;
-  if (GetArenaNoVirtual() == NULL && funcdef_ != NULL) {
-    delete funcdef_;
-  }
-  funcdef_ = NULL;
-  graph_def_version_ = 0;
 }
 
 bool TFSessionArgs::MergePartialFromCodedStream(
@@ -374,35 +364,11 @@ bool TFSessionArgs::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // int32 graph_def_version = 1;
+      // .tensorflow.ConfigProto cfgProto = 1;
       case 1: {
-        if (tag == 8u) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &graph_def_version_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .tensorflow.ConfigProto cfgProto = 3;
-      case 3: {
-        if (tag == 26u) {
+        if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_cfgproto()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .tensorflow.FunctionDefLibrary funcDef = 4;
-      case 4: {
-        if (tag == 34u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_funcdef()));
         } else {
           goto handle_unusual;
         }
@@ -433,21 +399,10 @@ failure:
 void TFSessionArgs::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:executor.TFSessionArgs)
-  // int32 graph_def_version = 1;
-  if (this->graph_def_version() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->graph_def_version(), output);
-  }
-
-  // .tensorflow.ConfigProto cfgProto = 3;
+  // .tensorflow.ConfigProto cfgProto = 1;
   if (this->has_cfgproto()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, *this->cfgproto_, output);
-  }
-
-  // .tensorflow.FunctionDefLibrary funcDef = 4;
-  if (this->has_funcdef()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, *this->funcdef_, output);
+      1, *this->cfgproto_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:executor.TFSessionArgs)
@@ -457,23 +412,11 @@ void TFSessionArgs::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:executor.TFSessionArgs)
-  // int32 graph_def_version = 1;
-  if (this->graph_def_version() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->graph_def_version(), target);
-  }
-
-  // .tensorflow.ConfigProto cfgProto = 3;
+  // .tensorflow.ConfigProto cfgProto = 1;
   if (this->has_cfgproto()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        3, *this->cfgproto_, false, target);
-  }
-
-  // .tensorflow.FunctionDefLibrary funcDef = 4;
-  if (this->has_funcdef()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        4, *this->funcdef_, false, target);
+        1, *this->cfgproto_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:executor.TFSessionArgs)
@@ -484,25 +427,11 @@ size_t TFSessionArgs::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.TFSessionArgs)
   size_t total_size = 0;
 
-  // .tensorflow.ConfigProto cfgProto = 3;
+  // .tensorflow.ConfigProto cfgProto = 1;
   if (this->has_cfgproto()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->cfgproto_);
-  }
-
-  // .tensorflow.FunctionDefLibrary funcDef = 4;
-  if (this->has_funcdef()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->funcdef_);
-  }
-
-  // int32 graph_def_version = 1;
-  if (this->graph_def_version() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->graph_def_version());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -534,12 +463,6 @@ void TFSessionArgs::MergeFrom(const TFSessionArgs& from) {
   if (from.has_cfgproto()) {
     mutable_cfgproto()->::tensorflow::ConfigProto::MergeFrom(from.cfgproto());
   }
-  if (from.has_funcdef()) {
-    mutable_funcdef()->::tensorflow::FunctionDefLibrary::MergeFrom(from.funcdef());
-  }
-  if (from.graph_def_version() != 0) {
-    set_graph_def_version(from.graph_def_version());
-  }
 }
 
 void TFSessionArgs::CopyFrom(const ::google::protobuf::Message& from) {
@@ -566,8 +489,6 @@ void TFSessionArgs::Swap(TFSessionArgs* other) {
 }
 void TFSessionArgs::InternalSwap(TFSessionArgs* other) {
   std::swap(cfgproto_, other->cfgproto_);
-  std::swap(funcdef_, other->funcdef_);
-  std::swap(graph_def_version_, other->graph_def_version_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -579,21 +500,7 @@ void TFSessionArgs::InternalSwap(TFSessionArgs* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // TFSessionArgs
 
-// int32 graph_def_version = 1;
-void TFSessionArgs::clear_graph_def_version() {
-  graph_def_version_ = 0;
-}
-::google::protobuf::int32 TFSessionArgs::graph_def_version() const {
-  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.graph_def_version)
-  return graph_def_version_;
-}
-void TFSessionArgs::set_graph_def_version(::google::protobuf::int32 value) {
-  
-  graph_def_version_ = value;
-  // @@protoc_insertion_point(field_set:executor.TFSessionArgs.graph_def_version)
-}
-
-// .tensorflow.ConfigProto cfgProto = 3;
+// .tensorflow.ConfigProto cfgProto = 1;
 bool TFSessionArgs::has_cfgproto() const {
   return this != internal_default_instance() && cfgproto_ != NULL;
 }
@@ -635,50 +542,6 @@ void TFSessionArgs::set_allocated_cfgproto(::tensorflow::ConfigProto* cfgproto) 
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.cfgProto)
-}
-
-// .tensorflow.FunctionDefLibrary funcDef = 4;
-bool TFSessionArgs::has_funcdef() const {
-  return this != internal_default_instance() && funcdef_ != NULL;
-}
-void TFSessionArgs::clear_funcdef() {
-  if (GetArenaNoVirtual() == NULL && funcdef_ != NULL) delete funcdef_;
-  funcdef_ = NULL;
-}
-const ::tensorflow::FunctionDefLibrary& TFSessionArgs::funcdef() const {
-  // @@protoc_insertion_point(field_get:executor.TFSessionArgs.funcDef)
-  return funcdef_ != NULL ? *funcdef_
-                         : *::tensorflow::FunctionDefLibrary::internal_default_instance();
-}
-::tensorflow::FunctionDefLibrary* TFSessionArgs::mutable_funcdef() {
-  
-  if (funcdef_ == NULL) {
-    funcdef_ = new ::tensorflow::FunctionDefLibrary;
-  }
-  // @@protoc_insertion_point(field_mutable:executor.TFSessionArgs.funcDef)
-  return funcdef_;
-}
-::tensorflow::FunctionDefLibrary* TFSessionArgs::release_funcdef() {
-  // @@protoc_insertion_point(field_release:executor.TFSessionArgs.funcDef)
-  
-  ::tensorflow::FunctionDefLibrary* temp = funcdef_;
-  funcdef_ = NULL;
-  return temp;
-}
-void TFSessionArgs::set_allocated_funcdef(::tensorflow::FunctionDefLibrary* funcdef) {
-  delete funcdef_;
-  if (funcdef != NULL && funcdef->GetArena() != NULL) {
-    ::tensorflow::FunctionDefLibrary* new_funcdef = new ::tensorflow::FunctionDefLibrary;
-    new_funcdef->CopyFrom(*funcdef);
-    funcdef = new_funcdef;
-  }
-  funcdef_ = funcdef;
-  if (funcdef) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionArgs.funcDef)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -955,6 +818,275 @@ void TFSessionCreated::set_allocated_sessionid(::std::string* sessionid) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TFSessionClose::kSessionIdFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+TFSessionClose::TFSessionClose()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_tfoplibrary_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.TFSessionClose)
+}
+TFSessionClose::TFSessionClose(const TFSessionClose& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  sessionid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.sessionid().size() > 0) {
+    sessionid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sessionid_);
+  }
+  // @@protoc_insertion_point(copy_constructor:executor.TFSessionClose)
+}
+
+void TFSessionClose::SharedCtor() {
+  sessionid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _cached_size_ = 0;
+}
+
+TFSessionClose::~TFSessionClose() {
+  // @@protoc_insertion_point(destructor:executor.TFSessionClose)
+  SharedDtor();
+}
+
+void TFSessionClose::SharedDtor() {
+  sessionid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void TFSessionClose::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* TFSessionClose::descriptor() {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[2].descriptor;
+}
+
+const TFSessionClose& TFSessionClose::default_instance() {
+  protobuf_tfoplibrary_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+TFSessionClose* TFSessionClose::New(::google::protobuf::Arena* arena) const {
+  TFSessionClose* n = new TFSessionClose;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void TFSessionClose::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.TFSessionClose)
+  sessionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool TFSessionClose::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.TFSessionClose)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // bytes sessionId = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_sessionid()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.TFSessionClose)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.TFSessionClose)
+  return false;
+#undef DO_
+}
+
+void TFSessionClose::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.TFSessionClose)
+  // bytes sessionId = 1;
+  if (this->sessionid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      1, this->sessionid(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.TFSessionClose)
+}
+
+::google::protobuf::uint8* TFSessionClose::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.TFSessionClose)
+  // bytes sessionId = 1;
+  if (this->sessionid().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        1, this->sessionid(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.TFSessionClose)
+  return target;
+}
+
+size_t TFSessionClose::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.TFSessionClose)
+  size_t total_size = 0;
+
+  // bytes sessionId = 1;
+  if (this->sessionid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->sessionid());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void TFSessionClose::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.TFSessionClose)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TFSessionClose* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const TFSessionClose>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.TFSessionClose)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.TFSessionClose)
+    MergeFrom(*source);
+  }
+}
+
+void TFSessionClose::MergeFrom(const TFSessionClose& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.TFSessionClose)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.sessionid().size() > 0) {
+
+    sessionid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sessionid_);
+  }
+}
+
+void TFSessionClose::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.TFSessionClose)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TFSessionClose::CopyFrom(const TFSessionClose& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.TFSessionClose)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TFSessionClose::IsInitialized() const {
+  return true;
+}
+
+void TFSessionClose::Swap(TFSessionClose* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void TFSessionClose::InternalSwap(TFSessionClose* other) {
+  sessionid_.Swap(&other->sessionid_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata TFSessionClose::GetMetadata() const {
+  protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[2];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// TFSessionClose
+
+// bytes sessionId = 1;
+void TFSessionClose::clear_sessionid() {
+  sessionid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& TFSessionClose::sessionid() const {
+  // @@protoc_insertion_point(field_get:executor.TFSessionClose.sessionId)
+  return sessionid_.GetNoArena();
+}
+void TFSessionClose::set_sessionid(const ::std::string& value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.TFSessionClose.sessionId)
+}
+#if LANG_CXX11
+void TFSessionClose::set_sessionid(::std::string&& value) {
+  
+  sessionid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.TFSessionClose.sessionId)
+}
+#endif
+void TFSessionClose::set_sessionid(const char* value) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.TFSessionClose.sessionId)
+}
+void TFSessionClose::set_sessionid(const void* value, size_t size) {
+  
+  sessionid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.TFSessionClose.sessionId)
+}
+::std::string* TFSessionClose::mutable_sessionid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.TFSessionClose.sessionId)
+  return sessionid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* TFSessionClose::release_sessionid() {
+  // @@protoc_insertion_point(field_release:executor.TFSessionClose.sessionId)
+  
+  return sessionid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void TFSessionClose::set_allocated_sessionid(::std::string* sessionid) {
+  if (sessionid != NULL) {
+    
+  } else {
+    
+  }
+  sessionid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sessionid);
+  // @@protoc_insertion_point(field_set_allocated:executor.TFSessionClose.sessionId)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int TFOpKernelDef::kNodedefFieldNumber;
 const int TFOpKernelDef::kIsAsyncFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1005,7 +1137,7 @@ void TFOpKernelDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFOpKernelDef::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[2].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[3].descriptor;
 }
 
 const TFOpKernelDef& TFOpKernelDef::default_instance() {
@@ -1202,7 +1334,7 @@ void TFOpKernelDef::InternalSwap(TFOpKernelDef* other) {
 
 ::google::protobuf::Metadata TFOpKernelDef::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[2];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[3];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1319,7 +1451,7 @@ void TFOpContextDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFOpContextDef::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[3].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
 }
 
 const TFOpContextDef& TFOpContextDef::default_instance() {
@@ -1620,7 +1752,7 @@ void TFOpContextDef::InternalSwap(TFOpContextDef* other) {
 
 ::google::protobuf::Metadata TFOpContextDef::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[3];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1772,7 +1904,7 @@ void TFOpContextUpdate::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFOpContextUpdate::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5].descriptor;
 }
 
 const TFOpContextUpdate& TFOpContextUpdate::default_instance() {
@@ -2096,7 +2228,7 @@ void TFOpContextUpdate::InternalSwap(TFOpContextUpdate* other) {
 
 ::google::protobuf::Metadata TFOpContextUpdate::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[4];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[5];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2307,7 +2439,7 @@ void TFRendezItem::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFRendezItem::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[5].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[6].descriptor;
 }
 
 const TFRendezItem& TFRendezItem::default_instance() {
@@ -2588,7 +2720,7 @@ void TFRendezItem::InternalSwap(TFRendezItem* other) {
 
 ::google::protobuf::Metadata TFRendezItem::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[5];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[6];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2764,7 +2896,7 @@ void TFRendezRecvRequests::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFRendezRecvRequests::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[6].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[7].descriptor;
 }
 
 const TFRendezRecvRequests& TFRendezRecvRequests::default_instance() {
@@ -2994,7 +3126,7 @@ void TFRendezRecvRequests::InternalSwap(TFRendezRecvRequests* other) {
 
 ::google::protobuf::Metadata TFRendezRecvRequests::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[6];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[7];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3132,7 +3264,7 @@ void TFRendezRecvUpdate::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFRendezRecvUpdate::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[7].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[8].descriptor;
 }
 
 const TFRendezRecvUpdate& TFRendezRecvUpdate::default_instance() {
@@ -3332,7 +3464,7 @@ void TFRendezRecvUpdate::InternalSwap(TFRendezRecvUpdate* other) {
 
 ::google::protobuf::Metadata TFRendezRecvUpdate::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[7];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[8];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3444,7 +3576,7 @@ void TFTensorItem::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* TFTensorItem::descriptor() {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[8].descriptor;
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[9].descriptor;
 }
 
 const TFTensorItem& TFTensorItem::default_instance() {
@@ -3690,7 +3822,7 @@ void TFTensorItem::InternalSwap(TFTensorItem* other) {
 
 ::google::protobuf::Metadata TFTensorItem::GetMetadata() const {
   protobuf_tfoplibrary_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_tfoplibrary_2eproto::file_level_metadata[8];
+  return protobuf_tfoplibrary_2eproto::file_level_metadata[9];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

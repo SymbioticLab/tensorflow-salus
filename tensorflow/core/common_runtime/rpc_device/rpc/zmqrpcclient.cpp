@@ -284,20 +284,18 @@ Status ZmqRpcClient::rpcCall(const std::string &sessionId, const ::google::proto
     return status;
 }
 
-void ZmqRpcClient::createSession(const ConfigProto & cfgProto, const FunctionDefLibrary & library,
-                                 const GraphDef &graphdef, std::string &sessionId)
+void ZmqRpcClient::createSession(const ConfigProto & cfgProto, std::string &sessionId)
 {
     LOG(INFO) << "===================================================================";
     LOG(INFO) << "RpcClient::createSession";
     rpc::TFSessionArgs args;
-    args.set_graph_def_version(graphdef.versions().producer());
     *args.mutable_cfgproto() = cfgProto;
-    *args.mutable_funcdef() = library;
 
-    rpc::InitSessionRequest request;
+    rpc::CustomRequest request;
     args.SerializeToString(request.mutable_extra());
+    request.set_type(args.GetTypeName());
 
-    std::unique_ptr<rpc::InitSessionResponse> pResponse;
+    std::unique_ptr<rpc::CustomResponse> pResponse;
     auto status = rpcCall("", request, pResponse);
 
     // TODO: better error handling
@@ -316,6 +314,49 @@ void ZmqRpcClient::createSession(const ConfigProto & cfgProto, const FunctionDef
     LOG(INFO) << "RpcClient created session with id " << sessionId;
 }
 
+void ZmqRpcClient::closeSession(const std::string &sessionId)
+{
+    LOG(INFO) << "===================================================================";
+    LOG(INFO) << "RpcClient::closeSession";
+    rpc::TFSessionClose tfclose;
+    tfclose.set_sessionid(sessionId);
+
+    rpc::CustomRequest request;
+    tfclose.SerializeToString(request.mutable_extra());
+    request.set_type(tfclose.GetTypeName());
+
+    std::unique_ptr<rpc::CustomResponse> pResponse;
+    auto status = rpcCall(sessionId, request, pResponse);
+
+    // TODO: better error handling
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        LOG(ERROR) << "RpcClient::closeSession failed";
+        return;
+    }
+}
+
+void ZmqRpcClient::execSetup(RPCDeviceContext *devCtx, std::string &execId)
+{
+    LOG(INFO) << "===================================================================";
+    LOG(INFO) << "RpcClient::execSetup";
+    rpc::RunGraphRequest request;
+    auto computation = request.mutable_computation();
+    devCtx->graphDef().SerializeToString(computation->mutable_extra());
+    computation->set_oplibrary(rpc::TENSORFLOW);
+
+    std::unique_ptr<rpc::RunGraphResponse> pResponse;
+    auto status = rpcCall(devCtx->sessionId(), request, pResponse);
+
+    // TODO: better error handling
+    if (!status.ok() || !pResponse || pResponse->result().code() != 0) {
+        LOG(ERROR) << "RpcClient::execSetup failed";
+        return;
+    }
+
+    execId = pResponse->execid();
+    LOG(INFO) << "RpcClient created exec with id " << execId;
+}
+
 void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpKernelContext *context,
                             AsyncOpKernel::DoneCallback done)
 {
@@ -325,6 +366,7 @@ void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpK
     rpc::RunRequest request;
     devCtx->serializeOpKernel(request.mutable_opkernel(), kernel);
     devCtx->serializeOpContext(request.mutable_context(), context);
+    request.set_execid(devCtx->execId());
 
     Item args;
     LOG(INFO) << "RpcClient::runAsync    calling rpc using rpc stub";
@@ -399,6 +441,7 @@ Status ZmqRpcClient::run(RPCDeviceContext *devCtx, OpKernel *kernel, OpKernelCon
     rpc::RunRequest request;
     devCtx->serializeOpKernel(request.mutable_opkernel(), kernel);
     devCtx->serializeOpContext(request.mutable_context(), context);
+    request.set_execid(devCtx->execId());
 
     std::unique_ptr<rpc::RunResponse> pResponse;
     LOG(INFO) << "RpcClient::run    calling rpc using rpc stub";

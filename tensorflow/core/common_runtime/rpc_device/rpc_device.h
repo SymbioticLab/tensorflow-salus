@@ -57,12 +57,14 @@ public:
 
     Status FillContextMap(const Graph* graph, DeviceContextMap* device_context_map) override;
 
+    const std::string &sessionId() const;
 private:
     Allocator *m_allocator;  // Not owned
 
     RpcClient &m_rpc;
 
-    FunctionDefLibrary m_funcDefLib;
+    std::string m_sessionId;
+
     ConfigProto m_cfgProto;
 };
 

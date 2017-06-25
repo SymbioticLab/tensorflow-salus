@@ -22,7 +22,6 @@
 
 #include "tensorflow/core/common_runtime/device.h"
 #include "tensorflow/core/framework/device_base.h"
-#include "tensorflow/core/framework/function.pb.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
 #include <unordered_map>
@@ -34,6 +33,7 @@ class OpContextDef;
 
 namespace tensorflow {
 
+class RPCDevice;
 class RpcClient;
 
 /**
@@ -42,8 +42,7 @@ class RpcClient;
 class RPCDeviceContext : public DeviceContext
 {
 public:
-    RPCDeviceContext(RpcClient &client, const Graph *graph,
-                     const FunctionDefLibrary &fdef, const ConfigProto &cfgProto);
+    RPCDeviceContext(RPCDevice &device, RpcClient &client, const Graph *graph);
 
     ~RPCDeviceContext() override;
 
@@ -58,18 +57,21 @@ public:
     Tensor tensorFromProtoMeta(const TensorProto &outdef);
     void tensorToProtoMeta(TensorProto *meta, const Tensor &tensor, bool is_ref);
 
-    std::string sessionId() const;
+    const std::string &execId() const;
+    const std::string &sessionId() const;
+    const GraphDef &graphDef() const;
 
 private:
     const NodeDef &findNodeDefFor(const OpKernel *kernel) const;
 
 private:
     RpcClient &m_rpc;
+    RPCDevice &m_device;
 
     GraphDef m_graphdef;
     std::unordered_map<std::string, int> m_name2defidx;
 
-    std::string m_sessionId;
+    std::string m_execId;
 
     TF_DISALLOW_COPY_AND_ASSIGN(RPCDeviceContext);
 };

@@ -44,11 +44,18 @@ RPCDevice::RPCDevice(const SessionOptions &options, const string &name, Bytes me
     , m_cfgProto(options.config)
 {
     LOG(INFO) << "Created RPCDevice: " << name;
+    m_rpc.createSession(m_cfgProto, m_sessionId);
 }
 
 RPCDevice::~RPCDevice()
 {
     LOG(INFO) << "Destroyed RPCDevice: " << name();
+    m_rpc.closeSession(m_sessionId);
+}
+
+const std::string &RPCDevice::sessionId() const
+{
+    return m_sessionId;
 }
 
 Status RPCDevice::Sync()
@@ -58,10 +65,7 @@ Status RPCDevice::Sync()
 
 Status RPCDevice::MaybeRewriteGraph(const FunctionDefLibrary& library, std::unique_ptr<Graph>* graph)
 {
-    m_funcDefLib = library;
-
     // NOTE: this is called before rewrite optimizations, so we don't save graph here.
-
     return Status::OK();
 }
 
@@ -69,7 +73,7 @@ Status RPCDevice::FillContextMap(const Graph* graph, DeviceContextMap* device_co
 {
     LOG(INFO) << "RpcDevice::FillContextMap";
     device_context_map->resize(graph->num_node_ids());
-    auto* ctx = new RPCDeviceContext(m_rpc, graph, m_funcDefLib, m_cfgProto);
+    auto* ctx = new RPCDeviceContext(*this, m_rpc, graph);
     for (Node* n : graph->nodes()) {
         LOG(INFO) << n->id() << " : " << n->type_string() << " : " << n->name();
         ctx->Ref();

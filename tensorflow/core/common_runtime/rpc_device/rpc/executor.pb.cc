@@ -22,10 +22,10 @@ class CustomRequestDefaultTypeInternal : public ::google::protobuf::internal::Ex
 } _CustomRequest_default_instance_;
 class CustomResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<CustomResponse> {
 } _CustomResponse_default_instance_;
-class InitSessionRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<InitSessionRequest> {
-} _InitSessionRequest_default_instance_;
-class InitSessionResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<InitSessionResponse> {
-} _InitSessionResponse_default_instance_;
+class RunGraphRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunGraphRequest> {
+} _RunGraphRequest_default_instance_;
+class RunGraphResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunGraphResponse> {
+} _RunGraphResponse_default_instance_;
 class RunRequestDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunRequest> {
 } _RunRequest_default_instance_;
 class RunResponseDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<RunResponse> {
@@ -42,6 +42,8 @@ class OpKernelDefDefaultTypeInternal : public ::google::protobuf::internal::Expl
 } _OpKernelDef_default_instance_;
 class OpContextDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<OpContextDef> {
 } _OpContextDef_default_instance_;
+class ComputeDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ComputeDef> {
+} _ComputeDef_default_instance_;
 class StatusDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Status> {
 } _Status_default_instance_;
 class EvenlopDefDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<EvenlopDef> {
@@ -52,7 +54,7 @@ namespace protobuf_executor_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[14];
+::google::protobuf::Metadata file_level_metadata[15];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 }  // namespace
@@ -71,22 +73,25 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomResponse, result_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CustomResponse, extra_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InitSessionRequest, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InitSessionRequest, extra_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphRequest, computation_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphRequest, extra_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InitSessionResponse, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InitSessionResponse, result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InitSessionResponse, extra_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphResponse, result_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphResponse, execid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunGraphResponse, extra_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunRequest, opkernel_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunRequest, context_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunRequest, execid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RunResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -128,6 +133,12 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OpContextDef, extra_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ComputeDef, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ComputeDef, oplibrary_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ComputeDef, extra_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Status, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -146,25 +157,26 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(CustomRequest)},
   { 6, -1, sizeof(CustomResponse)},
-  { 12, -1, sizeof(InitSessionRequest)},
-  { 17, -1, sizeof(InitSessionResponse)},
-  { 23, -1, sizeof(RunRequest)},
-  { 29, -1, sizeof(RunResponse)},
-  { 35, -1, sizeof(DeallocRequest)},
-  { 40, -1, sizeof(DeallocResponse)},
-  { 45, -1, sizeof(AllocRequest)},
-  { 51, -1, sizeof(AllocResponse)},
-  { 57, -1, sizeof(OpKernelDef)},
-  { 64, -1, sizeof(OpContextDef)},
-  { 69, -1, sizeof(Status)},
-  { 74, -1, sizeof(EvenlopDef)},
+  { 12, -1, sizeof(RunGraphRequest)},
+  { 18, -1, sizeof(RunGraphResponse)},
+  { 25, -1, sizeof(RunRequest)},
+  { 32, -1, sizeof(RunResponse)},
+  { 38, -1, sizeof(DeallocRequest)},
+  { 43, -1, sizeof(DeallocResponse)},
+  { 48, -1, sizeof(AllocRequest)},
+  { 54, -1, sizeof(AllocResponse)},
+  { 60, -1, sizeof(OpKernelDef)},
+  { 67, -1, sizeof(OpContextDef)},
+  { 72, -1, sizeof(ComputeDef)},
+  { 78, -1, sizeof(Status)},
+  { 83, -1, sizeof(EvenlopDef)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_CustomRequest_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_CustomResponse_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_InitSessionRequest_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_InitSessionResponse_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_RunGraphRequest_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_RunGraphResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_RunRequest_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_RunResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_DeallocRequest_default_instance_),
@@ -173,6 +185,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_AllocResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpKernelDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_OpContextDef_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_ComputeDef_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Status_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_EvenlopDef_default_instance_),
 };
@@ -195,7 +208,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 14);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 15);
 }
 
 }  // namespace
@@ -205,9 +218,9 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[0].reflection;
   _CustomResponse_default_instance_.Shutdown();
   delete file_level_metadata[1].reflection;
-  _InitSessionRequest_default_instance_.Shutdown();
+  _RunGraphRequest_default_instance_.Shutdown();
   delete file_level_metadata[2].reflection;
-  _InitSessionResponse_default_instance_.Shutdown();
+  _RunGraphResponse_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
   _RunRequest_default_instance_.Shutdown();
   delete file_level_metadata[4].reflection;
@@ -225,10 +238,12 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[10].reflection;
   _OpContextDef_default_instance_.Shutdown();
   delete file_level_metadata[11].reflection;
-  _Status_default_instance_.Shutdown();
+  _ComputeDef_default_instance_.Shutdown();
   delete file_level_metadata[12].reflection;
-  _EvenlopDef_default_instance_.Shutdown();
+  _Status_default_instance_.Shutdown();
   delete file_level_metadata[13].reflection;
+  _EvenlopDef_default_instance_.Shutdown();
+  delete file_level_metadata[14].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -237,8 +252,8 @@ void TableStruct::InitDefaultsImpl() {
   ::google::protobuf::internal::InitProtobufDefaults();
   _CustomRequest_default_instance_.DefaultConstruct();
   _CustomResponse_default_instance_.DefaultConstruct();
-  _InitSessionRequest_default_instance_.DefaultConstruct();
-  _InitSessionResponse_default_instance_.DefaultConstruct();
+  _RunGraphRequest_default_instance_.DefaultConstruct();
+  _RunGraphResponse_default_instance_.DefaultConstruct();
   _RunRequest_default_instance_.DefaultConstruct();
   _RunResponse_default_instance_.DefaultConstruct();
   _DeallocRequest_default_instance_.DefaultConstruct();
@@ -247,11 +262,14 @@ void TableStruct::InitDefaultsImpl() {
   _AllocResponse_default_instance_.DefaultConstruct();
   _OpKernelDef_default_instance_.DefaultConstruct();
   _OpContextDef_default_instance_.DefaultConstruct();
+  _ComputeDef_default_instance_.DefaultConstruct();
   _Status_default_instance_.DefaultConstruct();
   _EvenlopDef_default_instance_.DefaultConstruct();
   _CustomResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
       ::executor::Status::internal_default_instance());
-  _InitSessionResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
+  _RunGraphRequest_default_instance_.get_mutable()->computation_ = const_cast< ::executor::ComputeDef*>(
+      ::executor::ComputeDef::internal_default_instance());
+  _RunGraphResponse_default_instance_.get_mutable()->result_ = const_cast< ::executor::Status*>(
       ::executor::Status::internal_default_instance());
   _RunRequest_default_instance_.get_mutable()->opkernel_ = const_cast< ::executor::OpKernelDef*>(
       ::executor::OpKernelDef::internal_default_instance());
@@ -277,30 +295,34 @@ void AddDescriptorsImpl() {
       "\n\016executor.proto\022\010executor\",\n\rCustomRequ"
       "est\022\014\n\004type\030\001 \001(\t\022\r\n\005extra\030\002 \001(\014\"A\n\016Cust"
       "omResponse\022 \n\006result\030\001 \001(\0132\020.executor.St"
-      "atus\022\r\n\005extra\030\002 \001(\014\"#\n\022InitSessionReques"
-      "t\022\r\n\005extra\030\001 \001(\014\"F\n\023InitSessionResponse\022"
-      " \n\006result\030\001 \001(\0132\020.executor.Status\022\r\n\005ext"
-      "ra\030\002 \001(\014\"^\n\nRunRequest\022\'\n\010opkernel\030\001 \001(\013"
-      "2\025.executor.OpKernelDef\022\'\n\007context\030\002 \001(\013"
-      "2\026.executor.OpContextDef\"X\n\013RunResponse\022"
-      " \n\006result\030\001 \001(\0132\020.executor.Status\022\'\n\007con"
-      "text\030\002 \001(\0132\026.executor.OpContextDef\"%\n\016De"
-      "allocRequest\022\023\n\013addr_handle\030\001 \001(\004\"3\n\017Dea"
-      "llocResponse\022 \n\006result\030\001 \001(\0132\020.executor."
-      "Status\"4\n\014AllocRequest\022\021\n\talignment\030\001 \001("
-      "\004\022\021\n\tnum_bytes\030\002 \001(\004\"F\n\rAllocResponse\022 \n"
-      "\006result\030\001 \001(\0132\020.executor.Status\022\023\n\013addr_"
-      "handle\030\002 \001(\004\"T\n\013OpKernelDef\022*\n\toplibrary"
-      "\030\001 \001(\0162\027.executor.OpLibraryType\022\n\n\002id\030\002 "
-      "\001(\t\022\r\n\005extra\030\003 \001(\014\"\035\n\014OpContextDef\022\r\n\005ex"
-      "tra\030\001 \001(\014\"\026\n\006Status\022\014\n\004code\030\001 \001(\005\"|\n\nEve"
-      "nlopDef\022\014\n\004type\030\001 \001(\t\022\013\n\003seq\030\002 \001(\004\022\024\n\014re"
-      "cvIdentity\030\003 \001(\014\022\021\n\tsessionId\030\004 \001(\014\022*\n\to"
-      "plibrary\030\005 \001(\0162\027.executor.OpLibraryType*"
-      "\037\n\rOpLibraryType\022\016\n\nTENSORFLOW\020\000b\006proto3"
+      "atus\022\r\n\005extra\030\002 \001(\014\"K\n\017RunGraphRequest\022)"
+      "\n\013computation\030\001 \001(\0132\024.executor.ComputeDe"
+      "f\022\r\n\005extra\030\002 \001(\014\"S\n\020RunGraphResponse\022 \n\006"
+      "result\030\001 \001(\0132\020.executor.Status\022\016\n\006execId"
+      "\030\002 \001(\t\022\r\n\005extra\030\003 \001(\014\"n\n\nRunRequest\022\'\n\010o"
+      "pkernel\030\001 \001(\0132\025.executor.OpKernelDef\022\'\n\007"
+      "context\030\002 \001(\0132\026.executor.OpContextDef\022\016\n"
+      "\006execId\030\003 \001(\t\"X\n\013RunResponse\022 \n\006result\030\001"
+      " \001(\0132\020.executor.Status\022\'\n\007context\030\002 \001(\0132"
+      "\026.executor.OpContextDef\"%\n\016DeallocReques"
+      "t\022\023\n\013addr_handle\030\001 \001(\004\"3\n\017DeallocRespons"
+      "e\022 \n\006result\030\001 \001(\0132\020.executor.Status\"4\n\014A"
+      "llocRequest\022\021\n\talignment\030\001 \001(\004\022\021\n\tnum_by"
+      "tes\030\002 \001(\004\"F\n\rAllocResponse\022 \n\006result\030\001 \001"
+      "(\0132\020.executor.Status\022\023\n\013addr_handle\030\002 \001("
+      "\004\"T\n\013OpKernelDef\022*\n\toplibrary\030\001 \001(\0162\027.ex"
+      "ecutor.OpLibraryType\022\n\n\002id\030\002 \001(\t\022\r\n\005extr"
+      "a\030\003 \001(\014\"\035\n\014OpContextDef\022\r\n\005extra\030\001 \001(\014\"G"
+      "\n\nComputeDef\022*\n\toplibrary\030\001 \001(\0162\027.execut"
+      "or.OpLibraryType\022\r\n\005extra\030\002 \001(\014\"\026\n\006Statu"
+      "s\022\014\n\004code\030\001 \001(\005\"|\n\nEvenlopDef\022\014\n\004type\030\001 "
+      "\001(\t\022\013\n\003seq\030\002 \001(\004\022\024\n\014recvIdentity\030\003 \001(\014\022\021"
+      "\n\tsessionId\030\004 \001(\014\022*\n\toplibrary\030\005 \001(\0162\027.e"
+      "xecutor.OpLibraryType*\037\n\rOpLibraryType\022\016"
+      "\n\nTENSORFLOW\020\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 960);
+      descriptor, 1102);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "executor.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -1070,18 +1092,19 @@ void CustomResponse::set_allocated_extra(::std::string* extra) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int InitSessionRequest::kExtraFieldNumber;
+const int RunGraphRequest::kComputationFieldNumber;
+const int RunGraphRequest::kExtraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-InitSessionRequest::InitSessionRequest()
+RunGraphRequest::RunGraphRequest()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_executor_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.InitSessionRequest)
+  // @@protoc_insertion_point(constructor:executor.RunGraphRequest)
 }
-InitSessionRequest::InitSessionRequest(const InitSessionRequest& from)
+RunGraphRequest::RunGraphRequest(const RunGraphRequest& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
@@ -1090,349 +1113,79 @@ InitSessionRequest::InitSessionRequest(const InitSessionRequest& from)
   if (from.extra().size() > 0) {
     extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
   }
-  // @@protoc_insertion_point(copy_constructor:executor.InitSessionRequest)
+  if (from.has_computation()) {
+    computation_ = new ::executor::ComputeDef(*from.computation_);
+  } else {
+    computation_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:executor.RunGraphRequest)
 }
 
-void InitSessionRequest::SharedCtor() {
+void RunGraphRequest::SharedCtor() {
   extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  computation_ = NULL;
   _cached_size_ = 0;
 }
 
-InitSessionRequest::~InitSessionRequest() {
-  // @@protoc_insertion_point(destructor:executor.InitSessionRequest)
+RunGraphRequest::~RunGraphRequest() {
+  // @@protoc_insertion_point(destructor:executor.RunGraphRequest)
   SharedDtor();
 }
 
-void InitSessionRequest::SharedDtor() {
+void RunGraphRequest::SharedDtor() {
   extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) {
+    delete computation_;
+  }
 }
 
-void InitSessionRequest::SetCachedSize(int size) const {
+void RunGraphRequest::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* InitSessionRequest::descriptor() {
+const ::google::protobuf::Descriptor* RunGraphRequest::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[2].descriptor;
 }
 
-const InitSessionRequest& InitSessionRequest::default_instance() {
+const RunGraphRequest& RunGraphRequest::default_instance() {
   protobuf_executor_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-InitSessionRequest* InitSessionRequest::New(::google::protobuf::Arena* arena) const {
-  InitSessionRequest* n = new InitSessionRequest;
+RunGraphRequest* RunGraphRequest::New(::google::protobuf::Arena* arena) const {
+  RunGraphRequest* n = new RunGraphRequest;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void InitSessionRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.InitSessionRequest)
+void RunGraphRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.RunGraphRequest)
   extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && computation_ != NULL) {
+    delete computation_;
+  }
+  computation_ = NULL;
 }
 
-bool InitSessionRequest::MergePartialFromCodedStream(
+bool RunGraphRequest::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.InitSessionRequest)
+  // @@protoc_insertion_point(parse_start:executor.RunGraphRequest)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bytes extra = 1;
-      case 1: {
-        if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_extra()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:executor.InitSessionRequest)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:executor.InitSessionRequest)
-  return false;
-#undef DO_
-}
-
-void InitSessionRequest::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.InitSessionRequest)
-  // bytes extra = 1;
-  if (this->extra().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      1, this->extra(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:executor.InitSessionRequest)
-}
-
-::google::protobuf::uint8* InitSessionRequest::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.InitSessionRequest)
-  // bytes extra = 1;
-  if (this->extra().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        1, this->extra(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:executor.InitSessionRequest)
-  return target;
-}
-
-size_t InitSessionRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.InitSessionRequest)
-  size_t total_size = 0;
-
-  // bytes extra = 1;
-  if (this->extra().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->extra());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void InitSessionRequest::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.InitSessionRequest)
-  GOOGLE_DCHECK_NE(&from, this);
-  const InitSessionRequest* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const InitSessionRequest>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.InitSessionRequest)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.InitSessionRequest)
-    MergeFrom(*source);
-  }
-}
-
-void InitSessionRequest::MergeFrom(const InitSessionRequest& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.InitSessionRequest)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.extra().size() > 0) {
-
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-}
-
-void InitSessionRequest::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.InitSessionRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void InitSessionRequest::CopyFrom(const InitSessionRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.InitSessionRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool InitSessionRequest::IsInitialized() const {
-  return true;
-}
-
-void InitSessionRequest::Swap(InitSessionRequest* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void InitSessionRequest::InternalSwap(InitSessionRequest* other) {
-  extra_.Swap(&other->extra_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata InitSessionRequest::GetMetadata() const {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[2];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// InitSessionRequest
-
-// bytes extra = 1;
-void InitSessionRequest::clear_extra() {
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& InitSessionRequest::extra() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionRequest.extra)
-  return extra_.GetNoArena();
-}
-void InitSessionRequest::set_extra(const ::std::string& value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.InitSessionRequest.extra)
-}
-#if LANG_CXX11
-void InitSessionRequest::set_extra(::std::string&& value) {
-  
-  extra_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionRequest.extra)
-}
-#endif
-void InitSessionRequest::set_extra(const char* value) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.InitSessionRequest.extra)
-}
-void InitSessionRequest::set_extra(const void* value, size_t size) {
-  
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionRequest.extra)
-}
-::std::string* InitSessionRequest::mutable_extra() {
-  
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionRequest.extra)
-  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* InitSessionRequest::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionRequest.extra)
-  
-  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void InitSessionRequest::set_allocated_extra(::std::string* extra) {
-  if (extra != NULL) {
-    
-  } else {
-    
-  }
-  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionRequest.extra)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int InitSessionResponse::kResultFieldNumber;
-const int InitSessionResponse::kExtraFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-InitSessionResponse::InitSessionResponse()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_executor_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:executor.InitSessionResponse)
-}
-InitSessionResponse::InitSessionResponse(const InitSessionResponse& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.extra().size() > 0) {
-    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
-  }
-  if (from.has_result()) {
-    result_ = new ::executor::Status(*from.result_);
-  } else {
-    result_ = NULL;
-  }
-  // @@protoc_insertion_point(copy_constructor:executor.InitSessionResponse)
-}
-
-void InitSessionResponse::SharedCtor() {
-  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  result_ = NULL;
-  _cached_size_ = 0;
-}
-
-InitSessionResponse::~InitSessionResponse() {
-  // @@protoc_insertion_point(destructor:executor.InitSessionResponse)
-  SharedDtor();
-}
-
-void InitSessionResponse::SharedDtor() {
-  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) {
-    delete result_;
-  }
-}
-
-void InitSessionResponse::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* InitSessionResponse::descriptor() {
-  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[3].descriptor;
-}
-
-const InitSessionResponse& InitSessionResponse::default_instance() {
-  protobuf_executor_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-InitSessionResponse* InitSessionResponse::New(::google::protobuf::Arena* arena) const {
-  InitSessionResponse* n = new InitSessionResponse;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void InitSessionResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:executor.InitSessionResponse)
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (GetArenaNoVirtual() == NULL && result_ != NULL) {
-    delete result_;
-  }
-  result_ = NULL;
-}
-
-bool InitSessionResponse::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:executor.InitSessionResponse)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .executor.Status result = 1;
+      // .executor.ComputeDef computation = 1;
       case 1: {
         if (tag == 10u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_result()));
+               input, mutable_computation()));
         } else {
           goto handle_unusual;
         }
@@ -1463,21 +1216,21 @@ bool InitSessionResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:executor.InitSessionResponse)
+  // @@protoc_insertion_point(parse_success:executor.RunGraphRequest)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:executor.InitSessionResponse)
+  // @@protoc_insertion_point(parse_failure:executor.RunGraphRequest)
   return false;
 #undef DO_
 }
 
-void InitSessionResponse::SerializeWithCachedSizes(
+void RunGraphRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:executor.InitSessionResponse)
-  // .executor.Status result = 1;
-  if (this->has_result()) {
+  // @@protoc_insertion_point(serialize_start:executor.RunGraphRequest)
+  // .executor.ComputeDef computation = 1;
+  if (this->has_computation()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->result_, output);
+      1, *this->computation_, output);
   }
 
   // bytes extra = 2;
@@ -1486,18 +1239,18 @@ void InitSessionResponse::SerializeWithCachedSizes(
       2, this->extra(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:executor.InitSessionResponse)
+  // @@protoc_insertion_point(serialize_end:executor.RunGraphRequest)
 }
 
-::google::protobuf::uint8* InitSessionResponse::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* RunGraphRequest::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:executor.InitSessionResponse)
-  // .executor.Status result = 1;
-  if (this->has_result()) {
+  // @@protoc_insertion_point(serialize_to_array_start:executor.RunGraphRequest)
+  // .executor.ComputeDef computation = 1;
+  if (this->has_computation()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        1, *this->result_, false, target);
+        1, *this->computation_, false, target);
   }
 
   // bytes extra = 2;
@@ -1507,15 +1260,423 @@ void InitSessionResponse::SerializeWithCachedSizes(
         2, this->extra(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:executor.InitSessionResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:executor.RunGraphRequest)
   return target;
 }
 
-size_t InitSessionResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:executor.InitSessionResponse)
+size_t RunGraphRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.RunGraphRequest)
   size_t total_size = 0;
 
   // bytes extra = 2;
+  if (this->extra().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->extra());
+  }
+
+  // .executor.ComputeDef computation = 1;
+  if (this->has_computation()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->computation_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RunGraphRequest::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.RunGraphRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  const RunGraphRequest* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const RunGraphRequest>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.RunGraphRequest)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.RunGraphRequest)
+    MergeFrom(*source);
+  }
+}
+
+void RunGraphRequest::MergeFrom(const RunGraphRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.RunGraphRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.extra().size() > 0) {
+
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
+  if (from.has_computation()) {
+    mutable_computation()->::executor::ComputeDef::MergeFrom(from.computation());
+  }
+}
+
+void RunGraphRequest::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.RunGraphRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RunGraphRequest::CopyFrom(const RunGraphRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.RunGraphRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RunGraphRequest::IsInitialized() const {
+  return true;
+}
+
+void RunGraphRequest::Swap(RunGraphRequest* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void RunGraphRequest::InternalSwap(RunGraphRequest* other) {
+  extra_.Swap(&other->extra_);
+  std::swap(computation_, other->computation_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata RunGraphRequest::GetMetadata() const {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[2];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// RunGraphRequest
+
+// .executor.ComputeDef computation = 1;
+bool RunGraphRequest::has_computation() const {
+  return this != internal_default_instance() && computation_ != NULL;
+}
+void RunGraphRequest::clear_computation() {
+  if (GetArenaNoVirtual() == NULL && computation_ != NULL) delete computation_;
+  computation_ = NULL;
+}
+const ::executor::ComputeDef& RunGraphRequest::computation() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphRequest.computation)
+  return computation_ != NULL ? *computation_
+                         : *::executor::ComputeDef::internal_default_instance();
+}
+::executor::ComputeDef* RunGraphRequest::mutable_computation() {
+  
+  if (computation_ == NULL) {
+    computation_ = new ::executor::ComputeDef;
+  }
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphRequest.computation)
+  return computation_;
+}
+::executor::ComputeDef* RunGraphRequest::release_computation() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphRequest.computation)
+  
+  ::executor::ComputeDef* temp = computation_;
+  computation_ = NULL;
+  return temp;
+}
+void RunGraphRequest::set_allocated_computation(::executor::ComputeDef* computation) {
+  delete computation_;
+  computation_ = computation;
+  if (computation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphRequest.computation)
+}
+
+// bytes extra = 2;
+void RunGraphRequest::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& RunGraphRequest::extra() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphRequest.extra)
+  return extra_.GetNoArena();
+}
+void RunGraphRequest::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunGraphRequest.extra)
+}
+#if LANG_CXX11
+void RunGraphRequest::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphRequest.extra)
+}
+#endif
+void RunGraphRequest::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphRequest.extra)
+}
+void RunGraphRequest::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphRequest.extra)
+}
+::std::string* RunGraphRequest::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphRequest.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* RunGraphRequest::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphRequest.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void RunGraphRequest::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphRequest.extra)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int RunGraphResponse::kResultFieldNumber;
+const int RunGraphResponse::kExecIdFieldNumber;
+const int RunGraphResponse::kExtraFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+RunGraphResponse::RunGraphResponse()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_executor_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.RunGraphResponse)
+}
+RunGraphResponse::RunGraphResponse(const RunGraphResponse& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  execid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.execid().size() > 0) {
+    execid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.execid_);
+  }
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.extra().size() > 0) {
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
+  if (from.has_result()) {
+    result_ = new ::executor::Status(*from.result_);
+  } else {
+    result_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:executor.RunGraphResponse)
+}
+
+void RunGraphResponse::SharedCtor() {
+  execid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  result_ = NULL;
+  _cached_size_ = 0;
+}
+
+RunGraphResponse::~RunGraphResponse() {
+  // @@protoc_insertion_point(destructor:executor.RunGraphResponse)
+  SharedDtor();
+}
+
+void RunGraphResponse::SharedDtor() {
+  execid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) {
+    delete result_;
+  }
+}
+
+void RunGraphResponse::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RunGraphResponse::descriptor() {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[3].descriptor;
+}
+
+const RunGraphResponse& RunGraphResponse::default_instance() {
+  protobuf_executor_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+RunGraphResponse* RunGraphResponse::New(::google::protobuf::Arena* arena) const {
+  RunGraphResponse* n = new RunGraphResponse;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void RunGraphResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.RunGraphResponse)
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && result_ != NULL) {
+    delete result_;
+  }
+  result_ = NULL;
+}
+
+bool RunGraphResponse::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.RunGraphResponse)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .executor.Status result = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_result()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string execId = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_execid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->execid().data(), this->execid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.RunGraphResponse.execId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes extra = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_extra()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.RunGraphResponse)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.RunGraphResponse)
+  return false;
+#undef DO_
+}
+
+void RunGraphResponse::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.RunGraphResponse)
+  // .executor.Status result = 1;
+  if (this->has_result()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->result_, output);
+  }
+
+  // string execId = 2;
+  if (this->execid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->execid().data(), this->execid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.RunGraphResponse.execId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->execid(), output);
+  }
+
+  // bytes extra = 3;
+  if (this->extra().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->extra(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.RunGraphResponse)
+}
+
+::google::protobuf::uint8* RunGraphResponse::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.RunGraphResponse)
+  // .executor.Status result = 1;
+  if (this->has_result()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->result_, false, target);
+  }
+
+  // string execId = 2;
+  if (this->execid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->execid().data(), this->execid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.RunGraphResponse.execId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->execid(), target);
+  }
+
+  // bytes extra = 3;
+  if (this->extra().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->extra(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.RunGraphResponse)
+  return target;
+}
+
+size_t RunGraphResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.RunGraphResponse)
+  size_t total_size = 0;
+
+  // string execId = 2;
+  if (this->execid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->execid());
+  }
+
+  // bytes extra = 3;
   if (this->extra().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -1536,25 +1697,29 @@ size_t InitSessionResponse::ByteSizeLong() const {
   return total_size;
 }
 
-void InitSessionResponse::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:executor.InitSessionResponse)
+void RunGraphResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.RunGraphResponse)
   GOOGLE_DCHECK_NE(&from, this);
-  const InitSessionResponse* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const InitSessionResponse>(
+  const RunGraphResponse* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const RunGraphResponse>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.InitSessionResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.RunGraphResponse)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.InitSessionResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.RunGraphResponse)
     MergeFrom(*source);
   }
 }
 
-void InitSessionResponse::MergeFrom(const InitSessionResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:executor.InitSessionResponse)
+void RunGraphResponse::MergeFrom(const RunGraphResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.RunGraphResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.execid().size() > 0) {
+
+    execid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.execid_);
+  }
   if (from.extra().size() > 0) {
 
     extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
@@ -1564,71 +1729,72 @@ void InitSessionResponse::MergeFrom(const InitSessionResponse& from) {
   }
 }
 
-void InitSessionResponse::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:executor.InitSessionResponse)
+void RunGraphResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.RunGraphResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void InitSessionResponse::CopyFrom(const InitSessionResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:executor.InitSessionResponse)
+void RunGraphResponse::CopyFrom(const RunGraphResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.RunGraphResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool InitSessionResponse::IsInitialized() const {
+bool RunGraphResponse::IsInitialized() const {
   return true;
 }
 
-void InitSessionResponse::Swap(InitSessionResponse* other) {
+void RunGraphResponse::Swap(RunGraphResponse* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void InitSessionResponse::InternalSwap(InitSessionResponse* other) {
+void RunGraphResponse::InternalSwap(RunGraphResponse* other) {
+  execid_.Swap(&other->execid_);
   extra_.Swap(&other->extra_);
   std::swap(result_, other->result_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata InitSessionResponse::GetMetadata() const {
+::google::protobuf::Metadata RunGraphResponse::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_executor_2eproto::file_level_metadata[3];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// InitSessionResponse
+// RunGraphResponse
 
 // .executor.Status result = 1;
-bool InitSessionResponse::has_result() const {
+bool RunGraphResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
-void InitSessionResponse::clear_result() {
+void RunGraphResponse::clear_result() {
   if (GetArenaNoVirtual() == NULL && result_ != NULL) delete result_;
   result_ = NULL;
 }
-const ::executor::Status& InitSessionResponse::result() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.result)
+const ::executor::Status& RunGraphResponse::result() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.result)
   return result_ != NULL ? *result_
                          : *::executor::Status::internal_default_instance();
 }
-::executor::Status* InitSessionResponse::mutable_result() {
+::executor::Status* RunGraphResponse::mutable_result() {
   
   if (result_ == NULL) {
     result_ = new ::executor::Status;
   }
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.result)
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.result)
   return result_;
 }
-::executor::Status* InitSessionResponse::release_result() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.result)
+::executor::Status* RunGraphResponse::release_result() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.result)
   
   ::executor::Status* temp = result_;
   result_ = NULL;
   return temp;
 }
-void InitSessionResponse::set_allocated_result(::executor::Status* result) {
+void RunGraphResponse::set_allocated_result(::executor::Status* result) {
   delete result_;
   result_ = result;
   if (result) {
@@ -1636,59 +1802,111 @@ void InitSessionResponse::set_allocated_result(::executor::Status* result) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.result)
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.result)
 }
 
-// bytes extra = 2;
-void InitSessionResponse::clear_extra() {
-  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string execId = 2;
+void RunGraphResponse::clear_execid() {
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& InitSessionResponse::extra() const {
-  // @@protoc_insertion_point(field_get:executor.InitSessionResponse.extra)
-  return extra_.GetNoArena();
+const ::std::string& RunGraphResponse::execid() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.execId)
+  return execid_.GetNoArena();
 }
-void InitSessionResponse::set_extra(const ::std::string& value) {
+void RunGraphResponse::set_execid(const ::std::string& value) {
   
-  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:executor.InitSessionResponse.extra)
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunGraphResponse.execId)
 }
 #if LANG_CXX11
-void InitSessionResponse::set_extra(::std::string&& value) {
+void RunGraphResponse::set_execid(::std::string&& value) {
+  
+  execid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphResponse.execId)
+}
+#endif
+void RunGraphResponse::set_execid(const char* value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphResponse.execId)
+}
+void RunGraphResponse::set_execid(const char* value, size_t size) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphResponse.execId)
+}
+::std::string* RunGraphResponse::mutable_execid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.execId)
+  return execid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* RunGraphResponse::release_execid() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.execId)
+  
+  return execid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void RunGraphResponse::set_allocated_execid(::std::string* execid) {
+  if (execid != NULL) {
+    
+  } else {
+    
+  }
+  execid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), execid);
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.execId)
+}
+
+// bytes extra = 3;
+void RunGraphResponse::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& RunGraphResponse::extra() const {
+  // @@protoc_insertion_point(field_get:executor.RunGraphResponse.extra)
+  return extra_.GetNoArena();
+}
+void RunGraphResponse::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunGraphResponse.extra)
+}
+#if LANG_CXX11
+void RunGraphResponse::set_extra(::std::string&& value) {
   
   extra_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunGraphResponse.extra)
 }
 #endif
-void InitSessionResponse::set_extra(const char* value) {
+void RunGraphResponse::set_extra(const char* value) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_char:executor.RunGraphResponse.extra)
 }
-void InitSessionResponse::set_extra(const void* value, size_t size) {
+void RunGraphResponse::set_extra(const void* value, size_t size) {
   
   extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_pointer:executor.RunGraphResponse.extra)
 }
-::std::string* InitSessionResponse::mutable_extra() {
+::std::string* RunGraphResponse::mutable_extra() {
   
-  // @@protoc_insertion_point(field_mutable:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_mutable:executor.RunGraphResponse.extra)
   return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* InitSessionResponse::release_extra() {
-  // @@protoc_insertion_point(field_release:executor.InitSessionResponse.extra)
+::std::string* RunGraphResponse::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.RunGraphResponse.extra)
   
   return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void InitSessionResponse::set_allocated_extra(::std::string* extra) {
+void RunGraphResponse::set_allocated_extra(::std::string* extra) {
   if (extra != NULL) {
     
   } else {
     
   }
   extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
-  // @@protoc_insertion_point(field_set_allocated:executor.InitSessionResponse.extra)
+  // @@protoc_insertion_point(field_set_allocated:executor.RunGraphResponse.extra)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1698,6 +1916,7 @@ void InitSessionResponse::set_allocated_extra(::std::string* extra) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int RunRequest::kOpkernelFieldNumber;
 const int RunRequest::kContextFieldNumber;
+const int RunRequest::kExecIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 RunRequest::RunRequest()
@@ -1713,6 +1932,10 @@ RunRequest::RunRequest(const RunRequest& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  execid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.execid().size() > 0) {
+    execid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.execid_);
+  }
   if (from.has_opkernel()) {
     opkernel_ = new ::executor::OpKernelDef(*from.opkernel_);
   } else {
@@ -1727,6 +1950,7 @@ RunRequest::RunRequest(const RunRequest& from)
 }
 
 void RunRequest::SharedCtor() {
+  execid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&opkernel_, 0, reinterpret_cast<char*>(&context_) -
     reinterpret_cast<char*>(&opkernel_) + sizeof(context_));
   _cached_size_ = 0;
@@ -1738,6 +1962,7 @@ RunRequest::~RunRequest() {
 }
 
 void RunRequest::SharedDtor() {
+  execid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) {
     delete opkernel_;
   }
@@ -1771,6 +1996,7 @@ RunRequest* RunRequest::New(::google::protobuf::Arena* arena) const {
 
 void RunRequest::Clear() {
 // @@protoc_insertion_point(message_clear_start:executor.RunRequest)
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && opkernel_ != NULL) {
     delete opkernel_;
   }
@@ -1813,6 +2039,21 @@ bool RunRequest::MergePartialFromCodedStream(
         break;
       }
 
+      // string execId = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_execid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->execid().data(), this->execid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "executor.RunRequest.execId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -1849,6 +2090,16 @@ void RunRequest::SerializeWithCachedSizes(
       2, *this->context_, output);
   }
 
+  // string execId = 3;
+  if (this->execid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->execid().data(), this->execid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.RunRequest.execId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->execid(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:executor.RunRequest)
 }
 
@@ -1870,6 +2121,17 @@ void RunRequest::SerializeWithCachedSizes(
         2, *this->context_, false, target);
   }
 
+  // string execId = 3;
+  if (this->execid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->execid().data(), this->execid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "executor.RunRequest.execId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->execid(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:executor.RunRequest)
   return target;
 }
@@ -1877,6 +2139,13 @@ void RunRequest::SerializeWithCachedSizes(
 size_t RunRequest::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:executor.RunRequest)
   size_t total_size = 0;
+
+  // string execId = 3;
+  if (this->execid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->execid());
+  }
 
   // .executor.OpKernelDef opkernel = 1;
   if (this->has_opkernel()) {
@@ -1918,6 +2187,10 @@ void RunRequest::MergeFrom(const RunRequest& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:executor.RunRequest)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.execid().size() > 0) {
+
+    execid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.execid_);
+  }
   if (from.has_opkernel()) {
     mutable_opkernel()->::executor::OpKernelDef::MergeFrom(from.opkernel());
   }
@@ -1949,6 +2222,7 @@ void RunRequest::Swap(RunRequest* other) {
   InternalSwap(other);
 }
 void RunRequest::InternalSwap(RunRequest* other) {
+  execid_.Swap(&other->execid_);
   std::swap(opkernel_, other->opkernel_);
   std::swap(context_, other->context_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2038,6 +2312,58 @@ void RunRequest::set_allocated_context(::executor::OpContextDef* context) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.context)
+}
+
+// string execId = 3;
+void RunRequest::clear_execid() {
+  execid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& RunRequest::execid() const {
+  // @@protoc_insertion_point(field_get:executor.RunRequest.execId)
+  return execid_.GetNoArena();
+}
+void RunRequest::set_execid(const ::std::string& value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.RunRequest.execId)
+}
+#if LANG_CXX11
+void RunRequest::set_execid(::std::string&& value) {
+  
+  execid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.RunRequest.execId)
+}
+#endif
+void RunRequest::set_execid(const char* value) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.RunRequest.execId)
+}
+void RunRequest::set_execid(const char* value, size_t size) {
+  
+  execid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.RunRequest.execId)
+}
+::std::string* RunRequest::mutable_execid() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.RunRequest.execId)
+  return execid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* RunRequest::release_execid() {
+  // @@protoc_insertion_point(field_release:executor.RunRequest.execId)
+  
+  return execid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void RunRequest::set_allocated_execid(::std::string* execid) {
+  if (execid != NULL) {
+    
+  } else {
+    
+  }
+  execid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), execid);
+  // @@protoc_insertion_point(field_set_allocated:executor.RunRequest.execId)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4171,6 +4497,329 @@ void OpContextDef::set_allocated_extra(::std::string* extra) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ComputeDef::kOplibraryFieldNumber;
+const int ComputeDef::kExtraFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ComputeDef::ComputeDef()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_executor_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:executor.ComputeDef)
+}
+ComputeDef::ComputeDef(const ComputeDef& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.extra().size() > 0) {
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
+  oplibrary_ = from.oplibrary_;
+  // @@protoc_insertion_point(copy_constructor:executor.ComputeDef)
+}
+
+void ComputeDef::SharedCtor() {
+  extra_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  oplibrary_ = 0;
+  _cached_size_ = 0;
+}
+
+ComputeDef::~ComputeDef() {
+  // @@protoc_insertion_point(destructor:executor.ComputeDef)
+  SharedDtor();
+}
+
+void ComputeDef::SharedDtor() {
+  extra_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void ComputeDef::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ComputeDef::descriptor() {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[12].descriptor;
+}
+
+const ComputeDef& ComputeDef::default_instance() {
+  protobuf_executor_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+ComputeDef* ComputeDef::New(::google::protobuf::Arena* arena) const {
+  ComputeDef* n = new ComputeDef;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void ComputeDef::Clear() {
+// @@protoc_insertion_point(message_clear_start:executor.ComputeDef)
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  oplibrary_ = 0;
+}
+
+bool ComputeDef::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:executor.ComputeDef)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .executor.OpLibraryType oplibrary = 1;
+      case 1: {
+        if (tag == 8u) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_oplibrary(static_cast< ::executor::OpLibraryType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes extra = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_extra()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:executor.ComputeDef)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:executor.ComputeDef)
+  return false;
+#undef DO_
+}
+
+void ComputeDef::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:executor.ComputeDef)
+  // .executor.OpLibraryType oplibrary = 1;
+  if (this->oplibrary() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->oplibrary(), output);
+  }
+
+  // bytes extra = 2;
+  if (this->extra().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      2, this->extra(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:executor.ComputeDef)
+}
+
+::google::protobuf::uint8* ComputeDef::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:executor.ComputeDef)
+  // .executor.OpLibraryType oplibrary = 1;
+  if (this->oplibrary() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->oplibrary(), target);
+  }
+
+  // bytes extra = 2;
+  if (this->extra().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        2, this->extra(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:executor.ComputeDef)
+  return target;
+}
+
+size_t ComputeDef::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:executor.ComputeDef)
+  size_t total_size = 0;
+
+  // bytes extra = 2;
+  if (this->extra().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->extra());
+  }
+
+  // .executor.OpLibraryType oplibrary = 1;
+  if (this->oplibrary() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->oplibrary());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ComputeDef::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:executor.ComputeDef)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ComputeDef* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const ComputeDef>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:executor.ComputeDef)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:executor.ComputeDef)
+    MergeFrom(*source);
+  }
+}
+
+void ComputeDef::MergeFrom(const ComputeDef& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:executor.ComputeDef)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.extra().size() > 0) {
+
+    extra_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.extra_);
+  }
+  if (from.oplibrary() != 0) {
+    set_oplibrary(from.oplibrary());
+  }
+}
+
+void ComputeDef::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:executor.ComputeDef)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ComputeDef::CopyFrom(const ComputeDef& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:executor.ComputeDef)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ComputeDef::IsInitialized() const {
+  return true;
+}
+
+void ComputeDef::Swap(ComputeDef* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ComputeDef::InternalSwap(ComputeDef* other) {
+  extra_.Swap(&other->extra_);
+  std::swap(oplibrary_, other->oplibrary_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata ComputeDef::GetMetadata() const {
+  protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_executor_2eproto::file_level_metadata[12];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// ComputeDef
+
+// .executor.OpLibraryType oplibrary = 1;
+void ComputeDef::clear_oplibrary() {
+  oplibrary_ = 0;
+}
+::executor::OpLibraryType ComputeDef::oplibrary() const {
+  // @@protoc_insertion_point(field_get:executor.ComputeDef.oplibrary)
+  return static_cast< ::executor::OpLibraryType >(oplibrary_);
+}
+void ComputeDef::set_oplibrary(::executor::OpLibraryType value) {
+  
+  oplibrary_ = value;
+  // @@protoc_insertion_point(field_set:executor.ComputeDef.oplibrary)
+}
+
+// bytes extra = 2;
+void ComputeDef::clear_extra() {
+  extra_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& ComputeDef::extra() const {
+  // @@protoc_insertion_point(field_get:executor.ComputeDef.extra)
+  return extra_.GetNoArena();
+}
+void ComputeDef::set_extra(const ::std::string& value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:executor.ComputeDef.extra)
+}
+#if LANG_CXX11
+void ComputeDef::set_extra(::std::string&& value) {
+  
+  extra_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:executor.ComputeDef.extra)
+}
+#endif
+void ComputeDef::set_extra(const char* value) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:executor.ComputeDef.extra)
+}
+void ComputeDef::set_extra(const void* value, size_t size) {
+  
+  extra_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:executor.ComputeDef.extra)
+}
+::std::string* ComputeDef::mutable_extra() {
+  
+  // @@protoc_insertion_point(field_mutable:executor.ComputeDef.extra)
+  return extra_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* ComputeDef::release_extra() {
+  // @@protoc_insertion_point(field_release:executor.ComputeDef.extra)
+  
+  return extra_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void ComputeDef::set_allocated_extra(::std::string* extra) {
+  if (extra != NULL) {
+    
+  } else {
+    
+  }
+  extra_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), extra);
+  // @@protoc_insertion_point(field_set_allocated:executor.ComputeDef.extra)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Status::kCodeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -4211,7 +4860,7 @@ void Status::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Status::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[12].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[13].descriptor;
 }
 
 const Status& Status::default_instance() {
@@ -4371,7 +5020,7 @@ void Status::InternalSwap(Status* other) {
 
 ::google::protobuf::Metadata Status::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[12];
+  return protobuf_executor_2eproto::file_level_metadata[13];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -4461,7 +5110,7 @@ void EvenlopDef::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* EvenlopDef::descriptor() {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[13].descriptor;
+  return protobuf_executor_2eproto::file_level_metadata[14].descriptor;
 }
 
 const EvenlopDef& EvenlopDef::default_instance() {
@@ -4781,7 +5430,7 @@ void EvenlopDef::InternalSwap(EvenlopDef* other) {
 
 ::google::protobuf::Metadata EvenlopDef::GetMetadata() const {
   protobuf_executor_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_executor_2eproto::file_level_metadata[13];
+  return protobuf_executor_2eproto::file_level_metadata[14];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

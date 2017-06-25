@@ -2,6 +2,7 @@
 #include "tensorflow/core/common_runtime/rpc_device/rpc_device.h"
 #include "tensorflow/core/common_runtime/rpc_device/rpc/zmqrpcclient.h"
 #include "tensorflow/core/common_runtime/rpc_device/threadpiscine_device.h"
+#include "tensorflow/core/platform/logging.h"
 
 namespace tensorflow {
 
