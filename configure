@@ -303,7 +303,6 @@ if [[ "$TF_NEED_CUDA" == "0" ]] && [[ "$TF_NEED_OPENCL" == "0" ]]; then
 fi
 
 export TF_NEED_RPC
-write_action_env_to_bazelrc "TF_NEED_RPC" "$TF_NEED_RPC"
 
 if [ "$TF_NEED_CUDA" == "1" ]; then
 # Set up which gcc nvcc should use as the host compiler
