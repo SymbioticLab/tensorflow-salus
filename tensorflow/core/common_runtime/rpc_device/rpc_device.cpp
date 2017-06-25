@@ -103,7 +103,7 @@ Allocator *RPCDevice::GetAllocator(AllocatorAttributes attr)
 Status RPCDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const AllocatorAttributes alloc_attrs,
                                       Tensor *tensor)
 {
-    LOG(WARNING) << "!!!RpcDevice MakeTensorFromProto" << ProtoDebugString(tensor_proto);
+    LOG(INFO) << "RpcDevice MakeTensorFromProto" << ProtoDebugString(tensor_proto);
 
     if (alloc_attrs.on_host()) {
         if (tensor_proto.dtype() > 0 && tensor_proto.dtype() <= DataType_MAX) {
@@ -114,8 +114,8 @@ Status RPCDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const All
             }
         }
     } else {
-        // TODO: implement make tensor from proto through rpc
-        return errors::Internal("Parse to device memory not implemented: ", ProtoDebugString(tensor_proto));
+        LOG(WARNING) << "RpcDevice MakeTensorFromProto returning an empty tensor, since it is not used in RPC";
+        return Status::OK();
     }
     return errors::InvalidArgument("Cannot parse tensor from proto: ",
                                    ProtoDebugString(tensor_proto));
