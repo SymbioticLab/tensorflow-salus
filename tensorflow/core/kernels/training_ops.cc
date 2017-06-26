@@ -779,6 +779,29 @@ TF_CALL_double(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 #undef REGISTER_KERNELS
 
+
+#define REGISTER_KERNELS(T, Tindices)                                \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyAdadelta")                \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyAdadeltaOp<T, Tindices>);       \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyAdadelta")        \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyAdadeltaOp<T, Tindices>);
+#define REGISTER_RPC_KERNELS(T) \
+  REGISTER_KERNELS(T, int32);   \
+  REGISTER_KERNELS(T, int64);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
+#undef REGISTER_KERNELS
+
 // Note, this op works on cpu only.
 template <typename Device, typename T>
 class ApplyProximalGradientDescentOp : public OpKernel {
@@ -845,6 +868,21 @@ class ApplyProximalGradientDescentOp : public OpKernel {
 REGISTER_KERNELS(CPU, float);
 REGISTER_KERNELS(CPU, double);
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                          \
+  REGISTER_KERNEL_BUILDER(Name("ApplyProximalGradientDescent")           \
+                              .Device(DEVICE_RPC)                        \
+                              .TypeConstraint<T>("T"),                   \
+                          ApplyProximalGradientDescentOp<CPUDevice, T>); \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyProximalGradientDescent")   \
+                              .HostMemory("var")                         \
+                              .Device(DEVICE_RPC)                        \
+                              .TypeConstraint<T>("T"),                   \
+                          ApplyProximalGradientDescentOp<CPUDevice, T>);
+
+REGISTER_RPC_KERNELS(float);
+REGISTER_RPC_KERNELS(double);
+#undef REGISTER_RPC_KERNELS
 
 // Note, this op works on cpu only.
 template <typename T, typename Tindex>
@@ -990,6 +1028,24 @@ REGISTER_KERNELS(double, int32);
 REGISTER_KERNELS(double, int64);
 #undef REGISTER_KERNELS
 
+#define REGISTER_RPC_KERNELS(T, Tindices)                                     \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyProximalGradientDescent")          \
+                              .Device(DEVICE_RPC)                             \
+                              .TypeConstraint<T>("T")                         \
+                              .TypeConstraint<Tindices>("Tindices"),          \
+                          SparseApplyProximalGradientDescentOp<T, Tindices>); \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyProximalGradientDescent")  \
+                              .Device(DEVICE_RPC)                             \
+                              .TypeConstraint<T>("T")                         \
+                              .TypeConstraint<Tindices>("Tindices"),          \
+                          SparseApplyProximalGradientDescentOp<T, Tindices>);
+
+REGISTER_RPC_KERNELS(float, int32);
+REGISTER_RPC_KERNELS(float, int64);
+REGISTER_RPC_KERNELS(double, int32);
+REGISTER_RPC_KERNELS(double, int64);
+#undef REGISTER_RPC_KERNELS
+
 template <typename Device, typename T>
 class ApplyAdagradOp : public OpKernel {
  public:
@@ -1056,6 +1112,23 @@ using GPUDevice = Eigen::GpuDevice;
 TF_CALL_half(REGISTER_CPU_KERNELS);
 TF_CALL_float(REGISTER_CPU_KERNELS);
 TF_CALL_double(REGISTER_CPU_KERNELS);
+
+#define REGISTER_RPC_KERNELS(T)                                       \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("ApplyAdagrad").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyAdagradOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyAdagrad")                \
+                              .HostMemory("var")                      \
+                              .HostMemory("accum")                    \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T"),                \
+                          ApplyAdagradOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
@@ -1162,6 +1235,21 @@ using GPUDevice = Eigen::GpuDevice;
 REGISTER_KERNELS(CPU, float);
 REGISTER_KERNELS(CPU, double);
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                               \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("ApplyProximalAdagrad").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyProximalAdagradOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyProximalAdagrad")                \
+                              .Device(DEVICE_RPC)                             \
+                              .HostMemory("var")                              \
+                              .HostMemory("accum")                            \
+                              .TypeConstraint<T>("T"),                        \
+                          ApplyProximalAdagradOp<CPUDevice, T>);
+
+REGISTER_RPC_KERNELS(float);
+REGISTER_RPC_KERNELS(double);
+#undef REGISTER_RPC_KERNELS
 
 namespace {
 
@@ -1311,6 +1399,28 @@ TF_CALL_float(REGISTER_CPU_KERNELS);
 TF_CALL_double(REGISTER_CPU_KERNELS);
 
 #undef REGISTER_CPU_KERNELS
+#undef REGISTER_KERNELS
+
+#define REGISTER_KERNELS(T, Tindices)                                \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyAdagrad")                 \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyAdagradOp<T, Tindices>);        \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyAdagrad")         \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyAdagradOp<T, Tindices>);
+#define REGISTER_RPC_KERNELS(T) \
+  REGISTER_KERNELS(T, int32);   \
+  REGISTER_KERNELS(T, int64);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 #undef REGISTER_KERNELS
 
 // Note, this op works on cpu only.
@@ -1484,6 +1594,24 @@ REGISTER_KERNELS(double, int32);
 REGISTER_KERNELS(double, int64);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS(T, Tindices)                                 \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyProximalAdagrad")          \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyProximalAdagradOp<T, Tindices>); \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyProximalAdagrad")  \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyProximalAdagradOp<T, Tindices>);
+
+REGISTER_KERNELS(float, int32);
+REGISTER_KERNELS(float, int64);
+REGISTER_KERNELS(double, int32);
+REGISTER_KERNELS(double, int64);
+#undef REGISTER_KERNELS
+
 template <typename Device, typename T>
 class ApplyAdagradDAOp : public OpKernel {
  public:
@@ -1582,6 +1710,22 @@ using GPUDevice = Eigen::GpuDevice;
 REGISTER_KERNELS(CPU, float);
 REGISTER_KERNELS(CPU, double);
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                           \
+  REGISTER_KERNEL_BUILDER(                                                \
+      Name("ApplyAdagradDA").Device(DEVICE_RPC).TypeConstraint<T>("T"),   \
+      ApplyAdagradDAOp<CPUDevice, T>);                                    \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyAdagradDA")                  \
+                              .Device(DEVICE_RPCD)                         \
+                              .HostMemory("var")                          \
+                              .HostMemory("gradient_accumulator")         \
+                              .HostMemory("gradient_squared_accumulator") \
+                              .TypeConstraint<T>("T"),                    \
+                          ApplyAdagradDAOp<CPUDevice, T>);
+
+REGISTER_RPC_KERNELS(float);
+REGISTER_RPC_KERNELS(double);
+#undef REGISTER_RPC_KERNELS
 
 // Note, this op works on cpu only.
 template <typename T, typename Tindex>
@@ -1778,6 +1922,27 @@ REGISTER_KERNELS(double, int32);
 REGISTER_KERNELS(double, int64);
 #undef REGISTER_KERNELS
 
+#define REGISTER_RPC_KERNELS(T, Tindices)                                 \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyAdagradDA")                    \
+                              .Device(DEVICE_RPC)                         \
+                              .TypeConstraint<T>("T")                     \
+                              .TypeConstraint<Tindices>("Tindices"),      \
+                          SparseApplyAdagradDAOp<T, Tindices>);           \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyAdagradDA")            \
+                              .Device(DEVICE_RPC)                         \
+                              .HostMemory("var")                          \
+                              .HostMemory("gradient_accumulator")         \
+                              .HostMemory("gradient_squared_accumulator") \
+                              .TypeConstraint<T>("T")                     \
+                              .TypeConstraint<Tindices>("Tindices"),      \
+                          SparseApplyAdagradDAOp<T, Tindices>);
+
+REGISTER_RPC_KERNELS(float, int32);
+REGISTER_RPC_KERNELS(float, int64);
+REGISTER_RPC_KERNELS(double, int32);
+REGISTER_RPC_KERNELS(double, int64);
+#undef REGISTER_RPC_KERNELS
+
 template <typename Device, typename T>
 class ApplyFtrlOp : public OpKernel {
  public:
@@ -1887,6 +2052,24 @@ TF_CALL_double(REGISTER_CPU_KERNELS);
 
 #undef REGISTER_CPU_KERNELS
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                    \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("ApplyFtrl").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyFtrlOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyFtrl")                \
+                              .HostMemory("var")                   \
+                              .HostMemory("accum")                 \
+                              .HostMemory("linear")                \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T"),             \
+                          ApplyFtrlOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 // Note, this op works on cpu only.
 template <typename Device, typename T, typename Tindex>
@@ -2072,27 +2255,27 @@ class SparseApplyFtrlOp : public OpKernel {
   bool use_exclusive_lock_;
 };
 
-#define REGISTER_KERNELS(T, Tindices)                                 \
+#define REGISTER_RPC_KERNELS(T, Tindices)                             \
   REGISTER_KERNEL_BUILDER(Name("SparseApplyFtrl")                     \
-                              .Device(DEVICE_CPU)                     \
+                              .Device(DEVICE_RPC)                     \
                               .TypeConstraint<T>("T")                 \
                               .TypeConstraint<Tindices>("Tindices"),  \
                           SparseApplyFtrlOp<CPUDevice, T, Tindices>); \
   REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyFtrl")             \
-                              .Device(DEVICE_CPU)                     \
+                              .Device(DEVICE_RPC)                     \
                               .TypeConstraint<T>("T")                 \
                               .TypeConstraint<Tindices>("Tindices"),  \
                           SparseApplyFtrlOp<CPUDevice, T, Tindices>);
-#define REGISTER_CPU_KERNELS(T) \
-  REGISTER_KERNELS(T, int32);   \
-  REGISTER_KERNELS(T, int64);
+#define REGISTER_RPC_KERNELS_TYPE(T) \
+  REGISTER_RPC_KERNELS(T, int32);   \
+  REGISTER_RPC_KERNELS(T, int64);
 
-TF_CALL_half(REGISTER_CPU_KERNELS);
-TF_CALL_float(REGISTER_CPU_KERNELS);
-TF_CALL_double(REGISTER_CPU_KERNELS);
+TF_CALL_half(REGISTER_RPC_KERNELS_TYPE);
+TF_CALL_float(REGISTER_RPC_KERNELS_TYPE);
+TF_CALL_double(REGISTER_RPC_KERNELS_TYPE);
 
-#undef REGISTER_CPU_KERNELS
-#undef REGISTER_KERNELS
+#undef REGISTER_RPC_KERNELS
+#undef REGISTER_RPC_KERNELS_TYPE
 
 template <typename Device, typename T>
 class ApplyMomentumOp : public OpKernel {
@@ -2192,6 +2375,23 @@ REGISTER_KERNELS(GPU, double);
 #endif
 #undef REGISTER_CPU_KERNELS
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                        \
+  REGISTER_KERNEL_BUILDER(                                             \
+      Name("ApplyMomentum").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyMomentumOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyMomentum")                \
+                              .Device(DEVICE_RPC)                      \
+                              .HostMemory("var")                       \
+                              .HostMemory("accum")                     \
+                              .TypeConstraint<T>("T"),                 \
+                          ApplyMomentumOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 // Note, this op works on cpu only.
 template <typename T, typename Tindex>
@@ -2306,6 +2506,28 @@ TF_CALL_float(REGISTER_CPU_KERNELS);
 TF_CALL_double(REGISTER_CPU_KERNELS);
 
 #undef REGISTER_CPU_KERNELS
+#undef REGISTER_KERNELS
+
+#define REGISTER_KERNELS(T, Tindices)                                \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyMomentum")                \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyMomentumOp<T, Tindices>);       \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyMomentum")        \
+                              .Device(DEVICE_RPC)                    \
+                              .TypeConstraint<T>("T")                \
+                              .TypeConstraint<Tindices>("Tindices"), \
+                          SparseApplyMomentumOp<T, Tindices>);
+#define REGISTER_RPC_KERNELS(T) \
+  REGISTER_KERNELS(T, int32);   \
+  REGISTER_KERNELS(T, int64);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 #undef REGISTER_KERNELS
 
 template <typename Device, typename T>
@@ -2447,6 +2669,24 @@ REGISTER_KERNELS(GPU, double);
 #endif
 #undef REGISTER_CPU_KERNELS
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                    \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("ApplyAdam").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyAdamOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyAdam")                \
+                              .HostMemory("var")                   \
+                              .HostMemory("m")                     \
+                              .HostMemory("v")                     \
+                              .Device(DEVICE_RPC)                  \
+                              .TypeConstraint<T>("T"),             \
+                          ApplyAdamOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 template <typename Device, typename T>
 class ApplyRMSPropOp : public OpKernel {
@@ -2681,6 +2921,35 @@ REGISTER_KERNELS(GPU, double);
 #endif
 #undef REGISTER_CPU_KERNELS
 #undef REGISTER_KERNELS
+
+#define REGISTER_RPC_KERNELS(T)                                               \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("ApplyRMSProp").Device(DEVICE_RPC).TypeConstraint<T>("T"),         \
+      ApplyRMSPropOp<CPUDevice, T>);                                          \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("ApplyCenteredRMSProp").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      ApplyCenteredRMSPropOp<CPUDevice, T>);                                  \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyRMSProp")                        \
+                              .Device(DEVICE_RPC)                             \
+                              .HostMemory("var")                              \
+                              .HostMemory("ms")                               \
+                              .HostMemory("mom")                              \
+                              .TypeConstraint<T>("T"),                        \
+                          ApplyRMSPropOp<CPUDevice, T>);                      \
+  REGISTER_KERNEL_BUILDER(Name("ResourceApplyCenteredRMSProp")                \
+                              .Device(DEVICE_RPC)                             \
+                              .HostMemory("var")                              \
+                              .HostMemory("mg")                               \
+                              .HostMemory("ms")                               \
+                              .HostMemory("mom")                              \
+                              .TypeConstraint<T>("T"),                        \
+                          ApplyCenteredRMSPropOp<CPUDevice, T>);
+
+TF_CALL_half(REGISTER_RPC_KERNELS);
+TF_CALL_float(REGISTER_RPC_KERNELS);
+TF_CALL_double(REGISTER_RPC_KERNELS);
+
+#undef REGISTER_RPC_KERNELS
 
 // Note, this op works on cpu only.
 template <typename T, typename Tindex>
@@ -2961,6 +3230,37 @@ class SparseApplyCenteredRMSPropOp : public OpKernel {
                           SparseApplyRMSPropOp<T, Tindices>);         \
   REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyCenteredRMSProp")  \
                               .Device(DEVICE_CPU)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyCenteredRMSPropOp<T, Tindices>);
+
+REGISTER_KERNELS(Eigen::half, int32);
+REGISTER_KERNELS(Eigen::half, int64);
+REGISTER_KERNELS(float, int32);
+REGISTER_KERNELS(float, int64);
+REGISTER_KERNELS(double, int32);
+REGISTER_KERNELS(double, int64);
+
+#undef REGISTER_KERNELS
+
+#define REGISTER_KERNELS(T, Tindices)                                 \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyRMSProp")                  \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyRMSPropOp<T, Tindices>);         \
+  REGISTER_KERNEL_BUILDER(Name("SparseApplyCenteredRMSProp")          \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyCenteredRMSPropOp<T, Tindices>); \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyRMSProp")          \
+                              .Device(DEVICE_RPC)                     \
+                              .TypeConstraint<T>("T")                 \
+                              .TypeConstraint<Tindices>("Tindices"),  \
+                          SparseApplyRMSPropOp<T, Tindices>);         \
+  REGISTER_KERNEL_BUILDER(Name("ResourceSparseApplyCenteredRMSProp")  \
+                              .Device(DEVICE_RPC)                     \
                               .TypeConstraint<T>("T")                 \
                               .TypeConstraint<Tindices>("Tindices"),  \
                           SparseApplyCenteredRMSPropOp<T, Tindices>);
