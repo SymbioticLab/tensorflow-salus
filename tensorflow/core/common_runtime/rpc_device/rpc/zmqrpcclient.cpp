@@ -384,8 +384,8 @@ void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpK
     LOG(INFO) << "RpcClient::runAsync    calling rpc using rpc stub";
     using ResponsePtr = std::unique_ptr<rpc::RunResponse>;
     auto starter = rpcCallAsync<rpc::RunResponse>(devCtx->sessionId(), request,
-                                                  [done, devCtx, context, this](const Status &status,
-                                                                                ResponsePtr &&pResponse) {
+                                                  [done, devCtx, context](const Status &status,
+                                                                          ResponsePtr &&pResponse) {
         LOG(INFO) << "RpcClient::runAsync    rpc returned with status: "
                   << status.code() << " " << status.error_message();
 
