@@ -232,12 +232,13 @@ void RPCDeviceContext::deserializeOpContext(OpKernelContext *context, const exec
         if (!t.FromProto(cpu_allocator(), outdef.val())) {
             LOG(ERROR) << "Rendezvous tensors invalid";
         }
-        LOG(INFO) << "Rendezvous send tensor " << t.DebugString();
+        LOG(INFO) << "Forwarding rendezvous send tensor " << t.DebugString();
         status = context->rendezvous()->Send(parsed, args, t, outdef.isdead());
-        LOG(INFO) << "Rendezvous send finished";
         if (!status.ok()) {
             LOG(ERROR) << "Rendezvous send error: " << status;
             continue;
+        } else {
+            LOG(INFO) << "Rendezvous send finished";
         }
     }
 
