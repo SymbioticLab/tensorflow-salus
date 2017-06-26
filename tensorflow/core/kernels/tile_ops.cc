@@ -532,6 +532,15 @@ REGISTER_KERNEL_BUILDER(
     Name("TileGrad").Device(DEVICE_CPU).HostMemory("multiples"),
     TileGradientOp<CPUDevice>);
 
+REGISTER_KERNEL_BUILDER(Name("Tile")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("multiples")
+                            .TypeConstraint<int32>("Tmultiples"),
+                        TileOp<CPUDevice>);
+REGISTER_KERNEL_BUILDER(
+    Name("TileGrad").Device(DEVICE_RPC).HostMemory("multiples"),
+    TileGradientOp<CPUDevice>);
+
 #if GOOGLE_CUDA
 
 REGISTER_KERNEL_BUILDER(Name("Tile")

@@ -96,6 +96,21 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER_UNIQUE);
 REGISTER_UNIQUE(string)
 #undef REGISTER_UNIQUE
 
+#define REGISTER_UNIQUE_RPC(type)                                \
+  REGISTER_KERNEL_BUILDER(Name("Unique")                         \
+                              .Device(DEVICE_RPC)                \
+                              .TypeConstraint<type>("T")         \
+                              .TypeConstraint<int32>("out_idx"), \
+                          UniqueOp<type>);                       \
+  REGISTER_KERNEL_BUILDER(Name("UniqueWithCounts")               \
+                              .Device(DEVICE_RPC)                \
+                              .TypeConstraint<type>("T")         \
+                              .TypeConstraint<int32>("out_idx"), \
+                          UniqueOp<type>)
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_UNIQUE_RPC);
+REGISTER_UNIQUE_RPC(string)
+#undef REGISTER_UNIQUE_RPC
+
 // Fake integer GPU kernels so that the use of Unique in optimizers (to
 // de-duplicate sparse gradient indices) does not conflict with gradients being
 // located on a GPU. These kernels run on the CPU, their inputs and outputs

@@ -24,6 +24,13 @@ REGISTER_KERNEL_BUILDER(
         .HostMemory("reduction_indices"),
     ReductionOp<CPUDevice, bool, Eigen::internal::AndReducer>);
 
+REGISTER_KERNEL_BUILDER(
+    Name("All")
+        .TypeConstraint<int32>("Tidx")
+        .Device(DEVICE_RPC)
+        .HostMemory("reduction_indices"),
+    ReductionOp<CPUDevice, bool, Eigen::internal::AndReducer>);
+
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(
     Name("All")

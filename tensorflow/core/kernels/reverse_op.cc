@@ -268,6 +268,21 @@ class ReverseV2Op : public OpKernel {
 TF_CALL_POD_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(T)                              \
+  REGISTER_KERNEL_BUILDER(Name("Reverse")                    \
+                              .Device(DEVICE_RPC)            \
+                              .TypeConstraint<T>("T")        \
+                              .HostMemory("dims"),           \
+                          ReverseOp<CPUDevice, T>)           \
+  REGISTER_KERNEL_BUILDER(Name("ReverseV2")                  \
+                              .Device(DEVICE_RPC)            \
+                              .TypeConstraint<T>("T")        \
+                              .TypeConstraint<int32>("Tidx") \
+                              .HostMemory("axis"),           \
+                          ReverseV2Op<CPUDevice, T>)
+TF_CALL_POD_TYPES(REGISTER_KERNELS_RPC);
+#undef REGISTER_KERNELS_RPC
+
 #if GOOGLE_CUDA
 
 // Forward declarations of the function specializations for GPU (to prevent

@@ -128,6 +128,10 @@ class ArgMinOp : public ArgOp<Device, T, functor::ArgMin<Device, T> > {
                               .HostMemory("dimension"),  \
                           ArgMinOp<CPUDevice, type>);
 
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_ARGMAX);
+
+#undef REGISTER_ARGMAX
+
 #define REGISTER_ARGMAX_RPC(type)                        \
   REGISTER_KERNEL_BUILDER(Name("ArgMax")                 \
                               .Device(DEVICE_RPC)        \
@@ -141,6 +145,8 @@ class ArgMinOp : public ArgOp<Device, T, functor::ArgMin<Device, T> > {
                           ArgMinOp<CPUDevice, type>);
 
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_ARGMAX_RPC);
+
+#undef REGISTER_ARGMAX_RPC
 
 #if GOOGLE_CUDA
 

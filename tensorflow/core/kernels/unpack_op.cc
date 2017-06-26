@@ -131,6 +131,15 @@ TF_CALL_ALL_TYPES(REGISTER_UNPACK);
 
 #undef REGISTER_UNPACK
 
+#define REGISTER_UNPACK_RPC(type)                                  \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("Unpack").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      UnpackOp<CPUDevice, type>)
+
+TF_CALL_ALL_TYPES(REGISTER_UNPACK_RPC);
+
+#undef REGISTER_UNPACK_RPC
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                                         \

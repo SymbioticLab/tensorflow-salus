@@ -221,4 +221,14 @@ class SubstrOp : public OpKernel {
       SubstrOp<type>);
 REGISTER_SUBSTR(int32);
 REGISTER_SUBSTR(int64);
+#undef REGISTER_SUBSTR
+
+#define REGISTER_SUBSTR_RPC(type)                                  \
+  REGISTER_KERNEL_BUILDER(                                         \
+      Name("Substr").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      SubstrOp<type>);
+REGISTER_SUBSTR_RPC(int32);
+REGISTER_SUBSTR_RPC(int64);
+#undef REGISTER_SUBSTR_RPC
+
 }  // namespace tensorflow

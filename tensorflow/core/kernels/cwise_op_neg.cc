@@ -16,6 +16,9 @@ limitations under the License.
 #include "tensorflow/core/kernels/cwise_ops_common.h"
 
 namespace tensorflow {
+REGISTER7(UnaryOp, CPU, "Neg", functor::neg, float, Eigen::half, double, int32,
+          complex64, int64, complex128);
+
 REGISTER_RPC7(UnaryOp, "Neg", functor::neg, float, Eigen::half, double, int32,
               complex64, int64, complex128);
 

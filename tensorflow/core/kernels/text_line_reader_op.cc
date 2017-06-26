@@ -114,4 +114,9 @@ REGISTER_KERNEL_BUILDER(Name("TextLineReader").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("TextLineReaderV2").Device(DEVICE_CPU),
                         TextLineReaderOp);
 
+REGISTER_KERNEL_BUILDER(Name("TextLineReader").Device(DEVICE_RPC),
+                        TextLineReaderOp);
+REGISTER_KERNEL_BUILDER(Name("TextLineReaderV2").Device(DEVICE_RPC),
+                        TextLineReaderOp);
+
 }  // namespace tensorflow

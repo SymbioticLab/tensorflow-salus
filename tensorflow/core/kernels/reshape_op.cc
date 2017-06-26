@@ -24,6 +24,12 @@ REGISTER_KERNEL_BUILDER(Name("Reshape")
                             .TypeConstraint<int32>("Tshape"),
                         ReshapeOp);
 
+REGISTER_KERNEL_BUILDER(Name("Reshape")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("shape")
+                            .TypeConstraint<int32>("Tshape"),
+                        ReshapeOp);
+
 #define REGISTER_GPU_KERNEL(type)                               \
   REGISTER_KERNEL_BUILDER(Name("Reshape")                       \
                               .Device(DEVICE_GPU)               \

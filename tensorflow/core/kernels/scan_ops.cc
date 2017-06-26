@@ -124,6 +124,16 @@ TF_CALL_GPU_NUMBER_TYPES(DECLARE_FOR_ALL_REDUCERS);
 TF_CALL_NUMBER_TYPES(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
+#define REGISTER_RPC_KERNELS(type)        \
+  REGISTER_KERNEL_BUILDER(                \
+      Name("Cumsum")                      \
+          .Device(DEVICE_RPC)             \
+          .TypeConstraint<type>("T")      \
+          .TypeConstraint<int32>("Tidx"), \
+      ScanOp<CPUDevice, type, Eigen::internal::SumReducer<type>>)
+TF_CALL_NUMBER_TYPES(REGISTER_RPC_KERNELS);
+#undef REGISTER_RPC_KERNELS
+
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNELS(type)       \
   REGISTER_KERNEL_BUILDER(               \
@@ -147,6 +157,17 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS)
       ScanOp<CPUDevice, type, Eigen::internal::ProdReducer<type>>)
 TF_CALL_NUMBER_TYPES(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
+
+// Register Cumprod kernels
+#define REGISTER_RPC_KERNELS(type)        \
+  REGISTER_KERNEL_BUILDER(                \
+      Name("Cumprod")                     \
+          .Device(DEVICE_RPC)             \
+          .TypeConstraint<type>("T")      \
+          .TypeConstraint<int32>("Tidx"), \
+      ScanOp<CPUDevice, type, Eigen::internal::ProdReducer<type>>)
+TF_CALL_NUMBER_TYPES(REGISTER_RPC_KERNELS);
+#undef REGISTER_RPC_KERNELS
 
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNELS(type)       \

@@ -75,6 +75,10 @@ REGISTER_KERNEL_BUILDER(
     Name("InvertPermutation").Device(DEVICE_CPU).TypeConstraint<int32>("T"),
     InvertPermutationOp);
 
+REGISTER_KERNEL_BUILDER(
+    Name("InvertPermutation").Device(DEVICE_RPC).TypeConstraint<int32>("T"),
+    InvertPermutationOp);
+
 REGISTER_KERNEL_BUILDER(Name("InvertPermutation")
                             .Device(DEVICE_GPU)
                             .TypeConstraint<int32>("T")

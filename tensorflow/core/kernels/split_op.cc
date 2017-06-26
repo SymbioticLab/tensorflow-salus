@@ -327,6 +327,18 @@ REGISTER_SPLIT(quint8);
 
 #undef REGISTER_SPLIT
 
+#define REGISTER_SPLIT_RPC(type)                         \
+  REGISTER_KERNEL_BUILDER(Name("Split")                  \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<type>("T") \
+                              .HostMemory("split_dim"),  \
+                          SplitOpCPU<type>)
+
+TF_CALL_ALL_TYPES(REGISTER_SPLIT_RPC);
+REGISTER_SPLIT_RPC(quint8);
+
+#undef REGISTER_SPLIT_RPC
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                               \

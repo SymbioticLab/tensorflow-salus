@@ -354,4 +354,15 @@ TF_CALL_double(REGISTER);
 
 #undef REGISTER
 
+#define REGISTER_RPC(TYPE)                                                    \
+  REGISTER_KERNEL_BUILDER(                                                    \
+      Name("RandomPoisson").Device(DEVICE_RPC).TypeConstraint<TYPE>("dtype"), \
+      RandomPoissonOp<TYPE>);
+
+TF_CALL_half(REGISTER_RPC);
+TF_CALL_float(REGISTER_RPC);
+TF_CALL_double(REGISTER_RPC);
+
+#undef REGISTER_RPC
+
 }  // end namespace tensorflow

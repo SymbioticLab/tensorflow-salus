@@ -32,6 +32,17 @@ REGISTER_KERNEL_BUILDER(Name("Shape")
                             .TypeConstraint<int64>("out_type"),
                         ShapeOp<int64>);
 
+REGISTER_KERNEL_BUILDER(Name("Shape")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("output")
+                            .TypeConstraint<int32>("out_type"),
+                        ShapeOp<int32>);
+REGISTER_KERNEL_BUILDER(Name("Shape")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("output")
+                            .TypeConstraint<int64>("out_type"),
+                        ShapeOp<int64>);
+
 #ifdef TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(type)                               \
   REGISTER_KERNEL_BUILDER(Name("Shape")                          \
@@ -115,6 +126,17 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
                             .TypeConstraint<int64>("out_type"),
                         ShapeNOp<int64>);
 
+REGISTER_KERNEL_BUILDER(Name("ShapeN")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("output")
+                            .TypeConstraint<int32>("out_type"),
+                        ShapeNOp<int32>);
+REGISTER_KERNEL_BUILDER(Name("ShapeN")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("output")
+                            .TypeConstraint<int64>("out_type"),
+                        ShapeNOp<int64>);
+
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                \
   REGISTER_KERNEL_BUILDER(Name("ShapeN")                         \
@@ -193,6 +215,9 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
 REGISTER_KERNEL_BUILDER(Name("Rank").Device(DEVICE_CPU).HostMemory("output"),
                         RankOp);
 
+REGISTER_KERNEL_BUILDER(Name("Rank").Device(DEVICE_RPC).HostMemory("output"),
+                        RankOp);
+
 #ifdef TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(type)                       \
   REGISTER_KERNEL_BUILDER(Name("Rank")                   \
@@ -258,6 +283,17 @@ REGISTER_KERNEL_BUILDER(Name("Size")
                         SizeOp<int32>);
 REGISTER_KERNEL_BUILDER(Name("Size")
                             .Device(DEVICE_CPU)
+                            .HostMemory("output")
+                            .TypeConstraint<int64>("out_type"),
+                        SizeOp<int64>);
+
+REGISTER_KERNEL_BUILDER(Name("Size")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("output")
+                            .TypeConstraint<int32>("out_type"),
+                        SizeOp<int32>);
+REGISTER_KERNEL_BUILDER(Name("Size")
+                            .Device(DEVICE_RPC)
                             .HostMemory("output")
                             .TypeConstraint<int64>("out_type"),
                         SizeOp<int64>);
@@ -342,6 +378,12 @@ REGISTER_KERNEL_BUILDER(Name("ExpandDims")
                             .TypeConstraint<int32>("Tdim"),
                         ExpandDimsOp);
 
+REGISTER_KERNEL_BUILDER(Name("ExpandDims")
+                            .Device(DEVICE_RPC)
+                            .HostMemory("dim")
+                            .TypeConstraint<int32>("Tdim"),
+                        ExpandDimsOp);
+
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                            \
   REGISTER_KERNEL_BUILDER(Name("ExpandDims")                 \
@@ -388,6 +430,7 @@ REGISTER_KERNEL_BUILDER(Name("ExpandDims")
 
 // Squeeze ---------------------------------------
 REGISTER_KERNEL_BUILDER(Name("Squeeze").Device(DEVICE_CPU), SqueezeOp);
+REGISTER_KERNEL_BUILDER(Name("Squeeze").Device(DEVICE_RPC), SqueezeOp);
 
 #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                   \

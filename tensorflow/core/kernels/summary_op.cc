@@ -120,6 +120,16 @@ class SummaryHistoOp : public OpKernel {
 TF_CALL_REAL_NUMBER_TYPES(REGISTER)
 #undef REGISTER
 
+#define REGISTER_RPC(T)                                                   \
+  REGISTER_KERNEL_BUILDER(                                                \
+      Name("ScalarSummary").Device(DEVICE_RPC).TypeConstraint<T>("T"),    \
+      SummaryScalarOp<T>);                                                \
+  REGISTER_KERNEL_BUILDER(                                                \
+      Name("HistogramSummary").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      SummaryHistoOp<T>);
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC)
+#undef REGISTER_RPC
+
 struct HistogramResource : public ResourceBase {
   histogram::ThreadSafeHistogram histogram;
 
@@ -166,6 +176,9 @@ class SummaryMergeOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("MergeSummary").Device(DEVICE_CPU),
+                        SummaryMergeOp);
+
+REGISTER_KERNEL_BUILDER(Name("MergeSummary").Device(DEVICE_RPC),
                         SummaryMergeOp);
 
 }  // namespace tensorflow

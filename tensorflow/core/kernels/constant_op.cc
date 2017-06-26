@@ -273,6 +273,14 @@ class ZerosLikeOp : public OpKernel {
 TF_CALL_POD_STRING_TYPES(REGISTER_CPU);
 #undef REGISTER_CPU
 
+#define REGISTER_RPC(type)                                            \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("ZerosLike").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      ZerosLikeOp<CPUDevice, type>)
+
+TF_CALL_POD_STRING_TYPES(REGISTER_RPC);
+#undef REGISTER_RPC
+
 #ifdef TENSORFLOW_USE_SYCL
 REGISTER_KERNEL(float, SYCL);
 REGISTER_KERNEL(bool, SYCL);
@@ -322,6 +330,11 @@ void PlaceholderOp::Compute(OpKernelContext* ctx) {
 REGISTER_KERNEL_BUILDER(Name("Placeholder").Device(DEVICE_CPU), PlaceholderOp);
 REGISTER_KERNEL_BUILDER(Name("PlaceholderV2").Device(DEVICE_CPU),
                         PlaceholderOp);
+
+REGISTER_KERNEL_BUILDER(Name("Placeholder").Device(DEVICE_RPC), PlaceholderOp);
+REGISTER_KERNEL_BUILDER(Name("PlaceholderV2").Device(DEVICE_RPC),
+                        PlaceholderOp);
+
 // The following GPU kernel registration is used to address the situation that
 // a placeholder is added in a GPU device context and soft placement is false.
 // Since a placeholder should never be executed, adding these GPU kernels has

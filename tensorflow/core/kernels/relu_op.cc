@@ -50,6 +50,23 @@ typedef Eigen::SyclDevice SYCLDevice;
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_RELU_KERNELS);
 #undef REGISTER_RELU_KERNELS
 
+#define REGISTER_RELU_KERNELS_RPC(type)                               \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("Relu").Device(DEVICE_RPC).TypeConstraint<type>("T"),      \
+      ReluOp<CPUDevice, type>);                                       \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("ReluGrad").Device(DEVICE_RPC).TypeConstraint<type>("T"),  \
+      ReluGradOp<CPUDevice, type>);                                   \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("Relu6").Device(DEVICE_RPC).TypeConstraint<type>("T"),     \
+      Relu6Op<CPUDevice, type>);                                      \
+  REGISTER_KERNEL_BUILDER(                                            \
+      Name("Relu6Grad").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      Relu6GradOp<CPUDevice, type>)
+
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_RELU_KERNELS_RPC);
+#undef REGISTER_RELU_KERNELS_RPC
+
 #define REGISTER_ELU_KERNELS(type)                                  \
   REGISTER_KERNEL_BUILDER(                                          \
       Name("Elu").Device(DEVICE_CPU).TypeConstraint<type>("T"),     \
@@ -61,6 +78,18 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER_RELU_KERNELS);
 // Elu only makes sense with float or double.
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_ELU_KERNELS);
 #undef REGISTER_ELU_KERNELS
+
+#define REGISTER_ELU_KERNELS_RPC(type)                              \
+  REGISTER_KERNEL_BUILDER(                                          \
+      Name("Elu").Device(DEVICE_RPC).TypeConstraint<type>("T"),     \
+      EluOp<CPUDevice, type>);                                      \
+  REGISTER_KERNEL_BUILDER(                                          \
+      Name("EluGrad").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      EluGradOp<CPUDevice, type>)
+
+// Elu only makes sense with float or double.
+TF_CALL_GPU_NUMBER_TYPES(REGISTER_ELU_KERNELS_RPC);
+#undef REGISTER_ELU_KERNELS_RPC
 
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.

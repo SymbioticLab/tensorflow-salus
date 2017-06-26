@@ -32,6 +32,21 @@ TF_CALL_complex64(REGISTER_CPU_KERNELS);
 TF_CALL_complex128(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
+#define REGISTER_RPC_KERNELS(type)        \
+  REGISTER_KERNEL_BUILDER(                \
+      Name("Sum")                         \
+          .Device(DEVICE_RPC)             \
+          .TypeConstraint<type>("T")      \
+          .TypeConstraint<int32>("Tidx"), \
+      ReductionOp<CPUDevice, type, Eigen::internal::SumReducer<type>>);
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC_KERNELS);
+// NOTE: We should have mean(complex64,int32), too. But that needs to
+// change Eigen::internal::MeanReducer to cast int to complex<float>.
+// We don't see immediate need of mean(complex64,int32) anyway.
+TF_CALL_complex64(REGISTER_RPC_KERNELS);
+TF_CALL_complex128(REGISTER_RPC_KERNELS);
+#undef REGISTER_RPC_KERNELS
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU_KERNELS(type)          \

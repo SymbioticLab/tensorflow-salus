@@ -118,7 +118,19 @@ class TopK : public OpKernel {
   REGISTER_KERNELS_NAME(TopKV2, type)
 
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS);
-#undef REGISTER_KERNELS_TO_NAME
+#undef REGISTER_KERNELS_NAME
 #undef REGISTER_KERNELS
+
+#define REGISTER_KERNELS_NAME_RPC(name, type) \
+  REGISTER_KERNEL_BUILDER(                \
+      Name(#name).Device(DEVICE_RPC).TypeConstraint<type>("T"), TopK<type>)
+
+#define REGISTER_KERNELS_RPC(type)       \
+  REGISTER_KERNELS_NAME_RPC(TopK, type); \
+  REGISTER_KERNELS_NAME_RPC(TopKV2, type)
+
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS_RPC);
+#undef REGISTER_KERNELS_NAME_RPC
+#undef REGISTER_KERNELS_RPC
 
 }  // namespace tensorflow

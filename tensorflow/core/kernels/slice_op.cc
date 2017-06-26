@@ -247,6 +247,20 @@ REGISTER_SLICE(bfloat16);
 
 #undef REGISTER_SLICE
 
+#define REGISTER_SLICE_RPC(type)                         \
+  REGISTER_KERNEL_BUILDER(Name("Slice")                  \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<type>("T") \
+                              .HostMemory("begin")       \
+                              .HostMemory("size"),       \
+                          SliceOp<CPUDevice, type>)
+
+TF_CALL_POD_STRING_TYPES(REGISTER_SLICE_RPC);
+TF_CALL_QUANTIZED_TYPES(REGISTER_SLICE_RPC);
+REGISTER_SLICE_RPC(bfloat16);
+
+#undef REGISTER_SLICE_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

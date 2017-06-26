@@ -100,6 +100,9 @@ class ReaderReadOp : public ReaderVerbAsyncOpKernel {
 REGISTER_KERNEL_BUILDER(Name("ReaderRead").Device(DEVICE_CPU), ReaderReadOp);
 REGISTER_KERNEL_BUILDER(Name("ReaderReadV2").Device(DEVICE_CPU), ReaderReadOp);
 
+REGISTER_KERNEL_BUILDER(Name("ReaderRead").Device(DEVICE_RPC), ReaderReadOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderReadV2").Device(DEVICE_RPC), ReaderReadOp);
+
 class ReaderReadUpToOp : public ReaderVerbAsyncOpKernel {
  public:
   using ReaderVerbAsyncOpKernel::ReaderVerbAsyncOpKernel;
@@ -154,6 +157,11 @@ REGISTER_KERNEL_BUILDER(Name("ReaderReadUpTo").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("ReaderReadUpToV2").Device(DEVICE_CPU),
                         ReaderReadUpToOp);
 
+REGISTER_KERNEL_BUILDER(Name("ReaderReadUpTo").Device(DEVICE_RPC),
+                        ReaderReadUpToOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderReadUpToV2").Device(DEVICE_RPC),
+                        ReaderReadUpToOp);
+
 class ReaderNumRecordsProducedOp : public ReaderVerbSyncOpKernel {
  public:
   using ReaderVerbSyncOpKernel::ReaderVerbSyncOpKernel;
@@ -170,6 +178,11 @@ class ReaderNumRecordsProducedOp : public ReaderVerbSyncOpKernel {
 REGISTER_KERNEL_BUILDER(Name("ReaderNumRecordsProduced").Device(DEVICE_CPU),
                         ReaderNumRecordsProducedOp);
 REGISTER_KERNEL_BUILDER(Name("ReaderNumRecordsProducedV2").Device(DEVICE_CPU),
+                        ReaderNumRecordsProducedOp);
+
+REGISTER_KERNEL_BUILDER(Name("ReaderNumRecordsProduced").Device(DEVICE_RPC),
+                        ReaderNumRecordsProducedOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderNumRecordsProducedV2").Device(DEVICE_RPC),
                         ReaderNumRecordsProducedOp);
 
 class ReaderNumWorkUnitsCompletedOp : public ReaderVerbSyncOpKernel {
@@ -191,6 +204,12 @@ REGISTER_KERNEL_BUILDER(
     Name("ReaderNumWorkUnitsCompletedV2").Device(DEVICE_CPU),
     ReaderNumWorkUnitsCompletedOp);
 
+REGISTER_KERNEL_BUILDER(Name("ReaderNumWorkUnitsCompleted").Device(DEVICE_RPC),
+                        ReaderNumWorkUnitsCompletedOp);
+REGISTER_KERNEL_BUILDER(
+    Name("ReaderNumWorkUnitsCompletedV2").Device(DEVICE_RPC),
+    ReaderNumWorkUnitsCompletedOp);
+
 class ReaderSerializeStateOp : public ReaderVerbSyncOpKernel {
  public:
   using ReaderVerbSyncOpKernel::ReaderVerbSyncOpKernel;
@@ -208,6 +227,11 @@ class ReaderSerializeStateOp : public ReaderVerbSyncOpKernel {
 REGISTER_KERNEL_BUILDER(Name("ReaderSerializeState").Device(DEVICE_CPU),
                         ReaderSerializeStateOp);
 REGISTER_KERNEL_BUILDER(Name("ReaderSerializeStateV2").Device(DEVICE_CPU),
+                        ReaderSerializeStateOp);
+
+REGISTER_KERNEL_BUILDER(Name("ReaderSerializeState").Device(DEVICE_RPC),
+                        ReaderSerializeStateOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderSerializeStateV2").Device(DEVICE_RPC),
                         ReaderSerializeStateOp);
 
 class ReaderRestoreStateOp : public ReaderVerbSyncOpKernel {
@@ -231,6 +255,11 @@ REGISTER_KERNEL_BUILDER(Name("ReaderRestoreState").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("ReaderRestoreStateV2").Device(DEVICE_CPU),
                         ReaderRestoreStateOp);
 
+REGISTER_KERNEL_BUILDER(Name("ReaderRestoreState").Device(DEVICE_RPC),
+                        ReaderRestoreStateOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderRestoreStateV2").Device(DEVICE_RPC),
+                        ReaderRestoreStateOp);
+
 class ReaderResetOp : public ReaderVerbSyncOpKernel {
  public:
   using ReaderVerbSyncOpKernel::ReaderVerbSyncOpKernel;
@@ -243,6 +272,10 @@ class ReaderResetOp : public ReaderVerbSyncOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ReaderReset").Device(DEVICE_CPU), ReaderResetOp);
 REGISTER_KERNEL_BUILDER(Name("ReaderResetV2").Device(DEVICE_CPU),
+                        ReaderResetOp);
+
+REGISTER_KERNEL_BUILDER(Name("ReaderReset").Device(DEVICE_RPC), ReaderResetOp);
+REGISTER_KERNEL_BUILDER(Name("ReaderResetV2").Device(DEVICE_RPC),
                         ReaderResetOp);
 
 }  // namespace tensorflow

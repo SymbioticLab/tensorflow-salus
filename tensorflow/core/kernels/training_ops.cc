@@ -1716,7 +1716,7 @@ REGISTER_KERNELS(CPU, double);
       Name("ApplyAdagradDA").Device(DEVICE_RPC).TypeConstraint<T>("T"),   \
       ApplyAdagradDAOp<CPUDevice, T>);                                    \
   REGISTER_KERNEL_BUILDER(Name("ResourceApplyAdagradDA")                  \
-                              .Device(DEVICE_RPCD)                         \
+                              .Device(DEVICE_RPC)                         \
                               .HostMemory("var")                          \
                               .HostMemory("gradient_accumulator")         \
                               .HostMemory("gradient_squared_accumulator") \

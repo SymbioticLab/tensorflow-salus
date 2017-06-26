@@ -57,4 +57,13 @@ TF_CALL_ALL_TYPES(REGISTER)
 
 #undef REGISTER
 
+#define REGISTER_RPC(T)                                                \
+  REGISTER_KERNEL_BUILDER(                                             \
+      Name("TensorSummary").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
+      SummaryTensorOp<T>);
+
+TF_CALL_ALL_TYPES(REGISTER_RPC)
+
+#undef REGISTER_RPC
+
 }  // namespace tensorflow

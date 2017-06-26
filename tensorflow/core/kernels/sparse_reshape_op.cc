@@ -156,4 +156,7 @@ class SparseReshapeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SparseReshape").Device(DEVICE_CPU),
                         SparseReshapeOp)
+
+REGISTER_KERNEL_BUILDER(Name("SparseReshape").Device(DEVICE_RPC),
+                        SparseReshapeOp)
 }  // namespace tensorflow

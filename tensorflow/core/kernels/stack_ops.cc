@@ -180,6 +180,7 @@ class StackOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Stack").Device(DEVICE_CPU), StackOp);
+REGISTER_KERNEL_BUILDER(Name("Stack").Device(DEVICE_RPC), StackOp);
 REGISTER_KERNEL_BUILDER(Name("Stack").Device(DEVICE_GPU).HostMemory("handle"),
                         StackOp);
 
@@ -261,6 +262,8 @@ class StackPushOp : public AsyncOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("StackPush").Device(DEVICE_CPU),
                         StackPushOp<CPUDevice>);
+REGISTER_KERNEL_BUILDER(Name("StackPush").Device(DEVICE_RPC),
+                        StackPushOp<CPUDevice>);
 
 #define REGISTER_GPU_KERNEL(type)                         \
   REGISTER_KERNEL_BUILDER(Name("StackPush")               \
@@ -332,6 +335,7 @@ class StackPopOp : public AsyncOpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("StackPop").Device(DEVICE_CPU), StackPopOp);
+REGISTER_KERNEL_BUILDER(Name("StackPop").Device(DEVICE_RPC), StackPopOp);
 
 #define REGISTER_GPU_KERNEL(type)                                 \
   REGISTER_KERNEL_BUILDER(Name("StackPop")                        \
@@ -374,6 +378,7 @@ class StackCloseOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("StackClose").Device(DEVICE_CPU), StackCloseOp);
+REGISTER_KERNEL_BUILDER(Name("StackClose").Device(DEVICE_RPC), StackCloseOp);
 REGISTER_KERNEL_BUILDER(
     Name("StackClose").Device(DEVICE_GPU).HostMemory("handle"), StackCloseOp);
 

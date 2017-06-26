@@ -96,6 +96,7 @@ class StageOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Stage").Device(DEVICE_CPU), StageOp);
+REGISTER_KERNEL_BUILDER(Name("Stage").Device(DEVICE_RPC), StageOp);
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("Stage").Device(DEVICE_GPU), StageOp);
 #endif
@@ -126,6 +127,7 @@ class UnstageOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Unstage").Device(DEVICE_CPU), UnstageOp);
+REGISTER_KERNEL_BUILDER(Name("Unstage").Device(DEVICE_RPC), UnstageOp);
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("Unstage").Device(DEVICE_GPU), UnstageOp);
 #endif

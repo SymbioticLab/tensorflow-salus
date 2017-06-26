@@ -358,6 +358,25 @@ REGISTER_SPLIT_LEN(bfloat16);
 #undef REGISTER_SPLIT_LEN
 #undef REGISTER_SPLIT
 
+#define REGISTER_SPLIT_RPC(type, len_type)                      \
+  REGISTER_KERNEL_BUILDER(Name("SplitV")                        \
+                              .Device(DEVICE_RPC)               \
+                              .TypeConstraint<len_type>("Tlen") \
+                              .TypeConstraint<type>("T")        \
+                              .HostMemory("size_splits")        \
+                              .HostMemory("split_dim"),         \
+                          SplitVOpCPU<type, len_type>);
+
+#define REGISTER_SPLIT_LEN_RPC(type) \
+  REGISTER_SPLIT_RPC(type, int32);   \
+  REGISTER_SPLIT_RPC(type, int64);
+
+TF_CALL_ALL_TYPES(REGISTER_SPLIT_LEN_RPC);
+REGISTER_SPLIT_LEN_RPC(bfloat16);
+
+#undef REGISTER_SPLIT_LEN_RPC
+#undef REGISTER_SPLIT_RPC
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type, len_type)                            \

@@ -244,5 +244,7 @@ class SummaryImageOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ImageSummary").Device(DEVICE_CPU),
                         SummaryImageOp);
+REGISTER_KERNEL_BUILDER(Name("ImageSummary").Device(DEVICE_RPC),
+                        SummaryImageOp);
 
 }  // namespace tensorflow

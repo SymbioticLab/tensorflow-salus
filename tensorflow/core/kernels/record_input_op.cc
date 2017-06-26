@@ -64,4 +64,5 @@ class RecordInputOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("RecordInput").Device(DEVICE_CPU), RecordInputOp);
+REGISTER_KERNEL_BUILDER(Name("RecordInput").Device(DEVICE_RPC), RecordInputOp);
 }  // namespace tensorflow

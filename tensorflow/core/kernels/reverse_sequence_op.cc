@@ -176,6 +176,21 @@ class ReverseSequenceOp : public OpKernel {
 
 TF_CALL_NUMBER_TYPES(REGISTER_REVERSE_SEQUENCE_LEN);
 
+#define REGISTER_REVERSE_SEQUENCE_RPC(type, len_type)                       \
+  REGISTER_KERNEL_BUILDER(                                                  \
+      Name("ReverseSequence").Device(DEVICE_RPC).TypeConstraint<type>("T"). \
+      TypeConstraint<len_type>("Tlen"),                                     \
+      ReverseSequenceOp<CPUDevice, type, len_type>);
+
+#define REGISTER_REVERSE_SEQUENCE_LEN_RPC(type)    \
+  REGISTER_REVERSE_SEQUENCE_RPC(type, int32);      \
+  REGISTER_REVERSE_SEQUENCE_RPC(type, int64);
+
+TF_CALL_NUMBER_TYPES(REGISTER_REVERSE_SEQUENCE_LEN_RPC);
+
+#undef REGISTER_REVERSE_SEQUENCE_RPC
+#undef REGISTER_REVERSE_SEQUENCE_LEN_RPC
+
 #if GOOGLE_CUDA
 
 // Forward declarations of the functor specializations for GPU.

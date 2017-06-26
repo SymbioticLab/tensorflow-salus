@@ -155,6 +155,16 @@ class PadOp : public OpKernel {
 TF_CALL_POD_TYPES(REGISTER_KERNEL);
 #undef REGISTER_KERNEL
 
+#define REGISTER_KERNEL_RPC(type)                        \
+  REGISTER_KERNEL_BUILDER(Name("Pad")                    \
+                              .Device(DEVICE_RPC)        \
+                              .TypeConstraint<type>("T") \
+                              .HostMemory("paddings"),   \
+                          PadOp<CPUDevice, type>)
+
+TF_CALL_POD_TYPES(REGISTER_KERNEL_RPC);
+#undef REGISTER_KERNEL_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

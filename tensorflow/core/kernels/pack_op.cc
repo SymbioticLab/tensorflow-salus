@@ -137,6 +137,17 @@ TF_CALL_bfloat16(REGISTER_PACK);
 
 #undef REGISTER_PACK
 
+#define REGISTER_PACK_RPC(type)                                  \
+  REGISTER_KERNEL_BUILDER(                                       \
+      Name("Pack").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      PackOp<CPUDevice, type>)
+
+TF_CALL_ALL_TYPES(REGISTER_PACK_RPC);
+TF_CALL_QUANTIZED_TYPES(REGISTER_PACK_RPC);
+TF_CALL_bfloat16(REGISTER_PACK_RPC);
+
+#undef REGISTER_PACK_RPC
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                                       \

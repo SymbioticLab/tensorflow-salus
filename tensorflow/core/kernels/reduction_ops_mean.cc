@@ -27,6 +27,16 @@ namespace tensorflow {
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
+#define REGISTER_RPC_KERNELS(type)        \
+  REGISTER_KERNEL_BUILDER(                \
+      Name("Mean")                        \
+          .Device(DEVICE_RPC)             \
+          .TypeConstraint<type>("T")      \
+          .TypeConstraint<int32>("Tidx"), \
+      ReductionOp<CPUDevice, type, Eigen::internal::MeanReducer<type>>);
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC_KERNELS);
+#undef REGISTER_RPC_KERNELS
+
 #if GOOGLE_CUDA
 
 #define REGISTER_GPU_KERNELS(type)          \

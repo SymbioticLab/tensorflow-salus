@@ -86,6 +86,17 @@ void SoftsignGradOp<Device, T>::OperateNoTemplate(OpKernelContext* context,
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
+#define REGISTER_KERNELS_RPC(type)                                       \
+  REGISTER_KERNEL_BUILDER(                                               \
+      Name("Softsign").Device(DEVICE_RPC).TypeConstraint<type>("T"),     \
+      SoftsignOp<CPUDevice, type>);                                      \
+  REGISTER_KERNEL_BUILDER(                                               \
+      Name("SoftsignGrad").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
+      SoftsignGradOp<CPUDevice, type>);
+
+TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS_RPC);
+#undef REGISTER_KERNELS_RPC
+
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {

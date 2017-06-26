@@ -512,4 +512,9 @@ REGISTER_KERNEL_BUILDER(Name("RandomShuffleQueue").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("RandomShuffleQueueV2").Device(DEVICE_CPU),
                         RandomShuffleQueueOp);
 
+REGISTER_KERNEL_BUILDER(Name("RandomShuffleQueue").Device(DEVICE_RPC),
+                        RandomShuffleQueueOp);
+REGISTER_KERNEL_BUILDER(Name("RandomShuffleQueueV2").Device(DEVICE_RPC),
+                        RandomShuffleQueueOp);
+
 }  // namespace tensorflow
