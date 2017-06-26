@@ -114,7 +114,7 @@ Status RPCDevice::MakeTensorFromProto(const TensorProto &tensor_proto, const All
             }
         }
     } else {
-        LOG(WARNING) << "RpcDevice MakeTensorFromProto returning an empty tensor, since it is not used in RPC";
+        // RpcDevice MakeTensorFromProto returning an empty tensor, since it is not used in RPC
         return Status::OK();
     }
     return errors::InvalidArgument("Cannot parse tensor from proto: ",

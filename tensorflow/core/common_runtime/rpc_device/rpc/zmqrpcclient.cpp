@@ -102,20 +102,32 @@ void ZmqRpcClient::recvLoop()
 
     while (true) {
         try {
-            zmq::message_t msg;
             // Receive and skip identification frames
+            zmq::message_t msg;
             do {
                 recvSock.recv(&msg);
             } while (msg.size() != 0 && recvSock.getsockopt<int64_t>(ZMQ_RCVMORE));
 
-            // Now receive our message evenlop
+            // Now receive the message evenlop
             if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
                 LOG(ERROR) << "Skipped one iteration due to no evenlop message part found after identity frames";
                 continue;
             }
-            recvSock.recv(&msg);
+            zmq::message_t msg_evenlop;
+            recvSock.recv(&msg_evenlop);
+
+            // Now receive the message body, don't skip if we can't find the body frame,
+            // since we have the evenlop frame, we may find a callback to deal with this error.
+            bool has_body = false;
+            zmq::message_t msg_body;
+            if (recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
+                recvSock.recv(&msg_body);
+                has_body = true;
+            }
+
+            // Parse what we have received
             rpc::EvenlopDef edef;
-            if(!edef.ParseFromArray(msg.data(), msg.size())) {
+            if(!edef.ParseFromArray(msg_evenlop.data(), msg_evenlop.size())) {
                 LOG(ERROR) << "Received un-identifiable malformatted message. Dropping";
                 continue;
             }
@@ -165,19 +177,19 @@ void ZmqRpcClient::recvLoop()
             }
 
             // Now receive our message body
-            if (reply) {
-                if (!recvSock.getsockopt<int64_t>(ZMQ_RCVMORE)) {
-                    LOG(ERROR) << "Skipped one iteration due to no body message part found after identity frames";
-                    cb(errors::Internal("No body message found"), std::move(reply));
-                    continue;
-                }
-                recvSock.recv(&msg);
-                if(!reply->ParseFromArray(msg.data(), msg.size())) {
+            if (reply && !has_body) {
+                LOG(ERROR) << "Skipped one iteration due to no body message part found after evenlop frame";
+                cb(errors::Internal("No body message found"), std::move(reply));
+                continue;
+            } else if (reply) {
+                if(!reply->ParseFromArray(msg_body.data(), msg_body.size())) {
                     LOG(ERROR) << "Received malformatted message body. Dropping";
                     cb(errors::Internal("Body message malformatted"), std::move(reply));
                     continue;
                 }
             }
+
+            // Invoke callback regardless whether we have a body or not
             LOG(INFO) << "Calling callback function for seq " << edef.seq() << " and type " << edef.type();
             cb(Status::OK(), std::move(reply));
             LOG(INFO) << "Callback function returned for seq " << edef.seq() << " and type " << edef.type();
