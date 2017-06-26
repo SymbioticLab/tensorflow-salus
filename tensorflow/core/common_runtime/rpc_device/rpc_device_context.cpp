@@ -228,10 +228,6 @@ void RPCDeviceContext::deserializeOpContext(OpKernelContext *context, const exec
 
         // Directly create tensor on CPU
         args.alloc_attrs.set_on_host(true);
-        if (parsed.dst.type != "CPU") {
-            LOG(ERROR) << "Rendez from RPC to non CPU device is not supported";
-            continue;
-        }
         Tensor t;
         if (!t.FromProto(cpu_allocator(), outdef.val())) {
             LOG(ERROR) << "Rendezvous tensors invalid";
