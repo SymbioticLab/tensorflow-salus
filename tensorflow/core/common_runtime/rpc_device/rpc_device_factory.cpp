@@ -10,14 +10,22 @@ class RPCDeviceFactory : public DeviceFactory {
 public:
     Status CreateDevices(const SessionOptions &options, const string &name_prefix,
                          std::vector<Device *> *devices) override {
-        static ZmqRpcClient rpc(options.env, "tcp://localhost:5501");
+        LOG(INFO) << "RPCDeviceFactory got configproto: " << options.config.DebugString();
 
-        LOG(INFO) << "Creating RPC devices";
         int n = 1;
         auto iter = options.config.device_count().find("RPC");
         if (iter != options.config.device_count().end()) {
             n = iter->second;
         }
+
+        if (n == 0) {
+            return Status::OK();
+        }
+
+        static ZmqRpcClient rpc(options.env, "tcp://localhost:5501");
+
+        LOG(INFO) << "Creating RPC devices";
+
         for (int i = 0; i < n; i++) {
             string name = strings::StrCat(name_prefix, "/device:RPC:", i);
 
