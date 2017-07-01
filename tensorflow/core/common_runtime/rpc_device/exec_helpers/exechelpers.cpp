@@ -22,7 +22,8 @@
 namespace tensorflow {
 
 std::unique_ptr<Graph> ExecHelpers::convertGraphDefToGraph(const GraphDef &graphdef,
-                                                           const FunctionLibraryDefinition *fdef)
+                                                           const FunctionLibraryDefinition *fdef,
+                                                           std::unordered_map<std::string, int> &gindex)
 {
     auto graph = std::unique_ptr<Graph>(new Graph(fdef));
     GraphConstructorOptions opts;
@@ -31,6 +32,12 @@ std::unique_ptr<Graph> ExecHelpers::convertGraphDefToGraph(const GraphDef &graph
     if (!ok.ok()) {
         graph.reset();
     }
+    for (auto node: graph->nodes()) {
+        LOG(INFO) << "Procssing node id" << node->id();
+        gindex[node->name()] = node->id();
+    }
+
+    LOG(INFO) << "gindex built " << ok;
     return graph;
 }
 

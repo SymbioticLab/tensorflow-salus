@@ -24,6 +24,7 @@
 #include "tensorflow/core/graph/graph_constructor.h"
 
 #include <memory>
+#include <unordered_map>
 
 namespace tensorflow {
 class Graph;
@@ -35,7 +36,8 @@ class ExecHelpers
 {
 public:
     static std::unique_ptr<Graph> convertGraphDefToGraph(const GraphDef &graphdef,
-                                                         const FunctionLibraryDefinition *fdef);
+                                                         const FunctionLibraryDefinition *fdef,
+                                                         std::unordered_map<std::string, int> &gindex);
 };
 
 } // namespace tensorflow
