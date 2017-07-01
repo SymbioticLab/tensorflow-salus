@@ -565,6 +565,30 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
       inputs() const;
 
+  // repeated uint32 input_alloc_attrs = 6;
+  int input_alloc_attrs_size() const;
+  void clear_input_alloc_attrs();
+  static const int kInputAllocAttrsFieldNumber = 6;
+  ::google::protobuf::uint32 input_alloc_attrs(int index) const;
+  void set_input_alloc_attrs(int index, ::google::protobuf::uint32 value);
+  void add_input_alloc_attrs(::google::protobuf::uint32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      input_alloc_attrs() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_input_alloc_attrs();
+
+  // repeated uint32 output_alloc_attrs = 7;
+  int output_alloc_attrs_size() const;
+  void clear_output_alloc_attrs();
+  static const int kOutputAllocAttrsFieldNumber = 7;
+  ::google::protobuf::uint32 output_alloc_attrs(int index) const;
+  void set_output_alloc_attrs(int index, ::google::protobuf::uint32 value);
+  void add_output_alloc_attrs(::google::protobuf::uint32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      output_alloc_attrs() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_output_alloc_attrs();
+
   // int64 step_id = 1;
   void clear_step_id();
   static const int kStepIdFieldNumber = 1;
@@ -594,6 +618,10 @@ class TFOpContextDef : public ::google::protobuf::Message /* @@protoc_insertion_
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem > inputs_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > input_alloc_attrs_;
+  mutable int _input_alloc_attrs_cached_byte_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > output_alloc_attrs_;
+  mutable int _output_alloc_attrs_cached_byte_size_;
   ::google::protobuf::int64 step_id_;
   ::google::protobuf::uint64 frame_id_;
   ::google::protobuf::int64 iter_id_;
@@ -1472,6 +1500,66 @@ inline const ::google::protobuf::RepeatedPtrField< ::executor::TFTensorItem >&
 TFOpContextDef::inputs() const {
   // @@protoc_insertion_point(field_list:executor.TFOpContextDef.inputs)
   return inputs_;
+}
+
+// repeated uint32 input_alloc_attrs = 6;
+inline int TFOpContextDef::input_alloc_attrs_size() const {
+  return input_alloc_attrs_.size();
+}
+inline void TFOpContextDef::clear_input_alloc_attrs() {
+  input_alloc_attrs_.Clear();
+}
+inline ::google::protobuf::uint32 TFOpContextDef::input_alloc_attrs(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.input_alloc_attrs)
+  return input_alloc_attrs_.Get(index);
+}
+inline void TFOpContextDef::set_input_alloc_attrs(int index, ::google::protobuf::uint32 value) {
+  input_alloc_attrs_.Set(index, value);
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.input_alloc_attrs)
+}
+inline void TFOpContextDef::add_input_alloc_attrs(::google::protobuf::uint32 value) {
+  input_alloc_attrs_.Add(value);
+  // @@protoc_insertion_point(field_add:executor.TFOpContextDef.input_alloc_attrs)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+TFOpContextDef::input_alloc_attrs() const {
+  // @@protoc_insertion_point(field_list:executor.TFOpContextDef.input_alloc_attrs)
+  return input_alloc_attrs_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+TFOpContextDef::mutable_input_alloc_attrs() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextDef.input_alloc_attrs)
+  return &input_alloc_attrs_;
+}
+
+// repeated uint32 output_alloc_attrs = 7;
+inline int TFOpContextDef::output_alloc_attrs_size() const {
+  return output_alloc_attrs_.size();
+}
+inline void TFOpContextDef::clear_output_alloc_attrs() {
+  output_alloc_attrs_.Clear();
+}
+inline ::google::protobuf::uint32 TFOpContextDef::output_alloc_attrs(int index) const {
+  // @@protoc_insertion_point(field_get:executor.TFOpContextDef.output_alloc_attrs)
+  return output_alloc_attrs_.Get(index);
+}
+inline void TFOpContextDef::set_output_alloc_attrs(int index, ::google::protobuf::uint32 value) {
+  output_alloc_attrs_.Set(index, value);
+  // @@protoc_insertion_point(field_set:executor.TFOpContextDef.output_alloc_attrs)
+}
+inline void TFOpContextDef::add_output_alloc_attrs(::google::protobuf::uint32 value) {
+  output_alloc_attrs_.Add(value);
+  // @@protoc_insertion_point(field_add:executor.TFOpContextDef.output_alloc_attrs)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+TFOpContextDef::output_alloc_attrs() const {
+  // @@protoc_insertion_point(field_list:executor.TFOpContextDef.output_alloc_attrs)
+  return output_alloc_attrs_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+TFOpContextDef::mutable_output_alloc_attrs() {
+  // @@protoc_insertion_point(field_mutable_list:executor.TFOpContextDef.output_alloc_attrs)
+  return &output_alloc_attrs_;
 }
 
 // -------------------------------------------------------------------

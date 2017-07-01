@@ -170,9 +170,15 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
     tfdef.set_is_input_dead(params->is_input_dead);
 
     for (int i = 0; i != context->num_inputs(); i++) {
+        tfdef.add_input_alloc_attrs(context->input_alloc_attr(i).value);
+
         auto initem = tfdef.add_inputs();
         initem->set_is_ref(context->input_is_ref(i));
         initem->set_name(findNodeDefFor(&context->op_kernel()).input(i));
+    }
+
+    for (int i = 0; i != context->num_outputs(); i++) {
+        tfdef.add_output_alloc_attrs(context->output_alloc_attr(i).value);
     }
 
     tfdef.SerializeToString(def->mutable_extra());
