@@ -27,6 +27,7 @@ std::unique_ptr<Graph> ExecHelpers::convertGraphDefToGraph(const GraphDef &graph
 {
     auto graph = std::unique_ptr<Graph>(new Graph(fdef));
     GraphConstructorOptions opts;
+    opts.allow_internal_ops = true;
     auto ok = ConvertGraphDefToGraph(opts, graphdef, graph.get());
     LOG(INFO) << "ConvertGraphDefToGraph returned " << ok;
     if (!ok.ok()) {
