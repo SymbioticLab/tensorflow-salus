@@ -141,6 +141,12 @@ void RPCDeviceContext::ComputeAsync(AsyncOpKernel* op_kernel, OpKernelContext* c
 void RPCDeviceContext::serializeOpKernel(executor::OpKernelDef *def, tensorflow::OpKernel *kernel)
 {
     LOG(INFO) << "About to serialize OpKernel: " << kernel->name();
+    for (int i = 0; i != kernel->input_memory_types().size(); ++i) {
+        LOG(INFO) << "input_memory_types() " << i << kernel->input_memory_types()[i];
+    }
+    for (int i = 0; i != kernel->output_memory_types().size(); ++i) {
+        LOG(INFO) << "output_memory_types() " << i << kernel->output_memory_types()[i];
+    }
 
     def->set_id(kernel->name());
     def->set_oplibrary(executor::TENSORFLOW);
@@ -170,6 +176,7 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
     tfdef.set_is_input_dead(params->is_input_dead);
 
     for (int i = 0; i != context->num_inputs(); i++) {
+        LOG(INFO) << "input alloc attr " << i << context->input_alloc_attr(i).value;
         tfdef.add_input_alloc_attrs(context->input_alloc_attr(i).value);
 
         auto initem = tfdef.add_inputs();
@@ -178,6 +185,7 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
     }
 
     for (int i = 0; i != context->num_outputs(); i++) {
+        LOG(INFO) << "output alloc attr " << i << context->output_alloc_attr(i).value;
         tfdef.add_output_alloc_attrs(context->output_alloc_attr(i).value);
     }
 
