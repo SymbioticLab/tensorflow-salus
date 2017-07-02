@@ -32,13 +32,13 @@ std::unique_ptr<Graph> ExecHelpers::convertGraphDefToGraph(const GraphDef &graph
     LOG(INFO) << "ConvertGraphDefToGraph returned " << ok;
     if (!ok.ok()) {
         graph.reset();
+    } else {
+        for (auto node: graph->nodes()) {
+            LOG(INFO) << "Procssing node id" << node->id();
+            gindex[node->name()] = node->id();
+        }
+        LOG(INFO) << "gindex built " << ok;
     }
-    for (auto node: graph->nodes()) {
-        LOG(INFO) << "Procssing node id" << node->id();
-        gindex[node->name()] = node->id();
-    }
-
-    LOG(INFO) << "gindex built " << ok;
     return graph;
 }
 
