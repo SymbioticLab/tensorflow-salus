@@ -216,6 +216,7 @@ void DirectSession::SchedClosure(thread::ThreadPool* pool,
   // safe given the reasoning above.
   c();
 #else
+  VLOG(3) << "Schedule a closure on pool " << pool;
   pool->Schedule(std::move(c));
 #endif  // __ANDROID__
 }
@@ -440,7 +441,15 @@ Status DirectSession::Run(const RunOptions& run_options,
   args.rendezvous = run_state.rendez;
   args.cancellation_manager = &step_cancellation_manager;
   args.runner = [this, pool](Executor::Args::Closure c) {
-    SchedClosure(pool, std::move(c));
+    static std::atomic_int_fast64_t counter(0);
+    auto i = counter.fetch_add(1);
+    LOG(INFO) << "Schedule seq " << i << " from thread " << std::this_thread::get_id();
+    LOG(INFO) << "";
+    SchedClosure(pool, [c, i](){
+        LOG(INFO) << "ThreadPool thread " << std::this_thread::get_id() << " begin seq " << i;
+        c();
+        LOG(INFO) << "ThreadPool thread " << std::this_thread::get_id() << " end seq " << i;
+    });
   };
   args.session_state = &session_state_;
   args.tensor_store = &run_state.tensor_store;
