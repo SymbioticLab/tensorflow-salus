@@ -63,19 +63,20 @@ private:
         AsyncCallStarter &operator=(const AsyncCallStarter &other) = delete;
 
         AsyncCallStarter(AsyncCallStarter &&other)
-            : m_typedCallbacks(other.m_typedCallbacks)
+            : m_pTypedCallbacks(other.m_pTypedCallbacks)
             , m_client(other.m_client)
             , m_seq(other.m_seq)
             , m_evenlop(std::move(other.m_evenlop))
             , m_zmqmsg(std::move(other.m_zmqmsg))
             , m_started(std::move(other.m_started))
         {
+            other.m_pTypedCallbacks = nullptr;
             other.m_started = true;
         }
 
-        AsyncCallStarter(std::unordered_map<std::string, DoneCallback> &typedCallbacks,
+        AsyncCallStarter(std::unordered_map<std::string, DoneCallback> *pTypedCallbacks,
                          ZmqRpcClient &client, uint64_t seq, zmq::message_t &&evenlop, zmq::message_t &&zmqmsg)
-            : m_typedCallbacks(typedCallbacks)
+            : m_pTypedCallbacks(pTypedCallbacks)
             , m_client(client)
             , m_seq(seq)
             , m_evenlop(std::move(evenlop))
@@ -90,14 +91,19 @@ private:
 
         void start();
 
-        void add(const std::string &type, DoneCallback cb)
+        bool add(const std::string &type, DoneCallback cb)
         {
-            m_typedCallbacks[type] = std::move(cb);
+            if (m_pTypedCallbacks) {
+                (*m_pTypedCallbacks)[type] = std::move(cb);
+                return true;
+            }
+            LOG(WARNING) << "Adding typed callback to an empty (null) starter";
+            return false;
         }
 
         uint64_t seq() const { return m_seq; };
     private:
-        std::unordered_map<std::string, DoneCallback> &m_typedCallbacks;
+        std::unordered_map<std::string, DoneCallback> *m_pTypedCallbacks;
         ZmqRpcClient &m_client;
         uint64_t m_seq;
         zmq::message_t m_evenlop;
@@ -133,6 +139,8 @@ private:
         ProtoPtr reply;
         DoneCallback done;
         std::unordered_map<std::string, DoneCallback> typedCallbacks;
+
+        bool empty() const { return !reply && !done && typedCallbacks.empty(); }
 
         Item();
         Item(Item &&other);

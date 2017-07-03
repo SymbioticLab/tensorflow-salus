@@ -270,10 +270,14 @@ ZmqRpcClient::AsyncCallStarter ZmqRpcClient::makeStarter(const std::string &sess
     zmq::message_t zmqmsg(msg.ByteSizeLong());
     msg.SerializeToArray(zmqmsg.data(), zmqmsg.size());
 
-    {
+    if (cbitem.empty()) {
+        return AsyncCallStarter(nullptr,
+                                *this, seq, std::move(evenlop), std::move(zmqmsg));
+    } else {
         mutex_lock locker(m_mtable);
-        m_recvCallbacks.emplace(seq, std::move(cbitem));
-        return AsyncCallStarter(m_recvCallbacks[seq].typedCallbacks,
+        auto it = m_recvCallbacks.end();
+        std::tie(it, std::ignore) = m_recvCallbacks.emplace(seq, std::move(cbitem));
+        return AsyncCallStarter(&it->second.typedCallbacks,
                                 *this, seq, std::move(evenlop), std::move(zmqmsg));
     }
 }
