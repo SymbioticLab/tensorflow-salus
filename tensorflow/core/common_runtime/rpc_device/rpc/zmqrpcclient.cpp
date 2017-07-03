@@ -87,6 +87,26 @@ ZmqRpcClient::Item &ZmqRpcClient::Item::operator=(Item &&other)
     return *this;
 }
 
+void ZmqRpcClient::dumpWaitingCb()
+{
+    mutex_lock locker(m_mtable);
+    LOG(INFO) << "Pending callbacks:";
+    for (auto &p : m_recvCallbacks) {
+        auto &item = p.second;
+        LOG(INFO) << "  seq: " << p.first;
+        if (item.reply) {
+            LOG(INFO) << "    reply type: " << item.reply->GetTypeName();
+        } else {
+            LOG(INFO) << "    reply type: nullptr";
+        }
+        LOG(INFO) << "   done: " << item.done.target_type().name();
+        for (auto &typed : item.typedCallbacks) {
+            LOG(INFO) << "    " << typed.first
+                      << " -> " << typed.second.target_type().name();
+        }
+    }
+}
+
 void ZmqRpcClient::recvLoop()
 {
     LOG(INFO) << "Started zmq recving thread, using ZMQ_IDENTITY: " << m_recvId;
@@ -102,6 +122,7 @@ void ZmqRpcClient::recvLoop()
 
     while (true) {
         try {
+            dumpWaitingCb();
             // Receive and skip identification frames
             zmq::message_t msg;
             do {

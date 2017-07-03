@@ -112,6 +112,7 @@ private:
     AsyncCallStarter rpcCallAsync(const std::string &sessionId, const ::google::protobuf::Message &msg);
 
     void recvLoop();
+    void dumpWaitingCb();
 
     struct Item;
     AsyncCallStarter makeStarter(const std::string &sessionId, const ::google::protobuf::Message &msg,
