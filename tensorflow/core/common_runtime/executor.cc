@@ -1899,6 +1899,7 @@ void ExecutorState::PropagateOutputs(const TaggedNode& tagged_node,
   int64 input_iter = tagged_node.input_iter;
   const bool is_dead = tagged_node.is_dead;
 
+  VLOG(3) << "Propagate outputs for node: " << node->name();
   // Propagates outputs along out edges, and puts newly ready nodes
   // into the ready queue.
   ready->clear();
@@ -1982,6 +1983,11 @@ void ExecutorState::PropagateOutputs(const TaggedNode& tagged_node,
         &impl_->gview_, input_iter, ready);
   }
 
+  VLOG(3) << "After propagate the ready queue has size: " << ready->size();
+  for (auto &n : *ready) {
+    VLOG(3) << "    in ready queue: " << n.node->name();
+  }
+
   // At this point, this node is completely done. We also know if the
   // completion of this node makes its frame completed.
   if (is_frame_done) {
@@ -2034,18 +2040,25 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
     }
   }
 
+  VLOG(3) << "NodeDone ready size: " << ready.size();
+  VLOG(3) << "NodeDone s: " << s;
+
   bool completed = false;
   int ready_size = ready.size();
   if (ready_size == 0 || !s.ok()) {
-    completed = (num_outstanding_ops_.fetch_sub(1) == 1);
+    auto ops = num_outstanding_ops_.fetch_sub(1);
+    VLOG(3) << "NodeDone num_outstanding_ops_: " << ops;
+    completed = (ops == 1);
   } else if (ready_size > 1) {
-    num_outstanding_ops_.fetch_add(ready_size - 1, std::memory_order_relaxed);
+    auto ops = num_outstanding_ops_.fetch_add(ready_size - 1, std::memory_order_relaxed);
+    VLOG(3) << "NodeDone num_outstanding_ops_: " << ops;
   }
 
   // Schedule the ready nodes in 'ready'.
   if (s.ok()) {
     ScheduleReady(ready, inline_ready);
   }
+  VLOG(3) << "NodeDone completed: " << completed;
   return completed;
 }
 
@@ -2065,8 +2078,10 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
     // Schedule to run all the ready ops in thread pool.
     VLOG(3) << "Schedule to run all the ready ops in thread pool.";
     for (auto& tagged_node : ready) {
+      VLOG(3) << "Schedule to run the ready op: " << tagged_node.node->name();
       runner_([=]() { Process(tagged_node, scheduled_usec); });
     }
+    VLOG(3) << "All ops in ready queue sent to thread pool";
     return;
   }
   const GraphView& gview = impl_->gview_;
