@@ -18,6 +18,7 @@ limitations under the License.
 #include <atomic>
 #include <string>
 #include <vector>
+#include <thread>
 
 #include "tensorflow/core/common_runtime/constant_folding.h"
 #include "tensorflow/core/common_runtime/debugger_state_interface.h"
