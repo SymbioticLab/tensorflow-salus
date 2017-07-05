@@ -26,6 +26,9 @@ limitations under the License.
 #include <stdlib.h>
 #include <time.h>
 
+#include <sstream>
+#include <thread>
+
 namespace tensorflow {
 namespace internal {
 
@@ -86,8 +89,10 @@ void LogMessage::GenerateLogMessage() {
 	   localtime(&now_seconds));
 
   // TODO(jeff,sanjay): Replace this with something that logs through the env.
-  fprintf(stderr, "%s.%06d: %c %s:%d] %s\n", time_buffer, micros_remainder,
-	  "IWEF"[severity_], fname_, line_, str().c_str());
+  std::ostringstream oss;
+  oss << std::this_thread::get_id();
+  fprintf(stderr, "%s.%06d: %c %s:%d] [%s] %s\n", time_buffer, micros_remainder,
+	  "IWEF"[severity_], fname_, line_, oss.str().c_str(), str().c_str());
 }
 #endif
 
