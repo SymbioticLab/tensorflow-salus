@@ -2082,9 +2082,10 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
       VLOG(3) << "Schedule to run the ready op: " << tagged_node.node->name();
       auto i = counter.fetch_add(1);
       runner_([=]() {
-          VLOG(3) << "Threadpool start to run seq " << i << ": " << tagged_node.node->name();
+          auto name = tagged_node.node->name();
+          VLOG(3) << "Threadpool start to run seq " << i << ": " << name;
           Process(tagged_node, scheduled_usec);
-          VLOG(3) << "Threadpool end to run seq " << i << ": " << tagged_node.node->name();
+          VLOG(3) << "Threadpool end to run seq " << i << ": " << name;
       });
     }
     VLOG(3) << "All ops in ready queue sent to thread pool";
@@ -2105,9 +2106,10 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
 //         runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node, scheduled_usec));
         auto i = counter.fetch_add(1);
         runner_([=](){
-            VLOG(3) << "Threadpool start to run seq " << i << ": " << curr_expensive_node->node->name();
+            auto name = curr_expensive_node->node->name();
+            VLOG(3) << "Threadpool start to run seq " << i << ": " << name;
             Process(*curr_expensive_node, scheduled_usec);
-            VLOG(3) << "Threadpool end to run seq " << i << ": " << curr_expensive_node->node->name();
+            VLOG(3) << "Threadpool end to run seq " << i << ": " << name;
         });
       }
       curr_expensive_node = &tagged_node;
@@ -2123,9 +2125,10 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
 //       runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node, scheduled_usec));
       auto i = counter.fetch_add(1);
       runner_([=](){
-          VLOG(3) << "Threadpool start to run seq " << i << ": " << curr_expensive_node->node->name();
+          auto name = curr_expensive_node->node->name();
+          VLOG(3) << "Threadpool start to run seq " << i << ": " << name;
           Process(*curr_expensive_node, scheduled_usec);
-          VLOG(3) << "Threadpool end to run seq " << i << ": " << curr_expensive_node->node->name();
+          VLOG(3) << "Threadpool end to run seq " << i << ": " << name;
       });
     }
   }
