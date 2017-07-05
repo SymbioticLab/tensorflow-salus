@@ -140,6 +140,7 @@ private:
         DoneCallback done;
         std::unordered_map<std::string, DoneCallback> typedCallbacks;
 
+        ~Item();
         bool empty() const { return !reply && !done && typedCallbacks.empty(); }
 
         Item();

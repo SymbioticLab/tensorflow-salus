@@ -193,6 +193,7 @@ void ZmqRpcClient::recvLoop()
                     }
                     std::swap(cb ,it->second.done);
                     std::swap(reply ,it->second.reply);
+                    auto t = it->second.typedCallbacks;
                     m_recvCallbacks.erase(it);
                 }
             }
@@ -222,6 +223,13 @@ void ZmqRpcClient::recvLoop()
         } catch (std::exception &err) {
             LOG(ERROR) << "Caught exception during recving loop: " << err.what();
         }
+    }
+}
+
+ZmqRpcClient::Item::~Item()
+{
+    for (auto &item : typedCallbacks) {
+        item.second(errors::Cancelled("Callback function cancelled"), nullptr);
     }
 }
 
@@ -423,51 +431,48 @@ void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpK
         done();
     });
 
-    // NOTE: we cannot do RecvAsync inside the starter callback function, because RecvAsync may
-    // call its cb on current thread, which in turn initiates another rpc call. So the starter
-    // callback cannot block.
-    Notification n;
-    std::unique_ptr<executor::TFRendezRecvRequests> pReq;
-    starter.add("executor.TFRendezRecvRequests", [&pReq, &n](const Status &s, ProtoPtr &&msg){
-        pReq.reset(static_cast<executor::TFRendezRecvRequests*>(msg.release()));
-        n.Notify();
-    });
-    starter.start();
-
     auto seq = starter.seq();
     auto sessionId = devCtx->sessionId();
-    n.WaitForNotification();
-    for (size_t i = 0; i != pReq->key_size(); ++i) {
-        Rendezvous::ParsedKey parsed;
-        auto s = context->rendezvous()->ParseKey(pReq->key(i), &parsed);
+    starter.add("executor.TFRendezRecvRequests", [seq, sessionId, context, this](const Status &s, ProtoPtr &&msg){
         if (!s.ok()) {
-            LOG(ERROR) << "Invalid rendezvous key in TFRendezRecvRequests: " << pReq->key(i);
-            continue;
+            return;
         }
-        LOG(INFO) << "Got executor.TFRendezRecvRequests for " << pReq->key(i);
-        Rendezvous::Args args;
-        args.alloc_attrs.value = pReq->allocattributes(i);
-        args.alloc_attrs.set_on_host(true); // we want tensor to on CPU, because we send them out ourselves
-        args.device_context = context->op_device_context();
-        context->rendezvous()->RecvAsync(parsed, args,
-                                        [this, seq, sessionId, parsed](const Status &s,
-                                                                       const Rendezvous::Args &send_args,
-                                                                       const Rendezvous::Args &recv_args,
-                                                                       const Tensor &val, bool is_dead){
-            LOG(INFO) << "Send out executor.TFRendezRecvUpdate for " << parsed.FullKey();
-            rpc::TFRendezRecvUpdate resp;
-            resp.set_forseq(seq);
-            auto item = resp.add_items();
-            item->set_key(parsed.FullKey().ToString());
-//             item->set_allocattributes(send_args.alloc_attrs.value);
-            val.AsProtoTensorContent(item->mutable_val());
+        std::unique_ptr<executor::TFRendezRecvRequests> pReq;
+        pReq.reset(static_cast<executor::TFRendezRecvRequests*>(msg.release()));
+        for (size_t i = 0; i != pReq->key_size(); ++i) {
+            Rendezvous::ParsedKey parsed;
+            auto s = context->rendezvous()->ParseKey(pReq->key(i), &parsed);
+            if (!s.ok()) {
+                LOG(ERROR) << "Invalid rendezvous key in TFRendezRecvRequests: " << pReq->key(i);
+                continue;
+            }
+            LOG(INFO) << "Got executor.TFRendezRecvRequests for " << pReq->key(i);
+            Rendezvous::Args args;
+            args.alloc_attrs.value = pReq->allocattributes(i);
+            args.alloc_attrs.set_on_host(true); // we want tensor to on CPU, because we send them out ourselves
+            args.device_context = context->op_device_context();
+            context->rendezvous()->RecvAsync(parsed, args,
+                                            [this, seq, sessionId, parsed](const Status &s,
+                                                                        const Rendezvous::Args &send_args,
+                                                                        const Rendezvous::Args &recv_args,
+                                                                        const Tensor &val, bool is_dead){
+                LOG(INFO) << "Send out executor.TFRendezRecvUpdate for " << parsed.FullKey();
+                rpc::TFRendezRecvUpdate resp;
+                resp.set_forseq(seq);
+                auto item = resp.add_items();
+                item->set_key(parsed.FullKey().ToString());
+    //             item->set_allocattributes(send_args.alloc_attrs.value);
+                val.AsProtoTensorContent(item->mutable_val());
 
-            rpc::CustomRequest request;
-            request.set_type(resp.GetTypeName());
-            resp.SerializeToString(request.mutable_extra());
-            rpcCallAsync(sessionId, request);
-        });
-    }
+                rpc::CustomRequest request;
+                request.set_type(resp.GetTypeName());
+                resp.SerializeToString(request.mutable_extra());
+                this->rpcCallAsync(sessionId, request);
+                LOG(INFO) << "Send out executor.TFRendezRecvUpdate finish " << parsed.FullKey();
+            });
+            LOG(INFO) << "Called rendezvous recvasync for " << parsed.FullKey();
+        }
+    });
 }
 
 Status ZmqRpcClient::run(RPCDeviceContext *devCtx, OpKernel *kernel, OpKernelContext *context)
