@@ -21,6 +21,7 @@ limitations under the License.
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <thread>
 
 #include "tensorflow/core/common_runtime/costmodel_manager.h"
 #include "tensorflow/core/common_runtime/pending_counts.h"
@@ -1517,6 +1518,13 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
   params.input_alloc_attrs = &input_alloc_attrs;
   params.runner = &runner_;
 
+  VLOG(3) << "In thread " << std::this_thread::get_id() << " Size of inline_ready queue in thread: "
+          << inline_ready.end() - inline_ready.begin();
+  for (auto &n : inline_ready) {
+      VLOG(3) << "In thread " << std::this_thread::get_id()
+              << " node: " << n.node->name();
+  }
+
   Status s;
   NodeExecStats* stats = nullptr;
   EntryVector outputs;
@@ -1531,7 +1539,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
     const int id = node->id();
     const NodeItem& item = *gview.node(id);
 
-    VLOG(3) << "Get a new node from inline_ready queue";
+    VLOG(3) << "Get a new node from inline_ready queue in thread: " << std::this_thread::get_id();
 
     // TODO(misard) Replace with a finer-grain enabling flag once we
     // add better optional debugging support.
@@ -1557,7 +1565,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
     }
 
     if (vlog_) {
-      VLOG(1) << "Process node: " << id << " step " << params.step_id << " "
+      VLOG(1) << "In thread " << std::this_thread::get_id() << " Process node: " << id << " step " << params.step_id << " "
               << SummarizeNodeDef(node->def())
               << " is dead: " << tagged_node.is_dead;
     }
@@ -1678,7 +1686,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
       MaybeMarkCompleted(input_frame, input_iter, id);
       // Propagates outputs.
       if (s.ok()) {
-        VLOG(3) << "Propagates outputs";
+        VLOG(3) << "Propagates outputs in thread " << std::this_thread::get_id();
         PropagateOutputs(tagged_node, &item, &outputs, &ready);
       }
       outputs.clear();
@@ -1692,11 +1700,11 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_usec) {
       }
       // Postprocess.
       completed = NodeDone(s, item.node, ready, stats, &inline_ready);
-      VLOG(3) << "Postprocess completed: " << completed;
+      VLOG(3) << "In thread " << std::this_thread::get_id() << " Postprocess completed: " << completed;
     }
   }  // while !inline_ready.empty()
 
-  VLOG(3) << "inline ready queue empty";
+  VLOG(3) << "inline ready queue empty in thread " << std::this_thread::get_id();
   // This thread of computation is done if completed = true.
   if (completed) Finish();
 }
@@ -2266,7 +2274,7 @@ void ExecutorState::DumpState() {
 }
 
 void ExecutorState::Finish() {
-  VLOG(3) << "ExecutorState::Finish try lock";
+  VLOG(3) << "ExecutorState::Finish try lock in thread";
   mu_.lock();
   auto status = status_;
   auto done_cb = std::move(done_cb_);
