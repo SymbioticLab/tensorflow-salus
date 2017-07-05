@@ -2069,6 +2069,7 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
       return;
   }
   VLOG(3) << "ScheduleReady";
+  static std::atomic_int_fast64_t counter(0);
 
   int64 scheduled_usec = 0;
   if (stats_collector_) {
@@ -2079,7 +2080,12 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
     VLOG(3) << "Schedule to run all the ready ops in thread pool.";
     for (auto& tagged_node : ready) {
       VLOG(3) << "Schedule to run the ready op: " << tagged_node.node->name();
-      runner_([=]() { Process(tagged_node, scheduled_usec); });
+      auto i = counter.fetch_add(1);
+      runner_([=]() {
+          VLOG(3) << "Threadpool start to run seq " << i << ": " << tagged_node.node->name();
+          Process(tagged_node, scheduled_usec);
+          VLOG(3) << "Threadpool end to run seq " << i << ": " << tagged_node.node->name();
+      });
     }
     VLOG(3) << "All ops in ready queue sent to thread pool";
     return;
@@ -2096,8 +2102,13 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
       if (curr_expensive_node) {
         // Dispatch to another thread since there is plenty of work to
         // do for this thread.
-        runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node,
-                          scheduled_usec));
+//         runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node, scheduled_usec));
+        auto i = counter.fetch_add(1);
+        runner_([=](){
+            VLOG(3) << "Threadpool start to run seq " << i << ": " << curr_expensive_node->node->name();
+            Process(*curr_expensive_node, scheduled_usec);
+            VLOG(3) << "Threadpool end to run seq " << i << ": " << curr_expensive_node->node->name();
+        });
       }
       curr_expensive_node = &tagged_node;
     }
@@ -2109,8 +2120,13 @@ void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
     } else {
       // There are inline nodes to run already. We dispatch this expensive
       // node to other thread.
-      runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node,
-                        scheduled_usec));
+//       runner_(std::bind(&ExecutorState::Process, this, *curr_expensive_node, scheduled_usec));
+      auto i = counter.fetch_add(1);
+      runner_([=](){
+          VLOG(3) << "Threadpool start to run seq " << i << ": " << curr_expensive_node->node->name();
+          Process(*curr_expensive_node, scheduled_usec);
+          VLOG(3) << "Threadpool end to run seq " << i << ": " << curr_expensive_node->node->name();
+      });
     }
   }
 }
