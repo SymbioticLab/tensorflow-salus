@@ -89,6 +89,8 @@ class RangeOp : public OpKernel {
 
 #define REGISTER_CPU_KERNEL(T) REGISTER_KERNEL(DEVICE_CPU, T)
 #define REGISTER_GPU_KERNEL(T) REGISTER_KERNEL(DEVICE_GPU, T)
+#define REGISTER_RPC_KERNEL(T) REGISTER_KERNEL(DEVICE_RPC, T)
+
 #ifdef TENSORFLOW_USE_SYCL
 #define REGISTER_SYCL_KERNEL(T) REGISTER_KERNEL(DEVICE_SYCL, T)
 TF_CALL_float(REGISTER_SYCL_KERNEL);
@@ -103,6 +105,11 @@ TF_CALL_double(REGISTER_CPU_KERNEL);
 TF_CALL_int32(REGISTER_CPU_KERNEL);
 TF_CALL_int64(REGISTER_CPU_KERNEL);
 
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
+TF_CALL_int32(REGISTER_RPC_KERNEL);
+TF_CALL_int64(REGISTER_RPC_KERNEL);
+
 #if GOOGLE_CUDA
 
 TF_CALL_float(REGISTER_GPU_KERNEL);
@@ -115,6 +122,7 @@ TF_CALL_int64(REGISTER_GPU_KERNEL);
 #undef REGISTER_KERNEL
 #undef REGISTER_CPU_KERNEL
 #undef REGISTER_GPU_KERNEL
+#undef REGISTER_RPC_KERNEL
 
 template <typename T>
 class LinSpaceOp : public OpKernel {
@@ -163,8 +171,14 @@ class LinSpaceOp : public OpKernel {
                               .HostMemory("output"),         \
                           LinSpaceOp<T>);
 #define REGISTER_CPU_KERNEL(T) REGISTER_KERNEL(DEVICE_CPU, T)
+
+#define REGISTER_RPC_KERNEL(T) REGISTER_KERNEL(DEVICE_RPC, T)
+
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
+
+TF_CALL_float(REGISTER_RPC_KERNEL);
+TF_CALL_double(REGISTER_RPC_KERNEL);
 
 // NOTE(touts): We register the op on GPU but it still runs on CPU
 // because its inputs and outputs are tagged as HostMemory.
