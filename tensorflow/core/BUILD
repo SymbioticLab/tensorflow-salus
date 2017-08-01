@@ -1655,6 +1655,7 @@ cc_library(
         "common_runtime/rpc_device/rpc/rpcclient.cpp",
         "common_runtime/rpc_device/rpc/zmqrpcclient.cpp",
         "common_runtime/rpc_device/exec_helpers/exechelpers.cpp",
+        "common_runtime/rpc_device/exec_helpers/devicefactories.cpp",
         "common_runtime/rpc_device/rpc_allocator.cpp",
         "common_runtime/rpc_device/rpc_device.cpp",
         "common_runtime/rpc_device/rpc_device_context.cpp",
@@ -1668,6 +1669,7 @@ cc_library(
         "common_runtime/rpc_device/rpc/rpcclient.h",
         "common_runtime/rpc_device/rpc/zmqrpcclient.h",
         "common_runtime/rpc_device/exec_helpers/exechelpers.h",
+        "common_runtime/rpc_device/exec_helpers/devicefactories.h",
         "common_runtime/rpc_device/rpc_allocator.h",
         "common_runtime/rpc_device/rpc_device.h",
         "common_runtime/rpc_device/rpc_device_context.h",
@@ -1678,6 +1680,7 @@ cc_library(
     deps = [
         ":core_cpu",
         ":core_cpu_internal",
+        ":gpu_runtime",
         ":framework",
         ":framework_internal",
         ":lib",
