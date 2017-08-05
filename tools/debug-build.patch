@@ -1,0 +1,68 @@
+diff --git a/tensorflow/core/BUILD b/tensorflow/core/BUILD
+index 15ba8f6c3..c80bcdf0b 100644
+--- a/tensorflow/core/BUILD
++++ b/tensorflow/core/BUILD
+@@ -675,6 +675,7 @@ cc_library(
+ cc_library(
+     name = "all_kernels",
+     visibility = ["//visibility:public"],
++    copts = tf_copts(),
+     deps = [
+         "//tensorflow/core/kernels:array",
+         "//tensorflow/core/kernels:bincount_op",
+@@ -1384,7 +1385,7 @@ tf_cuda_library(
+         "util/tensor_slice_set.h",
+         "util/tensor_slice_util.h",
+     ],
+-    copts = tf_copts(),
++    copts = tf_copts() + ["-g"],
+     linkopts = select({
+         "//tensorflow:freebsd": [],
+         "//conditions:default": ["-ldl"],
+@@ -1486,7 +1487,7 @@ tf_cuda_library(
+             "common_runtime/gpu_device_context.h",
+         ],
+     ),
+-    copts = tf_copts(),
++    copts = tf_copts() + ["-g"],
+     deps = [
+                ":framework",
+                ":framework_internal",
+@@ -1600,7 +1601,7 @@ tf_cuda_library(
+         "common_runtime/gpu/pool_allocator.h",
+         "common_runtime/gpu/process_state.h",
+     ],
+-    copts = tf_copts(),
++    copts = tf_copts() + ["-g"],
+     linkstatic = 1,
+     deps = [
+         ":core_cpu",
+@@ -1675,7 +1676,7 @@ cc_library(
+         "common_runtime/rpc_device/rpc_device_context.h",
+         "common_runtime/rpc_device/threadpiscine_device.h",
+     ],
+-    copts = tf_copts() + ["-fexceptions"],
++    copts = tf_copts() + ["-fexceptions", "-g"],
+     linkstatic = 1,
+     deps = [
+         ":core_cpu",
+diff --git a/tensorflow/core/kernels/BUILD b/tensorflow/core/kernels/BUILD
+index 5faeb7d05..d1efb4f2f 100644
+--- a/tensorflow/core/kernels/BUILD
++++ b/tensorflow/core/kernels/BUILD
+@@ -67,6 +67,7 @@ config_setting(
+ cc_library(
+     name = "assign_op",
+     hdrs = ["assign_op.h"],
++    copts = ["-g", "-O0"] + tf_copts(),
+     deps = [
+         "//tensorflow/core:framework",
+         "//third_party/eigen3",
+@@ -2157,6 +2158,7 @@ tf_kernel_library(
+ tf_kernel_library(
+     name = "cwise_op",
+     prefix = "cwise_op",
++    copts = tf_copts() + ["-g", "-O0"],
+     deps = MATH_DEPS,
+ )
+ 
