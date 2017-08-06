@@ -11,5 +11,8 @@ cc_library(
     copts = [
         "-fexceptions",
     ],
+    # this is needed to make bazel add the path using -isystem.
+    # Bazel defaults to add path using -iquote, thus #include<...> will not find it.
+    includes = ["."],
     visibility = ["//visibility:public"],
 )

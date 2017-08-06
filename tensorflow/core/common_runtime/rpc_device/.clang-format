@@ -37,7 +37,7 @@ BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: true
 BreakStringLiterals: true
-ColumnLimit:     100
+ColumnLimit:     110
 CommentPragmas:  '^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 4
