@@ -8,6 +8,7 @@ cc_library(
         "include/zmq.hpp",
         "include/zmq_utils.h",
     ],
+    strip_include_prefix = "include/",
     copts = [
         "-fexceptions",
     ],

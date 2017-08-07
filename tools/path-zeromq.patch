@@ -10,18 +10,3 @@ index a64afb3..b27660f 100644
 +      path = "/gpfs/gpfs0/groups/chowdhury/peifeng/tools/zeromq",
        build_file = str(Label("//third_party:zeromq.BUILD")),
    )
- 
-diff --git a/third_party/zeromq.BUILD b/third_party/zeromq.BUILD
-index b97131f..f789163 100644
---- a/third_party/zeromq.BUILD
-+++ b/third_party/zeromq.BUILD
-@@ -7,6 +7,9 @@ cc_library(
-         "include/zmq.h",
-         "include/zmq.hpp",
-         "include/zmq_utils.h",
-+        "zmq.h",
-+        "zmq.hpp",
-+        "zmq_utils.h",
-     ],
-     copts = [
-         "-fexceptions",
