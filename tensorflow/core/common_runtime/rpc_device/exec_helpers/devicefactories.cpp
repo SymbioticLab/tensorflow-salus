@@ -29,6 +29,8 @@
 #include "tensorflow/core/common_runtime/gpu/process_state.h"
 #endif
 
+#include <atomic>
+
 namespace tensorflow {
 namespace remote {
 
@@ -56,16 +58,16 @@ void WrappedDeviceSettings::setWrapperFactory(AllocatorFactory fact)
 
 // Normal CPU device
 
-class WrappedCPUDevice : public ThreadPoolDevice
+class WrappedThreadPoolDevice : public ThreadPoolDevice
 {
 public:
-    WrappedCPUDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
-                     const DeviceLocality &locality, Allocator *allocator)
+    WrappedThreadPoolDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+                            const DeviceLocality &locality, Allocator *allocator)
         : ThreadPoolDevice(options, name, memory_limit, locality, allocator)
     {
     }
 
-    ~WrappedCPUDevice() override
+    ~WrappedThreadPoolDevice() override
     {
     }
 
@@ -90,15 +92,13 @@ public:
         }
         for (int i = 0; i < n; i++) {
             string name = strings::StrCat(name_prefix, "/cpu:", i);
-            devices->push_back(new WrappedCPUDevice(options, name, Bytes(256 << 20),
-                                                    DeviceLocality(), cpu_allocator()));
+            devices->push_back(new WrappedThreadPoolDevice(options, name, Bytes(256 << 20), DeviceLocality(),
+                                                           cpu_allocator()));
         }
 
         return Status::OK();
     }
 };
-
-REGISTER_LOCAL_DEVICE_FACTORY("CPU", WrappedThreadPoolDeviceFactory, 888);
 
 #if GOOGLE_CUDA
 
@@ -108,9 +108,8 @@ public:
     WrappedGPUDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
                      const DeviceLocality &locality, int gpu_id, const string &physical_device_desc,
                      Allocator *gpu_allocator, Allocator *cpu_allocator)
-        : BaseGPUDevice(options, name, memory_limit, locality, gpu_id, physical_device_desc,
-                        gpu_allocator, cpu_allocator, false /* sync every op */,
-                        1 /* max_streams */)
+        : BaseGPUDevice(options, name, memory_limit, locality, gpu_id, physical_device_desc, gpu_allocator,
+                        cpu_allocator, false /* sync every op */, 1 /* max_streams */)
     {
     }
 
@@ -134,17 +133,15 @@ public:
 class WrappedGPUDeviceFactory : public BaseGPUDeviceFactory
 {
 private:
-    BaseGPUDevice *CreateGPUDevice(const SessionOptions &options, const string &name,
-                                   Bytes memory_limit, const DeviceLocality &locality, int gpu_id,
+    BaseGPUDevice *CreateGPUDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+                                   const DeviceLocality &locality, int gpu_id,
                                    const string &physical_device_desc, Allocator *gpu_allocator,
                                    Allocator *cpu_allocator) override
     {
-        return new WrappedGPUDevice(options, name, memory_limit, locality, gpu_id,
-                                    physical_device_desc, gpu_allocator, cpu_allocator);
+        return new WrappedGPUDevice(options, name, memory_limit, locality, gpu_id, physical_device_desc,
+                                    gpu_allocator, cpu_allocator);
     }
 };
-
-REGISTER_LOCAL_DEVICE_FACTORY("GPU", WrappedGPUDeviceFactory, 999);
 
 //------------------------------------------------------------------------------
 // A CPUDevice that optimizes for interaction with GPUs in the
@@ -153,9 +150,8 @@ REGISTER_LOCAL_DEVICE_FACTORY("GPU", WrappedGPUDeviceFactory, 999);
 class WrappedGPUCompatibleCPUDevice : public ThreadPoolDevice
 {
 public:
-    WrappedGPUCompatibleCPUDevice(const SessionOptions &options, const string &name,
-                                  Bytes memory_limit, const DeviceLocality &locality,
-                                  Allocator *allocator)
+    WrappedGPUCompatibleCPUDevice(const SessionOptions &options, const string &name, Bytes memory_limit,
+                                  const DeviceLocality &locality, Allocator *allocator)
         : ThreadPoolDevice(options, name, memory_limit, locality, allocator)
     {
     }
@@ -189,17 +185,29 @@ public:
         for (int i = 0; i < n; i++) {
             string name = strings::StrCat(name_prefix, "/cpu:", i);
             devices->push_back(new WrappedGPUCompatibleCPUDevice(options, name, Bytes(256 << 20),
-                                                                 DeviceLocality(),
-                                                                 cpu_allocator()));
+                                                                 DeviceLocality(), cpu_allocator()));
         }
 
         return Status::OK();
     }
 };
 
-REGISTER_LOCAL_DEVICE_FACTORY("CPU", WrappedGPUCompatibleCPUDeviceFactory, 999);
+#endif // GOOGLE_CUDA
 
-#endif
+void WrappedDeviceSettings::maybeRegisterWrappedDeviceFactories()
+{
+    static std::atomic_flag done = ATOMIC_FLAG_INIT;
+    if (done.test_and_set()) {
+        return;
+    }
+
+    REGISTER_LOCAL_DEVICE_FACTORY("CPU", WrappedThreadPoolDeviceFactory, 888);
+
+#if GOOGLE_CUDA
+    REGISTER_LOCAL_DEVICE_FACTORY("GPU", WrappedGPUDeviceFactory, 999);
+    REGISTER_LOCAL_DEVICE_FACTORY("CPU", WrappedGPUCompatibleCPUDeviceFactory, 999);
+#endif // GOOGLE_CUDA
+}
 
 } // namespace remote
 } // namespace tensorflow

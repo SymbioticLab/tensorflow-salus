@@ -35,6 +35,8 @@ public:
     static void setWrapperFactory(AllocatorFactory fact);
     static Allocator *getWrapped(Allocator *alloc);
 
+    static void maybeRegisterWrappedDeviceFactories();
+
 private:
     static AllocatorFactory m_allocatorFactory;
 };
