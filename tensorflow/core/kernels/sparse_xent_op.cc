@@ -138,7 +138,7 @@ REGISTER(GPU, Eigen::half, int64)
 #define REGISTER_RPC(T, Index)                    \
   REGISTER_KERNEL_BUILDER(                        \
       Name("SparseSoftmaxCrossEntropyWithLogits") \
-          .Device(DEVICE_CPU)                   \
+          .Device(DEVICE_RPC)                   \
           .TypeConstraint<T>("T")                 \
           .TypeConstraint<Index>("Tlabels"),      \
       SparseSoftmaxXentWithLogitsOp<CPUDevice, T, Index>);
