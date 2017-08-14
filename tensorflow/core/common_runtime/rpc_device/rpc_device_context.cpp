@@ -165,7 +165,7 @@ void RPCDeviceContext::serializeOpKernel(executor::OpKernelDef *def, tensorflow:
 
 void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelContext *context)
 {
-    LOG(INFO) << "About to serialize OpContext";
+    LOG(INFO) << "About to serialize OpContext for kernel name: " << context->op_kernel().name();
 
     executor::TFOpContextDef tfdef;
     auto params = context->params_;
@@ -175,8 +175,10 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
     tfdef.set_iter_id(params->frame_iter.iter_id);
     tfdef.set_is_input_dead(params->is_input_dead);
 
+    const auto &ndef = findNodeDefFor(&context->op_kernel());
     for (int i = 0; i != context->num_inputs(); i++) {
         auto initem = tfdef.add_inputs();
+
         if (!context->has_input(i)) {
             LOG(INFO) << "input " << i << " has no value";
             initem->set_has_value(false);
@@ -185,7 +187,7 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
         }
         initem->set_has_value(true);
         initem->set_is_ref(context->input_is_ref(i));
-        initem->set_name(findNodeDefFor(&context->op_kernel()).input(i));
+        initem->set_name(ndef.input(i));
 
         LOG(INFO) << "input alloc attr " << i << context->input_alloc_attr(i).value;
         tfdef.add_input_alloc_attrs(context->input_alloc_attr(i).value);
@@ -250,8 +252,10 @@ void RPCDeviceContext::deserializeOpContext(OpKernelContext *context, const exec
         // Directly create tensor on CPU
         args.alloc_attrs.set_on_host(true);
         Tensor t;
-        if (!t.FromProto(cpu_allocator(), outdef.val())) {
-            LOG(ERROR) << "Rendezvous tensors invalid";
+        status = context->device()->MakeTensorFromProto(outdef.val(), args.alloc_attrs, &t);
+        if (!status.ok()) {
+            LOG(ERROR) << "Rendezvous tensors invalid: " << status;
+            continue;
         }
         LOG(INFO) << "Forwarding rendezvous send tensor " << t.DebugString();
         status = context->rendezvous()->Send(parsed, args, t, outdef.isdead());

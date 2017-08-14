@@ -462,6 +462,7 @@ void ZmqRpcClient::runAsync(RPCDeviceContext *devCtx, AsyncOpKernel *kernel, OpK
                 auto item = resp.add_items();
                 item->set_key(parsed.FullKey().ToString());
     //             item->set_allocattributes(send_args.alloc_attrs.value);
+                item->set_isdead(is_dead);
                 val.AsProtoTensorContent(item->mutable_val());
 
                 rpc::CustomRequest request;
