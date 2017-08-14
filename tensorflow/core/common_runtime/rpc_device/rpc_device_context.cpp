@@ -176,12 +176,19 @@ void RPCDeviceContext::serializeOpContext(executor::OpContextDef *def, OpKernelC
     tfdef.set_is_input_dead(params->is_input_dead);
 
     for (int i = 0; i != context->num_inputs(); i++) {
-        LOG(INFO) << "input alloc attr " << i << context->input_alloc_attr(i).value;
-        tfdef.add_input_alloc_attrs(context->input_alloc_attr(i).value);
-
         auto initem = tfdef.add_inputs();
+        if (!context->has_input(i)) {
+            LOG(INFO) << "input " << i << " has no value";
+            initem->set_has_value(false);
+            tfdef.add_input_alloc_attrs(AllocatorAttributes().value);
+            continue;
+        }
+        initem->set_has_value(true);
         initem->set_is_ref(context->input_is_ref(i));
         initem->set_name(findNodeDefFor(&context->op_kernel()).input(i));
+
+        LOG(INFO) << "input alloc attr " << i << context->input_alloc_attr(i).value;
+        tfdef.add_input_alloc_attrs(context->input_alloc_attr(i).value);
     }
 
     for (int i = 0; i != context->num_outputs(); i++) {
