@@ -117,6 +117,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensorItem, is_ref_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensorItem, name_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensorItem, meta_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TFTensorItem, has_value_),
 };
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
@@ -254,12 +255,12 @@ void AddDescriptorsImpl() {
       "ests\022\013\n\003key\030\001 \003(\t\022\027\n\017allocAttributes\030\002 \003"
       "(\r\"K\n\022TFRendezRecvUpdate\022\016\n\006forSeq\030\001 \001(\004"
       "\022%\n\005items\030\002 \003(\0132\026.executor.TFRendezItem\""
-      "S\n\014TFTensorItem\022\016\n\006is_ref\030\001 \001(\010\022\014\n\004name\030"
+      "f\n\014TFTensorItem\022\016\n\006is_ref\030\001 \001(\010\022\014\n\004name\030"
       "\002 \001(\t\022%\n\004meta\030\003 \001(\0132\027.tensorflow.TensorP"
-      "rotob\006proto3"
+      "roto\022\021\n\thas_value\030\004 \001(\010b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1172);
+      descriptor, 1191);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "tfoplibrary.proto", &protobuf_RegisterTypes);
   ::tensorflow::protobuf_tensorflow_2fcore_2fframework_2fnode_5fdef_2eproto::AddDescriptors();
@@ -3706,6 +3707,7 @@ TFRendezRecvUpdate::items() const {
 const int TFTensorItem::kIsRefFieldNumber;
 const int TFTensorItem::kNameFieldNumber;
 const int TFTensorItem::kMetaFieldNumber;
+const int TFTensorItem::kHasValueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 TFTensorItem::TFTensorItem()
@@ -3730,14 +3732,16 @@ TFTensorItem::TFTensorItem(const TFTensorItem& from)
   } else {
     meta_ = NULL;
   }
-  is_ref_ = from.is_ref_;
+  ::memcpy(&is_ref_, &from.is_ref_,
+    reinterpret_cast<char*>(&has_value_) -
+    reinterpret_cast<char*>(&is_ref_) + sizeof(has_value_));
   // @@protoc_insertion_point(copy_constructor:executor.TFTensorItem)
 }
 
 void TFTensorItem::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&meta_, 0, reinterpret_cast<char*>(&is_ref_) -
-    reinterpret_cast<char*>(&meta_) + sizeof(is_ref_));
+  ::memset(&meta_, 0, reinterpret_cast<char*>(&has_value_) -
+    reinterpret_cast<char*>(&meta_) + sizeof(has_value_));
   _cached_size_ = 0;
 }
 
@@ -3783,7 +3787,8 @@ void TFTensorItem::Clear() {
     delete meta_;
   }
   meta_ = NULL;
-  is_ref_ = false;
+  ::memset(&is_ref_, 0, reinterpret_cast<char*>(&has_value_) -
+    reinterpret_cast<char*>(&is_ref_) + sizeof(has_value_));
 }
 
 bool TFTensorItem::MergePartialFromCodedStream(
@@ -3835,6 +3840,19 @@ bool TFTensorItem::MergePartialFromCodedStream(
         break;
       }
 
+      // bool has_value = 4;
+      case 4: {
+        if (tag == 32u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &has_value_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -3880,6 +3898,11 @@ void TFTensorItem::SerializeWithCachedSizes(
       3, *this->meta_, output);
   }
 
+  // bool has_value = 4;
+  if (this->has_value() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->has_value(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:executor.TFTensorItem)
 }
 
@@ -3910,6 +3933,11 @@ void TFTensorItem::SerializeWithCachedSizes(
         3, *this->meta_, false, target);
   }
 
+  // bool has_value = 4;
+  if (this->has_value() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->has_value(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:executor.TFTensorItem)
   return target;
 }
@@ -3934,6 +3962,11 @@ size_t TFTensorItem::ByteSizeLong() const {
 
   // bool is_ref = 1;
   if (this->is_ref() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool has_value = 4;
+  if (this->has_value() != 0) {
     total_size += 1 + 1;
   }
 
@@ -3973,6 +4006,9 @@ void TFTensorItem::MergeFrom(const TFTensorItem& from) {
   if (from.is_ref() != 0) {
     set_is_ref(from.is_ref());
   }
+  if (from.has_value() != 0) {
+    set_has_value(from.has_value());
+  }
 }
 
 void TFTensorItem::CopyFrom(const ::google::protobuf::Message& from) {
@@ -4001,6 +4037,7 @@ void TFTensorItem::InternalSwap(TFTensorItem* other) {
   name_.Swap(&other->name_);
   std::swap(meta_, other->meta_);
   std::swap(is_ref_, other->is_ref_);
+  std::swap(has_value_, other->has_value_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -4120,6 +4157,20 @@ void TFTensorItem::set_allocated_meta(::tensorflow::TensorProto* meta) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFTensorItem.meta)
+}
+
+// bool has_value = 4;
+void TFTensorItem::clear_has_value() {
+  has_value_ = false;
+}
+bool TFTensorItem::has_value() const {
+  // @@protoc_insertion_point(field_get:executor.TFTensorItem.has_value)
+  return has_value_;
+}
+void TFTensorItem::set_has_value(bool value) {
+  
+  has_value_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFTensorItem.has_value)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

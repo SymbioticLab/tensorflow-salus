@@ -260,6 +260,9 @@ void RPCDeviceContext::deserializeOpContext(OpKernelContext *context, const exec
     static std::atomic<int64> counter(0);
     for (int i = 0; i != tfdef.outputs_size(); ++i) {
         const auto &outdef = tfdef.outputs(i);
+        if (!outdef.has_value()) {
+            continue;
+        }
         auto tensor = tensorFromProtoMeta(outdef.meta());
         if (outdef.is_ref()) {
             auto name = strings::StrCat(outdef.name(), "_", counter.fetch_add(1));

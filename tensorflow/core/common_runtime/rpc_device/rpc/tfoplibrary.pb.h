@@ -1176,6 +1176,12 @@ class TFTensorItem : public ::google::protobuf::Message /* @@protoc_insertion_po
   bool is_ref() const;
   void set_is_ref(bool value);
 
+  // bool has_value = 4;
+  void clear_has_value();
+  static const int kHasValueFieldNumber = 4;
+  bool has_value() const;
+  void set_has_value(bool value);
+
   // @@protoc_insertion_point(class_scope:executor.TFTensorItem)
  private:
 
@@ -1183,6 +1189,7 @@ class TFTensorItem : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::tensorflow::TensorProto* meta_;
   bool is_ref_;
+  bool has_value_;
   mutable int _cached_size_;
   friend struct  protobuf_tfoplibrary_2eproto::TableStruct;
 };
@@ -2083,6 +2090,20 @@ inline void TFTensorItem::set_allocated_meta(::tensorflow::TensorProto* meta) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:executor.TFTensorItem.meta)
+}
+
+// bool has_value = 4;
+inline void TFTensorItem::clear_has_value() {
+  has_value_ = false;
+}
+inline bool TFTensorItem::has_value() const {
+  // @@protoc_insertion_point(field_get:executor.TFTensorItem.has_value)
+  return has_value_;
+}
+inline void TFTensorItem::set_has_value(bool value) {
+  
+  has_value_ = value;
+  // @@protoc_insertion_point(field_set:executor.TFTensorItem.has_value)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
