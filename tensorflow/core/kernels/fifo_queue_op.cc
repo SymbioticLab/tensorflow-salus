@@ -59,8 +59,4 @@ class FIFOQueueOp : public TypedQueueOp {
 
 REGISTER_KERNEL_BUILDER(Name("FIFOQueue").Device(DEVICE_CPU), FIFOQueueOp);
 REGISTER_KERNEL_BUILDER(Name("FIFOQueueV2").Device(DEVICE_CPU), FIFOQueueOp);
-
-REGISTER_KERNEL_BUILDER(Name("FIFOQueue").Device(DEVICE_RPC), FIFOQueueOp);
-REGISTER_KERNEL_BUILDER(Name("FIFOQueueV2").Device(DEVICE_RPC), FIFOQueueOp);
-
 }  // namespace tensorflow
