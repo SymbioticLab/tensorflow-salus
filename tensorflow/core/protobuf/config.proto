@@ -167,6 +167,13 @@ message RPCOptions {
   bool use_rpc_for_inprocess_master = 1;
 };
 
+message ZMQRPCOptions {
+  // the zeromq endpoint to connect to
+  string endpoint = 1;
+  // whether executor scheduler should only use CPU
+  bool sched_cpu_only = 2;
+}
+
 // Session configuration parameters.
 // The system picks appropriate values for fields that are not set.
 message ConfigProto {
@@ -247,6 +254,9 @@ message ConfigProto {
 
   // Options that apply when this session uses the distributed runtime.
   RPCOptions rpc_options = 13;
+
+  // Options that apply when this session uses zmq rpc devices.
+  ZMQRPCOptions zmq_options = 101;
 };
 
 // Options for a single Run() call.

@@ -31,8 +31,13 @@ public:
             n = iter->second;
         }
 
+        auto endpoint = options.config.zmq_options().endpoint();
+        if (endpoint.empty()) {
+            endpoint = "tcp://localhost:5501";
+        }
+
         for (int i = 0; i < n; i++) {
-            static ZmqRpcClient rpc(options.env, "tcp://localhost:5501");
+            static ZmqRpcClient rpc(options.env, endpoint);
 
             string name = strings::StrCat(name_prefix, "/device:RPC:", i);
             LOG(INFO) << "Creating RPC device: " << name;
