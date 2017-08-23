@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package tensorflow.zrpc;
+
+message CustomRequest {
+    string type = 1;
+    bytes extra = 2;
+}
+
+message CustomResponse {
+    Status result = 1;
+    bytes extra = 2;
+}
+
+message RunGraphRequest {
+    ComputeDef computation = 1;
+    bytes extra = 2;
+}
+
+message RunGraphResponse {
+    Status result = 1;
+    string execId = 2;
+    bytes extra = 3;
+}
+
+message RunRequest {
+    OpKernelDef opkernel = 1;
+    OpContextDef context = 2;
+    string execId = 3;
+}
+
+message RunResponse {
+    Status result = 1;
+    OpContextDef context = 2;
+}
+
+message DeallocRequest {
+    uint64 addr_handle = 1;
+}
+
+message DeallocResponse {
+    Status result = 1;
+}
+
+message AllocRequest {
+    uint64 alignment = 1;
+    uint64 num_bytes = 2;
+}
+
+message AllocResponse {
+    Status result = 1;
+    uint64 addr_handle = 2;
+}
+
+message OpKernelDef {
+    OpLibraryType oplibrary = 1;
+    string id = 2;
+    bytes extra = 3;
+}
+
+message OpContextDef {
+    bytes extra = 1;
+}
+
+message ComputeDef {
+    OpLibraryType oplibrary = 1;
+    bytes extra = 2;
+}
+
+message Status {
+    int32 code = 1;
+}
+
+message EvenlopDef {
+    string type = 1;
+    uint64 seq = 2;
+    bytes recvIdentity = 3;
+    bytes sessionId = 4;
+    OpLibraryType oplibrary = 5;
+}
+
+enum OpLibraryType {
+    TENSORFLOW = 0;
+}

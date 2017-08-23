@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package tensorflow.zrpc;
+
+import "tensorflow/core/framework/tensor.proto";
+import "tensorflow/core/lib/core/error_codes.proto";
+
+message TFOpContextUpdate {
+// Outputs
+    bool is_output_dead = 1;
+    repeated TFTensorItem outputs = 2;
+    repeated TFRendezItem rendezTensors = 3;
+    // Output AllocatorAttributes
+
+    tensorflow.error.Code status_code = 4;
+    string status_msg = 5;
+}
+
+message TFRendezItem {
+    string key = 1;
+    uint32 allocAttributes = 2;
+    bool isDead = 3;
+    tensorflow.TensorProto val = 4;
+}
+
+message TFRendezRecvRequests {
+    repeated string key = 1;
+    repeated uint32 allocAttributes = 2;
+}
+
+message TFRendezRecvUpdate {
+    uint64 forSeq = 1;
+    repeated TFRendezItem items = 2;
+}
+
+message TFTensorItem {
+    bool is_ref = 1;
+    string name = 2;
+    tensorflow.TensorProto meta = 3;
+    bool has_value = 4;
+}

@@ -342,6 +342,7 @@ cc_binary(
     deps = [
         "//tensorflow/c:c_api",
         "//tensorflow/core:tensorflow",
+        "//tensorflow/core/distributed_runtime/zrpc:zrpc_runtime"
     ],
 )
 
@@ -353,6 +354,7 @@ cc_binary(
         "//tensorflow/core:framework",
         "//tensorflow/core:all_kernels",
         "//tensorflow/core:ops",
+        "//tensorflow/core/distributed_runtime/zrpc:zrpc_runtime"
     ],
 )
 
