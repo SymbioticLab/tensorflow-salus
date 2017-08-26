@@ -1,5 +1,5 @@
 diff --git a/tensorflow/core/BUILD b/tensorflow/core/BUILD
-index 15ba8f6c3..c80bcdf0b 100644
+index 8fd8f3b25..a8edb1d75 100644
 --- a/tensorflow/core/BUILD
 +++ b/tensorflow/core/BUILD
 @@ -675,6 +675,7 @@ cc_library(
@@ -46,6 +46,335 @@ index 15ba8f6c3..c80bcdf0b 100644
      linkstatic = 1,
      deps = [
          ":core_cpu",
+diff --git a/tensorflow/core/distributed_runtime/BUILD b/tensorflow/core/distributed_runtime/BUILD
+index e26741465..af412cc22 100644
+--- a/tensorflow/core/distributed_runtime/BUILD
++++ b/tensorflow/core/distributed_runtime/BUILD
+@@ -55,6 +55,7 @@ cc_library(
+         "//tensorflow/core:proto_text",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_test(
+@@ -67,12 +68,14 @@ cc_test(
+         "//tensorflow/core:test",
+         "//tensorflow/core:test_main",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+     name = "worker_env",
+     hdrs = ["worker_env.h"],
+     deps = [],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -90,6 +93,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -105,6 +109,7 @@ cc_library(
+         "//tensorflow/core:core_cpu_internal",
+         "//tensorflow/core:lib_internal",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -114,6 +119,7 @@ cc_library(
+     deps = [
+         "//tensorflow/core:lib",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_test(
+@@ -125,6 +131,7 @@ cc_test(
+         "//tensorflow/core:test",
+         "//tensorflow/core:test_main",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_test(
+@@ -142,12 +149,14 @@ cc_test(
+         "//tensorflow/core:test_main",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+     name = "worker_cache",
+     hdrs = ["worker_cache.h"],
+     deps = ["//tensorflow/core:protos_all_cc"],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -161,6 +170,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -171,6 +181,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:master_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -192,6 +203,7 @@ cc_library(
+         "//tensorflow/core:master_proto_cc",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -213,6 +225,7 @@ cc_library(
+         "//tensorflow/core:master_proto_cc",
+         "//tensorflow/core:protos_all_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -224,6 +237,7 @@ cc_library(
+         ":master_interface",
+         "//tensorflow/core:lib",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -233,6 +247,7 @@ cc_library(
+     deps = [
+         "//tensorflow/core:framework",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -244,6 +259,7 @@ cc_library(
+         "//tensorflow/core:framework",
+         "//tensorflow/core:tensorflow_opensource",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -260,11 +276,13 @@ cc_library(
+         "//tensorflow/core:framework_internal",
+         "//tensorflow/core:lib",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+     name = "master_env",
+     hdrs = ["master_env.h"],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -281,6 +299,7 @@ cc_library(
+         "//tensorflow/core:protos_all_cc",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -295,6 +314,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:worker_proto_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -306,6 +326,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:protos_all_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ cc_library(
+@@ -318,6 +339,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "//tensorflow/core:protos_all_cc",
+     ],
++    copts = ["-g"],
+ )
+ 
+ # TODO(mrry): Move executor_test.cc to ../common_runtime when once it no longer depends
+diff --git a/tensorflow/core/distributed_runtime/zrpc/BUILD b/tensorflow/core/distributed_runtime/zrpc/BUILD
+index 9976b97be..9a528a671 100644
+--- a/tensorflow/core/distributed_runtime/zrpc/BUILD
++++ b/tensorflow/core/distributed_runtime/zrpc/BUILD
+@@ -1,5 +1,5 @@
+ # Description:
+-#   RPC communication interfaces and implementations for TensorFlow.
++#   ZRPC communication interfaces and implementations for TensorFlow.
+ 
+ licenses(["notice"])  # Apache 2.0
+ 
+@@ -27,11 +27,12 @@ filegroup(
+ 
+ load(
+     "//tensorflow:tensorflow.bzl",
+-    "tf_cuda_library",
++
+     "tf_cc_test",
++    "tf_cuda_library",
++    "tf_cuda_cc_test",
++    "tf_cuda_cc_tests",
+ )
+-load("//tensorflow:tensorflow.bzl", "tf_cuda_cc_test")
+-load("//tensorflow:tensorflow.bzl", "tf_cuda_cc_tests")
+ 
+ # For platform specific build config
+ load(
+@@ -44,6 +45,12 @@ load(
+     "tf_cuda_tests_tags",
+ )
+ 
++# For package specific build config
++load(
++    ":zrpc.bzl",
++    "zrpc_copts",
++)
++
+ package(default_visibility = [
+     "//tensorflow:internal",
+ ])
+@@ -55,6 +62,7 @@ cc_library(
+         ":zrpc_session",
+         ":zrpc_exechelper",
+     ],
++    copts = zrpc_copts() + ["-g"],
+ )
+ 
+ tf_proto_library_cc(
+@@ -74,6 +82,7 @@ cc_library(
+         "//tensorflow/core:lib",
+         "@zeromq//:zmq_cpp",
+     ],
++    copts = zrpc_copts() + ["-fexceptions", "-g"],
+ )
+ 
+ cc_library(
+@@ -91,6 +100,7 @@ cc_library(
+         "//tensorflow/core/distributed_runtime:call_options",
+         "//tensorflow/core/distributed_runtime:master_interface",
+     ],
++    copts = zrpc_copts() + ["-g"],
+     alwayslink = 1,
+ )
+ 
+@@ -114,6 +124,7 @@ cc_library(
+         "//tensorflow/core/distributed_runtime:master_interface",
+         "@zeromq//:zmq_cpp",
+     ],
++    copts = zrpc_copts() + ["-g"],
+     alwayslink = 1,
+ )
+ 
+@@ -137,6 +148,7 @@ cc_library(
+         "//tensorflow/core/distributed_runtime:master_session",
+         "//tensorflow/core/distributed_runtime:worker_env",
+     ],
++    copts = zrpc_copts() + ["-g"],
+     alwayslink = 1,
+ )
+ 
+@@ -150,6 +162,7 @@ cc_library(
+        "//tensorflow/core/distributed_runtime:worker_cache_partial",
+        "//tensorflow/core/distributed_runtime:worker_interface",
+    ],
++    copts = zrpc_copts() + ["-g"],
+ )
+ 
+ tf_cuda_library(
+@@ -170,6 +183,7 @@ tf_cuda_library(
+        "//tensorflow/core/distributed_runtime:worker_cache",
+        "//tensorflow/core/distributed_runtime:worker_env",
+    ],
++    copts = zrpc_copts() + ["-g"],
+ )
+ 
+ cc_library(
+@@ -185,6 +199,7 @@ cc_library(
+         "//tensorflow/core:worker_proto_cc",
+         "@zeromq//:zmq_cpp",
+     ],
++    copts = zrpc_copts() + ["-g"],
+ )
+ 
+ cc_library(
+@@ -200,6 +215,7 @@ cc_library(
+        "//tensorflow/core/distributed_runtime:worker_env",
+        "//tensorflow/core/distributed_runtime:worker_interface",
+    ],
++    copts = zrpc_copts() + ["-g"],
+ )
+ 
+ #cc_library(
+diff --git a/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl b/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl
+new file mode 100644
+index 000000000..af8aeca36
+--- /dev/null
++++ b/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl
+@@ -0,0 +1,35 @@
++# -*- Python -*-
++# kate: syntax python
++
++load(
++    "//tensorflow:tensorflow.bzl",
++    "if_cuda",
++    "if_mkl",
++    "if_android_arm",
++    "if_x86",
++)
++
++def zrpc_copts():
++    return ([]
++    + if_cuda(["-DGOOGLE_CUDA=1"])
++    + if_mkl(["-DINTEL_MKL=1"])
++    + if_android_arm(["-mfpu=neon"])
++    + if_x86(["-msse3"])
++    + select({
++        "//tensorflow:android": [
++            "-std=c++11",
++            "-DTF_LEAN_BINARY",
++            "-O2",
++        ],
++        "//tensorflow:darwin": [],
++        "//tensorflow:windows": [
++            "/DLANG_CXX11",
++            "/D__VERSION__=\\\"MSVC\\\"",
++            "/DPLATFORM_WINDOWS",
++            "/DTF_COMPILE_LIBRARY",
++            "/DEIGEN_HAS_C99_MATH",
++            "/DTENSORFLOW_USE_EIGEN_THREADPOOL",
++        ],
++        "//tensorflow:ios": ["-std=c++11"],
++        "//conditions:default": ["-pthread"]
++    }))
 diff --git a/tensorflow/core/kernels/BUILD b/tensorflow/core/kernels/BUILD
 index 5faeb7d05..d1efb4f2f 100644
 --- a/tensorflow/core/kernels/BUILD
