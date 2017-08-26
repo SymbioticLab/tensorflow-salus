@@ -34,6 +34,27 @@ using random_bytes_engine = std::independent_bits_engine<std::random_device, siz
 
 namespace tensorflow {
 
+namespace {
+
+inline Status FromZrpcStatus(const ::zrpc::Status& s) {
+    if (s.code() == 0) {
+        return Status::OK();
+    } else {
+        return Status(static_cast<tensorflow::error::Code>(s.code()), s.message());
+    }
+}
+
+inline ::zrpc::Status ToZrpcStatus(const ::tensorflow::Status& s) {
+    ::zrpc::Status ret;
+    if (!s.ok()) {
+        ret.set_code(s.code());
+        ret.set_message(s.error_message());
+    }
+    return ret;
+}
+
+} // namespace
+
 ZrpcMasterServiceStub::ZrpcMasterServiceStub(Env *env, const std::string &executorAddr)
     : m_execAddr(executorAddr)
     , m_zmqctx(1)
@@ -340,9 +361,13 @@ Status ZrpcMasterServiceStub:: name (const name ## Request &req, name ## Respons
     std::unique_ptr<zrpc::CustomResponse> pResponse; \
     auto status = rpcCall((sessIdExpr), request, pResponse); \
 \
-    if (!status.ok() || !pResponse || pResponse->result().code() != 0) { \
+    if (!status.ok() || !pResponse) { \
         LOG(ERROR) << "ZrpcMasterServiceStub::" << #name << " failed: " << status; \
         status.Update(errors::Internal("ZrpcMasterServiceStub::" #name " failed")); \
+        return status; \
+    } \
+    status.Update(FromZrpcStatus(pResponse->result())); \
+    if (!status.ok()) { \
         return status; \
     } \
     if (!resp->ParseFromString(pResponse->extra())) { \

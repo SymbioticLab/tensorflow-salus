@@ -132,6 +132,7 @@ TFOpLibraryProxy::~TFOpLibraryProxy() = default;
 TFOpLibraryProxy::TFOpLibraryProxy()
     : d(new TFOpLibraryProxyPrivate(this))
 {
+    d->m_env = Env::Default();
 }
 
 TFOpLibraryProxy::TFOpLibraryProxy(TFOpLibraryProxy &&other)
