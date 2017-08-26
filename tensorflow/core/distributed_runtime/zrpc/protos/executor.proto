@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package tensorflow.zrpc;
+package executor;
 
 message CustomRequest {
     string type = 1;

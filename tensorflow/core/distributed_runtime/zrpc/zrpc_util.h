@@ -16,7 +16,6 @@ limitations under the License.
 #ifndef TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_ZRPC_ZRPC_UTIL_H_
 #define TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_ZRPC_ZRPC_UTIL_H_
 
-#include "tensorflow/core/distributed_runtime/zrpc/protos/executor.pb.h"
 #include "tensorflow/core/lib/core/status.h"
 
 #include "zmq.hpp"
@@ -91,12 +90,5 @@ private:
 };
 
 } // namespace zmq
-
-namespace tensorflow {
-
-using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
-
-
-} // namespace tensorflow
 
 #endif // TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_ZRPC_ZRPC_UTIL_H_

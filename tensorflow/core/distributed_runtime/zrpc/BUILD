@@ -71,7 +71,6 @@ cc_library(
     name = "zrpc_util",
     hdrs = ["zrpc_util.h"],
     deps = [
-        ":executor_protos_cc",
         "//tensorflow/core:lib",
         "@zeromq//:zmq_cpp",
     ],
@@ -159,7 +158,6 @@ tf_cuda_library(
    hdrs = ["zrpc_worker_service.h"],
    deps = [
        ":zrpc_tensor_coding",
-       ":zrpc_util",
        "//tensorflow/core:core_cpu_internal",
        "//tensorflow/core:framework",
        "//tensorflow/core:gpu_runtime",
@@ -171,7 +169,6 @@ tf_cuda_library(
        "//tensorflow/core/distributed_runtime:worker",
        "//tensorflow/core/distributed_runtime:worker_cache",
        "//tensorflow/core/distributed_runtime:worker_env",
-       "@zeromq//:zmq_cpp",
    ],
 )
 

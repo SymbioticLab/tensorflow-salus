@@ -20,7 +20,6 @@
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_master_service_stub.h"
 
 #include "tensorflow/core/distributed_runtime/zrpc/protos/executor.pb.h"
-#include "tensorflow/core/distributed_runtime/zrpc/protos/tfoplibrary.pb.h"
 #include "tensorflow/core/protobuf/master.pb.h"
 #include "tensorflow/core/platform/env.h"
 
@@ -29,6 +28,7 @@
 #include <random>
 #include <memory>
 
+namespace zrpc = executor;
 using std::ostringstream;
 using random_bytes_engine = std::independent_bits_engine<std::random_device, sizeof(uint8_t), uint8_t>;
 

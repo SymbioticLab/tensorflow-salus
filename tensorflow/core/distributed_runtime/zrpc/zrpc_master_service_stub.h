@@ -52,6 +52,8 @@ class ListDevicesResponse;
 class ResetRequest;
 class ResetResponse;
 
+using ProtoPtr = std::unique_ptr<::google::protobuf::Message>;
+
 class ZrpcMasterServiceStub
 {
 public:

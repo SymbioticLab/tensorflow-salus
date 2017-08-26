@@ -36,8 +36,6 @@ limitations under the License.
 #include "tensorflow/core/platform/tracing.h"
 #include "tensorflow/core/protobuf/worker.pb.h"
 
-#include "zmq.hpp"
-
 #include <deque>
 
 namespace tensorflow {
