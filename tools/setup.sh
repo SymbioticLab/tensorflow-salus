@@ -27,7 +27,7 @@ function repatch {
 }
 
 function bb() {
-    bazel build -c opt --config=cuda //tensorflow:libtensorflow.so //tensorflow:libtensorflow_kernels.so //tensorflow/tools/pip_package:build_pip_package
+    bazel build -c opt --config=cuda "$@" //tensorflow:libtensorflow.so //tensorflow:libtensorflow_kernels.so //tensorflow/tools/pip_package:build_pip_package
 }
 
 BUILD_BRANCH=tfbuild
@@ -35,7 +35,7 @@ function cf() {
     cur_br=$(git rev-parse --abbrev-ref HEAD)
     git checkout -b $BUILD_BRANCH
 
-    ./configure
+    ./configure "$@"
 
     git checkout $cur_br
     git branch -D $BUILD_BRANCH
@@ -45,7 +45,7 @@ function bbi() {
     cur_br=$(git rev-parse --abbrev-ref HEAD)
     git checkout -b $BUILD_BRANCH
 
-    bb && bazel-bin/tensorflow/tools/pip_package/build_pip_package $HOME/downloads && pip uninstall -y tensorflow && pip install $HOME/downloads/*.whl
+    bb "$@" && bazel-bin/tensorflow/tools/pip_package/build_pip_package $HOME/downloads && pip uninstall -y tensorflow && pip install $HOME/downloads/*.whl
 
     git checkout $cur_br
     git branch -D $BUILD_BRANCH
