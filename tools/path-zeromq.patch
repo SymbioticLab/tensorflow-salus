@@ -1,5 +1,5 @@
 diff --git a/tensorflow/workspace.bzl b/tensorflow/workspace.bzl
-index a64afb3..b27660f 100644
+index a64afb3c5..b27660fce 100644
 --- a/tensorflow/workspace.bzl
 +++ b/tensorflow/workspace.bzl
 @@ -421,7 +421,7 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
@@ -10,3 +10,4 @@ index a64afb3..b27660f 100644
 +      path = "/gpfs/gpfs0/groups/chowdhury/peifeng/tools/zeromq",
        build_file = str(Label("//third_party:zeromq.BUILD")),
    )
+ 
