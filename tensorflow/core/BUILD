@@ -1690,7 +1690,7 @@ cc_library(
         #"@grpc_new//:grpc++_unsecure", # link to this after fix grpc version problem
         "@zeromq//:zmq_cpp",
     ],
-    alwayslink = 1,
+#     alwayslink = 1,
 )
 
 # -----------------------------------------------------------------------------
