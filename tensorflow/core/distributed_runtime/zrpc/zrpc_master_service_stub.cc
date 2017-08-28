@@ -20,6 +20,8 @@
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_master_service_stub.h"
 
 #include "tensorflow/core/distributed_runtime/zrpc/protos/executor.pb.h"
+#include "tensorflow/core/lib/random/random.h"
+#include "tensorflow/core/lib/strings/numbers.h"
 #include "tensorflow/core/protobuf/master.pb.h"
 #include "tensorflow/core/platform/env.h"
 
@@ -60,15 +62,12 @@ ZrpcMasterServiceStub::ZrpcMasterServiceStub(Env *env, const std::string &execut
     , m_zmqctx(1)
     , m_seq(0)
     , m_sendSock(m_zmqctx, zmq::socket_type::dealer)
+    , m_recvId(strings::FpToString(random::New64()))
 {
-    LOG(INFO) << "Created ZeroMQ context";
+    LOG(INFO) << "Created ZeroMQ context with recv id" << m_recvId;
 
-    random_bytes_engine rbe;
-    m_recvId = "tensorflow::recv::";
-    m_recvId += rbe();
-    m_recvId += rbe();
-    m_recvId += rbe();
-    m_recvThread = env->StartThread(ThreadOptions(), "ZrpcMasterServiceStub::recvLoop",
+    m_recvThread = env->StartThread(ThreadOptions(),
+                                    strings::StrCat("ZrpcMasterServiceStub::recvLoop::", m_recvId),
                                     std::bind(&ZrpcMasterServiceStub::recvLoop, this));
 
     try {
