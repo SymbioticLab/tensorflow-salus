@@ -27,11 +27,12 @@ filegroup(
 
 load(
     "//tensorflow:tensorflow.bzl",
-    "tf_cuda_library",
+
     "tf_cc_test",
+    "tf_cuda_library",
+    "tf_cuda_cc_test",
+    "tf_cuda_cc_tests",
 )
-load("//tensorflow:tensorflow.bzl", "tf_cuda_cc_test")
-load("//tensorflow:tensorflow.bzl", "tf_cuda_cc_tests")
 
 # For platform specific build config
 load(
@@ -42,6 +43,12 @@ load(
 load(
     "//tensorflow/core:platform/default/build_config_root.bzl",
     "tf_cuda_tests_tags",
+)
+
+# For package specific build config
+load(
+    ":zrpc.bzl",
+    "zrpc_copts",
 )
 
 package(default_visibility = [
@@ -55,6 +62,7 @@ cc_library(
         ":zrpc_session",
         ":zrpc_exechelper",
     ],
+    copts = zrpc_copts(),
 )
 
 tf_proto_library_cc(
@@ -74,6 +82,7 @@ cc_library(
         "//tensorflow/core:lib",
         "@zeromq//:zmq_cpp",
     ],
+    copts = zrpc_copts(),
 )
 
 cc_library(
@@ -91,6 +100,7 @@ cc_library(
         "//tensorflow/core/distributed_runtime:call_options",
         "//tensorflow/core/distributed_runtime:master_interface",
     ],
+    copts = zrpc_copts(),
     alwayslink = 1,
 )
 
@@ -114,6 +124,7 @@ cc_library(
         "//tensorflow/core/distributed_runtime:master_interface",
         "@zeromq//:zmq_cpp",
     ],
+    copts = zrpc_copts(),
     alwayslink = 1,
 )
 
@@ -145,6 +156,7 @@ cc_library(
         "//tensorflow/core/distributed_runtime:master_session",
         "//tensorflow/core/distributed_runtime:worker_env",
     ],
+    copts = zrpc_copts(),
     alwayslink = 1,
 )
 
@@ -158,6 +170,7 @@ cc_library(
        "//tensorflow/core/distributed_runtime:worker_cache_partial",
        "//tensorflow/core/distributed_runtime:worker_interface",
    ],
+    copts = zrpc_copts(),
 )
 
 tf_cuda_library(
@@ -178,6 +191,7 @@ tf_cuda_library(
        "//tensorflow/core/distributed_runtime:worker_cache",
        "//tensorflow/core/distributed_runtime:worker_env",
    ],
+    copts = zrpc_copts(),
 )
 
 cc_library(
@@ -193,6 +207,7 @@ cc_library(
         "//tensorflow/core:worker_proto_cc",
         "@zeromq//:zmq_cpp",
     ],
+    copts = zrpc_copts(),
 )
 
 cc_library(
@@ -208,6 +223,7 @@ cc_library(
        "//tensorflow/core/distributed_runtime:worker_env",
        "//tensorflow/core/distributed_runtime:worker_interface",
    ],
+    copts = zrpc_copts(),
 )
 
 #cc_library(
