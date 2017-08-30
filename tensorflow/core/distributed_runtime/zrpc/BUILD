@@ -1,5 +1,5 @@
 # Description:
-#   RPC communication interfaces and implementations for TensorFlow.
+#   ZRPC communication interfaces and implementations for TensorFlow.
 
 licenses(["notice"])  # Apache 2.0
 
@@ -119,8 +119,16 @@ cc_library(
 
 cc_library(
     name = "zrpc_exechelper",
-    srcs = ["exechelper/tfoplibraryproxy.cc"],
-    hdrs = ["exechelper/tfoplibraryproxy.h"],
+    srcs = [
+        "exechelper/tfoplibraryproxy.cc",
+        "exechelper/graphview.cc",
+        "exechelper/mdgraphmgr.cc",
+    ],
+    hdrs = [
+        "exechelper/tfoplibraryproxy.h",
+        "exechelper/graphview.h",
+        "exechelper/mdgraphmgr.h",
+    ],
     deps = [
         ":zrpc_util",
         ":zrpc_worker_cache",

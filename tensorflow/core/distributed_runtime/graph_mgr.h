@@ -61,7 +61,7 @@ class StepStatsCollector;
 class GraphMgr {
  public:
   explicit GraphMgr(const WorkerEnv* worker_env);
-  ~GraphMgr();
+  virtual ~GraphMgr();
 
   // Registers a graph. Fills in "handle"
   Status Register(const string& session, const GraphDef& gdef,
@@ -90,7 +90,7 @@ class GraphMgr {
   // Deregister all graphs.
   Status DeregisterAll();
 
- private:
+  protected:
   typedef GraphMgr ME;
 
   struct ExecutionUnit {
@@ -161,8 +161,8 @@ class GraphMgr {
   void RecvOutputsFromRendezvousAsync(Rendezvous* rendezvous, NamedTensors* out,
                                       const StatusCallback& done);
 
-  Status InitItem(const string& session, const GraphDef& gdef,
-                  const GraphOptions& graph_options, Item* item);
+  virtual Status InitItem(const string& session, const GraphDef& gdef,
+                          const GraphOptions& graph_options, Item* item);
 
   TF_DISALLOW_COPY_AND_ASSIGN(GraphMgr);
 };

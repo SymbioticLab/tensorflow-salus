@@ -63,6 +63,10 @@ CallWithAllMethodName(FWD_DECLARE)
 
 #undef FWD_DECLARE
 
+struct LocalExecutorParams;
+class Graph;
+class Executor;
+
 namespace remote {
 
 class TFOpLibraryProxyPrivate;
@@ -73,10 +77,12 @@ class TFOpLibraryProxyPrivate;
 class TFOpLibraryProxy
 {
 public:
+    using ExecutorFactory =
+        std::function<Status(const LocalExecutorParams &params, const Graph *graph, Executor **executor)>;
     /**
      * Default constructor
      */
-    TFOpLibraryProxy();
+    explicit TFOpLibraryProxy(ExecutorFactory execFactory);
     ~TFOpLibraryProxy();
 
     /**

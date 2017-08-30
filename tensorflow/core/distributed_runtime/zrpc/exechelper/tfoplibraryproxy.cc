@@ -32,6 +32,7 @@
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_util.h"
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_worker_cache.h"
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_worker_service.h"
+#include "tensorflow/core/distributed_runtime/zrpc/exechelper/mdgraphmgr.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow/core/platform/mutex.h"
@@ -102,7 +103,7 @@ public:
 
         // Finish setting up worker environment.
         m_workerEnv.worker_cache = m_masterEnv.worker_cache;
-        m_workerEnv.graph_mgr = new GraphMgr(&m_workerEnv);
+        m_workerEnv.graph_mgr = new MDGraphMgr(&m_workerEnv, m_execFactory);
         // TODO: use our own thread pool
         m_workerEnv.compute_pool = ComputePool(sess_opts);
         m_workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&m_workerEnv);
@@ -122,6 +123,7 @@ public:
     std::unique_ptr<Master> m_master;
     WorkerEnv m_workerEnv;
     std::unique_ptr<ZrpcWorker> m_worker;
+    TFOpLibraryProxy::ExecutorFactory m_execFactory;
 
 private:
     tensorflow::remote::TFOpLibraryProxy *const q;
@@ -129,10 +131,11 @@ private:
 
 TFOpLibraryProxy::~TFOpLibraryProxy() = default;
 
-TFOpLibraryProxy::TFOpLibraryProxy()
+TFOpLibraryProxy::TFOpLibraryProxy(ExecutorFactory execFactory)
     : d(new TFOpLibraryProxyPrivate(this))
 {
     d->m_env = Env::Default();
+    d->m_execFactory = execFactory;
 }
 
 TFOpLibraryProxy::TFOpLibraryProxy(TFOpLibraryProxy &&other)
