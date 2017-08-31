@@ -40,6 +40,14 @@
 namespace tensorflow {
 namespace remote {
 
+namespace {
+thread::ThreadPool *ComputePool(Env *env)
+{
+    static std::unique_ptr<thread::ThreadPool> pool(new thread::ThreadPool(env, "ZrpcCompute", 4);
+    return pool.get();
+}
+} // namespace
+
 class TFOpLibraryProxyPrivate
 {
 public:
@@ -104,8 +112,7 @@ public:
         // Finish setting up worker environment.
         m_workerEnv.worker_cache = m_masterEnv.worker_cache;
         m_workerEnv.graph_mgr = new MDGraphMgr(&m_workerEnv, m_execFactory);
-        // TODO: use our own thread pool
-        m_workerEnv.compute_pool = ComputePool(sess_opts);
+        m_workerEnv.compute_pool = ComputePool(m_env);
         m_workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&m_workerEnv);
 
         return Status::OK();
