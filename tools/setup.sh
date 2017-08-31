@@ -36,9 +36,12 @@ function cf() {
     git checkout -b $BUILD_BRANCH
 
     ./configure "$@"
+    local s=$?
 
     git checkout $cur_br
     git branch -D $BUILD_BRANCH
+
+    return $s
 }
 
 function bbi() {
@@ -46,9 +49,12 @@ function bbi() {
     git checkout -b $BUILD_BRANCH
 
     bb "$@" && bazel-bin/tensorflow/tools/pip_package/build_pip_package $HOME/downloads && pip uninstall -y tensorflow && pip install $HOME/downloads/*.whl
+    local s=$?
 
     git checkout $cur_br
     git branch -D $BUILD_BRANCH
+
+    return $s
 }
 
 #build && bazel-bin/tensorflow/tools/pip_package/build_pip_package $HOME/downloads && pip uninstall -y tensorflow && pip install $HOME/downloads/*.whl
