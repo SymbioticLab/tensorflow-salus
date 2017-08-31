@@ -63,7 +63,7 @@ CallWithAllMethodName(FWD_DECLARE)
 
 #undef FWD_DECLARE
 
-struct LocalExecutorParams;
+struct MultiDeviceExecutorParams;
 class Graph;
 class Executor;
 
@@ -78,7 +78,7 @@ class TFOpLibraryProxy
 {
 public:
     using ExecutorFactory =
-        std::function<Status(const LocalExecutorParams &params, const Graph *graph, Executor **executor)>;
+        std::function<Status(const MultiDeviceExecutorParams &params, const Graph *graph, Executor **executor)>;
     /**
      * Default constructor
      */
