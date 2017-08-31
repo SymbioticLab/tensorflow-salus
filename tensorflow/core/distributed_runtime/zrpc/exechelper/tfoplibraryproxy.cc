@@ -43,7 +43,7 @@ namespace remote {
 namespace {
 thread::ThreadPool *ComputePool(Env *env)
 {
-    static std::unique_ptr<thread::ThreadPool> pool(new thread::ThreadPool(env, "ZrpcCompute", 4);
+    static std::unique_ptr<thread::ThreadPool> pool(new thread::ThreadPool(env, "ZrpcCompute", 4));
     return pool.get();
 }
 } // namespace
