@@ -59,7 +59,7 @@ private:
     OpSegment m_opseg;
 
     // Kernel to device map
-    std::unordered_map<OpKernel*, Device*> m_kernelToDevice;
+    std::unordered_map<const OpKernel*, const Device*> m_kernelToDevice;
     mutex m_mu;
 };
 
