@@ -30,6 +30,7 @@
 
 namespace tensorflow {
 class Graph;
+class OpKernel;
 
 namespace remote {
 
@@ -64,11 +65,7 @@ struct NodeItem
     // A graph node.
     const Node *node = nullptr;
 
-    // The kernel for this node.
-    OpKernel *kernel = nullptr;
-
     bool kernel_is_expensive : 1; // True iff kernel->IsExpensive()
-    bool kernel_is_async : 1;     // True iff kernel->AsAsync() != nullptr
     bool is_merge : 1;            // True iff IsMerge(node)
     bool is_enter : 1;            // True iff IsEnter(node)
     bool is_exit : 1;             // True iff IsExit(node)
@@ -172,7 +169,7 @@ public:
 
     void Initialize(const Graph *g);
     //     Status SetAllocAttrs(const Graph* g, const Device* device);
-    Status SetAllocAttrForNode(const Node *n, const Device *device);
+    Status SetAllocAttrForNode(const Node *n, const Device *device, const OpKernel *op_kernel) const;
 
     NodeItem *node(int id) const
     {

@@ -252,7 +252,7 @@ Status InferAllocAttr(const Node *n, const Node *dst,
     return s;
 }
 
-Status GraphView::SetAllocAttrForNode(const Node *n, const Device *device)
+Status GraphView::SetAllocAttrForNode(const Node *n, const Device *device, const OpKernel *op_kernel) const
 {
     Status s;
     DeviceNameUtils::ParsedName local_dev_name = device->parsed_name();
@@ -275,7 +275,6 @@ Status GraphView::SetAllocAttrForNode(const Node *n, const Device *device)
     }
 
     for (int out = 0; out < n->num_outputs(); out++) {
-        const OpKernel *op_kernel = item->kernel;
         DCHECK_LT(out, op_kernel->output_memory_types().size());
         bool on_host = op_kernel->output_memory_types()[out] == HOST_MEMORY;
         if (on_host) {

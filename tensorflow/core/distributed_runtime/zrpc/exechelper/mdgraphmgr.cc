@@ -100,7 +100,8 @@ Status MDGraphMgr::InitItem(const string& session, const GraphDef& gdef,
   TF_RETURN_IF_ERROR(OptimizationPassRegistry::Global()->RunGrouping(
       OptimizationPassRegistry::POST_PARTITIONING, optimization_options));
 
-  LocalExecutorParams params;
+  MultiDeviceExecutorParams params;
+  params.deviceMgr = worker_env_->device_mgr;
 
   item->units.reserve(partitions.size());
   item->graph_mgr = this;
@@ -113,8 +114,7 @@ Status MDGraphMgr::InitItem(const string& session, const GraphDef& gdef,
     ExecutionUnit* unit = &(item->units.back());
 
     // Find the device.
-    Status s =
-        worker_env_->device_mgr->LookupDevice(device_name, &unit->device);
+    Status s = worker_env_->device_mgr->LookupDevice(device_name, &unit->device);
     if (!s.ok()) {
       // Remove the empty unit from the item as the item destructor wants all
       // units to have valid devices.
@@ -129,41 +129,64 @@ Status MDGraphMgr::InitItem(const string& session, const GraphDef& gdef,
     // Top-level nodes in the graph uses the op segment to cache
     // kernels. Therefore, as long as the executor is alive, we need
     // to ensure the kernels cached for the session are alive.
-    auto opseg = unit->device->op_segment();
+//     auto opseg = unit->device->op_segment();
+    auto opseg = &m_opseg;
     opseg->AddHold(session);
 
-    // Function library runtime.
+    auto producer = subgraph->versions().producer();
+    params.create_fruntime = [this, producer, item, &graph_options](Device *dev) {
+        return NewFunctionLibraryRuntime(worker_env_->device_mgr, worker_env_->env, dev,
+                                         producer, item->lib_def,
+                                         graph_options.optimizer_options());
+    };
+
+    // Construct the root executor for the subgraph.
+    params.find_kernel = [this, session, opseg](const NodeDef &ndef, const Device **device, OpKernel **kernel) {
+        *device = nullptr;
+        *kernel = nullptr;
+
+        bool found = true;
+        auto ok = opseg->FindOrCreate(session, ndef.name(), kernel, [&found](OpKernel **) {
+            found = false;
+            return Status::OK();
+        });
+        if (!ok.ok() || !found) {
+            return ok;
+        }
+
+        mutex_lock l(m_mu);
+        auto it = m_kernelToDevice.find(*kernel);
+        if (it == m_kernelToDevice.end()) {
+            return errors::Internal("We've created the kernel, but don't remember its device");
+        }
+        *device = it->second;
+        return Status::OK();
+    };
+
+    params.create_kernel = [this, session, opseg](const NodeDef& ndef, const Device *device,
+                                                  FunctionLibraryRuntime *lib, OpKernel** kernel) -> Status {
+        // Caches the kernel only if the node is stateful.
+        if (!lib->IsStateful(ndef.op())) {
+            return lib->CreateKernel(ndef, kernel);
+        }
+        auto create_fn = [this, device, lib, &ndef](OpKernel** kernel) {
+            auto s = lib->CreateKernel(ndef, kernel);
+            mutex_lock l(m_mu);
+            m_kernelToDevice[*kernel] = device;
+            return s;
+        };
+        // Kernels created for subgraph nodes need to be cached.  On
+        // cache miss, create_fn() is invoked to create a kernel based
+        // on the function library here + global op registry.
+        return opseg->FindOrCreate(session, ndef.name(), kernel, create_fn);
+    };
+
     unit->lib = NewFunctionLibraryRuntime(
         worker_env_->device_mgr, worker_env_->env, unit->device,
         subgraph->versions().producer(), item->lib_def,
         graph_options.optimizer_options());
 
-    // Construct the root executor for the subgraph.
-    params.device = unit->device;
-    auto lib = unit->lib;
-    params.function_library = lib;
-    params.create_kernel = [session, lib, opseg](const NodeDef& ndef,
-                                                 OpKernel** kernel) {
-      // Caches the kernel only if the node is stateful.
-      if (!lib->IsStateful(ndef.op())) {
-        return lib->CreateKernel(ndef, kernel);
-      }
-      auto create_fn = [lib, &ndef](OpKernel** kernel) {
-        return lib->CreateKernel(ndef, kernel);
-      };
-      // Kernels created for subgraph nodes need to be cached.  On
-      // cache miss, create_fn() is invoked to create a kernel based
-      // on the function library here + global op registry.
-      return opseg->FindOrCreate(session, ndef.name(), kernel, create_fn);
-    };
-    params.delete_kernel = [lib](OpKernel* kernel) {
-      // If the node is stateful, opseg owns it. Otherwise, delete it.
-      if (kernel && !lib->IsStateful(kernel->type_string())) {
-        delete kernel;
-      }
-    };
-
-    optimizer.Optimize(lib, worker_env_->env, params.device, &subgraph);
+    optimizer.Optimize(unit->lib, worker_env_->env, unit->device, &subgraph);
     TF_RETURN_IF_ERROR(
         EnsureMemoryTypes(DeviceType(unit->device->device_type()),
                           unit->device->name(), subgraph.get()));

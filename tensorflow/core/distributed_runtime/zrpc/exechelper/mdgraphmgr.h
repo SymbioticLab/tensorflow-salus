@@ -21,17 +21,28 @@
 
 #include "tensorflow/core/distributed_runtime/graph_mgr.h"
 
+#include "tensorflow/core/common_runtime/executor.h"
+#include "tensorflow/core/framework/op_segment.h"
+
 #include <functional>
 
 namespace tensorflow {
+class Device;
+class DeviceMgr;
+class FunctionLibraryRuntime;
+class NodeDef;
+class OpKernel;
+
+struct MultiDeviceExecutorParams;
+
 /**
  * @todo write docs
  */
 class MDGraphMgr : public GraphMgr
 {
 public:
-    using ExecutorFactory =
-        std::function<Status(const LocalExecutorParams &params, const Graph *graph, Executor **executor)>;
+    using ExecutorFactory = std::function<Status(const MultiDeviceExecutorParams &params, const Graph *graph,
+                                                 Executor **executor)>;
 
     MDGraphMgr(const WorkerEnv *env, ExecutorFactory execFactory);
     ~MDGraphMgr() override;
@@ -42,6 +53,34 @@ protected:
 
 private:
     ExecutorFactory m_execFactory;
+
+    // Global Opsegment that shared by all local devices on all workers
+    // (we have one and only one local worker)
+    OpSegment m_opseg;
+
+    // Kernel to device map
+    std::unordered_map<OpKernel*, Device*> m_kernelToDevice;
+    mutex m_mu;
+};
+
+struct MultiDeviceExecutorParams
+{
+    // The devices this executor should use.
+    DeviceMgr *deviceMgr;
+
+    // create_fruntime creates function library runtime given device,
+    // caller takes the ownership of the created library runtime.
+    std::function<FunctionLibraryRuntime *(Device *)> create_fruntime;
+
+    // find_kernel returns an instance of op kernel, which was created on device.
+    // create_kernel returns an instance of op kernel based on NodeDef for device d.
+    // delete_kernel is called for every kernel used by the executor
+    // when the executor is deleted.
+    std::function<Status(const NodeDef &, const Device **, OpKernel **)> find_kernel;
+
+    std::function<Status(const NodeDef &, const Device *, FunctionLibraryRuntime *, OpKernel **)> create_kernel;
+
+    Executor::Args::NodeOutputsCallback node_outputs_cb;
 };
 
 } // namespace tensorflow
