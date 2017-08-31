@@ -222,3 +222,16 @@ index e26741465..af412cc22 100644
  )
  
  # TODO(mrry): Move executor_test.cc to ../common_runtime when once it no longer depends
+diff --git a/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl b/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl
+index af8aeca36..4bd0a5261 100644
+--- a/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl
++++ b/tensorflow/core/distributed_runtime/zrpc/zrpc.bzl
+@@ -10,7 +10,7 @@ load(
+ )
+ 
+ def zrpc_copts():
+-    return ([]
++    return (["-g"]
+     + if_cuda(["-DGOOGLE_CUDA=1"])
+     + if_mkl(["-DINTEL_MKL=1"])
+     + if_android_arm(["-mfpu=neon"])
