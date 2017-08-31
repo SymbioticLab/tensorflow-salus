@@ -76,7 +76,7 @@ struct MultiDeviceExecutorParams
     // create_kernel returns an instance of op kernel based on NodeDef for device d.
     // delete_kernel is called for every kernel used by the executor
     // when the executor is deleted.
-    std::function<Status(const NodeDef &, const Device **, OpKernel **)> find_kernel;
+    std::function<Status(const NodeDef &, Device **, OpKernel **)> find_kernel;
 
     std::function<Status(const NodeDef &, const Device *, FunctionLibraryRuntime *, OpKernel **)> create_kernel;
 
