@@ -141,7 +141,7 @@ Status MDGraphMgr::InitItem(const string& session, const GraphDef& gdef,
     };
 
     // Construct the root executor for the subgraph.
-    params.find_kernel = [this, session, opseg](const NodeDef &ndef, Device **device, OpKernel **kernel) {
+    params.find_kernel = [this, session, opseg](const NodeDef &ndef, const Device **device, OpKernel **kernel) {
         *device = nullptr;
         *kernel = nullptr;
 
