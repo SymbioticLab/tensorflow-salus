@@ -217,7 +217,7 @@ cc_library(
         "zrpc_wrapped_devicecontext.cc",
     ],
     hdrs = [
-        "zrpc_rendezvous_mgr.h"
+        "zrpc_rendezvous_mgr.h",
         "zrpc_wrapped_devicecontext.h",
     ],
     deps = [
