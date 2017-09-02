@@ -71,19 +71,36 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
                                               StatusCallback done)
 {
     auto send_wrapper = static_cast<WrapperDeviceContext *>(send_args.device_context);
-    auto recv_wrapper = static_cast<WrapperDeviceContext *>(recv_args.device_context);
-    if (!send_wrapper || !recv_wrapper) {
-        return BaseRemoteRendezvous::SameWorkerRecvDone(parsed, send_args, recv_args, in, out, std::move(done));
+    Device *send_dev = nullptr;
+    DeviceContext *send_dctx = nullptr;
+    if (send_wrapper) {
+        send_dev = send_wrapper->device();
+        send_dctx = send_wrapper->wrapped();
+        send_wrapper->Unref();
+        send_wrapper = nullptr;
+    } else {
+        auto s = env_->device_mgr->LookupDevice(parsed.src_device, &send_dev);
+        if (!s.ok()) {
+            done(s);
+            return;
+        }
     }
 
-    auto send_dctx = send_wrapper->wrapped();
-    auto recv_dctx = recv_wrapper->wrapped();
-    auto send_dev = send_wrapper->device();
-    auto recv_dev = recv_wrapper->device();
-    send_wrapper->Unref();
-    recv_wrapper->Unref();
-    send_wrapper = nullptr;
-    recv_wrapper = nullptr;
+    auto recv_wrapper = static_cast<WrapperDeviceContext *>(recv_args.device_context);
+    Device *recv_dev = nullptr;
+    DeviceContext *recv_dctx = nullptr;
+    if (recv_wrapper) {
+        recv_dev = recv_wrapper->device();
+        recv_dctx = recv_wrapper->wrapped();
+        recv_wrapper->Unref();
+        recv_wrapper = nullptr;
+    } else {
+        auto s = env_->device_mgr->LookupDevice(parsed.dst_device, &recv_dev);
+        if (!s.ok()) {
+            done(s);
+            return;
+        }
+    }
 
     // Do a quick copy (sharing the underlying buffer) if both tensors
     // are on host memory.
@@ -114,6 +131,9 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
 
     // The following function takes care of cpu->gpu, gpu->cpu, gpu->gpu copies,
     // etc.
+    VLOG(1) << "ZrpcRemoteRendezvous::SameWorkerRecvDone copy from " << send_dev->name()
+            << " to " << recv_dev->name() << "    send_on_host " << send_args.alloc_attrs.on_host()
+            << " recv_on_host " << recv_args.alloc_attrs.on_host();
     CopyTensor::ViaDMA(parsed.edge_name, send_dctx, recv_dctx, send_dev, recv_dev,
                         send_args.alloc_attrs, recv_args.alloc_attrs, &in, out,
                         done);
