@@ -48,6 +48,7 @@ thread::ThreadPool *computePool(Env *env)
     static std::unique_ptr<thread::ThreadPool> pool(new thread::ThreadPool(env, "ZrpcCompute", 4));
     return pool.get();
 }
+
 std::unique_ptr<Master> createMaster(MasterEnv *master_env)
 {
     return std::unique_ptr<Master>(new Master(master_env, 0.0));
