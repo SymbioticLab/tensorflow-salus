@@ -211,18 +211,24 @@ cc_library(
 )
 
 cc_library(
-   name = "zrpc_rendezvous_mgr",
-   srcs = ["zrpc_rendezvous_mgr.cc"],
-   hdrs = ["zrpc_rendezvous_mgr.h"],
-   deps = [
-       "//tensorflow/core:core_cpu_internal",
-       "//tensorflow/core:framework",
-       "//tensorflow/core:lib",
-       "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
-       "//tensorflow/core/distributed_runtime:worker_cache",
-       "//tensorflow/core/distributed_runtime:worker_env",
-       "//tensorflow/core/distributed_runtime:worker_interface",
-   ],
+    name = "zrpc_rendezvous_mgr",
+    srcs = [
+        "zrpc_rendezvous_mgr.cc",
+        "zrpc_wrapped_devicecontext.cc",
+    ],
+    hdrs = [
+        "zrpc_rendezvous_mgr.h"
+        "zrpc_wrapped_devicecontext.h",
+    ],
+    deps = [
+        "//tensorflow/core:core_cpu_internal",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:lib",
+        "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
+        "//tensorflow/core/distributed_runtime:worker_cache",
+        "//tensorflow/core/distributed_runtime:worker_env",
+        "//tensorflow/core/distributed_runtime:worker_interface",
+    ],
     copts = zrpc_copts(),
 )
 

@@ -152,6 +152,15 @@ class BaseRemoteRendezvous : public Rendezvous {
   virtual bool IsSameWorker(DeviceNameUtils::ParsedName src,
                             DeviceNameUtils::ParsedName dst);
 
+  // Callback handling the case when a rendezvous has been
+  // accomplished in local_ and the consumer is local to this process.
+  // Tensor "in" will be copied into "out". The key "parsed" encodes
+  // the src and dst devices.
+  virtual void SameWorkerRecvDone(const Rendezvous::ParsedKey& parsed,
+                                  const Rendezvous::Args& in_args,
+                                  const Rendezvous::Args& out_args, const Tensor& in,
+                                  Tensor* out, StatusCallback done);
+
   // If aborted, aborts "call". Otherwise, adds "call" into active_.
   void RegisterCall(BaseRecvTensorCall* call);
 
@@ -178,15 +187,6 @@ class BaseRemoteRendezvous : public Rendezvous {
   // source is in this process. If "is_src" is false, checks that the
   // rendezvous key "parsed"'s destination is in this process.
   Status ValidateDevices(const Rendezvous::ParsedKey& parsed, bool is_src);
-
-  // Callback handling the case when a rendezvous has been
-  // accomplished in local_ and the consumer is local to this process.
-  // Tensor "in" will be copied into "out". The key "parsed" encodes
-  // the src and dst devices.
-  void SameWorkerRecvDone(const Rendezvous::ParsedKey& parsed,
-                          const Rendezvous::Args& in_args,
-                          const Rendezvous::Args& out_args, const Tensor& in,
-                          Tensor* out, StatusCallback done);
 
   TF_DISALLOW_COPY_AND_ASSIGN(BaseRemoteRendezvous);
 };
