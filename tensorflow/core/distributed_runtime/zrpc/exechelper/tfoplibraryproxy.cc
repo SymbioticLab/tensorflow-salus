@@ -74,6 +74,7 @@ Status TFOpLibraryProxy::globalInit()
     (*sess_opts.config.mutable_device_count())["RPC"] = 0;
     TF_RETURN_IF_ERROR(DeviceFactory::AddDevices(sess_opts, name_prefix, &m_devices));
     m_deviceMgr.reset(new DeviceMgr(m_devices));
+    return Status::OK();
 }
 
 Status TFOpLibraryProxy::newSession(std::unique_ptr<TFSessionProxy> &p)
