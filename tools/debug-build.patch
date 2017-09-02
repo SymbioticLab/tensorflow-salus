@@ -231,7 +231,7 @@ index af8aeca36..4bd0a5261 100644
  
  def zrpc_copts():
 -    return ([]
-+    return (["-g"]
++    return (["-g", "-O0"]
      + if_cuda(["-DGOOGLE_CUDA=1"])
      + if_mkl(["-DINTEL_MKL=1"])
      + if_android_arm(["-mfpu=neon"])
