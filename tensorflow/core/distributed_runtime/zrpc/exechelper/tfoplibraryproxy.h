@@ -66,14 +66,13 @@ CallWithAllMethodName(FWD_DECLARE)
 struct MultiDeviceExecutorParams;
 class Graph;
 class Executor;
+class Env;
+class Device;
+class DeviceMgr;
 
 namespace remote {
 
-class TFOpLibraryProxyPrivate;
-/**
- * Hides all implementations in tensorflow dynamic library in a d-pointer,
- * so this is the only class exposed to the outside
- */
+class TFSessionProxy;
 class TFOpLibraryProxy
 {
 public:
@@ -85,12 +84,37 @@ public:
     explicit TFOpLibraryProxy(ExecutorFactory execFactory);
     ~TFOpLibraryProxy();
 
+    Status globalInit();
+    Status newSession(std::unique_ptr<TFSessionProxy> &p);
+
+private:
+    friend class TFSessionProxy;
+
+    Env *m_env;
+    ExecutorFactory m_execFactory;
+    std::unique_ptr<DeviceMgr> m_deviceMgr;
+    std::vector<Device *> m_devices;
+};
+
+/**
+ * Hides all implementations in tensorflow dynamic library in a d-pointer,
+ * so this is the only class exposed to the outside
+ */
+class TFSessionProxyPrivate;
+class TFSessionProxy
+{
+public:
+    TFSessionProxy();
+    ~TFSessionProxy();
+
     /**
      * Move constructor
      */
-    TFOpLibraryProxy(TFOpLibraryProxy &&other);
+    TFSessionProxy(TFSessionProxy &&other);
 
-    Status init();
+    Status init(TFOpLibraryProxy *proxy);
+
+    void schedule(std::function<void()> f);
 
 #define DECLARE_HANDLER(name) \
     void Handle ## name (const name ## Request *req, std::function<void(name ## Response*, Status)> cb);
@@ -105,7 +129,7 @@ public:
     void HandleRecvTensorRaw(const RecvTensorRequest *req, std::function<void(std::vector<zmq::message_t>*, Status)> cb);
 
 private:
-    std::unique_ptr<TFOpLibraryProxyPrivate> d;
+    std::unique_ptr<TFSessionProxyPrivate> d;
 };
 
 } // namespace remote

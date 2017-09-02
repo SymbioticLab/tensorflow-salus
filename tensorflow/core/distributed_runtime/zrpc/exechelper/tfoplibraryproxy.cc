@@ -41,155 +41,167 @@ namespace tensorflow {
 namespace remote {
 
 namespace {
-thread::ThreadPool *ComputePool(Env *env)
+const static char name_prefix[] = "/job:executor/replica:0/task:0";
+
+thread::ThreadPool *computePool(Env *env)
 {
     static std::unique_ptr<thread::ThreadPool> pool(new thread::ThreadPool(env, "ZrpcCompute", 4));
     return pool.get();
 }
+std::unique_ptr<Master> createMaster(MasterEnv *master_env)
+{
+    return std::unique_ptr<Master>(new Master(master_env, 0.0));
+}
+
+MasterSession *sessionFactory(const SessionOptions &options, const MasterEnv *env,
+                              std::unique_ptr<std::vector<std::unique_ptr<Device>>> remote_devs)
+{
+    return new MasterSession(options, env, std::move(remote_devs), CreateNoOpStatsPublisher);
+}
 } // namespace
 
-class TFOpLibraryProxyPrivate
+TFOpLibraryProxy::TFOpLibraryProxy(ExecutorFactory execFactory)
 {
-public:
-    TFOpLibraryProxyPrivate(TFOpLibraryProxy *q)
-        : q(q)
-    {
-    }
-
-    ~TFOpLibraryProxyPrivate()
-    {
-        delete m_masterEnv.worker_cache; // Shared with worker_env.worker_cache.
-
-        // We must delete graph_mgr before device_mgr, due to shared
-        // ownership of OpKernels in the executors. (The graph_mgr will
-        // free all stateless OpKernels, and pass over borrowed stateful
-        // OpKernels, which are also held in their respective devices'
-        // OpSegments.)
-        delete m_workerEnv.graph_mgr;
-        delete m_workerEnv.device_mgr;
-
-        delete m_workerEnv.rendezvous_mgr;
-
-        // Do not delete (as these are not owned by the server):
-        // - m_masterEnv.env
-        // - m_workerEnv.env
-        // - m_workerEnv.compute_pool
-    }
-
-    std::unique_ptr<Master> CreateMaster(MasterEnv *master_env)
-    {
-        return std::unique_ptr<Master>(new Master(master_env, 0.0));
-    }
-
-    Status init()
-    {
-        mutex_lock l(m_mu);
-        m_masterEnv.env = m_env;
-        m_workerEnv.env = m_env;
-
-        SessionOptions sess_opts;
-        (*sess_opts.config.mutable_device_count())["RPC"] = 0;
-
-        // Configure shared devices between master and worker.
-        string name_prefix = strings::StrCat("/job:", "executor", "/replica:0", "/task:", 0);
-        TF_RETURN_IF_ERROR(DeviceFactory::AddDevices(sess_opts, name_prefix, &m_masterEnv.local_devices));
-        m_workerEnv.device_mgr = new DeviceMgr(m_masterEnv.local_devices);
-        m_workerEnv.worker_name = name_prefix;
-
-        // Create master and worker
-        m_master = CreateMaster(&m_masterEnv);
-        m_worker = NewZrpcWorker(&m_workerEnv);
-
-        // Finish setting up master environment.
-        m_masterEnv.ops = OpRegistry::Global();
-        m_masterEnv.worker_cache = NewZrpcWorkerCacheWithLocalWorker(m_worker.get(), name_prefix);
-        m_masterEnv.master_session_factory =
-            [](const SessionOptions &options, const MasterEnv *env,
-               std::unique_ptr<std::vector<std::unique_ptr<Device>>> remote_devs) {
-                return new MasterSession(options, env, std::move(remote_devs), CreateNoOpStatsPublisher);
-            };
-
-        // Finish setting up worker environment.
-        m_workerEnv.worker_cache = m_masterEnv.worker_cache;
-        m_workerEnv.graph_mgr = new MDGraphMgr(&m_workerEnv, m_execFactory);
-        m_workerEnv.compute_pool = ComputePool(m_env);
-        m_workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&m_workerEnv);
-
-        return Status::OK();
-    }
-
-    void schedule(std::function<void()> f)
-    {
-        m_worker->env()->compute_pool->Schedule(std::move(f));
-    }
-
-    mutex m_mu;
-
-    Env *m_env;
-    MasterEnv m_masterEnv;
-    std::unique_ptr<Master> m_master;
-    WorkerEnv m_workerEnv;
-    std::unique_ptr<ZrpcWorker> m_worker;
-    TFOpLibraryProxy::ExecutorFactory m_execFactory;
-
-private:
-    tensorflow::remote::TFOpLibraryProxy *const q;
-};
+    m_env = Env::Default();
+    m_execFactory = execFactory;
+}
 
 TFOpLibraryProxy::~TFOpLibraryProxy() = default;
 
-TFOpLibraryProxy::TFOpLibraryProxy(ExecutorFactory execFactory)
-    : d(new TFOpLibraryProxyPrivate(this))
+Status TFOpLibraryProxy::globalInit()
 {
-    d->m_env = Env::Default();
-    d->m_execFactory = execFactory;
+    SessionOptions sess_opts;
+    (*sess_opts.config.mutable_device_count())["RPC"] = 0;
+    TF_RETURN_IF_ERROR(DeviceFactory::AddDevices(sess_opts, name_prefix, &m_devices));
+    m_deviceMgr.reset(new DeviceMgr(m_devices));
 }
 
-TFOpLibraryProxy::TFOpLibraryProxy(TFOpLibraryProxy &&other)
+Status TFOpLibraryProxy::newSession(std::unique_ptr<TFSessionProxy> &p)
+{
+    std::unique_ptr<TFSessionProxy> sess(new TFSessionProxy);
+    auto s = sess->init(this);
+    if (!s.ok()) {
+        return s;
+    }
+    std::swap(sess, p);
+    return Status::OK();
+}
+
+class TFSessionProxyPrivate
+{
+public:
+    ~TFSessionProxyPrivate();
+
+    MasterEnv masterEnv;
+    std::unique_ptr<Master> master;
+    WorkerEnv workerEnv;
+    std::unique_ptr<ZrpcWorker> worker;
+
+    ResourceMgr resourceMgr;
+};
+
+TFSessionProxyPrivate::~TFSessionProxyPrivate()
+{
+    delete masterEnv.worker_cache; // Shared with worker_env.worker_cache.
+
+    // We must delete graph_mgr before device_mgr, due to shared
+    // ownership of OpKernels in the executors. (The graph_mgr will
+    // free all stateless OpKernels, and pass over borrowed stateful
+    // OpKernels, which are also held in their respective devices'
+    // OpSegments.)
+    delete workerEnv.graph_mgr;
+
+    delete workerEnv.rendezvous_mgr;
+
+    // Do not delete (as these are not owned by the server):
+    // - masterEnv.env
+    // - workerEnv.env
+    // - workerEnv.compute_pool
+    // - workerEnv.device_mgr
+}
+
+TFSessionProxy::~TFSessionProxy() = default;
+
+TFSessionProxy::TFSessionProxy()
+    : d(new TFSessionProxyPrivate)
+{
+}
+
+TFSessionProxy::TFSessionProxy(TFSessionProxy &&other)
     : d(std::move(other.d))
 {
 }
 
-Status TFOpLibraryProxy::init()
+Status TFSessionProxy::init(TFOpLibraryProxy *proxy)
 {
-    return d->init();
+    d->masterEnv.env = proxy->m_env;
+    d->workerEnv.env = proxy->m_env;
+
+    // Configure shared devices between master and worker.
+    for (auto dev : proxy->m_devices) {
+        d->masterEnv.local_devices.push_back(dev);
+    }
+    d->workerEnv.device_mgr = proxy->m_deviceMgr.get();
+    d->workerEnv.worker_name = name_prefix;
+
+    // Create master and worker
+    d->master = createMaster(&d->masterEnv);
+    d->worker = NewZrpcWorker(&d->workerEnv);
+
+    // Finish setting up master environment.
+    d->masterEnv.ops = OpRegistry::Global();
+    d->masterEnv.worker_cache = NewZrpcWorkerCacheWithLocalWorker(d->worker.get(), name_prefix);
+    d->masterEnv.master_session_factory = sessionFactory;
+
+    // Finish setting up worker environment.
+    d->workerEnv.worker_cache = d->masterEnv.worker_cache;
+    d->workerEnv.graph_mgr = new MDGraphMgr(&d->workerEnv, proxy->m_execFactory);
+    d->workerEnv.compute_pool = computePool(proxy->m_env);
+    d->workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&d->workerEnv);
+
+    return Status::OK();
+}
+
+void TFSessionProxy::schedule(std::function<void()> f)
+{
+    d->worker->env()->compute_pool->Schedule(std::move(f));
 }
 
 #define IMPL_MASTER_HANDLER(name)                                                                            \
-    void TFOpLibraryProxy::Handle##name(const name##Request *req,                                            \
-                                        std::function<void(name##Response *, Status)> cb)                    \
+    void TFSessionProxy::Handle##name(const name##Request *req,                                            \
+                                      std::function<void(name##Response *, Status)> cb)                    \
     {                                                                                                        \
         auto resp = new name##Response();                                                                    \
-        d->m_master->name(req, resp, [cb, resp](const Status &s) { cb(resp, s); });                          \
+        d->master->name(req, resp, [cb, resp](const Status &s) { cb(resp, s); });                          \
     }
 
 CallWithMasterMethodName(IMPL_MASTER_HANDLER)
 
 #undef IMPL_MASTER_HANDLER
 
-void TFOpLibraryProxy::HandleRunStep(const RunStepRequest *req,
-                                     std::function<void(RunStepResponse *, Status)> cb)
+void TFSessionProxy::HandleRunStep(const RunStepRequest *req,
+                                   std::function<void(RunStepResponse *, Status)> cb)
 {
     CallOptions *call_opts = new CallOptions;
     auto wrapped_request = new ProtoRunStepRequest(req);
     auto resp = new RunStepResponse();
     auto wrapped_response = new NonOwnedProtoRunStepResponse(resp);
-    d->m_master->RunStep(call_opts, wrapped_request, wrapped_response,
-                         [call_opts, wrapped_request, wrapped_response, resp, cb](const Status &status) {
-                             delete call_opts;
-                             delete wrapped_request;
-                             delete wrapped_response;
-                             cb(resp, status);
-                         });
+    d->master->RunStep(call_opts, wrapped_request, wrapped_response,
+                       [call_opts, wrapped_request, wrapped_response, resp, cb](const Status &status) {
+                           delete call_opts;
+                           delete wrapped_request;
+                           delete wrapped_response;
+                           cb(resp, status);
+                       });
 }
 
 #define IMPL_WORKER_HANDLER(name)                                                                            \
-    void TFOpLibraryProxy::Handle##name(const name##Request *req,                                            \
-                                        std::function<void(name##Response *, Status)> cb)                    \
+    void TFSessionProxy::Handle##name(const name##Request *req,                                            \
+                                      std::function<void(name##Response *, Status)> cb)                    \
     {                                                                                                        \
-        d->schedule([this, req, cb]() {                                                                      \
+        schedule([this, req, cb]() {                                                                      \
             auto resp = new name##Response();                                                                \
-            d->m_worker->name##Async(req, resp, [resp, cb](Status s) { cb(resp, s); });                      \
+            d->worker->name##Async(req, resp, [resp, cb](Status s) { cb(resp, s); });                      \
         });                                                                                                  \
     }
 
@@ -197,31 +209,31 @@ CallWithWorkerMethodName(IMPL_WORKER_HANDLER)
 
 #undef IMPL_WORKER_HANDLER
 
-void TFOpLibraryProxy::HandleRunGraph(const RunGraphRequest *req,
-                                      std::function<void(RunGraphResponse *, Status)> cb)
+void TFSessionProxy::HandleRunGraph(const RunGraphRequest *req,
+                                    std::function<void(RunGraphResponse *, Status)> cb)
 {
-    d->schedule([this, req, cb]() {
+    schedule([this, req, cb]() {
         CallOptions *call_opts = new CallOptions;
         auto wrapped_request = new ProtoRunGraphRequest(req);
         auto resp = new RunGraphResponse();
         auto wrapped_response = new NonOwnedProtoRunGraphResponse(resp);
-        d->m_worker->RunGraphAsync(call_opts, wrapped_request, wrapped_response,
-                                   [call_opts, wrapped_request, wrapped_response, resp, cb](const Status &s) {
-                                       delete call_opts;
-                                       delete wrapped_request;
-                                       delete wrapped_response;
-                                       cb(resp, s);
-                                   });
+        d->worker->RunGraphAsync(call_opts, wrapped_request, wrapped_response,
+                                 [call_opts, wrapped_request, wrapped_response, resp, cb](const Status &s) {
+                                     delete call_opts;
+                                     delete wrapped_request;
+                                     delete wrapped_response;
+                                     cb(resp, s);
+                                 });
     });
 }
 
-void TFOpLibraryProxy::HandleRecvTensorRaw(const RecvTensorRequest *req,
-                                           std::function<void(std::vector<zmq::message_t> *, Status)> cb)
+void TFSessionProxy::HandleRecvTensorRaw(const RecvTensorRequest *req,
+                                         std::function<void(std::vector<zmq::message_t> *, Status)> cb)
 {
-    d->schedule([this, req, cb]() {
+    schedule([this, req, cb]() {
         CallOptions *call_opts = new CallOptions;
         auto resp = new zmq::MultiPartMessage;
-        d->m_worker->RecvTensorAsync(call_opts, req, resp, [call_opts, resp, cb](const Status &s) {
+        d->worker->RecvTensorAsync(call_opts, req, resp, [call_opts, resp, cb](const Status &s) {
             delete call_opts;
             cb(resp->release(), s);
         });

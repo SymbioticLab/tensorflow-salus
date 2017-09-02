@@ -23,6 +23,7 @@
 
 #include "tensorflow/core/common_runtime/executor.h"
 #include "tensorflow/core/framework/op_segment.h"
+#include "tensorflow/core/framework/resource_mgr.h"
 
 #include <functional>
 
@@ -54,9 +55,12 @@ protected:
 private:
     ExecutorFactory m_execFactory;
 
-    // Global Opsegment that shared by all local devices on all workers
+    // Global Opsegment shared by all local devices on all workers
     // (we have one and only one local worker)
     OpSegment m_opseg;
+
+    // Global Resource manager shared by all local devices
+    ResourceMgr m_resourceMgr;
 
     // Kernel to device map
     std::unordered_map<const OpKernel*, const Device*> m_kernelToDevice;
@@ -67,6 +71,9 @@ struct MultiDeviceExecutorParams
 {
     // The devices this executor should use.
     DeviceMgr *deviceMgr;
+
+    // The resource manager this executor should use.
+    ResourceMgr *resourceMgr;
 
     // create_fruntime creates function library runtime given device,
     // caller takes the ownership of the created library runtime.
