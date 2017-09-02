@@ -133,9 +133,10 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
     // etc.
     VLOG(1) << "ZrpcRemoteRendezvous::SameWorkerRecvDone copy from " << send_dev->name()
             << " to " << recv_dev->name() << "    send_on_host " << send_args.alloc_attrs.on_host()
-            << " recv_on_host " << recv_args.alloc_attrs.on_host();
+            << " recv_on_host " << recv_args.alloc_attrs.on_host() << " src_data: " << (uint64_t)(in.tensor_data().data())
+            << " dst_data: " << (uint64_t)(out->tensor_data().data());
     CopyTensor::ViaDMA(parsed.edge_name, send_dctx, recv_dctx, send_dev, recv_dev,
-                        send_args.alloc_attrs, recv_args.alloc_attrs, &in, out,
+                        send_args.alloc_attrs, attr, &in, out,
                         done);
 }
 

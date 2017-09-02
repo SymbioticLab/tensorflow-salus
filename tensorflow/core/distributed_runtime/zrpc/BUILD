@@ -134,11 +134,13 @@ cc_library(
         "exechelper/tfoplibraryproxy.cc",
         "exechelper/graphview.cc",
         "exechelper/mdgraphmgr.cc",
+        "exechelper/devicefactories.cc",
     ],
     hdrs = [
         "exechelper/tfoplibraryproxy.h",
         "exechelper/graphview.h",
         "exechelper/mdgraphmgr.h",
+        "exechelper/devicefactories.h",
     ],
     deps = [
         ":zrpc_util",
