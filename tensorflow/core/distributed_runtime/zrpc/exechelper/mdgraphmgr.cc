@@ -32,10 +32,19 @@ namespace tensorflow {
 MDGraphMgr::MDGraphMgr(const WorkerEnv *env, ExecutorFactory execFactory)
     : GraphMgr(env)
     , m_execFactory(execFactory)
+    , m_resourceMgr(new ResourceMgr)
+    , m_opseg(new OpSegment)
 {
 }
 
-MDGraphMgr::~MDGraphMgr() = default;
+MDGraphMgr::~MDGraphMgr()
+{
+    m_opseg.reset();
+
+    VLOG(1) << "Deleting resource manager " << m_resourceMgr.get() << " on " << this
+    << ": " << m_resourceMgr->DebugString();
+    m_resourceMgr.reset();
+}
 
 Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const GraphOptions &graph_options,
                             Item *item)
@@ -102,7 +111,7 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
 
     MultiDeviceExecutorParams params;
     params.deviceMgr = worker_env_->device_mgr;
-    params.resourceMgr = &m_resourceMgr;
+    params.resourceMgr = m_resourceMgr.get();
 
     item->units.reserve(partitions.size());
     item->graph_mgr = this;
@@ -130,7 +139,7 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
         // kernels. Therefore, as long as the executor is alive, we need
         // to ensure the kernels cached for the session are alive.
         //     auto opseg = unit->device->op_segment();
-        auto opseg = &m_opseg;
+        auto opseg = m_opseg.get();
         opseg->AddHold(session);
 
         auto producer = subgraph->versions().producer();

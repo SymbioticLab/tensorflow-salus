@@ -55,12 +55,14 @@ protected:
 private:
     ExecutorFactory m_execFactory;
 
+    // Global Resource manager shared by all local devices.
+    // NOTE: Must be valid when destorying opsegment, because
+    // some op uses this during deconstruction.
+    std::unique_ptr<ResourceMgr> m_resourceMgr;
+
     // Global Opsegment shared by all local devices on all workers
     // (we have one and only one local worker)
-    OpSegment m_opseg;
-
-    // Global Resource manager shared by all local devices
-    ResourceMgr m_resourceMgr;
+    std::unique_ptr<OpSegment> m_opseg;
 
     // Kernel to device map
     std::unordered_map<const OpKernel*, const Device*> m_kernelToDevice;
