@@ -73,7 +73,6 @@ Status TFOpLibraryProxy::globalInit(const ConfigProto &config)
 {
     SessionOptions sess_opts;
     (*sess_opts.config.mutable_device_count())["RPC"] = 0;
-    sess_opts.config.gpu_options()->set_allow_growth(true);
 
     sess_opts.config.MergeFrom(config);
 
