@@ -45,7 +45,7 @@ void *TrivialGPUAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
 
 void TrivialGPUAllocator::DeallocateRaw(void *ptr)
 {
-    return m_sub->Free(ptr);
+    return m_sub->Free(ptr, 0);
 }
 
 } // namespace remote
