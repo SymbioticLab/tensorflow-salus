@@ -69,6 +69,7 @@ class Executor;
 class Env;
 class Device;
 class DeviceMgr;
+class ConfigProto;
 
 namespace remote {
 
@@ -84,7 +85,7 @@ public:
     explicit TFOpLibraryProxy(ExecutorFactory execFactory);
     ~TFOpLibraryProxy();
 
-    Status globalInit();
+    Status globalInit(const ConfigProto &options);
     Status newSession(std::unique_ptr<TFSessionProxy> &p);
 
 private:

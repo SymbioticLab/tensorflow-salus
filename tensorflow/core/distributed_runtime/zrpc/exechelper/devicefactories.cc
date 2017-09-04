@@ -23,6 +23,7 @@
 #include "tensorflow/core/common_runtime/threadpool_device.h"
 #include "tensorflow/core/framework/allocator.h"
 #include "tensorflow/core/public/session_options.h"
+#include "tensorflow/core/platform/mutex.h"
 
 #if GOOGLE_CUDA
 #include "tensorflow/core/common_runtime/gpu/gpu_device.h"
@@ -36,17 +37,19 @@ namespace remote {
 
 WrappedDeviceSettings::AllocatorFactory WrappedDeviceSettings::m_allocatorFactory = nullptr;
 
-Allocator *WrappedDeviceSettings::getWrapped(Allocator *alloc)
+Allocator *WrappedDeviceSettings::getWrapped(Allocator *alloc, Device *device)
 {
     static std::map<Allocator *, std::unique_ptr<Allocator>> cache;
+    static mutex mu;
 
     if (!m_allocatorFactory) {
         return alloc;
     }
 
+    mutex_lock l(mu);
     auto &wrapped = cache[alloc];
     if (!wrapped) {
-        wrapped = m_allocatorFactory(alloc);
+        wrapped = m_allocatorFactory(alloc, device);
     }
     return wrapped.get();
 }
@@ -110,6 +113,7 @@ public:
                      Allocator *gpu_allocator, Allocator *cpu_allocator)
         : BaseGPUDevice(options, name, memory_limit, locality, gpu_id, physical_device_desc, gpu_allocator,
                         cpu_allocator, false /* sync every op */, 1 /* max_streams */)
+        , gpu_id(gpu_id)
     {
     }
 
@@ -125,9 +129,11 @@ public:
             }
         }
 
-        alloc = WrappedDeviceSettings::getWrapped(alloc);
+        alloc = WrappedDeviceSettings::getWrapped(alloc, this);
         return alloc;
     }
+protected:
+    int gpu_id = -1;
 };
 
 class WrappedGPUDeviceFactory : public BaseGPUDeviceFactory

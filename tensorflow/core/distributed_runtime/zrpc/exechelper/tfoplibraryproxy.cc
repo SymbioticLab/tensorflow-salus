@@ -69,10 +69,14 @@ TFOpLibraryProxy::TFOpLibraryProxy(ExecutorFactory execFactory)
 
 TFOpLibraryProxy::~TFOpLibraryProxy() = default;
 
-Status TFOpLibraryProxy::globalInit()
+Status TFOpLibraryProxy::globalInit(const ConfigProto &config)
 {
     SessionOptions sess_opts;
     (*sess_opts.config.mutable_device_count())["RPC"] = 0;
+    sess_opts.config.gpu_options()->set_allow_growth(true);
+
+    sess_opts.config.MergeFrom(config);
+
     TF_RETURN_IF_ERROR(DeviceFactory::AddDevices(sess_opts, name_prefix, &m_devices));
     m_deviceMgr.reset(new DeviceMgr(m_devices));
     return Status::OK();
