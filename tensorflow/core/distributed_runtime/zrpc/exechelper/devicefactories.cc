@@ -76,7 +76,7 @@ public:
 
     Allocator *GetAllocator(AllocatorAttributes attr) override
     {
-        return WrappedDeviceSettings::getWrapped(ThreadPoolDevice::GetAllocator(attr));
+        return WrappedDeviceSettings::getWrapped(ThreadPoolDevice::GetAllocator(attr), this);
     }
 };
 
@@ -170,10 +170,10 @@ public:
     {
         if (attr.gpu_compatible()) {
             ProcessState *ps = ProcessState::singleton();
-            return WrappedDeviceSettings::getWrapped(ps->GetCUDAHostAllocator(0));
+            return WrappedDeviceSettings::getWrapped(ps->GetCUDAHostAllocator(0), this);
         }
         // Call the parent's implementation.
-        return WrappedDeviceSettings::getWrapped(ThreadPoolDevice::GetAllocator(attr));
+        return WrappedDeviceSettings::getWrapped(ThreadPoolDevice::GetAllocator(attr), this);
     }
 };
 
