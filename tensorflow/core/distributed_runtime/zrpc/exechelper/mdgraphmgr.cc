@@ -29,9 +29,9 @@
 
 namespace tensorflow {
 
-MDGraphMgr::MDGraphMgr(const WorkerEnv *env, ExecutorFactory execFactory)
+MDGraphMgr::MDGraphMgr(const WorkerEnv *env)
     : GraphMgr(env)
-    , m_execFactory(execFactory)
+    , m_execFactory(nullptr)
     , m_resourceMgr(new ResourceMgr)
     , m_opseg(new OpSegment)
 {
@@ -41,14 +41,14 @@ MDGraphMgr::~MDGraphMgr()
 {
     m_opseg.reset();
 
-    VLOG(1) << "Deleting resource manager " << m_resourceMgr.get() << " on " << this
-    << ": " << m_resourceMgr->DebugString();
     m_resourceMgr.reset();
 }
 
 Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const GraphOptions &graph_options,
                             Item *item)
 {
+    assert(m_execFactory);
+
     item->session = session;
     item->lib_def = new FunctionLibraryDefinition(OpRegistry::Global(), gdef.library());
 

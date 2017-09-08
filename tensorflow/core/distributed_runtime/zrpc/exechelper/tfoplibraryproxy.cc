@@ -61,10 +61,9 @@ MasterSession *sessionFactory(const SessionOptions &options, const MasterEnv *en
 }
 } // namespace
 
-TFOpLibraryProxy::TFOpLibraryProxy(ExecutorFactory execFactory)
+TFOpLibraryProxy::TFOpLibraryProxy()
 {
     m_env = Env::Default();
-    m_execFactory = execFactory;
 }
 
 TFOpLibraryProxy::~TFOpLibraryProxy() = default;
@@ -160,11 +159,16 @@ Status TFSessionProxy::init(TFOpLibraryProxy *proxy)
 
     // Finish setting up worker environment.
     d->workerEnv.worker_cache = d->masterEnv.worker_cache;
-    d->workerEnv.graph_mgr = new MDGraphMgr(&d->workerEnv, proxy->m_execFactory);
+    d->workerEnv.graph_mgr = new MDGraphMgr(&d->workerEnv);
     d->workerEnv.compute_pool = computePool(proxy->m_env);
     d->workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&d->workerEnv);
 
     return Status::OK();
+}
+
+void TFSessionProxy::setExecFactory(TFSessionProxy::ExecutorFactory f)
+{
+    static_cast<MDGraphMgr*>(d->workerEnv.graph_mgr)->setExecutorFactory(f);
 }
 
 void TFSessionProxy::schedule(std::function<void()> f)

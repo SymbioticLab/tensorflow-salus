@@ -77,12 +77,10 @@ class TFSessionProxy;
 class TFOpLibraryProxy
 {
 public:
-    using ExecutorFactory =
-        std::function<Status(const MultiDeviceExecutorParams &params, const Graph *graph, Executor **executor)>;
     /**
      * Default constructor
      */
-    explicit TFOpLibraryProxy(ExecutorFactory execFactory);
+    TFOpLibraryProxy();
     ~TFOpLibraryProxy();
 
     Status globalInit(const ConfigProto &options);
@@ -92,7 +90,6 @@ private:
     friend class TFSessionProxy;
 
     Env *m_env;
-    ExecutorFactory m_execFactory;
     std::unique_ptr<DeviceMgr> m_deviceMgr;
     std::vector<Device *> m_devices;
 };
@@ -114,6 +111,10 @@ public:
     TFSessionProxy(TFSessionProxy &&other);
 
     Status init(TFOpLibraryProxy *proxy);
+
+    using ExecutorFactory =
+        std::function<Status(const MultiDeviceExecutorParams &params, const Graph *graph, Executor **executor)>;
+    void setExecFactory(ExecutorFactory f);
 
     void schedule(std::function<void()> f);
 

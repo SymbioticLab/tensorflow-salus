@@ -136,6 +136,7 @@ cc_library(
         "exechelper/mdgraphmgr.cc",
         "exechelper/devicefactories.cc",
         "exechelper/allocators.cc",
+        "exechelper/memorytypes.cc",
     ],
     hdrs = [
         "exechelper/tfoplibraryproxy.h",
@@ -143,6 +144,7 @@ cc_library(
         "exechelper/mdgraphmgr.h",
         "exechelper/devicefactories.h",
         "exechelper/allocators.h",
+        "exechelper/memorytypes.h",
     ],
     deps = [
         ":zrpc_util",
