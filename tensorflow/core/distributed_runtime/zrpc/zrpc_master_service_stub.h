@@ -25,6 +25,7 @@
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/platform/mutex.h"
+#include "tensorflow/core/platform/default/notification.h"
 
 #include "zmq.hpp"
 
@@ -179,6 +180,7 @@ private:
     std::unordered_map<uint64_t, Item> m_recvCallbacks GUARDED_BY(m_mtable);
     std::string m_recvId;
     Thread *m_recvThread;
+    Notification m_recvReady;
 
     TF_DISALLOW_COPY_AND_ASSIGN(ZrpcMasterServiceStub);
 };

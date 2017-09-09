@@ -75,6 +75,8 @@ ZrpcMasterServiceStub::ZrpcMasterServiceStub(Env *env, const std::string &execut
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "ZeroMQ socket connect failed: " << err.what();
     }
+
+    m_recvReady.WaitForNotification();
 }
 
 ZrpcMasterServiceStub::~ZrpcMasterServiceStub()
@@ -144,6 +146,8 @@ void ZrpcMasterServiceStub::recvLoop()
         LOG(ERROR) << "ZeroMQ recving socket creation failed: " << err.what();
         return;
     }
+
+    m_recvReady.Notify();
 
     while (true) {
         try {
