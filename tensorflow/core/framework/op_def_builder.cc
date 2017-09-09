@@ -577,6 +577,13 @@ Status OpDefBuilder::Finalize(OpRegistrationData* op_reg_data) const {
   std::vector<string> errors = errors_;
   *op_reg_data = op_reg_data_;
 
+  // Add a dummy shape function for all missing ops
+  if (op_reg_data->shape_inference_fn == nullptr) {
+    op_reg_data->shape_inference_fn = [](shape_inference::InferenceContext *) {
+        return Status::OK();
+    };
+  }
+
   OpDef* op_def = &op_reg_data->op_def;
   for (StringPiece attr : attrs_) {
     FinalizeAttr(attr, op_def, &errors);
