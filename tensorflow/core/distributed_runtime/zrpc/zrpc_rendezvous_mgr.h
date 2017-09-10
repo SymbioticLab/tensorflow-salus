@@ -23,6 +23,49 @@ limitations under the License.
 
 namespace tensorflow {
 
+class ZrpcRemoteRendezvous : public BaseRemoteRendezvous
+{
+public:
+    ZrpcRemoteRendezvous(const WorkerEnv *env, WorkerCacheInterface *cache, int64 step_id)
+        : BaseRemoteRendezvous(env, step_id, false)
+        , cache_(cache)
+    {
+    }
+
+    // Forwards to local_, where the Tensor "val" will be buffered and
+    // any waiting callback stored.
+    Status Send(const ParsedKey& key, const Rendezvous::Args& args,
+                const Tensor& val, const bool is_dead) override;
+
+    // This method is called only by the RecvOp.  It tests to see
+    // whether the value will be produced by a local or remote device
+    // and handles accordingly.  In the local case it forwards to
+    // local_, in the remote case it initiates an RPC request.
+    void RecvAsync(const ParsedKey& key, const Rendezvous::Args& args,
+                    DoneCallback done) override;
+
+    bool FindTensor(const std::string &key, Tensor &t);
+
+protected:
+    void RecvFromRemoteAsync(const Rendezvous::ParsedKey &parsed, const Rendezvous::Args &args,
+                             DoneCallback done) override;
+
+    void SameWorkerRecvDone(const Rendezvous::ParsedKey &parsed, const Rendezvous::Args &in_args,
+                            const Rendezvous::Args &out_args, const Tensor &in, Tensor *out,
+                            StatusCallback done) override;
+
+private:
+    ~ZrpcRemoteRendezvous() override
+    {
+    }
+
+    mutex mu;
+    std::unordered_map<std::string, Tensor> tensors;
+
+    WorkerCacheInterface *cache_; // Not owned.
+    TF_DISALLOW_COPY_AND_ASSIGN(ZrpcRemoteRendezvous);
+};
+
 // RendezvousMgr keeps track of a set of local rendezvous instances.
 // All tensors sent by this worker are buffered in a RendezvousMgr
 // until the tensor is received.  Each global unique "step_id"

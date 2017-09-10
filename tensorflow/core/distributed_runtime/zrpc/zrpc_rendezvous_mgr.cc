@@ -34,36 +34,46 @@ limitations under the License.
 #include "tensorflow/core/platform/types.h"
 
 #include <unordered_set>
+#include <unordered_map>
 
 namespace tensorflow {
 
-namespace {
-
-class ZrpcRemoteRendezvous : public BaseRemoteRendezvous
+bool ZrpcRemoteRendezvous::FindTensor(const std::string &key, Tensor &t)
 {
-public:
-    ZrpcRemoteRendezvous(const WorkerEnv *env, WorkerCacheInterface *cache, int64 step_id)
-        : BaseRemoteRendezvous(env, step_id, false)
-        , cache_(cache)
-    {
+    mutex_lock l(mu);
+    auto it = tensors.find(key);
+    if (it != tensors.end()) {
+        t = it->second;
+        return true;
     }
+    return false;
+}
 
-protected:
-    void RecvFromRemoteAsync(const Rendezvous::ParsedKey &parsed, const Rendezvous::Args &args,
-                             DoneCallback done) override;
+Status ZrpcRemoteRendezvous::Send(const ParsedKey& key, const Rendezvous::Args& args,
+                                  const Tensor& val, const bool is_dead)
+{
+    mutex_lock l(mu);
 
-    void SameWorkerRecvDone(const Rendezvous::ParsedKey &parsed, const Rendezvous::Args &in_args,
-                            const Rendezvous::Args &out_args, const Tensor &in, Tensor *out,
-                            StatusCallback done) override;
+    tensors.emplace(key.FullKey().ToString(), val);
 
-private:
-    ~ZrpcRemoteRendezvous() override
-    {
-    }
+    return BaseRemoteRendezvous::Send(key, args, val, is_dead);
+}
 
-    WorkerCacheInterface *cache_; // Not owned.
-    TF_DISALLOW_COPY_AND_ASSIGN(ZrpcRemoteRendezvous);
-};
+void ZrpcRemoteRendezvous::RecvAsync(const ParsedKey& key, const Rendezvous::Args& args,
+                                     DoneCallback done)
+{
+    auto full_key = key.FullKey().ToString();
+    auto final_done = [done, full_key, this](const Status &s, const Rendezvous::Args &send_args,
+                                             const Rendezvous::Args &recv_args, const Tensor &val, bool is_dead){
+        {
+            mutex_lock l(mu);
+            tensors.erase(full_key);
+        }
+        done(s, send_args, recv_args, val, is_dead);
+    };
+
+    return BaseRemoteRendezvous::RecvAsync(key, args, std::move(final_done));
+}
 
 void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parsed,
                                               const Rendezvous::Args &send_args,
@@ -462,8 +472,6 @@ void ZrpcRemoteRendezvous::RecvFromRemoteAsync(const Rendezvous::ParsedKey &pars
         Unref();
     });
 }
-
-} // namespace
 
 ZrpcRendezvousMgr::ZrpcRendezvousMgr(const WorkerEnv *env)
     : BaseRendezvousMgr(env)
