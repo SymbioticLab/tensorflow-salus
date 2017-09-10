@@ -192,6 +192,13 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
             return opseg->FindOrCreate(session, ndef.name(), kernel, create_fn);
         };
 
+        params.delete_kernel = [](OpKernel *kernel, FunctionLibraryRuntime *lib) {
+            // If the node is stateful, opseg owns it. Otherwise, delete it.
+            if (kernel && !lib->IsStateful(kernel->type_string())) {
+                delete kernel;
+            }
+        };
+
         unit->lib = NewFunctionLibraryRuntime(worker_env_->device_mgr, worker_env_->env, unit->device,
                                               subgraph->versions().producer(), item->lib_def,
                                               graph_options.optimizer_options());

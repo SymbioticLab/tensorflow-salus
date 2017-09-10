@@ -95,6 +95,8 @@ struct MultiDeviceExecutorParams
 
     std::function<Status(const NodeDef &, const Device *, FunctionLibraryRuntime *, OpKernel **)> create_kernel;
 
+    std::function<void(OpKernel *, FunctionLibraryRuntime *)> delete_kernel;
+
     Executor::Args::NodeOutputsCallback node_outputs_cb;
 };
 
