@@ -86,6 +86,7 @@ struct MultiDeviceExecutorParams
     // create_fruntime creates function library runtime given device,
     // caller takes the ownership of the created library runtime.
     std::function<FunctionLibraryRuntime *(Device *)> create_fruntime;
+    std::function<void(FunctionLibraryRuntime *)> delete_fruntime;
 
     // find_kernel returns an instance of op kernel, which was created on device.
     // create_kernel returns an instance of op kernel based on NodeDef for device d.

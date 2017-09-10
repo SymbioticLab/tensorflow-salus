@@ -145,8 +145,14 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
         auto producer = subgraph->versions().producer();
         auto worker_env = worker_env_;
         params.create_fruntime = [worker_env, producer, item, optimizer_opts](Device *dev) {
+            item->Ref();
             return NewFunctionLibraryRuntime(worker_env->device_mgr, worker_env->env, dev, producer,
                                              item->lib_def, optimizer_opts);
+        };
+
+        params.delete_fruntime = [item] (FunctionLibraryRuntime *r) {
+            delete r;
+            item->Unref();
         };
 
         // Construct the root executor for the subgraph.
