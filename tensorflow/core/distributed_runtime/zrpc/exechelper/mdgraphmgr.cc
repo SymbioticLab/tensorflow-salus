@@ -110,6 +110,7 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
                                                         optimization_options));
 
     MultiDeviceExecutorParams params;
+    params.session = session;
     params.deviceMgr = worker_env_->device_mgr;
     params.resourceMgr = m_resourceMgr.get();
 

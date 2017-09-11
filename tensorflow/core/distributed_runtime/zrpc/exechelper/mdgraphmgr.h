@@ -77,6 +77,8 @@ private:
 
 struct MultiDeviceExecutorParams
 {
+    std::string session;
+
     // The devices this executor should use.
     DeviceMgr *deviceMgr;
 
