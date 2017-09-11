@@ -172,6 +172,13 @@ message ZMQRPCOptions {
   string endpoint = 1;
   // whether executor scheduler should only use CPU
   bool sched_cpu_only = 2;
+
+  // Resource usage
+  message ResourceMapDef {
+    map<string, double> persistant = 1;
+    map<string, double> temporary = 2;
+  }
+  ResourceMapDef resource_map = 3;
 }
 
 // Session configuration parameters.

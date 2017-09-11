@@ -184,9 +184,20 @@ void TFSessionProxy::schedule(std::function<void()> f)
         d->master->name(req, resp, [cb, resp](const Status &s) { cb(resp, s); });                          \
     }
 
-CallWithMasterMethodName(IMPL_MASTER_HANDLER)
+IMPL_MASTER_HANDLER(ExtendSession)
+IMPL_MASTER_HANDLER(PartialRunSetup)
+IMPL_MASTER_HANDLER(CloseSession)
+IMPL_MASTER_HANDLER(ListDevices)
+IMPL_MASTER_HANDLER(Reset)
 
 #undef IMPL_MASTER_HANDLER
+
+void TFSessionProxy::HandleCreateSession(const CreateSessionRequest *req,
+                                   std::function<void(CreateSessionResponse *, Status)> cb)
+{
+    auto resp = new CreateSessionResponse();
+    d->master->CreateSession(req, resp, [cb, resp](const Status &s) { cb(resp, s); });
+}
 
 void TFSessionProxy::HandleRunStep(const RunStepRequest *req,
                                    std::function<void(RunStepResponse *, Status)> cb)
