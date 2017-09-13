@@ -82,9 +82,11 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
 {
     auto send_wrapper = static_cast<WrapperDeviceContext *>(send_args.device_context);
     Device *send_dev = nullptr;
+    WrapperDeviceContext::WrapperFunction send_allocWrapper = nullptr;
     DeviceContext *send_dctx = nullptr;
     if (send_wrapper) {
         send_dev = send_wrapper->device();
+        send_allocWrapper = send_wrapper->allocWrapper();
         send_dctx = send_wrapper->wrapped();
         send_wrapper->Unref();
         send_wrapper = nullptr;
@@ -98,9 +100,11 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
 
     auto recv_wrapper = static_cast<WrapperDeviceContext *>(recv_args.device_context);
     Device *recv_dev = nullptr;
+    WrapperDeviceContext::WrapperFunction recv_allocWrapper = nullptr;
     DeviceContext *recv_dctx = nullptr;
     if (recv_wrapper) {
         recv_dev = recv_wrapper->device();
+        recv_allocWrapper = recv_wrapper->allocWrapper();
         recv_dctx = recv_wrapper->wrapped();
         recv_wrapper->Unref();
         recv_wrapper = nullptr;
@@ -136,8 +140,19 @@ void ZrpcRemoteRendezvous::SameWorkerRecvDone(const Rendezvous::ParsedKey &parse
     attr.set_gpu_compatible(send_args.alloc_attrs.gpu_compatible() ||
                             recv_args.alloc_attrs.gpu_compatible());
     Allocator* out_allocator = recv_dev->GetAllocator(attr);
+    if (recv_allocWrapper) {
+        out_allocator = recv_allocWrapper(out_allocator);
+    }
     Tensor copy(out_allocator, in.dtype(), in.shape());
     *out = copy;
+
+    auto ref = dynamic_cast<RefCounted*>(out_allocator);
+    if (ref) {
+        ref->Unref();
+    }
+
+    // TODO: when copy gpu->gpu, ViaDMA calls unwrapped allocator.
+    // For now we can ignore this.
 
     // The following function takes care of cpu->gpu, gpu->cpu, gpu->gpu copies,
     // etc.

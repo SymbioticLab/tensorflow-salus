@@ -21,17 +21,26 @@
 
 #include "tensorflow/core/common_runtime/device.h"
 
+#include <functional>
+
 namespace tensorflow {
 
 class WrapperDeviceContext : public DeviceContext
 {
+public:
+    using WrapperFunction = std::function<Allocator*(Allocator*)>;
+
+private:
     Device *m_device;
+    WrapperFunction m_allocWrapper;
+
     DeviceContext *m_actualCtx;
 
 public:
     // Takes one ref on `actual`
-    WrapperDeviceContext(Device *dev, DeviceContext *actual)
+    WrapperDeviceContext(Device *dev, WrapperFunction allocWrapper, DeviceContext *actual)
         : m_device(dev)
+        , m_allocWrapper(allocWrapper)
         , m_actualCtx(actual)
     {
         assert(m_device);
@@ -95,6 +104,11 @@ public:
     DeviceContext *wrapped() const
     {
         return m_actualCtx;
+    }
+
+    WrapperFunction allocWrapper() const
+    {
+        return m_allocWrapper;
     }
 };
 

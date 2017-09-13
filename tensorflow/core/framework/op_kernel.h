@@ -51,6 +51,8 @@ limitations under the License.
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <functional>
+
 namespace Eigen {
 struct ThreadPoolDevice;
 struct GpuDevice;
@@ -477,6 +479,8 @@ class OpKernelContext {
 
     // The device on which the kernel is running.
     DeviceBase* device = nullptr;
+
+    std::function<Allocator*(Allocator*)> allocator_wrapper = nullptr;
 
     // The Eigen GPU device wrapper, which may include a per-op
     // wrapped allocator. The concrete type of this object depends on

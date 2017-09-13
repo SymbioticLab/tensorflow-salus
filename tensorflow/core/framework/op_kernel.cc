@@ -228,6 +228,9 @@ OpKernelContext::~OpKernelContext() {
 Allocator* OpKernelContext::get_allocator(AllocatorAttributes attr) {
   Allocator* allocator =
       params_->device->GetStepAllocator(attr, resource_manager());
+  if (params_->allocator_wrapper) {
+      allocator = params_->allocator_wrapper(allocator);
+  }
   if (track_allocations()) {
     mutex_lock lock(mu_);
     for (const auto& wrapped : wrapped_allocators_) {
