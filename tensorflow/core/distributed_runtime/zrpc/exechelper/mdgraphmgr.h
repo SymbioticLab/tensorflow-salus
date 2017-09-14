@@ -70,8 +70,8 @@ private:
     // (we have one and only one local worker)
     std::unique_ptr<OpSegment> m_opseg;
 
-    // Kernel to device map
-    std::unordered_map<const OpKernel*, const Device*> m_kernelToDevice;
+    // Kernel to device name map
+    std::unordered_map<const OpKernel*, std::string> m_kernelToDevice;
     mutex m_mu;
 };
 
@@ -94,9 +94,9 @@ struct MultiDeviceExecutorParams
     // create_kernel returns an instance of op kernel based on NodeDef for device d.
     // delete_kernel is called for every kernel used by the executor
     // when the executor is deleted.
-    std::function<Status(const NodeDef &, const Device **, OpKernel **)> find_kernel;
+    std::function<Status(const NodeDef &, std::string *, OpKernel **)> find_kernel;
 
-    std::function<Status(const NodeDef &, const Device *, FunctionLibraryRuntime *, OpKernel **)> create_kernel;
+    std::function<Status(const NodeDef &, FunctionLibraryRuntime *, OpKernel **)> create_kernel;
 
     std::function<void(OpKernel *, FunctionLibraryRuntime *)> delete_kernel;
 

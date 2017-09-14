@@ -157,10 +157,10 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
         };
 
         // Construct the root executor for the subgraph.
-        params.find_kernel = [this, session, opseg](const NodeDef &ndef, const Device **device,
+        params.find_kernel = [this, session, opseg](const NodeDef &ndef, std::string *devName,
                                                     OpKernel **kernel) {
-            *device = nullptr;
             *kernel = nullptr;
+            devName->clear();
 
             bool found = true;
             auto ok = opseg->FindOrCreate(session, ndef.name(), kernel, [&found](OpKernel **) {
@@ -176,21 +176,21 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
             if (it == m_kernelToDevice.end()) {
                 return errors::Internal("We've created the kernel, but don't remember its device");
             }
-            *device = it->second;
+            *devName = it->second;
             return Status::OK();
         };
 
-        params.create_kernel = [this, session, opseg](const NodeDef &ndef, const Device *device,
+        params.create_kernel = [this, session, opseg](const NodeDef &ndef,
                                                       FunctionLibraryRuntime *lib,
                                                       OpKernel **kernel) -> Status {
             // Caches the kernel only if the node is stateful.
             if (!lib->IsStateful(ndef.op())) {
                 return lib->CreateKernel(ndef, kernel);
             }
-            auto create_fn = [this, device, lib, &ndef](OpKernel **kernel) {
+            auto create_fn = [this,lib, &ndef](OpKernel **kernel) {
                 auto s = lib->CreateKernel(ndef, kernel);
                 mutex_lock l(m_mu);
-                m_kernelToDevice[*kernel] = device;
+                m_kernelToDevice[*kernel] = lib->device()->name();
                 return s;
             };
             // Kernels created for subgraph nodes need to be cached.  On

@@ -480,8 +480,6 @@ class OpKernelContext {
     // The device on which the kernel is running.
     DeviceBase* device = nullptr;
 
-    std::function<Allocator*(Allocator*)> allocator_wrapper = nullptr;
-
     // The Eigen GPU device wrapper, which may include a per-op
     // wrapped allocator. The concrete type of this object depends on
     // the type of this->device, so eigen_gpu_device can't be an
