@@ -51,10 +51,11 @@ bool ZrpcRemoteRendezvous::FindTensor(const std::string &key, Tensor &t)
 Status ZrpcRemoteRendezvous::Send(const ParsedKey& key, const Rendezvous::Args& args,
                                   const Tensor& val, const bool is_dead)
 {
-    mutex_lock l(mu);
-
-    tensors.emplace(key.FullKey().ToString(), val);
-
+    // Must not hold lock when calling Send, which in turn may call cb, and requiring lock again
+    {
+        mutex_lock l(mu);
+        tensors.emplace(key.FullKey().ToString(), val);
+    }
     return BaseRemoteRendezvous::Send(key, args, val, is_dead);
 }
 
