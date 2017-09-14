@@ -91,7 +91,7 @@ public:
 
     Device *device() const
     {
-        return m_device;
+        return m_device.get();
     }
 
     DeviceContext *wrapped() const
