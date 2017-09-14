@@ -32,7 +32,7 @@ class WrapperDeviceContext : public DeviceContext
 
 public:
     // Takes one ref on `actual`
-    WrapperDeviceContext(Device *dev, DeviceContext *actual)
+    WrapperDeviceContext(const std::shared_ptr<Device> &dev, DeviceContext *actual)
         : m_device(dev)
         , m_actualCtx(actual)
     {
