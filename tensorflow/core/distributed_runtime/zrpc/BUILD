@@ -137,6 +137,7 @@ cc_library(
         "exechelper/devicefactories.cc",
         "exechelper/allocators.cc",
         "exechelper/memorytypes.cc",
+        "exechelper/paginghelper.cc",
     ],
     hdrs = [
         "exechelper/tfoplibraryproxy.h",
@@ -145,6 +146,7 @@ cc_library(
         "exechelper/devicefactories.h",
         "exechelper/allocators.h",
         "exechelper/memorytypes.h",
+        "exechelper/paginghelper.h",
     ],
     deps = [
         ":zrpc_util",

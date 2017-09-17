@@ -38,6 +38,10 @@ namespace tensorflow {
 class TensorBuffer;  // Forward declaration.
 class TensorCApi;
 
+namespace remote {
+class PagingHelper;
+} // namespace remote
+
 /// @ingroup core
 /// Represents an n-dimensional array of values.
 class Tensor {
@@ -447,6 +451,8 @@ class Tensor {
   friend class CreateVariableOp;
   friend class OpKernelContext;  // For access to RefCountIsOne().
 
+  friend class remote::PagingHelper; // For access to buf_
+
   // Creates a tensor with the input datatype, shape and buf.
   //
   // Acquires a ref on buf that belongs to this Tensor.
@@ -491,6 +497,13 @@ class TensorBuffer : public core::RefCounted {
   // If this TensorBuffer is sub-buffer of another TensorBuffer,
   // returns that TensorBuffer. Otherwise, returns this.
   virtual TensorBuffer* root_buffer() = 0;
+
+  // If this is sub-buffer, return nullptr. Otherwise, return the allocator
+  virtual Allocator* allocator() const = 0;
+
+  // If this is a sub-buffer, create a new subbuffer rooting at root.
+  // Otherwise return nullptr
+  virtual TensorBuffer* clone(TensorBuffer *root) const { return nullptr; }
 
   // Fill metadata about the allocation into the proto.
   virtual void FillAllocationDescription(
