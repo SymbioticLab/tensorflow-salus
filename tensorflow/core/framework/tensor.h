@@ -499,7 +499,7 @@ class TensorBuffer : public core::RefCounted {
   virtual TensorBuffer* root_buffer() = 0;
 
   // If this is sub-buffer, return nullptr. Otherwise, return the allocator
-  virtual Allocator* allocator() const = 0;
+  virtual Allocator* allocator() const { return nullptr; };
 
   // If this is a sub-buffer, create a new subbuffer rooting at root.
   // Otherwise return nullptr
