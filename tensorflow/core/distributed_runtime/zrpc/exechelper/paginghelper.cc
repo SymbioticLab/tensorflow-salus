@@ -23,6 +23,11 @@
 namespace tensorflow {
 namespace remote{
 
+int PagingHelper::refCountOf(core::RefCounted &reff)
+{
+    return reff.ref_.load();
+}
+
 TensorBuffer *PagingHelper::bufferOf(Tensor &t)
 {
     return t.buf_;

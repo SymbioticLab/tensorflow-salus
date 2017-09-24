@@ -23,11 +23,17 @@ namespace tensorflow {
 class Tensor;
 class TensorBuffer;
 
+namespace core {
+class RefCounted;
+} // namespace core
+
 namespace remote {
 
 class PagingHelper
 {
 public:
+    static int refCountOf(core::RefCounted &reff);
+
     static TensorBuffer *bufferOf(Tensor &t);
     static Tensor cloneWithNewBuffer(const Tensor &t, TensorBuffer *buf);
 };

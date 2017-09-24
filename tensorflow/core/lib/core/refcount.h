@@ -20,6 +20,9 @@ limitations under the License.
 #include "tensorflow/core/platform/logging.h"
 
 namespace tensorflow {
+namespace remote {
+class PagingHelper;
+} // namespace remote
 namespace core {
 
 class RefCounted {
@@ -52,6 +55,8 @@ class RefCounted {
   virtual ~RefCounted();
 
  private:
+  friend class remote::PagingHelper;
+
   mutable std::atomic_int_fast32_t ref_;
 
   RefCounted(const RefCounted&) = delete;
