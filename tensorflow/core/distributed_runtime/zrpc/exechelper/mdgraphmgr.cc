@@ -47,7 +47,7 @@ MDGraphMgr::~MDGraphMgr()
 Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const GraphOptions &graph_options,
                             Item *item)
 {
-    assert(m_execFactory);
+    DCHECK(m_execFactory);
 
     item->session = session;
     item->lib_def = new FunctionLibraryDefinition(OpRegistry::Global(), gdef.library());
@@ -215,9 +215,11 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
             EnsureMemoryTypes(DeviceType(unit->device->device_type()), unit->device->name(), subgraph.get()));
         unit->graph = subgraph.get();
         unit->build_cost_model = graph_options.build_cost_model();
-        if (unit->build_cost_model > 0) {
-            skip_cost_models_ = false;
-        }
+
+        // TODO: Always skip cost models, which causes a deadlock
+        // when calling item->Unref() from delete_fruntime.
+        skip_cost_models_ = true;
+
         TF_RETURN_IF_ERROR(m_execFactory(params, subgraph.release(), &unit->root));
     }
     return Status::OK();
