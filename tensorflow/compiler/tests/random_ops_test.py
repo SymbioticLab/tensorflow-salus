@@ -29,6 +29,9 @@ from tensorflow.python.platform import googletest
 class RandomOpsTest(XLATestCase):
   """Test cases for random-number generating operators."""
 
+  def _random_types(self):
+    return set(self.numeric_types) - set(self.complex_types)
+
   def _testRngIsNotConstant(self, rng, dtype):
     # Tests that 'rng' does not always return the same value.
     with self.test_session() as sess:
@@ -51,7 +54,8 @@ class RandomOpsTest(XLATestCase):
     def rng(dtype):
       return random_ops.random_uniform(shape=[2], dtype=dtype,
                                        maxval=1000000)
-    for dtype in self.numeric_types:
+
+    for dtype in self._random_types():
       self._testRngIsNotConstant(rng, dtype)
 
   def testRandomNormalIsNotConstant(self):
@@ -63,7 +67,7 @@ class RandomOpsTest(XLATestCase):
     self._testRngIsNotConstant(rng, dtype)
 
   def testRandomUniformIsInRange(self):
-    for dtype in self.numeric_types:
+    for dtype in self._random_types():
       with self.test_session() as sess:
         with self.test_scope():
           x = random_ops.random_uniform(shape=[1000], dtype=dtype, minval=-2,
@@ -71,6 +75,17 @@ class RandomOpsTest(XLATestCase):
         y = sess.run(x)
         self.assertTrue((y >= -2).sum() == 1000)
         self.assertTrue((y < 33).sum() == 1000)
+
+  def testTruncatedNormalIsInRange(self):
+    count = 10000
+    # TODO(b/34339814): implement inverse erf support for non-F32 types.
+    for dtype in [dtypes.float32]:
+      with self.test_session() as sess:
+        with self.test_scope():
+          x = random_ops.truncated_normal(shape=[count], dtype=dtype, seed=42)
+        y = sess.run(x)
+        self.assertTrue((y >= -2).sum() == count)
+        self.assertTrue((y <= 2).sum() == count)
 
 
 if __name__ == '__main__':

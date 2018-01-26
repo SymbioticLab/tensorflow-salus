@@ -26,16 +26,6 @@ namespace tensorflow {
 REGISTER_COMPLEX(CPU, float, complex64);
 REGISTER_COMPLEX(CPU, double, complex128);
 
-#define REGISTER_COMPLEX_RPC(R, C)                        \
-  REGISTER_KERNEL_BUILDER(Name("Imag")                    \
-                              .Device(DEVICE_RPC)         \
-                              .TypeConstraint<C>("T")     \
-                              .TypeConstraint<R>("Tout"), \
-                          UnaryOp<CPUDevice, functor::get_imag<C>>);
-
-REGISTER_COMPLEX_RPC(float, complex64);
-REGISTER_COMPLEX_RPC(double, complex128);
-
 #if GOOGLE_CUDA
 REGISTER_COMPLEX(GPU, float, complex64);
 REGISTER_COMPLEX(GPU, double, complex128);

@@ -103,11 +103,6 @@ class EnqueueOp : public QueueAccessOpKernel {
     }
 
     OP_REQUIRES_OK_ASYNC(ctx, queue->ValidateTuple(tuple), callback);
-    if (ctx->track_allocations()) {
-      // We can get persistent memory size of the queue when it is kept full, no
-      // matter whether it is before or after the enqueue.
-      ctx->record_host_persistent_memory_allocation(queue->MemoryUsed());
-    }
     queue->TryEnqueue(tuple, ctx, callback);
   }
 
@@ -117,9 +112,6 @@ class EnqueueOp : public QueueAccessOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueue").Device(DEVICE_CPU), EnqueueOp);
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueueV2").Device(DEVICE_CPU), EnqueueOp);
-
-REGISTER_KERNEL_BUILDER(Name("QueueEnqueue").Device(DEVICE_RPC), EnqueueOp);
-REGISTER_KERNEL_BUILDER(Name("QueueEnqueueV2").Device(DEVICE_RPC), EnqueueOp);
 
 // Defines an EnqueueManyOp, the execution of which slices each
 // component of a tuple of tensors along the 0th dimension, and
@@ -163,9 +155,6 @@ class EnqueueManyOp : public QueueAccessOpKernel {
     }
 
     OP_REQUIRES_OK_ASYNC(ctx, queue->ValidateManyTuple(tuple), callback);
-    if (ctx->track_allocations()) {
-      ctx->record_host_persistent_memory_allocation(queue->MemoryUsed());
-    }
     queue->TryEnqueueMany(tuple, ctx, callback);
   }
 
@@ -178,11 +167,6 @@ class EnqueueManyOp : public QueueAccessOpKernel {
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueueMany").Device(DEVICE_CPU),
                         EnqueueManyOp);
 REGISTER_KERNEL_BUILDER(Name("QueueEnqueueManyV2").Device(DEVICE_CPU),
-                        EnqueueManyOp);
-
-REGISTER_KERNEL_BUILDER(Name("QueueEnqueueMany").Device(DEVICE_RPC),
-                        EnqueueManyOp);
-REGISTER_KERNEL_BUILDER(Name("QueueEnqueueManyV2").Device(DEVICE_RPC),
                         EnqueueManyOp);
 
 // Defines a DequeueOp, the execution of which dequeues a tuple of
@@ -233,9 +217,6 @@ class DequeueOp : public QueueAccessOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QueueDequeue").Device(DEVICE_CPU), DequeueOp);
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueV2").Device(DEVICE_CPU), DequeueOp);
-
-REGISTER_KERNEL_BUILDER(Name("QueueDequeue").Device(DEVICE_RPC), DequeueOp);
-REGISTER_KERNEL_BUILDER(Name("QueueDequeueV2").Device(DEVICE_RPC), DequeueOp);
 
 // Defines a DequeueManyOp, the execution of which concatenates the
 // requested number of elements from the given Queue along the 0th
@@ -304,12 +285,6 @@ REGISTER_KERNEL_BUILDER(Name("QueueDequeueMany").Device(DEVICE_CPU),
                         DequeueManyOp);
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueManyV2").Device(DEVICE_CPU),
                         DequeueManyOp);
-
-REGISTER_KERNEL_BUILDER(Name("QueueDequeueMany").Device(DEVICE_RPC),
-                        DequeueManyOp);
-REGISTER_KERNEL_BUILDER(Name("QueueDequeueManyV2").Device(DEVICE_RPC),
-                        DequeueManyOp);
-
 
 // Defines a DequeueUpToOp, the execution of which concatenates the
 // requested number of elements from the given Queue along the 0th
@@ -397,11 +372,6 @@ REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpTo").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpToV2").Device(DEVICE_CPU),
                         DequeueUpToOp);
 
-REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpTo").Device(DEVICE_RPC),
-                        DequeueUpToOp);
-REGISTER_KERNEL_BUILDER(Name("QueueDequeueUpToV2").Device(DEVICE_RPC),
-                        DequeueUpToOp);
-
 // Defines a QueueCloseOp, which closes the given Queue. Closing a
 // Queue signals that no more elements will be enqueued in it.
 //
@@ -427,9 +397,6 @@ class QueueCloseOp : public QueueOpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QueueClose").Device(DEVICE_CPU), QueueCloseOp);
 REGISTER_KERNEL_BUILDER(Name("QueueCloseV2").Device(DEVICE_CPU), QueueCloseOp);
-
-REGISTER_KERNEL_BUILDER(Name("QueueClose").Device(DEVICE_RPC), QueueCloseOp);
-REGISTER_KERNEL_BUILDER(Name("QueueCloseV2").Device(DEVICE_RPC), QueueCloseOp);
 
 // Defines a QueueSizeOp, which computes the number of elements in the
 // given Queue, and emits it as an output tensor.
@@ -458,8 +425,26 @@ class QueueSizeOp : public QueueOpKernel {
 REGISTER_KERNEL_BUILDER(Name("QueueSize").Device(DEVICE_CPU), QueueSizeOp);
 REGISTER_KERNEL_BUILDER(Name("QueueSizeV2").Device(DEVICE_CPU), QueueSizeOp);
 
-REGISTER_KERNEL_BUILDER(Name("QueueSize").Device(DEVICE_RPC), QueueSizeOp);
-REGISTER_KERNEL_BUILDER(Name("QueueSizeV2").Device(DEVICE_RPC), QueueSizeOp);
+class QueueIsClosedOp : public QueueOpKernel {
+ public:
+  explicit QueueIsClosedOp(OpKernelConstruction* context)
+     : QueueOpKernel(context) {}
+
+ protected:
+  void ComputeAsync(OpKernelContext* ctx, QueueInterface* queue,
+                    DoneCallback callback) override {
+    Tensor* Tqueue_is_closed = nullptr;
+    OP_REQUIRES_OK(ctx, ctx->allocate_output(0, TensorShape({}), &Tqueue_is_closed));
+    Tqueue_is_closed->flat<bool>().setConstant(queue->is_closed());
+    callback();
+  }
+
+ private:
+  TF_DISALLOW_COPY_AND_ASSIGN(QueueIsClosedOp);
+};
+
+REGISTER_KERNEL_BUILDER(Name("QueueIsClosed").Device(DEVICE_CPU), QueueIsClosedOp);
+REGISTER_KERNEL_BUILDER(Name("QueueIsClosedV2").Device(DEVICE_CPU), QueueIsClosedOp);
 
 class FakeQueueOp : public OpKernel {
  public:
@@ -469,7 +454,7 @@ class FakeQueueOp : public OpKernel {
                                                 &handle_, nullptr));
   }
 
-  void Compute(OpKernelContext* context) {
+  void Compute(OpKernelContext* context) override {
     ResourceHandle ref = context->input(0).flat<ResourceHandle>()(0);
     handle_.AccessTensor(context)->flat<string>()(0) = ref.container();
     handle_.AccessTensor(context)->flat<string>()(1) = ref.name();
@@ -482,7 +467,5 @@ class FakeQueueOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("FakeQueue").Device(DEVICE_CPU), FakeQueueOp);
-
-REGISTER_KERNEL_BUILDER(Name("FakeQueue").Device(DEVICE_RPC), FakeQueueOp);
 
 }  // namespace tensorflow

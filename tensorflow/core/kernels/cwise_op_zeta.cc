@@ -18,6 +18,4 @@ limitations under the License.
 namespace tensorflow {
 REGISTER2(BinaryOp, CPU, "Zeta", functor::zeta, float, double);
 REGISTER2(BinaryOp, CPU, "Polygamma", functor::polygamma, float, double);
-REGISTER_RPC2(BinaryOp, "Zeta", functor::zeta, float, double);
-REGISTER_RPC2(BinaryOp, "Polygamma", functor::polygamma, float, double);
 }  // namespace tensorflow

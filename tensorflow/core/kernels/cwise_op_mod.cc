@@ -21,11 +21,6 @@ REGISTER2(BinaryOp, CPU, "Mod", functor::fmod, float, double);
 REGISTER2(BinaryOp, CPU, "TruncateMod", functor::safe_mod, int32, int64);
 REGISTER2(BinaryOp, CPU, "TruncateMod", functor::fmod, float, double);
 
-REGISTER_RPC2(BinaryOp, "Mod", functor::safe_mod, int32, int64);
-REGISTER_RPC2(BinaryOp, "Mod", functor::fmod, float, double);
-REGISTER_RPC2(BinaryOp, "TruncateMod", functor::safe_mod, int32, int64);
-REGISTER_RPC2(BinaryOp, "TruncateMod", functor::fmod, float, double);
-
 #if GOOGLE_CUDA
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel

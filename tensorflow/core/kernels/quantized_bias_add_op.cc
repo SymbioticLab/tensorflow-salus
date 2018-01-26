@@ -103,17 +103,4 @@ REGISTER_KERNEL_BUILDER(Name("QuantizedBiasAdd")
                             .TypeConstraint<qint8>("T2")
                             .TypeConstraint<qint32>("out_type"),
                         QuantizedBiasAddOp<qint8, qint8, qint32>);
-
-REGISTER_KERNEL_BUILDER(Name("QuantizedBiasAdd")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<quint8>("T1")
-                            .TypeConstraint<quint8>("T2")
-                            .TypeConstraint<qint32>("out_type"),
-                        QuantizedBiasAddOp<quint8, quint8, qint32>);
-REGISTER_KERNEL_BUILDER(Name("QuantizedBiasAdd")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<qint8>("T1")
-                            .TypeConstraint<qint8>("T2")
-                            .TypeConstraint<qint32>("out_type"),
-                        QuantizedBiasAddOp<qint8, qint8, qint32>);
 }  // namespace tensorflow

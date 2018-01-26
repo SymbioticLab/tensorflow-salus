@@ -132,12 +132,4 @@ REGISTER_KERNEL_BUILDER(
     Name("QuantizedMaxPool").Device(DEVICE_CPU).TypeConstraint<quint8>("T"),
     QuantizedMaxPoolingOp<CPUDevice, quint8>);
 
-REGISTER_KERNEL_BUILDER(
-    Name("QuantizedAvgPool").Device(DEVICE_RPC).TypeConstraint<quint8>("T"),
-    QuantizedAvgPoolingOp<CPUDevice, quint8>);
-
-REGISTER_KERNEL_BUILDER(
-    Name("QuantizedMaxPool").Device(DEVICE_RPC).TypeConstraint<quint8>("T"),
-    QuantizedMaxPoolingOp<CPUDevice, quint8>);
-
 }  // namespace tensorflow

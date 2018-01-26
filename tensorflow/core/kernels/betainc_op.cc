@@ -39,7 +39,7 @@ class BetaincOp : public OpKernel {
  public:
   explicit BetaincOp(OpKernelConstruction* ctx) : OpKernel(ctx) {}
 
-  void Compute(OpKernelContext* ctx) {
+  void Compute(OpKernelContext* ctx) override {
     const Tensor& a = ctx->input(0);
     const Tensor& b = ctx->input(1);
     const Tensor& x = ctx->input(2);
@@ -121,15 +121,6 @@ class BetaincOp : public OpKernel {
 REGISTER_KERNELS(float);
 REGISTER_KERNELS(double);
 #undef REGISTER_KERNELS
-
-#define REGISTER_KERNELS_RPC(type)                                      \
-  REGISTER_KERNEL_BUILDER(                                          \
-      Name("Betainc").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
-      BetaincOp<CPUDevice, type>);
-
-REGISTER_KERNELS_RPC(float);
-REGISTER_KERNELS_RPC(double);
-#undef REGISTER_KERNELS_RPC
 
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.

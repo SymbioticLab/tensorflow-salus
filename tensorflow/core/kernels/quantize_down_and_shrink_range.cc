@@ -104,10 +104,4 @@ REGISTER_KERNEL_BUILDER(Name("QuantizeDownAndShrinkRange")
                             .TypeConstraint<quint8>("out_type"),
                         QuantizeDownAndShrinkRangeOp<qint32, quint8>);
 
-REGISTER_KERNEL_BUILDER(Name("QuantizeDownAndShrinkRange")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<qint32>("Tinput")
-                            .TypeConstraint<quint8>("out_type"),
-                        QuantizeDownAndShrinkRangeOp<qint32, quint8>);
-
 }  // namespace tensorflow

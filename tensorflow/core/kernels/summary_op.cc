@@ -120,16 +120,6 @@ class SummaryHistoOp : public OpKernel {
 TF_CALL_REAL_NUMBER_TYPES(REGISTER)
 #undef REGISTER
 
-#define REGISTER_RPC(T)                                                   \
-  REGISTER_KERNEL_BUILDER(                                                \
-      Name("ScalarSummary").Device(DEVICE_RPC).TypeConstraint<T>("T"),    \
-      SummaryScalarOp<T>);                                                \
-  REGISTER_KERNEL_BUILDER(                                                \
-      Name("HistogramSummary").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      SummaryHistoOp<T>);
-TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC)
-#undef REGISTER_RPC
-
 struct HistogramResource : public ResourceBase {
   histogram::ThreadSafeHistogram histogram;
 
@@ -159,7 +149,7 @@ class SummaryMergeOp : public OpKernel {
           const string& tag = summary_in.value(v).tag();
           // The tag is unused by the TensorSummary op, so no need to check
           // for duplicates.
-          if ((tag != "") && !tags.insert(tag).second) {
+          if ((!tag.empty()) && !tags.insert(tag).second) {
             c->SetStatus(errors::InvalidArgument(strings::StrCat(
                 "Duplicate tag ", tag, " found in summary inputs")));
             return;
@@ -176,9 +166,6 @@ class SummaryMergeOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("MergeSummary").Device(DEVICE_CPU),
-                        SummaryMergeOp);
-
-REGISTER_KERNEL_BUILDER(Name("MergeSummary").Device(DEVICE_RPC),
                         SummaryMergeOp);
 
 }  // namespace tensorflow

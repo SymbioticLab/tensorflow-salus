@@ -18,8 +18,6 @@ limitations under the License.
 namespace tensorflow {
 REGISTER3(UnaryOp, CPU, "Digamma", functor::digamma, float, Eigen::half,
           double);
-REGISTER_RPC3(UnaryOp, "Digamma", functor::digamma, float, Eigen::half,
-          double);
 #if GOOGLE_CUDA
 REGISTER3(UnaryOp, GPU, "Digamma", functor::digamma, float, Eigen::half,
           double);

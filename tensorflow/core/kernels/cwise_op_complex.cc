@@ -23,18 +23,8 @@ namespace tensorflow {
                               .TypeConstraint<C>("Tout"), \
                           BinaryOp<D##Device, functor::make_complex<R>>);
 
-#define REGISTER_COMPLEX_RPC(D, R, C) \
-  REGISTER_KERNEL_BUILDER(Name("Complex")                 \
-                              .Device(DEVICE_RPC)         \
-                              .TypeConstraint<R>("T")     \
-                              .TypeConstraint<C>("Tout"), \
-                          BinaryOp<CPUDevice, functor::make_complex<R>>);
-
 REGISTER_COMPLEX(CPU, float, complex64);
 REGISTER_COMPLEX(CPU, double, complex128);
-
-REGISTER_COMPLEX_RPC(CPU, float, complex64);
-REGISTER_COMPLEX_RPC(CPU, double, complex128);
 
 #if GOOGLE_CUDA
 REGISTER_COMPLEX(GPU, float, complex64);

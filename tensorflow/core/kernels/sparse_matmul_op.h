@@ -31,11 +31,11 @@ namespace internal {
 // in the lower 16-bits of input
 template <typename Packet>
 EIGEN_DEVICE_FUNC inline Packet pexpand_bf16_l(const Packet& from) {
-  tensorflow::uint32 tmp;  
+  tensorflow::uint32 tmp;
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-    tmp = (reinterpret_cast<const tensorflow::uint32&>(from) ) & 0xffff0000;  
-#else    
-    tmp = (reinterpret_cast<const tensorflow::uint32&>(from) << 16) & 0xffff0000;  
+  tmp = (reinterpret_cast<const tensorflow::uint32&>(from)) & 0xffff0000;
+#else
+  tmp = (reinterpret_cast<const tensorflow::uint32&>(from) << 16) & 0xffff0000;
 #endif
   return reinterpret_cast<const float&>(tmp);
 }
@@ -44,29 +44,30 @@ EIGEN_DEVICE_FUNC inline Packet pexpand_bf16_l(const Packet& from) {
 // in the upper 16-bits of input
 template <typename Packet>
 EIGEN_DEVICE_FUNC inline Packet pexpand_bf16_u(const Packet& from) {
-  tensorflow::uint32 tmp;  
+  tensorflow::uint32 tmp;
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-    tmp = (reinterpret_cast<const tensorflow::uint32&>(from) << 16 ) & 0xffff0000;  
+  tmp = (reinterpret_cast<const tensorflow::uint32&>(from) << 16) & 0xffff0000;
 #else
-    tmp = (reinterpret_cast<const tensorflow::uint32&>(from)) & 0xffff0000;  
-#endif 
+  tmp = (reinterpret_cast<const tensorflow::uint32&>(from)) & 0xffff0000;
+#endif
   return reinterpret_cast<const float&>(tmp);
 }
 
 // Specialization non-scalar version on non-sse.
+// Enable vectorization on z13 and higher
 #if defined(EIGEN_VECTORIZE_ALTIVEC) || defined(EIGEN_VECTORIZE_VSX) || \
-    defined(EIGEN_VECTORIZE_NEON)
+    defined(EIGEN_VECTORIZE_NEON) || defined(EIGEN_VECTORIZE_ZVECTOR)
 template <typename Packet>
 EIGEN_DEVICE_FUNC inline Packet4f pexpand_bf16_l(const Packet4f& from) {
   float r[4];
   tensorflow::uint32 p[4];
   pstoreu(r, from);
-  tensorflow::uint32 * ir = reinterpret_cast<tensorflow::uint32 *>(r);
+  tensorflow::uint32* ir = reinterpret_cast<tensorflow::uint32*>(r);
   p[0] = (ir[0] << 16) & 0xffff0000;
-  p[1] = ir[0]& 0xffff0000;
+  p[1] = ir[0] & 0xffff0000;
   p[2] = (ir[1] << 16) & 0xffff0000;
   p[3] = ir[1] & 0xffff0000;
-  return ploadu<Packet4f>(reinterpret_cast<float *>(p));
+  return ploadu<Packet4f>(reinterpret_cast<float*>(p));
 }
 
 template <typename Packet>
@@ -74,12 +75,12 @@ EIGEN_DEVICE_FUNC inline Packet4f pexpand_bf16_u(const Packet4f& from) {
   float r[4];
   tensorflow::uint32 p[4];
   pstoreu(r, from);
-  tensorflow::uint32 * ir = reinterpret_cast<tensorflow::uint32 *>(r);
+  tensorflow::uint32* ir = reinterpret_cast<tensorflow::uint32*>(r);
   p[0] = (ir[2] << 16) & 0xffff0000;
   p[1] = ir[2] & 0xffff0000;
   p[2] = (ir[3] << 16) & 0xffff0000;
   p[3] = ir[3] & 0xffff0000;
-  return ploadu<Packet4f>(reinterpret_cast<float *>(p));
+  return ploadu<Packet4f>(reinterpret_cast<float*>(p));
 }
 #endif
 
@@ -126,28 +127,57 @@ EIGEN_DEVICE_FUNC inline Packet pload2bf16(
 }
 
 // Specialization for pload4bf16 and pload2bf16 for non-sse.
+// Enable vectorization on z13 and higher.
 #if defined(EIGEN_VECTORIZE_ALTIVEC) || defined(EIGEN_VECTORIZE_VSX) || \
-    defined(EIGEN_VECTORIZE_NEON)
+    defined(EIGEN_VECTORIZE_NEON) || defined(EIGEN_VECTORIZE_ZVECTOR)
 template <>
 EIGEN_STRONG_INLINE Packet4f pload4bf16<Packet4f>(const float* from) {
   tensorflow::uint32 p[4];
-  const tensorflow::uint32* ir = reinterpret_cast<const tensorflow::uint32 *>(from);
+  const tensorflow::uint32* ir =
+      reinterpret_cast<const tensorflow::uint32*>(from);
   p[0] = (ir[0] << 16) & 0xffff0000;
-  p[1] = ir[0]& 0xffff0000;
+  p[1] = ir[0] & 0xffff0000;
   p[2] = (ir[1] << 16) & 0xffff0000;
   p[3] = ir[1] & 0xffff0000;
-  return ploadu<Packet4f>(reinterpret_cast<float *>(p));
+  return ploadu<Packet4f>(reinterpret_cast<float*>(p));
 }
 
 template <>
 EIGEN_STRONG_INLINE Packet4f pload2bf16<Packet4f>(const float* from) {
   tensorflow::uint32 p[4];
-  const tensorflow::uint32* ir = reinterpret_cast<const tensorflow::uint32 *>(from);
+  const tensorflow::uint32* ir =
+      reinterpret_cast<const tensorflow::uint32*>(from);
   p[0] = (ir[0] << 16) & 0xffff0000;
-  p[1] = ir[0]& 0xffff0000;
+  p[1] = ir[0] & 0xffff0000;
   p[2] = (ir[0] << 16) & 0xffff0000;
   p[3] = ir[0] & 0xffff0000;
-  return ploadu<Packet4f>(reinterpret_cast<float *>(p));  
+  return ploadu<Packet4f>(reinterpret_cast<float*>(p));
+}
+#endif
+
+#if defined(EIGEN_VECTORIZE_ALTIVEC) || defined(EIGEN_VECTORIZE_VSX)
+// Return a packet with the first value of the input Packet replicated
+template <>
+EIGEN_STRONG_INLINE Packet4f pbroadcast_first<Packet4f>(const Packet4f& a) {
+  return vec_splat (a, 0);
+}
+
+// Return a packet with the second value of the input Packet replicated
+template <>
+EIGEN_STRONG_INLINE Packet4f pbroadcast_second<Packet4f>(const Packet4f& a) {
+  return vec_splat (a, 1);
+}
+
+// Return a packet with the third value of the input Packet replicated
+template <>
+EIGEN_STRONG_INLINE Packet4f pbroadcast_third<Packet4f>(const Packet4f& a) {
+  return vec_splat (a, 2);
+}
+
+// Return a packet with the fourth value of the input Packet replicated
+template <>
+EIGEN_STRONG_INLINE Packet4f pbroadcast_fourth<Packet4f>(const Packet4f& a) {
+  return vec_splat (a, 3);
 }
 #endif
 
@@ -425,10 +455,10 @@ EIGEN_DEVICE_FUNC inline Packet16f pexpand_bf16_l(const Packet16f& from) {
 
 template <typename Packet>
 EIGEN_DEVICE_FUNC inline Packet16f pexpand_bf16_u(const Packet16f& from) {
-  return _mm512_castsi512_ps(
-      _mm512_slli_epi32(_mm512_cvtepu16_epi32(_mm256_castpd_si256(
-                            _mm512_extractf64x4_pd(_mm512_castps_pd(from), 1))),
-                        16));
+  Packet16i tmp = _mm512_castps_si512(from);
+  Packet16i tmp2 = _mm512_alignr_epi32(tmp, tmp, 8);
+  return _mm512_castsi512_ps(_mm512_slli_epi32(
+      _mm512_cvtepu16_epi32(_mm512_castsi512_si256(tmp2)), 16));
 }
 
 #endif

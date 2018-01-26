@@ -83,9 +83,6 @@ class CrossOp : public OpKernel {
 #define REGISTER_CPU_KERNEL(type)                                 \
   REGISTER_KERNEL_BUILDER(                                        \
       Name("Cross").Device(DEVICE_CPU).TypeConstraint<type>("T"), \
-      CrossOp<CPUDevice, type>); \
-  REGISTER_KERNEL_BUILDER(                                        \
-      Name("Cross").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
       CrossOp<CPUDevice, type>);
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL

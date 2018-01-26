@@ -15,6 +15,7 @@ limitations under the License.
 
 // XLA-specific Shape Ops.
 
+#include "tensorflow/compiler/tf2xla/kernels/shape_util.h"
 #include "tensorflow/compiler/tf2xla/type_util.h"
 #include "tensorflow/compiler/tf2xla/xla_helpers.h"
 #include "tensorflow/compiler/tf2xla/xla_op_kernel.h"
@@ -27,58 +28,44 @@ namespace {
 
 class ShapeOp : public XlaOpKernel {
  public:
-  explicit ShapeOp(OpKernelConstruction* ctx) : XlaOpKernel(ctx) {}
+  explicit ShapeOp(OpKernelConstruction* ctx) : XlaOpKernel(ctx) {
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("out_type", &out_dtype_));
+  }
 
   void Compile(XlaOpKernelContext* ctx) override {
     const TensorShape input_shape = ctx->InputShape(0);
-    const int rank = input_shape.dims();
-    Tensor shape_constant(DT_INT32, TensorShape({rank}));
-    auto vec = shape_constant.vec<int32>();
-    // TODO(dga): support int64.  b/28119922.
-    for (int i = 0; i < rank; ++i) {
-      int64 dim_size = input_shape.dim_size(i);
-      OP_REQUIRES(
-          ctx, FastBoundsCheck(dim_size, std::numeric_limits<int32>::max()),
-          errors::InvalidArgument("Shape does not support tensors > int32max",
-                                  " but dim ", i, " is ", dim_size));
-      vec(i) = static_cast<int32>(dim_size);
-    }
-
+    Tensor shape_constant(out_dtype_, TensorShape({input_shape.dims()}));
+    OP_REQUIRES_OK(ctx, TensorShapeToConstant(input_shape, &shape_constant));
     ctx->SetConstantOutput(0, shape_constant);
   }
+
+ private:
+  DataType out_dtype_;
 };
 
-REGISTER_XLA_OP("Shape", ShapeOp);
+REGISTER_XLA_OP(Name("Shape"), ShapeOp);
 
 class ShapeNOp : public XlaOpKernel {
  public:
-  explicit ShapeNOp(OpKernelConstruction* ctx) : XlaOpKernel(ctx) {}
+  explicit ShapeNOp(OpKernelConstruction* ctx) : XlaOpKernel(ctx) {
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("out_type", &out_dtype_));
+  }
 
   void Compile(XlaOpKernelContext* ctx) override {
     for (int i = 0; i < ctx->num_inputs(); ++i) {
-      const TensorShape shape = ctx->InputShape(i);
-      const int dims = shape.dims();
-      Tensor shape_constant(DT_INT32, TensorShape({dims}));
-      auto vec = shape_constant.vec<int32>();
-
-      // TODO(dga): support int64.  b/28119922.
-      for (int j = 0; j < dims; ++j) {
-        int64 dim_size = shape.dim_size(j);
-        OP_REQUIRES(
-            ctx, FastBoundsCheck(dim_size, std::numeric_limits<int32>::max()),
-            errors::InvalidArgument("Shape does not support tensors > int32max",
-                                    " but shape ", i, " dim ", j, " is ",
-                                    dim_size));
-        vec(j) = static_cast<int32>(dim_size);
-      }
-
+      const TensorShape input_shape = ctx->InputShape(i);
+      Tensor shape_constant(out_dtype_, TensorShape({input_shape.dims()}));
+      OP_REQUIRES_OK(ctx, TensorShapeToConstant(input_shape, &shape_constant));
       ctx->SetConstantOutput(i, shape_constant);
     }
   }
 
   bool IsExpensive() override { return false; }
+
+ private:
+  DataType out_dtype_;
 };
-REGISTER_XLA_OP("ShapeN", ShapeNOp);
+REGISTER_XLA_OP(Name("ShapeN"), ShapeNOp);
 
 class RankOp : public XlaOpKernel {
  public:
@@ -94,7 +81,7 @@ class RankOp : public XlaOpKernel {
   }
 };
 
-REGISTER_XLA_OP("Rank", RankOp);
+REGISTER_XLA_OP(Name("Rank"), RankOp);
 
 class SizeOp : public XlaOpKernel {
  public:
@@ -113,7 +100,7 @@ class SizeOp : public XlaOpKernel {
   }
 };
 
-REGISTER_XLA_OP("Size", SizeOp);
+REGISTER_XLA_OP(Name("Size"), SizeOp);
 
 class ExpandDimsOp : public XlaOpKernel {
  public:
@@ -163,7 +150,7 @@ class ExpandDimsOp : public XlaOpKernel {
     ctx->SetOutput(0, ctx->builder()->Reshape(ctx->Input(0), new_shape));
   }
 };
-REGISTER_XLA_OP("ExpandDims", ExpandDimsOp);
+REGISTER_XLA_OP(Name("ExpandDims"), ExpandDimsOp);
 
 class SqueezeOp : public XlaOpKernel {
  public:
@@ -225,7 +212,7 @@ class SqueezeOp : public XlaOpKernel {
   std::unordered_set<int32> squeeze_dims_;
 };
 
-REGISTER_XLA_OP("Squeeze", SqueezeOp);
+REGISTER_XLA_OP(Name("Squeeze"), SqueezeOp);
 
 class ZerosLikeOp : public XlaOpKernel {
  public:
@@ -239,7 +226,21 @@ class ZerosLikeOp : public XlaOpKernel {
   }
 };
 
-REGISTER_XLA_OP("ZerosLike", ZerosLikeOp);
+REGISTER_XLA_OP(Name("ZerosLike"), ZerosLikeOp);
+
+class OnesLikeOp : public XlaOpKernel {
+ public:
+  explicit OnesLikeOp(OpKernelConstruction* ctx) : XlaOpKernel(ctx) {}
+
+  void Compile(XlaOpKernelContext* ctx) override {
+    const TensorShape input_shape = ctx->InputShape(0);
+
+    auto one = XlaHelpers::One(ctx->builder(), input_type(0));
+    ctx->SetOutput(0, ctx->builder()->Broadcast(one, input_shape.dim_sizes()));
+  }
+};
+
+REGISTER_XLA_OP(Name("OnesLike"), OnesLikeOp);
 
 }  // namespace
 }  // namespace tensorflow

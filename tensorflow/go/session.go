@@ -1,16 +1,18 @@
-// Copyright 2016 The TensorFlow Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
 package tensorflow
 
@@ -87,6 +89,10 @@ func (s *Session) Run(feeds map[Output]*Tensor, fetches []Output, targets []*Ope
 		ptrOutput(c.fetches), ptrTensor(c.fetchTensors), C.int(len(fetches)),
 		ptrOperation(c.targets), C.int(len(targets)),
 		nil, status.c)
+
+	// Make sure GC won't harvest input tensors until SessionRun() is finished
+	runtime.KeepAlive(feeds)
+
 	if err := status.Err(); err != nil {
 		return nil, err
 	}
@@ -197,7 +203,7 @@ func (s *Session) NewPartialRun(feeds, fetches []Output, targets []*Operation) (
 		return nil, err
 	}
 	runtime.SetFinalizer(pr, func(pr *PartialRun) {
-		deletePRunHandle(pr.handle)
+		C.TF_DeletePRunHandle(pr.handle)
 	})
 	return pr, nil
 }

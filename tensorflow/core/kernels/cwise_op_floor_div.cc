@@ -21,11 +21,6 @@ REGISTER5(BinaryOp, CPU, "FloorDiv", functor::safe_floor_div, uint8, uint16,
 REGISTER3(BinaryOp, CPU, "FloorDiv", functor::floor_div_real, float,
           Eigen::half, double);
 
-REGISTER_RPC5(BinaryOp, "FloorDiv", functor::safe_floor_div, uint8, uint16,
-              int16, int32, int64);
-REGISTER_RPC3(BinaryOp, "FloorDiv", functor::floor_div_real, float,
-              Eigen::half, double);
-
 #if GOOGLE_CUDA
 REGISTER4(BinaryOp, GPU, "FloorDiv", functor::floor_div, uint8, uint16, int16,
           int64);
