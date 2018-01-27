@@ -7,7 +7,7 @@ index a64afb3c5..b27660fce 100644
    native.new_local_repository(
        name = "zeromq",
 -      path = "/usr",
-+      path = "/gpfs/gpfs0/groups/chowdhury/peifeng/tools/zeromq",
++      path = "spack-packages/",
        build_file = str(Label("//third_party:zeromq.BUILD")),
    )
  

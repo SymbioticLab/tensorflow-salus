@@ -516,7 +516,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
 
   native.new_local_repository(
       name = "zeromq",
-      path = "/usr",
+      path = "spack-packages/",
       build_file = str(Label("//third_party:zeromq.BUILD")),
   )
 
