@@ -1,7 +1,6 @@
 .DS_Store
 .ipynb_checkpoints
 node_modules
-spack-packages
 /.bazelrc
 /.tf_configure.bazelrc
 /bazel-*
@@ -13,9 +12,6 @@ spack-packages
 *.pyc
 __pycache__
 *.swp
-.vscode/
-/.kdev4
-*.kdev4
 /.tf_configure.bazelrc
 cmake_build/
 .idea/**
@@ -38,3 +34,10 @@ xcuserdata/**
 *.iml
 local.properties
 gradleBuild
+
+# Salus
+/invoke.yml
+spack-packages
+/.kdev4
+*.kdev4
+.vscode/

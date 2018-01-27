@@ -4,6 +4,7 @@ load("//third_party/gpus:cuda_configure.bzl", "cuda_configure")
 load("//third_party/mkl:build_defs.bzl", "mkl_repository")
 load("//third_party/py:python_configure.bzl", "python_configure")
 load("//third_party/sycl:sycl_configure.bzl", "sycl_configure")
+load("//third_party/zeromq:zeromq_configure.bzl", "zeromq_configure")
 load("//third_party/toolchains/cpus/arm:arm_compiler_configure.bzl", "arm_compiler_configure")
 load("//third_party:repo.bzl", "tf_http_archive")
 load("@io_bazel_rules_closure//closure/private:java_import_external.bzl", "java_import_external")
@@ -49,6 +50,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
   cuda_configure(name="local_config_cuda")
   sycl_configure(name="local_config_sycl")
   python_configure(name="local_config_python")
+  zeromq_configure(name="local_config_zeromq")
 
   # Point //external/local_config_arm_compiler to //external/arm_compiler
   arm_compiler_configure(
@@ -512,12 +514,6 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       sha256 = "b888d8ce5fc10254c3dd6c9020c7764dd53cf39cf011249d0b4deda895de1b7c",
       strip_prefix = "aws-sdk-cpp-1.3.15",
       build_file = str(Label("//third_party:aws.BUILD")),
-  )
-
-  native.new_local_repository(
-      name = "zeromq",
-      path = "spack-packages/",
-      build_file = str(Label("//third_party:zeromq.BUILD")),
   )
 
   java_import_external(

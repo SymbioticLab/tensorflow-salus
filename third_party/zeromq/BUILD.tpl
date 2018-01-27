@@ -7,6 +7,7 @@ cc_library(
         "include/zmq.h",
         "include/zmq.hpp",
         "include/zmq_utils.h",
+        "include/zmq_addon.hpp",
     ],
     strip_include_prefix = "include/",
     copts = [

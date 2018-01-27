@@ -80,7 +80,7 @@ cc_library(
     hdrs = ["zrpc_util.h"],
     deps = [
         "//tensorflow/core:lib",
-        "@zeromq//:zmq_cpp",
+        "@local_config_zeromq//:zmq_cpp",
     ],
     copts = zrpc_copts(),
 )
@@ -122,7 +122,7 @@ cc_library(
         "//tensorflow/core:master_proto_cc",
         "//tensorflow/core/distributed_runtime:call_options",
         "//tensorflow/core/distributed_runtime:master_interface",
-        "@zeromq//:zmq_cpp",
+        "@local_config_zeromq//:zmq_cpp",
     ],
     copts = zrpc_copts(),
     alwayslink = 1,
@@ -213,7 +213,7 @@ cc_library(
         "//tensorflow/core:framework_internal",
         "//tensorflow/core:lib",
         "//tensorflow/core:worker_proto_cc",
-        "@zeromq//:zmq_cpp",
+        "@local_config_zeromq//:zmq_cpp",
     ],
     copts = zrpc_copts(),
 )
