@@ -45,7 +45,7 @@ public:
     using ExecutorFactory = std::function<Status(const MultiDeviceExecutorParams &params, const Graph *graph,
                                                  Executor **executor)>;
 
-    explicit MDGraphMgr(const WorkerEnv *env);
+    explicit MDGraphMgr(const WorkerEnv *env, DeviceMgr *device_mgr);
     ~MDGraphMgr() override;
 
     // This is not thread safe, must be called before first call of InitItem

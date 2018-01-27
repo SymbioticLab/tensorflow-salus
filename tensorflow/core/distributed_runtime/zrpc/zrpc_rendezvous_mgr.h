@@ -26,9 +26,8 @@ namespace tensorflow {
 class ZrpcRemoteRendezvous : public BaseRemoteRendezvous
 {
 public:
-    ZrpcRemoteRendezvous(const WorkerEnv *env, WorkerCacheInterface *cache, int64 step_id)
-        : BaseRemoteRendezvous(env, step_id, false)
-        , cache_(cache)
+    ZrpcRemoteRendezvous(const WorkerEnv *env, int64 step_id)
+        : BaseRemoteRendezvous(env, step_id)
     {
     }
 
@@ -62,7 +61,6 @@ private:
     mutex mu;
     std::unordered_map<std::string, Tensor> tensors;
 
-    WorkerCacheInterface *cache_; // Not owned.
     TF_DISALLOW_COPY_AND_ASSIGN(ZrpcRemoteRendezvous);
 };
 
@@ -93,9 +91,6 @@ protected:
     BaseRemoteRendezvous *Create(int64 step_id, const WorkerEnv *worker_env) override;
 
 private:
-    // Private cache_ that allows us to reuse WorkerInterface objects.
-    std::unique_ptr<WorkerCacheInterface> cache_;
-
     TF_DISALLOW_COPY_AND_ASSIGN(ZrpcRendezvousMgr);
 };
 

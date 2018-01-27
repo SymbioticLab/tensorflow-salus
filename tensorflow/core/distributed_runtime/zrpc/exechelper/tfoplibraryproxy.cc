@@ -54,11 +54,6 @@ std::unique_ptr<Master> createMaster(MasterEnv *master_env)
     return std::unique_ptr<Master>(new Master(master_env, 0.0));
 }
 
-MasterSession *sessionFactory(const SessionOptions &options, const MasterEnv *env,
-                              std::unique_ptr<std::vector<std::unique_ptr<Device>>> remote_devs)
-{
-    return new MasterSession(options, env, std::move(remote_devs), CreateNoOpStatsPublisher);
-}
 } // namespace
 
 TFOpLibraryProxy::TFOpLibraryProxy()
@@ -152,16 +147,42 @@ Status TFSessionProxy::init(TFOpLibraryProxy *proxy)
     d->master = createMaster(&d->masterEnv);
     d->worker = NewZrpcWorker(&d->workerEnv);
 
+    WorkerCacheInterface* worker_cache;
+    WorkerCacheFactoryOptions worker_cache_factory_options;
+    TF_RETURN_IF_ERROR(
+        WorkerCacheFactory(worker_cache_factory_options, &worker_cache));
+    CHECK_NE(nullptr, worker_cache);
+
     // Finish setting up master environment.
     d->masterEnv.ops = OpRegistry::Global();
-    d->masterEnv.worker_cache = NewZrpcWorkerCacheWithLocalWorker(d->worker.get(), name_prefix);
-    d->masterEnv.master_session_factory = sessionFactory;
+    d->masterEnv.worker_cache = worker_cache;
+    d->masterEnv.master_session_factory =
+        [config](SessionOptions options, const MasterEnv *env,
+                 std::unique_ptr<std::vector<std::unique_ptr<Device>>> remote_devs,
+                 std::unique_ptr<WorkerCacheInterface> worker_cache,
+                 std::unique_ptr<DeviceSet> device_set) {
+            options.config.MergeFrom(config);
+            return new MasterSession(options, env, std::move(remote_devs),
+                                     std::move(worker_cache), std::move(device_set),
+                                     CreateNoOpStatsPublisher);
+        };
+    d->masterEnv.worker_cache_factory =
+        [](const WorkerCacheFactoryOptions& options, WorkerCacheInterface** worker_cache) {
+            return WorkerCacheFactory(options, worker_cache);
+        };
 
     // Finish setting up worker environment.
     d->workerEnv.worker_cache = d->masterEnv.worker_cache;
     d->workerEnv.graph_mgr = new MDGraphMgr(&d->workerEnv);
     d->workerEnv.compute_pool = computePool(proxy->m_env);
     d->workerEnv.rendezvous_mgr = new ZrpcRendezvousMgr(&d->workerEnv);
+    d->workerEnv.session_mgr = new SessionMgr(
+        &d->workerEnv, "Salus",
+        std::unique_ptr<WorkerCacheInterface>(worker_cache),
+        [](const ServerDef& server_def, WorkerCacheInterface** worker_cache) {
+            WorkerCacheFactoryOptions options(server_def);
+            return WorkerCacheFactory(options, worker_cache);
+        });
 
     return Status::OK();
 }

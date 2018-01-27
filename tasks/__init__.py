@@ -5,6 +5,39 @@ import os
 from .config import WORKSPACE, BUILD_BRANCH, CFGENV, VENV
 
 
+def get_input(question):
+    try:
+        try:
+            answer = raw_input(question)
+        except NameError:
+            answer = input(question)  # pylint: disable=bad-builtin
+    except EOFError:
+        answer = ''
+    return answer
+
+
+def confirm(question, enabled_by_default=True):
+    """Prompt and let the user to confirm the operation"""
+    if enabled_by_default:
+        question += ' [Y/n]: '
+    else:
+        question += ' [y/N]: '
+
+    var = None
+    while var is None:
+        user_input_origin = get_input(question)
+        user_input = user_input_origin.strip().lower()
+        if user_input == 'y':
+            var = True
+        elif user_input == 'n':
+            var = False
+        elif not user_input:
+            var = enabled_by_default
+        else:
+            print('Invalid selection: %s' % user_input_origin)
+        return var
+
+
 @contextmanager
 def wscd(ctx, relpath=''):
     class WorkSpaceWrapper(object):
@@ -22,7 +55,6 @@ def wscd(ctx, relpath=''):
             return self._ctx.run(*args, **kwargs)
 
     with ctx.cd(os.path.join(WORKSPACE, relpath)):
-        #with ctx.prefix(' '.join("{}='{}'".format(k, v) for k, v in CFGENV.items())):
         yield WorkSpaceWrapper(ctx)
 
 
@@ -42,10 +74,15 @@ def gitbr(ctx, branch):
 
 @task
 def repatch(ctx):
+    def maybepatch(ws, patch):
+        if confirm('Apply {}?'.format(patch)):
+            print('Applying {}'.format(patch))
+            ws.run('git apply {}'.format(patch))
+
     with wscd(ctx) as ws:
-        ws.run('git apply tools/path-zeromq.patch')
-        ws.run('git apply tools/debug-build.patch')
-        ws.run('git apply tools/path-gcc54.patch')
+        maybepatch(ws, 'tools/path-zeromq.patch')
+        maybepatch(ws, 'tools/debug-build.patch')
+        maybepatch(ws, 'tools/path-gcc54.patch')
 
 
 @task(aliases=['bb'], positional=['bazelArgs'])
@@ -81,4 +118,3 @@ def install(ctx):
             ws.run('{} install {}/*.whl'.format(VENV.pip, tempdir))
         finally:
             ws.run('rm -rf {}'.format(tempdir))
-

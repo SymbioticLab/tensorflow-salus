@@ -236,6 +236,7 @@ cc_library(
         "//tensorflow/core/distributed_runtime:worker_cache",
         "//tensorflow/core/distributed_runtime:worker_env",
         "//tensorflow/core/distributed_runtime:worker_interface",
+        "//tensorflow/core/distributed_runtime:tensor_coding",
     ],
     copts = zrpc_copts(),
 )

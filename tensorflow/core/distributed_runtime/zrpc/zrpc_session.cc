@@ -101,6 +101,7 @@ Status ZrpcSession::CreateImpl(CallOptions *call_options, const GraphDef &graph)
     CreateSessionRequest req;
     *req.mutable_config() = options_.config;
     *req.mutable_graph_def() = graph;
+    req.set_target(options_.target);
     ReEncodeConsts(req.mutable_graph_def());
     CreateSessionResponse resp;
     Status s = master_->CreateSession(call_options, &req, &resp);
@@ -176,6 +177,11 @@ Status ZrpcSession::RunHelper(const RunOptions &run_options,
 
     *req->mutable_options() = run_options;
 
+    if (run_options.timeout_in_ms() == 0) {
+        req->mutable_options()->set_timeout_in_ms(
+            options_.config.operation_timeout_in_ms());
+    }
+
     if (!prun_handle.empty()) {
         req->set_partial_run_handle(prun_handle);
     }
@@ -186,9 +192,11 @@ Status ZrpcSession::RunHelper(const RunOptions &run_options,
 
     // Build an index from fetch tensor name to offset.
     std::unordered_map<string, int> output_name_to_offset;
-    for (const string &output_name : output_tensor_names) {
-        req->add_fetch(output_name);
-        output_name_to_offset.insert(std::make_pair(output_name, output_name_to_offset.size()));
+    for (size_t i = 0; i < output_tensor_names.size(); ++i) {
+        const string& name = output_tensor_names[i];
+        if (output_name_to_offset.insert(std::make_pair(name, i)).second) {
+            req->add_fetch(name);
+        }
     }
     for (const string &target : target_node_names) {
         req->add_target(target);
@@ -212,6 +220,18 @@ Status ZrpcSession::RunHelper(const RunOptions &run_options,
         Tensor output;
         TF_RETURN_IF_ERROR(resp->TensorValue(i, &output));
         (*outputs)[fetch_it->second] = output;
+    }
+
+    // In the unlikely event that output_tensor_names contains duplicates, fill in
+    // the duplicate values.
+    if (output_name_to_offset.size() != output_tensor_names.size()) {
+        for (size_t i = 0; i < output_tensor_names.size(); ++i) {
+            const string& name = output_tensor_names[i];
+            int offset = output_name_to_offset[name];
+            if (offset != i) {
+                (*outputs)[i] = (*outputs)[offset];
+            }
+        }
     }
 
     if (run_metadata) {
@@ -309,28 +329,43 @@ Status ZrpcSession::Close()
     return master_->CloseSession(&call_options, &req, &resp);
 }
 
-std::vector<DeviceAttributes> ZrpcSession::ListDevices()
+Status ZrpcSession::ListDevices(std::vector<DeviceAttributes>* response)
 {
-    std::vector<DeviceAttributes> devices;
-
     ListDevicesRequest req;
+    {
+        mutex_lock l(mu_);
+        req.set_session_handle(handle_);
+    }
+    if (req.session_handle().empty()) {
+        LOG(WARNING) << "ZrpcSession::ListDevices will initialize the session with "
+                     << "an empty graph and other defaults because the session has "
+                     << "not yet been created.";
+        GraphDef graph_def;
+        TF_RETURN_IF_ERROR(Create(graph_def));
+        {
+            mutex_lock l(mu_);
+            req.set_session_handle(handle_);
+        }
+    }
     ListDevicesResponse resp;
     CallOptions call_options;
     call_options.SetTimeout(options_.config.operation_timeout_in_ms());
     Status s = master_->ListDevices(&call_options, &req, &resp);
     if (!s.ok()) {
         LOG(ERROR) << "Could not list devices: " << s;
-        return devices;
+        return s;
     }
 
+    response->clear();
+    response->reserve(resp.local_device_size() + resp.remote_device_size());
     for (const auto &device_attr : resp.local_device()) {
-        devices.push_back(device_attr);
+        response->emplace_back(device_attr);
     }
     for (const auto &device_attr : resp.remote_device()) {
-        devices.push_back(device_attr);
+        response->emplace_back(device_attr);
     }
 
-    return devices;
+    return Status::OK();
 }
 
 void ZrpcSession::SetRemoteMaster(std::unique_ptr<MasterInterface> master)

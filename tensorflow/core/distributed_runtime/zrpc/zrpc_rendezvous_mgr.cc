@@ -418,16 +418,8 @@ private:
 void ZrpcRemoteRendezvous::RecvFromRemoteAsync(const Rendezvous::ParsedKey &parsed,
                                                const Rendezvous::Args &recv_args, DoneCallback done)
 {
+    CHECK(is_initialized());
     Status s;
-
-    // TODO(jeff): Consider checking for a valid worker_cache during the
-    // constructor of ZrpcRemoteRendezvous, rather than here, to simplify
-    // the twisty logic below.
-    if (env_->worker_cache == nullptr) {
-        s = errors::Internal("No remote worker cache available.");
-        done(s, Args(), recv_args, Tensor{}, false);
-        return;
-    }
 
     // Prepare a RecvTensor call that can handle being aborted.
     ZrpcRecvTensorCall *call = get_call_freelist()->New();
@@ -436,17 +428,21 @@ void ZrpcRemoteRendezvous::RecvFromRemoteAsync(const Rendezvous::ParsedKey &pars
     if (!DeviceNameUtils::SplitDeviceName(parsed.src_device, &call->src_worker_, &call->src_rel_device_)) {
         s = errors::Internal(parsed.src_device, " is invalid remote source device.");
     }
-    WorkerInterface *rwi = cache_->CreateWorker(call->src_worker_);
+    WorkerSession *sess = session();
+    WorkerInterface *rwi = sess->worker_cache->CreateWorker(call->src_worker_);
     if (s.ok() && rwi == nullptr) {
         s = errors::Internal("No worker known as ", call->src_worker_);
     }
 
     Device *dst_device;
     if (s.ok()) {
-        s = env_->device_mgr->LookupDevice(parsed.dst_device, &dst_device);
+        s = sess->device_mgr->LookupDevice(parsed.dst_device, &dst_device);
     }
     if (!s.ok()) {
-        get_call_freelist()->Release(call, cache_);
+        if (rwi != nullptr) {
+            sess->worker_cache->ReleaseWorker(call->src_worker_, rwi);
+        }
+        get_call_freelist()->Release(call, sess->worker_cache.get());
         done(s, Args(), recv_args, Tensor{}, false);
         return;
     }
@@ -466,22 +462,21 @@ void ZrpcRemoteRendezvous::RecvFromRemoteAsync(const Rendezvous::ParsedKey &pars
         // current status should be bad.
         Status s = call->status();
         call->done()(s, Args(), call->recv_args(), call->tensor(), call->is_dead());
-        cache_->ReleaseWorker(call->src_worker_, call->wi_);
+        session()->worker_cache->ReleaseWorker(call->src_worker_, call->wi_);
         call->wi_ = nullptr;
-        get_call_freelist()->Release(call, cache_);
+        get_call_freelist()->Release(call, session()->worker_cache.get());
         Unref();
     });
 }
 
 ZrpcRendezvousMgr::ZrpcRendezvousMgr(const WorkerEnv *env)
     : BaseRendezvousMgr(env)
-    , cache_(new WorkerFreeListCache(env->worker_cache))
 {
 }
 
 BaseRemoteRendezvous *ZrpcRendezvousMgr::Create(int64 step_id, const WorkerEnv *worker_env)
 {
-    return new ZrpcRemoteRendezvous(worker_env, cache_.get(), step_id);
+    return new ZrpcRemoteRendezvous(worker_env, step_id);
 }
 
 } // end namespace tensorflow

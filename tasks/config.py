@@ -1,10 +1,12 @@
 import os
 
+
 class venv(object):
     def __init__(self, vdir):
         self.dir = vdir
         for name in ['pip', 'python']:
             setattr(self, name, os.path.join(self.dir, 'bin', name))
+
 
 VENV = venv('/home/peifeng/.local/venvs/tfbuild')
 
@@ -21,9 +23,12 @@ CFGENV = {
     'TF_NEED_JEMALLOC': '1',
     'TF_NEED_GCP': '0',
     'TF_NEED_HDFS': '0',
+    'TF_NEED_S3': '0',
+    'TF_NEED_GDR': '0',
     'TF_ENABLE_XLA': '0',
     'TF_NEED_OPENCL_SYCL': '0',
     'TF_NEED_MPI': '0',
+    'TF_NEED_VERBS': '0',
     'TF_NEED_RPC': '1',
 
     'TF_NEED_CUDA': '1',
@@ -35,7 +40,7 @@ CFGENV = {
     'TF_CUDA_CLANG': '0',
     'GCC_HOST_COMPILER_PATH': '/usr/bin/gcc-5',
 
-    'TF_SET_ANDROID_WORKSPACE': '0'
+    'TF_SET_ANDROID_WORKSPACE': ''
 }
 
 BUILD_BRANCH = 'tfbuild'
@@ -47,5 +52,5 @@ try:
     orEnv = getattr(override, 'CFGENV')
     if orEnv:
         CFGENV.update(orEnv)
-except:
+except Exception:
     pass

@@ -29,8 +29,8 @@
 
 namespace tensorflow {
 
-MDGraphMgr::MDGraphMgr(const WorkerEnv *env)
-    : GraphMgr(env)
+MDGraphMgr::MDGraphMgr(const WorkerEnv *env, DeviceMgr *device_mgr)
+    : GraphMgr(env, device_mgr)
     , m_execFactory(nullptr)
     , m_resourceMgr(new ResourceMgr)
     , m_opseg(new OpSegment)
@@ -50,7 +50,7 @@ Status MDGraphMgr::InitItem(const string &session, const GraphDef &gdef, const G
     DCHECK(m_execFactory);
 
     item->session = session;
-    item->lib_def = new FunctionLibraryDefinition(OpRegistry::Global(), gdef.library());
+    item->lib_def.reset(new FunctionLibraryDefinition(OpRegistry::Global(), gdef.library()));
 
     //   TF_RETURN_IF_ERROR(ValidateGraphDefForDevices(gdef));
 
