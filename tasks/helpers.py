@@ -8,6 +8,14 @@ from string import Template
 from .config import venv, WORKSPACE
 
 
+def get_env(envdict, name):
+    return envdict.get(name) or ''
+
+
+def env_is(envdict, name):
+    return get_env(envdict, name) == '1'
+
+
 def get_input(question):
     try:
         try:
@@ -62,6 +70,30 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
+def flatten(iterable):
+    iterator, sentinel, stack = iter(iterable), object(), []
+    while True:
+        value = next(iterator, sentinel)
+        if value is sentinel:
+            if not stack:
+                break
+            iterator = stack.pop()
+        elif isinstance(value, str):
+            yield value
+        else:
+            try:
+                new_iterator = iter(value)
+            except TypeError:
+                yield value
+            else:
+                stack.append(iterator)
+                iterator = new_iterator
+
+
+def buildcmd(*args):
+    return ' '.join(flatten(args))
+
+
 @contextmanager
 def wscd(ctx, relpath=''):
     class WorkSpaceWrapper(object):
@@ -71,13 +103,18 @@ def wscd(ctx, relpath=''):
 
         def run(self, *args, **kwargs):
             if 'env' in kwargs:
-                tmp = dict(ctx.buildcfg.env)
+                tmp = dict(self._ctx.buildcfg.env)
                 tmp.update(kwargs['env'])
                 kwargs['env'] = tmp
             else:
-                kwargs['env'] = dict(ctx.buildcfg.env)
+                kwargs['env'] = dict(self._ctx.buildcfg.env)
 
             return self._ctx.run(*args, **kwargs)
+
+        def if_cuda(self, iterable):
+            if env_is(self._ctx.buildcfg.env, 'TF_NEED_CUDA'):
+                return iterable
+            return []
 
     with ctx.cd(os.path.join(WORKSPACE, relpath)):
         yield WorkSpaceWrapper(ctx)

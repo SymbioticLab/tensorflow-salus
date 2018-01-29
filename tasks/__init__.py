@@ -7,7 +7,7 @@ from invoke import task
 from invoke.exceptions import Exit
 
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
-from .helpers import confirm, edit_file, template, eprint, wscd, gitbr
+from .helpers import confirm, edit_file, template, eprint, buildcmd, wscd, gitbr
 
 
 @task
@@ -26,7 +26,7 @@ def init(ctx, yes=False):
         if not confirm('tasks.yml already exists. Do you want to overwrite?',
                        enabled_by_default=False, yes=yes):
             return
-    
+
     # Collecting information
     default_values = {
         'PYTHON_BIN_PATH': '',
@@ -67,7 +67,7 @@ def checkinit(ctx):
 
 
 @task(pre=[checkinit])
-def envs(ctx):
+def env(ctx):
     '''Print out currently initizliaed environment variables'''
     for k, v in ctx.buildcfg.env.items():
         print('{}: {}'.format(k, repr(v)))
@@ -82,7 +82,6 @@ def patch(ctx):
             ws.run('git apply {}'.format(patch))
 
     with wscd(ctx) as ws:
-        maybepatch(ws, 'tools/path-zeromq.patch')
         maybepatch(ws, 'tools/debug-build.patch')
         maybepatch(ws, 'tools/path-gcc54.patch')
 
@@ -91,12 +90,14 @@ def patch(ctx):
 def build(ctx, bazelArgs=''):
     with wscd(ctx) as ws:
         with gitbr(ctx, BUILD_BRANCH):
-            cmd = ' '.join([
-                'bazel', 'build', '-c opt', '--config=cuda', bazelArgs,
+            cmd = buildcmd(
+                'bazel', 'build', '-c opt',
+                ws.if_cuda('--config=cuda'),
+                bazelArgs,
                 '//tensorflow:libtensorflow.so',
                 '//tensorflow:libtensorflow_kernels.so',
                 '//tensorflow/tools/pip_package:build_pip_package'
-            ])
+            )
             ws.run(cmd, pty=True)
 
 
