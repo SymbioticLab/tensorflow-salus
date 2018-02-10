@@ -25,14 +25,7 @@
 #include "tensorflow/core/distributed_runtime/master.h"
 #include "tensorflow/core/distributed_runtime/master_env.h"
 #include "tensorflow/core/distributed_runtime/rendezvous_mgr_interface.h"
-#include "tensorflow/core/distributed_runtime/worker.h"
-#include "tensorflow/core/distributed_runtime/worker_cache.h"
-#include "tensorflow/core/distributed_runtime/worker_env.h"
-#include "tensorflow/core/distributed_runtime/zrpc/zrpc_rendezvous_mgr.h"
 #include "tensorflow/core/distributed_runtime/zrpc/zrpc_util.h"
-#include "tensorflow/core/distributed_runtime/zrpc/zrpc_worker_cache.h"
-#include "tensorflow/core/distributed_runtime/zrpc/zrpc_worker_service.h"
-#include "tensorflow/core/distributed_runtime/zrpc/exechelper/mdgraphmgr.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow/core/platform/mutex.h"
@@ -65,14 +58,6 @@ TFOpLibraryProxy::~TFOpLibraryProxy() = default;
 
 Status TFOpLibraryProxy::globalInit(const ConfigProto &config)
 {
-    SessionOptions sess_opts;
-    (*sess_opts.config.mutable_device_count())["RPC"] = 0;
-
-    sess_opts.config.MergeFrom(config);
-
-    TF_RETURN_IF_ERROR(DeviceFactory::AddDevices(sess_opts, name_prefix, &m_devices));
-    m_deviceMgr.reset(new DeviceMgr(m_devices));
-    return Status::OK();
 }
 
 Status TFOpLibraryProxy::newSession(std::unique_ptr<TFSessionProxy> &p)

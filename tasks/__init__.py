@@ -111,13 +111,16 @@ def config(ctx, configureArgs=''):
 
 
 @task(pre=[checkinit, build], aliases=['bbi'], default=True)
-def install(ctx):
+def install(ctx, save=False):
     with wscd(ctx) as ws:
-        tempdir = ws.run('mktemp -d', hide=True).stdout.strip()
         try:
+            tempdir = ws.run('mktemp -d', hide=True).stdout.strip()
             ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package {}'.format(tempdir))
             ws.run('echo $PATH')
             ws.run('{} uninstall -y tensorflow'.format(ws.venv.pip), warn=True)
             ws.run('{} install {}/*.whl'.format(ws.venv.pip, tempdir))
+            if save:
+                ws.run('cp -a {} {}'.format(tempdir, os.path.expanduser('~/downloads/')))
         finally:
-            ws.run('rm -rf {}'.format(tempdir))
+            if tempdir:
+                ws.run('rm -rf {}'.format(tempdir))

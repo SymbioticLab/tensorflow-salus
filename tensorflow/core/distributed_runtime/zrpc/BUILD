@@ -55,16 +55,6 @@ package(default_visibility = [
     "//tensorflow:internal",
 ])
 
-cc_library(
-    name = "zrpc_runtime",
-    visibility = ["//visibility:public"],
-    deps = [
-        ":zrpc_session",
-        ":zrpc_exechelper",
-    ],
-    copts = zrpc_copts(),
-)
-
 tf_proto_library_cc(
     name = "executor_protos",
     srcs = [
@@ -131,18 +121,14 @@ cc_library(
 cc_library(
     name = "zrpc_exechelper",
     srcs = [
-        "exechelper/tfoplibraryproxy.cc",
         "exechelper/graphview.cc",
-        "exechelper/mdgraphmgr.cc",
         "exechelper/devicefactories.cc",
         "exechelper/allocators.cc",
         "exechelper/memorytypes.cc",
         "exechelper/paginghelper.cc",
     ],
     hdrs = [
-        "exechelper/tfoplibraryproxy.h",
         "exechelper/graphview.h",
-        "exechelper/mdgraphmgr.h",
         "exechelper/devicefactories.h",
         "exechelper/allocators.h",
         "exechelper/memorytypes.h",
@@ -150,95 +136,15 @@ cc_library(
     ],
     deps = [
         ":zrpc_util",
-        ":zrpc_worker_cache",
-        ":zrpc_worker_service",
-        ":zrpc_rendezvous_mgr",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:core_cpu_internal",
+        "//tensorflow/core:gpu_runtime_impl",
         "//tensorflow/core:framework",
         "//tensorflow/core:framework_internal",
         "//tensorflow/core:lib",
-        "//tensorflow/core/distributed_runtime:graph_mgr",
-        "//tensorflow/core/distributed_runtime:master",
-        "//tensorflow/core/distributed_runtime:master_env",
-        "//tensorflow/core/distributed_runtime:master_session",
-        "//tensorflow/core/distributed_runtime:worker_env",
     ],
     copts = zrpc_copts(),
     alwayslink = 1,
-)
-
-cc_library(
-   name = "zrpc_worker_cache",
-   srcs = ["zrpc_worker_cache.cc"],
-   hdrs = ["zrpc_worker_cache.h"],
-   deps = [
-       "//tensorflow/core/distributed_runtime:worker_cache",
-       "//tensorflow/core/distributed_runtime:worker_cache_logger",
-       "//tensorflow/core/distributed_runtime:worker_cache_partial",
-       "//tensorflow/core/distributed_runtime:worker_interface",
-   ],
-    copts = zrpc_copts(),
-)
-
-tf_cuda_library(
-   name = "zrpc_worker_service",
-   srcs = ["zrpc_worker_service.cc"],
-   hdrs = ["zrpc_worker_service.h"],
-   deps = [
-       ":zrpc_tensor_coding",
-       "//tensorflow/core:core_cpu_internal",
-       "//tensorflow/core:framework",
-       "//tensorflow/core:gpu_runtime",
-       "//tensorflow/core:lib",
-       "//tensorflow/core:lib_internal",
-       "//tensorflow/core:worker_proto_cc",
-       "//tensorflow/core/distributed_runtime:graph_mgr",
-       "//tensorflow/core/distributed_runtime:rendezvous_mgr_interface",
-       "//tensorflow/core/distributed_runtime:worker",
-       "//tensorflow/core/distributed_runtime:worker_cache",
-       "//tensorflow/core/distributed_runtime:worker_env",
-   ],
-    copts = zrpc_copts(),
-)
-
-cc_library(
-    name = "zrpc_tensor_coding",
-    srcs = ["zrpc_tensor_coding.cc"],
-    hdrs = ["zrpc_tensor_coding.h"],
-    deps = [
-        ":zrpc_util",
-        "//tensorflow/core:core_cpu_internal",
-        "//tensorflow/core:framework",
-        "//tensorflow/core:framework_internal",
-        "//tensorflow/core:lib",
-        "//tensorflow/core:worker_proto_cc",
-        "@local_config_zeromq//:zmq_cpp",
-    ],
-    copts = zrpc_copts(),
-)
-
-cc_library(
-    name = "zrpc_rendezvous_mgr",
-    srcs = [
-        "zrpc_rendezvous_mgr.cc",
-        "zrpc_wrapped_devicecontext.cc",
-    ],
-    hdrs = [
-        "zrpc_rendezvous_mgr.h",
-        "zrpc_wrapped_devicecontext.h",
-    ],
-    deps = [
-        "//tensorflow/core:core_cpu_internal",
-        "//tensorflow/core:framework",
-        "//tensorflow/core:lib",
-        "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
-        "//tensorflow/core/distributed_runtime:worker_cache",
-        "//tensorflow/core/distributed_runtime:worker_env",
-        "//tensorflow/core/distributed_runtime:worker_interface",
-        "//tensorflow/core/distributed_runtime:tensor_coding",
-    ],
-    copts = zrpc_copts(),
 )
 
 #cc_library(

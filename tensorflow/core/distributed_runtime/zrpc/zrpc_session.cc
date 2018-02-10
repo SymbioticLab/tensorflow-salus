@@ -44,7 +44,7 @@ const size_t kSchemePrefixLength = strlen(kSchemePrefix);
 std::unique_ptr<MasterInterface> createMaster(const SessionOptions &options)
 {
     return std::unique_ptr<MasterInterface>(
-        NewZrpcMaster(options.env, options.target.substr(kSchemePrefixLength)));
+        NewZrpcRemoteMaster(options.env, options.target.substr(kSchemePrefixLength)));
 }
 
 } // namespace

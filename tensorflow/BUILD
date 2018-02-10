@@ -741,7 +741,6 @@ tf_cc_shared_object(
         "//tensorflow/c:version_script.lds",
         "//tensorflow/c/eager:c_api",
         "//tensorflow/core:tensorflow",
-        "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper"
     ],
 )
 
@@ -750,7 +749,6 @@ cc_binary(
     linkshared = 1,
     deps = [
         "//tensorflow/core:lib",
-        "//tensorflow/core:framework",
         "//tensorflow/core:all_kernels",
         "//tensorflow/core:ops",
         "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper"

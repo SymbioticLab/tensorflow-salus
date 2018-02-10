@@ -103,7 +103,7 @@ class GraphMgr {
   // Deregister all graphs.
   Status DeregisterAll();
 
-  protected:
+ protected:
   typedef GraphMgr ME;
 
   struct ExecutionUnit {
