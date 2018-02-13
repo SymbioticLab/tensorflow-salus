@@ -8,8 +8,8 @@ from string import Template
 from .config import venv, WORKSPACE
 
 
-def get_env(envdict, name):
-    return envdict.get(name) or ''
+def get_env(envdict, name, default=''):
+    return envdict.get(name) or default
 
 
 def env_is(envdict, name):
@@ -60,10 +60,14 @@ def template(src, dst, values):
 
 
 def edit_file(ctx, filename):
-    editor = os.getenv('EDITOR')
-    if not editor:
-        editor = 'vim'
+    editor = get_env('EDITOR', 'vim')
     ctx.run('{} {}'.format(editor, filename), pty=True)
+
+
+def shell(ctx, sh=None):
+    if sh is None:
+        sh = get_env('SHELL', 'bash')
+    ctx.run('{} -i'.format(sh), pty=True)
 
 
 def eprint(*args, **kwargs):

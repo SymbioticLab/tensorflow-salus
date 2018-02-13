@@ -7,7 +7,7 @@ from invoke import task
 from invoke.exceptions import Exit
 
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
-from .helpers import confirm, edit_file, template, eprint, buildcmd, wscd, gitbr
+from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr
 
 
 @task
@@ -124,3 +124,11 @@ def install(ctx, save=False):
         finally:
             if tempdir:
                 ws.run('rm -rf {}'.format(tempdir))
+
+
+@task(pre=[checkinit], aliases=['shell'])
+def interactive(ctx, sh=None):
+    with wscd(ctx) as ws:
+        with gitbr(ws, BUILD_BRANCH):
+            print("Entering interactive shell...")
+            shell(ws, sh)
