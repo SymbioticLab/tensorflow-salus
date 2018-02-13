@@ -18,6 +18,7 @@ limitations under the License.
 
 #include <functional>
 
+#include "tensorflow/core/distributed_runtime/session_mgr_interface.h"
 #include "tensorflow/core/distributed_runtime/worker_session.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/platform/mutex.h"
@@ -33,7 +34,7 @@ struct WorkerEnv;
 // SessionMgr runs on the workers.
 //
 // SessionMgr is threadsafe.
-class SessionMgr {
+class SessionMgr : public SessionMgrInterface {
  public:
   typedef std::function<Status(const ServerDef&, WorkerCacheInterface**)>
       WorkerCacheFactory;
@@ -42,17 +43,17 @@ class SessionMgr {
       WorkerEnv* worker_env, const string& default_worker_name,
       std::unique_ptr<WorkerCacheInterface> default_worker_cache,
       WorkerCacheFactory worker_cache_factory);
-  ~SessionMgr() {}
+  ~SessionMgr() override {}
 
   // Allocates state for a new session.
   Status CreateSession(const string& session, const ServerDef& server_def,
-                       bool isolate_session_state);
+                       bool isolate_session_state) override;
 
   // Locates the worker session for a given session handle
-  WorkerSession* WorkerSessionForSession(const string& session);
+  WorkerSession* WorkerSessionForSession(const string& session) override;
   WorkerSession* LegacySession();
 
-  Status DeleteSession(const string& session);
+  Status DeleteSession(const string& session) override;
 
   static string WorkerNameFromServerDef(const ServerDef& server_def);
 

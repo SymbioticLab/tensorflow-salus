@@ -704,6 +704,25 @@ tf_cc_shared_object(
     ] + tf_additional_binary_deps(),
 )
 
+cc_binary(
+    name = "libtensorflow_kernels.so",
+    deps = [
+        "//tensorflow/core:framework_internal_impl",
+        "//tensorflow/core:lib_internal_impl",
+        "//tensorflow/core:core_cpu_impl",
+        "//tensorflow/stream_executor:stream_executor_impl",
+        "//tensorflow/core:gpu_runtime_impl",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:all_kernels",
+        "//tensorflow/core:ops",
+        "//tensorflow/core/distributed_runtime:master_session",
+        "//tensorflow/core/distributed_runtime:worker",
+        "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
+        "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper"
+    ],
+)
+
 # -------------------------------------------
 # New rules should be added above this target.
 # -------------------------------------------
@@ -744,16 +763,6 @@ tf_cc_shared_object(
     ],
 )
 
-cc_binary(
-    name = "libtensorflow_kernels.so",
-    linkshared = 1,
-    deps = [
-        "//tensorflow/core:lib",
-        "//tensorflow/core:all_kernels",
-        "//tensorflow/core:ops",
-        "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper"
-    ],
-)
 
 tf_cc_shared_object(
     name = "libtensorflow_cc.so",

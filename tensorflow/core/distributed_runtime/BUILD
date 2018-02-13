@@ -137,7 +137,10 @@ tf_cc_test(
 cc_library(
     name = "session_mgr",
     srcs = ["session_mgr.cc"],
-    hdrs = ["session_mgr.h"],
+    hdrs = [
+        "session_mgr.h",
+        "session_mgr_interface.h"
+    ],
     deps = [
         ":graph_mgr",
         ":worker_cache_wrapper",

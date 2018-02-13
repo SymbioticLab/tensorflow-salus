@@ -29,7 +29,7 @@ class Device;
 class DeviceMgr;
 class Env;
 class RendezvousMgrInterface;
-class SessionMgr;
+class SessionMgrInterface;
 
 // The worker environment class, which holds a bag of pointers to
 // per-worker singletons.
@@ -39,7 +39,7 @@ struct WorkerEnv {
   Env* env = nullptr;
 
   // session_mgr encapsulates state for each session.
-  SessionMgr* session_mgr = nullptr;
+  SessionMgrInterface* session_mgr = nullptr;
 
   // The local devices of this worker. Devices are owned by the device_mgr.
   //
