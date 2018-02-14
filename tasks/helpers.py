@@ -60,13 +60,13 @@ def template(src, dst, values):
 
 
 def edit_file(ctx, filename):
-    editor = get_env('EDITOR', 'vim')
+    editor = get_env(os.environ, 'EDITOR', 'vim')
     ctx.run('{} {}'.format(editor, filename), pty=True)
 
 
 def shell(ctx, sh=None):
     if sh is None:
-        sh = get_env('SHELL', 'bash')
+        sh = get_env(os.environ, 'SHELL', 'bash')
     ctx.run('{} -i'.format(sh), pty=True)
 
 
