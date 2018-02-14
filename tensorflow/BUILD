@@ -704,23 +704,28 @@ tf_cc_shared_object(
     ] + tf_additional_binary_deps(),
 )
 
-cc_binary(
+tf_cc_shared_object(
     name = "libtensorflow_kernels.so",
+    framework_so = [],
     deps = [
+        "//tensorflow/core:protos_all_cc",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:ops",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:gpu_runtime",
+        "//tensorflow/core:all_kernels",
+        "//tensorflow/core/distributed_runtime:master_session",
+        "//tensorflow/core/distributed_runtime:worker",
+        "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
+        "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper",
+        # can't make gpu_runtime work in shared mode, so directly link to impl and don't depend on libtensorflow_framework.so
         "//tensorflow/core:framework_internal_impl",
         "//tensorflow/core:lib_internal_impl",
         "//tensorflow/core:core_cpu_impl",
         "//tensorflow/stream_executor:stream_executor_impl",
         "//tensorflow/core:gpu_runtime_impl",
-        "//tensorflow/core:lib",
-        "//tensorflow/core:framework",
-        "//tensorflow/core:all_kernels",
-        "//tensorflow/core:ops",
-        "//tensorflow/core/distributed_runtime:master_session",
-        "//tensorflow/core/distributed_runtime:worker",
-        "//tensorflow/core/distributed_runtime:base_rendezvous_mgr",
-        "//tensorflow/core/distributed_runtime/zrpc:zrpc_exechelper"
-    ],
+    ] + tf_additional_binary_deps(),
 )
 
 # -------------------------------------------

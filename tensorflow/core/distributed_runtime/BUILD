@@ -327,6 +327,7 @@ cc_library(
     name = "master_session",
     srcs = ["master_session.cc"],
     hdrs = ["master_session.h"],
+    copts = ["-g"],
     deps = [
         ":call_options",
         ":master_env",
