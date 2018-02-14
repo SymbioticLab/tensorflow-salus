@@ -103,7 +103,7 @@ def wscd(ctx, relpath=''):
     class WorkSpaceWrapper(object):
         def __init__(self, ctx):
             self._ctx = ctx
-            self.venv = venv(os.path.dirname(ctx.buildcfg.env.PYTHON_BIN_PATH))
+            self.venv = venv(os.path.dirname(os.path.dirname(ctx.buildcfg.env.PYTHON_BIN_PATH)))
 
         def run(self, *args, **kwargs):
             if 'env' in kwargs:
