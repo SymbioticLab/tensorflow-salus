@@ -94,7 +94,7 @@ def build(ctx, bazelArgs=''):
                 'bazel', 'build', '-c opt',
                 ws.if_cuda('--config=cuda'),
                 bazelArgs,
-                '//tensorflow:libtensorflow.so',
+                '//tensorflow:libtensorflow_framework.so',
                 '//tensorflow:libtensorflow_kernels.so',
                 '//tensorflow/tools/pip_package:build_pip_package'
             )
