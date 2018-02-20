@@ -274,7 +274,9 @@ cc_library(
         "platform/platform.h",
         "platform/protobuf.h",
         "platform/types.h",
-    ] + glob(tf_additional_proto_hdrs()) + glob(tf_env_time_hdrs()),
+        "platform/windows/cpu_info.h",
+        "lib/bfloat16/bfloat16.h",
+    ] + tf_additional_proto_hdrs() + glob(tf_env_time_hdrs()),
     copts = tf_copts(),
     deps = tf_lib_proto_parsing_deps(),
 )
@@ -286,6 +288,7 @@ cc_library(
 cc_library(
     name = "lib",
     hdrs = [
+        "lib/bfloat16/bfloat16.h",
         "lib/core/arena.h",
         "lib/core/bitmap.h",
         "lib/core/bits.h",
@@ -549,6 +552,7 @@ cc_library(
         "framework/numeric_types.h",
         "framework/tensor_types.h",
         "framework/type_traits.h",
+        "lib/bfloat16/bfloat16.h",
         "platform/default/dynamic_annotations.h",
         "platform/default/integral_types.h",
         "platform/default/logging.h",
@@ -1563,6 +1567,7 @@ cc_library(
         "platform/jpeg.h",
     ]),
     hdrs = [
+        "lib/bfloat16/bfloat16.h",
         "lib/core/stringpiece.h",
         "lib/jpeg/jpeg_handle.h",
         "lib/jpeg/jpeg_mem.h",
@@ -1590,6 +1595,7 @@ cc_library(
         "platform/gif.h",
     ]),
     hdrs = [
+        "lib/bfloat16/bfloat16.h",
         "lib/core/stringpiece.h",
         "lib/gif/gif_io.h",
         "lib/gtl/cleanup.h",
@@ -1617,6 +1623,7 @@ cc_library(
         "platform/png.h",
     ]),
     hdrs = [
+        "lib/bfloat16/bfloat16.h",
         "lib/core/casts.h",
         "lib/core/stringpiece.h",
         "lib/png/png_io.h",
@@ -2297,53 +2304,6 @@ cc_library(
         "@local_config_sycl//sycl:sycl",
     ],
     alwayslink = 0,
-)
-
-cc_library(
-    name = "rpc_runtime",
-    srcs = [
-        "common_runtime/rpc_device/rpc/executor.pb.cc",
-        "common_runtime/rpc_device/rpc/tfoplibrary.pb.cc",
-        #"common_runtime/rpc_device/rpc/executor.grpc.pb.cc",
-        "common_runtime/rpc_device/rpc/rpcclient.cpp",
-        "common_runtime/rpc_device/rpc/zmqrpcclient.cpp",
-        "common_runtime/rpc_device/exec_helpers/exechelpers.cpp",
-        "common_runtime/rpc_device/exec_helpers/devicefactories.cpp",
-        "common_runtime/rpc_device/rpc_allocator.cpp",
-        "common_runtime/rpc_device/rpc_device.cpp",
-        "common_runtime/rpc_device/rpc_device_context.cpp",
-        "common_runtime/rpc_device/rpc_device_factory.cpp",
-        "common_runtime/rpc_device/threadpiscine_device.cc",
-    ],
-    hdrs = [
-        "common_runtime/rpc_device/rpc/executor.pb.h",
-        "common_runtime/rpc_device/rpc/tfoplibrary.pb.h",
-        #"common_runtime/rpc_device/rpc/executor.grpc.pb.h",
-        "common_runtime/rpc_device/rpc/rpcclient.h",
-        "common_runtime/rpc_device/rpc/zmqrpcclient.h",
-        "common_runtime/rpc_device/exec_helpers/exechelpers.h",
-        "common_runtime/rpc_device/exec_helpers/devicefactories.h",
-        "common_runtime/rpc_device/rpc_allocator.h",
-        "common_runtime/rpc_device/rpc_device.h",
-        "common_runtime/rpc_device/rpc_device_context.h",
-        "common_runtime/rpc_device/threadpiscine_device.h",
-    ],
-    copts = tf_copts() + ["-fexceptions"],
-    linkstatic = 1,
-    deps = [
-        ":core_cpu",
-        ":core_cpu_internal",
-        ":gpu_runtime",
-        ":framework",
-        ":framework_internal",
-        ":lib",
-        ":lib_internal",
-        ":protos_all_cc",
-        "//third_party/eigen3",
-        #"@grpc_new//:grpc++_unsecure", # link to this after fix grpc version problem
-        "@zeromq//:zmq_cpp",
-    ],
-#     alwayslink = 1,
 )
 
 # -----------------------------------------------------------------------------

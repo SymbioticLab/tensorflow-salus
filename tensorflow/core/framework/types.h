@@ -97,6 +97,28 @@ struct DeviceName<Eigen::SyclDevice> {
 };
 #endif  // TENSORFLOW_USE_SYCL
 
+template <typename Device>
+struct DeviceName {};
+
+template <>
+struct DeviceName<Eigen::ThreadPoolDevice> {
+  static const std::string value;
+};
+
+#if GOOGLE_CUDA
+template <>
+struct DeviceName<Eigen::GpuDevice> {
+  static const std::string value;
+};
+#endif  // GOOGLE_CUDA
+
+#ifdef TENSORFLOW_USE_SYCL
+template <>
+struct DeviceName<Eigen::SyclDevice> {
+  static const std::string value;
+};
+#endif  // TENSORFLOW_USE_SYCL
+
 typedef gtl::InlinedVector<MemoryType, 4> MemoryTypeVector;
 typedef gtl::ArraySlice<MemoryType> MemoryTypeSlice;
 

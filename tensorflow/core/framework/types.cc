@@ -48,6 +48,14 @@ const std::string DeviceName<Eigen::GpuDevice>::value = DEVICE_GPU;
 const std::string DeviceName<Eigen::SyclDevice>::value = DEVICE_SYCL;
 #endif  // TENSORFLOW_USE_SYCL
 
+const std::string DeviceName<Eigen::ThreadPoolDevice>::value = DEVICE_CPU;
+#if GOOGLE_CUDA
+const std::string DeviceName<Eigen::GpuDevice>::value = DEVICE_GPU;
+#endif  // GOOGLE_CUDA
+#ifdef TENSORFLOW_USE_SYCL
+const std::string DeviceName<Eigen::SyclDevice>::value = DEVICE_SYCL;
+#endif  // TENSORFLOW_USE_SYCL
+
 string DataTypeString(DataType dtype) {
   if (IsRefType(dtype)) {
     DataType non_ref = static_cast<DataType>(dtype - kDataTypeRefOffset);

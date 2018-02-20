@@ -768,7 +768,6 @@ tf_cc_shared_object(
     ],
 )
 
-
 tf_cc_shared_object(
     name = "libtensorflow_cc.so",
     linkopts = select({
