@@ -750,7 +750,7 @@ class SubBuffer : public TensorBuffer {
  public:
   // This buffer is an alias to buf[delta, delta + n).
   SubBuffer(TensorBuffer* buf, int64 delta, int64 n)
-      : root_(buf->root_buffer()) , data_(buf->base<T>() + delta) , elem_(n) {
+      : root_(buf->root_buffer()), data_(buf->base<T>() + delta), elem_(n) {
     // Sanity check. The caller should ensure the sub buffer is valid.
     CHECK_LE(root_->base<T>(), this->base<T>());
     T* root_limit = root_->base<T>() + root_->size() / sizeof(T);

@@ -216,9 +216,6 @@ class BaseRemoteRendezvous : public RemoteRendezvous {
   // Must be called only if fully initialized.
   void RecvLocalAsyncInternal(const ParsedKey& parsed, DoneCallback done);
 
-  // Must be called only if fully initialized.
-  void RecvLocalAsyncInternal(const ParsedKey& parsed, DoneCallback done);
-
   TF_DISALLOW_COPY_AND_ASSIGN(BaseRemoteRendezvous);
 };
 

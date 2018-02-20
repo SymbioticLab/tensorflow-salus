@@ -247,7 +247,6 @@ void DirectSession::SchedClosure(thread::ThreadPool* pool,
   // safe given the reasoning above.
   c();
 #else
-  VLOG(3) << "Schedule a closure on pool " << pool;
   pool->Schedule(std::move(c));
 #endif  // __ANDROID__
 }

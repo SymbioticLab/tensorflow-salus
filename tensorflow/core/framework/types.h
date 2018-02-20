@@ -73,29 +73,6 @@ std::ostream& operator<<(std::ostream& os, const DeviceType& d);
 TF_EXPORT extern const char* const DEVICE_CPU;   // "CPU"
 TF_EXPORT extern const char* const DEVICE_GPU;   // "GPU"
 TF_EXPORT extern const char* const DEVICE_SYCL;  // "SYCL"
-TF_EXPORT extern const char* const DEVICE_RPC;  // "RPC"
-
-template <typename Device>
-struct DeviceName {};
-
-template <>
-struct DeviceName<Eigen::ThreadPoolDevice> {
-  static const std::string value;
-};
-
-#if GOOGLE_CUDA
-template <>
-struct DeviceName<Eigen::GpuDevice> {
-  static const std::string value;
-};
-#endif  // GOOGLE_CUDA
-
-#ifdef TENSORFLOW_USE_SYCL
-template <>
-struct DeviceName<Eigen::SyclDevice> {
-  static const std::string value;
-};
-#endif  // TENSORFLOW_USE_SYCL
 
 template <typename Device>
 struct DeviceName {};

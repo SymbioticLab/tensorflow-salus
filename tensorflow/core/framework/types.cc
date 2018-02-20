@@ -38,15 +38,6 @@ std::ostream& operator<<(std::ostream& os, const DeviceType& d) {
 const char* const DEVICE_CPU = "CPU";
 const char* const DEVICE_GPU = "GPU";
 const char* const DEVICE_SYCL = "SYCL";
-const char* const DEVICE_RPC = "RPC";
-
-const std::string DeviceName<Eigen::ThreadPoolDevice>::value = DEVICE_CPU;
-#if GOOGLE_CUDA
-const std::string DeviceName<Eigen::GpuDevice>::value = DEVICE_GPU;
-#endif  // GOOGLE_CUDA
-#ifdef TENSORFLOW_USE_SYCL
-const std::string DeviceName<Eigen::SyclDevice>::value = DEVICE_SYCL;
-#endif  // TENSORFLOW_USE_SYCL
 
 const std::string DeviceName<Eigen::ThreadPoolDevice>::value = DEVICE_CPU;
 #if GOOGLE_CUDA

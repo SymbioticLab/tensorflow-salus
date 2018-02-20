@@ -48,8 +48,6 @@ limitations under the License.
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 
-#include <functional>
-
 namespace Eigen {
 struct ThreadPoolDevice;
 struct GpuDevice;
@@ -458,7 +456,6 @@ struct TensorValue {
   Tensor* tensor;
 };
 
-class RPCDeviceContext;
 class OpKernelContext {
  public:
   // The first element of a WrappedAllocator is a "base" Allocator and
@@ -1095,9 +1092,6 @@ class OpKernelContext {
   // asynchronous execution after the Compute() method completes.
   friend class PersistentTensor;
   void NotifyUseOfPersistentTensor(const Tensor& tensor);
-
-  // Such that RPCDeviceContext can read out needed values and manipulate context directly.
-  friend class RPCDeviceContext;
 
   Status status_;
   Params* params_;    // not owned

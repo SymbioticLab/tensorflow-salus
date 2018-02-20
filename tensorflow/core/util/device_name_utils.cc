@@ -176,16 +176,6 @@ bool DeviceNameUtils::ParseFullName(StringPiece fullname, ParsedName* p) {
       }
       progress = true;
     }
-    if (str_util::ConsumePrefix(&fullname, "/rpc:") ||
-        str_util::ConsumePrefix(&fullname, "/RPC:")) {
-      p->has_type = true;
-      p->type = "RPC";  // Treat '/rpc:..' as uppercase '/device:RPC:...'
-      p->has_id = !str_util::ConsumePrefix(&fullname, "*");
-      if (p->has_id && !ConsumeNumber(&fullname, &p->id)) {
-        return false;
-      }
-      progress = true;
-    }
 
     if (!progress) {
       return false;

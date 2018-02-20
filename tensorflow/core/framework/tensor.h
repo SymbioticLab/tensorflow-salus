@@ -539,10 +539,7 @@ class Tensor {
 // Interface to access the raw ref-counted data buffer.
 class TensorBuffer : public core::RefCounted {
  public:
- int64_t mark = 0xdeadbeef;
-  ~TensorBuffer() override {
-    mark = 0xbeefdead;
-  }
+  ~TensorBuffer() override {}
 
   // data() points to a memory region of size() bytes.
   virtual void* data() const = 0;

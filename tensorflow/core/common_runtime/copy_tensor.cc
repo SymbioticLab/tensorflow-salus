@@ -257,7 +257,6 @@ void CopyTensor::ViaDMA(StringPiece edge_name, DeviceContext* send_dev_context,
 
   // E.g., gpu -> gpu
   if (non_cpu_src && non_cpu_dst) {
-    VLOG(2) << "Device to device copy " << edge_name;
     // Device to device copy.  Look through registry for an appropriate
     // CopyFunction.
     std::vector<RegistrationInfo>* registry = MutableRegistry();
@@ -324,7 +323,6 @@ void CopyTensor::ViaDMA(StringPiece edge_name, DeviceContext* send_dev_context,
     return;
   }
 
-  VLOG(2) << "cpu to cpu copy " << edge_name;
   // cpu -> cpu
   CHECK(!non_cpu_src && !non_cpu_dst);
   *output = *input;
