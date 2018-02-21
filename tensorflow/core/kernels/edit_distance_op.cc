@@ -239,13 +239,4 @@ TF_CALL_POD_STRING_TYPES(REGISTER_CPU_KERNEL);
 
 #undef REGISTER_CPU_KERNEL
 
-#define REGISTER_RPC_KERNEL(T)                                        \
-  REGISTER_KERNEL_BUILDER(                                            \
-      Name("EditDistance").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      EditDistanceOp<T>);
-
-TF_CALL_POD_STRING_TYPES(REGISTER_RPC_KERNEL);
-
-#undef REGISTER_RPC_KERNEL
-
 }  // end namespace tensorflow

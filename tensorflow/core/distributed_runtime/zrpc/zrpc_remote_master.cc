@@ -102,7 +102,7 @@ private:
     }
 };
 
-MasterInterface *NewZrpcMaster(Env *env, const std::string &endpoint)
+MasterInterface *NewZrpcRemoteMaster(Env *env, const std::string &endpoint)
 {
     return new ZrpcRemoteMaster(env, endpoint);
 }

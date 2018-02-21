@@ -40,6 +40,7 @@ from tensorflow.python.platform import tf_logging
 
 ops.NotDifferentiable("DecodeRaw")
 ops.NotDifferentiable("ParseTensor")
+ops.NotDifferentiable("SerializeTensor")
 ops.NotDifferentiable("StringToNumber")
 
 
@@ -58,7 +59,7 @@ class SparseFeature(
         ["index_key", "value_key", "dtype", "size", "already_sorted"])):
   """Configuration for parsing a sparse input feature from an `Example`.
 
-  Note, preferrably use `VarLenFeature` (possibly in combination with a
+  Note, preferably use `VarLenFeature` (possibly in combination with a
   `SequenceExample`) in order to parse out `SparseTensor`s instead of
   `SparseFeature` due to its simplicity.
 
@@ -120,8 +121,10 @@ class SparseFeature(
       `value_key` are already sorted by their index position. If so skip
       sorting. False by default (optional).
   """
-  pass
-SparseFeature.__new__.__defaults__ = (False,)
+
+  def __new__(cls, index_key, value_key, dtype, size, already_sorted=False):
+    return super(SparseFeature, cls).__new__(
+        cls, index_key, value_key, dtype, size, already_sorted)
 
 
 class FixedLenFeature(collections.namedtuple(
@@ -137,8 +140,10 @@ class FixedLenFeature(collections.namedtuple(
     default_value: Value to be used if an example is missing this feature. It
         must be compatible with `dtype` and of the specified `shape`.
   """
-  pass
-FixedLenFeature.__new__.__defaults__ = (None,)
+
+  def __new__(cls, shape, dtype, default_value=None):
+    return super(FixedLenFeature, cls).__new__(
+        cls, shape, dtype, default_value)
 
 
 class FixedLenSequenceFeature(collections.namedtuple(
@@ -168,8 +173,10 @@ class FixedLenSequenceFeature(collections.namedtuple(
       `SequenceExample`. Defaults to "" for dtype string and 0 otherwise
       (optional).
   """
-  pass
-FixedLenSequenceFeature.__new__.__defaults__ = (False, None)
+
+  def __new__(cls, shape, dtype, allow_missing=False, default_value=None):
+    return super(FixedLenSequenceFeature, cls).__new__(
+        cls, shape, dtype, allow_missing, default_value)
 
 
 def _features_to_raw_params(features, types):
@@ -192,7 +199,11 @@ def _features_to_raw_params(features, types):
   sparse_types = []
   dense_keys = []
   dense_types = []
-  dense_defaults = {}
+  # When the graph is built twice, multiple dense_defaults in a normal dict
+  # could come out in different orders. This will fail the _e2e_test which
+  # expects exactly the same graph.
+  # OrderedDict which preserves the order can solve the problem.
+  dense_defaults = collections.OrderedDict()
   dense_shapes = []
   if features:
     # NOTE: We iterate over sorted keys to keep things deterministic.
@@ -200,21 +211,21 @@ def _features_to_raw_params(features, types):
       feature = features[key]
       if isinstance(feature, VarLenFeature):
         if VarLenFeature not in types:
-          raise ValueError("Unsupported VarLenFeature %s.", feature)
+          raise ValueError("Unsupported VarLenFeature %s." % feature)
         if not feature.dtype:
           raise ValueError("Missing type for feature %s." % key)
         sparse_keys.append(key)
         sparse_types.append(feature.dtype)
       elif isinstance(feature, SparseFeature):
         if SparseFeature not in types:
-          raise ValueError("Unsupported SparseFeature %s.", feature)
+          raise ValueError("Unsupported SparseFeature %s." % feature)
 
         if not feature.index_key:
           raise ValueError(
-              "Missing index_key for SparseFeature %s.", feature)
+              "Missing index_key for SparseFeature %s." % feature)
         if not feature.value_key:
           raise ValueError(
-              "Missing value_key for SparseFeature %s.", feature)
+              "Missing value_key for SparseFeature %s." % feature)
         if not feature.dtype:
           raise ValueError("Missing type for feature %s." % key)
         index_keys = feature.index_key
@@ -243,7 +254,7 @@ def _features_to_raw_params(features, types):
           sparse_types.append(feature.dtype)
       elif isinstance(feature, FixedLenFeature):
         if FixedLenFeature not in types:
-          raise ValueError("Unsupported FixedLenFeature %s.", feature)
+          raise ValueError("Unsupported FixedLenFeature %s." % feature)
         if not feature.dtype:
           raise ValueError("Missing type for feature %s." % key)
         if feature.shape is None:
@@ -264,7 +275,7 @@ def _features_to_raw_params(features, types):
           dense_defaults[key] = feature.default_value
       elif isinstance(feature, FixedLenSequenceFeature):
         if FixedLenSequenceFeature not in types:
-          raise ValueError("Unsupported FixedLenSequenceFeature %s.", feature)
+          raise ValueError("Unsupported FixedLenSequenceFeature %s." % feature)
         if not feature.dtype:
           raise ValueError("Missing type for feature %s." % key)
         if feature.shape is None:
@@ -324,6 +335,24 @@ def _construct_sparse_tensors_for_sparse_features(features, tensor_dict):
   for key in set(tensor_dict) - set(features):
     del tensor_dict[key]
   return tensor_dict
+
+
+def _prepend_none_dimension(features):
+  if features:
+    modified_features = dict(features)  # Create a copy to modify
+    for key, feature in features.items():
+      if isinstance(feature, FixedLenSequenceFeature):
+        if not feature.allow_missing:
+          raise ValueError("Unsupported: FixedLenSequenceFeature requires "
+                           "allow_missing to be True.")
+        modified_features[key] = FixedLenSequenceFeature(
+            [None] + list(feature.shape),
+            feature.dtype,
+            feature.allow_missing,
+            feature.default_value)
+    return modified_features
+  else:
+    return features
 
 
 def parse_example(serialized, features, name=None, example_names=None):
@@ -393,7 +422,7 @@ def parse_example(serialized, features, name=None, example_names=None):
 
   then the output will look like:
 
-  ```
+  ```python
   {"ft": SparseTensor(indices=[[0, 0], [0, 1], [2, 0]],
                       values=[1.0, 2.0, 3.0],
                       dense_shape=(3, 2)) }
@@ -402,7 +431,7 @@ def parse_example(serialized, features, name=None, example_names=None):
   If instead a `FixedLenSequenceFeature` with `default_value = -1.0` and
   `shape=[]` is used then the output will look like:
 
-  ```
+  ```python
   {"ft": [[1.0, 2.0], [3.0, -1.0]]}
   ```
 
@@ -541,19 +570,7 @@ def parse_example(serialized, features, name=None, example_names=None):
   """
   if not features:
     raise ValueError("Missing: features was %s." % features)
-  if features:
-    modified_features = dict(features)  # Create a copy to modify
-    for key, feature in features.items():
-      if isinstance(feature, FixedLenSequenceFeature):
-        if not feature.allow_missing:
-          raise ValueError("Unsupported: FixedLenSequenceFeature requires "
-                           "allow_missing to be True.")
-        modified_features[key] = FixedLenSequenceFeature(
-            [None] + list(feature.shape),
-            feature.dtype,
-            feature.allow_missing,
-            feature.default_value)
-    features = modified_features
+  features = _prepend_none_dimension(features)
   (sparse_keys, sparse_types, dense_keys, dense_types, dense_defaults,
    dense_shapes) = _features_to_raw_params(
        features,
@@ -612,7 +629,8 @@ def _parse_example_raw(serialized,
   """
   with ops.name_scope(name, "ParseExample", [serialized, names]):
     names = [] if names is None else names
-    dense_defaults = {} if dense_defaults is None else dense_defaults
+    dense_defaults = collections.OrderedDict(
+    ) if dense_defaults is None else dense_defaults
     sparse_keys = [] if sparse_keys is None else sparse_keys
     sparse_types = [] if sparse_types is None else sparse_types
     dense_keys = [] if dense_keys is None else dense_keys
@@ -731,9 +749,11 @@ def parse_single_example(serialized, features, name=None, example_names=None):
   """
   if not features:
     raise ValueError("Missing features.")
+  features = _prepend_none_dimension(features)
   (sparse_keys, sparse_types, dense_keys, dense_types, dense_defaults,
    dense_shapes) = _features_to_raw_params(
-       features, [VarLenFeature, FixedLenFeature, SparseFeature])
+       features,
+       [VarLenFeature, FixedLenFeature, FixedLenSequenceFeature, SparseFeature])
   outputs = _parse_single_example_raw(
       serialized, example_names, sparse_keys, sparse_types, dense_keys,
       dense_types, dense_defaults, dense_shapes, name)
@@ -837,7 +857,7 @@ def parse_single_sequence_example(
   Parses a single serialized [`SequenceExample`](https://www.tensorflow.org/code/tensorflow/core/example/example.proto)
   proto given in `serialized`.
 
-  This op parses a serialize sequence example into a tuple of dictionaries
+  This op parses a serialized sequence example into a tuple of dictionaries
   mapping keys to `Tensor` and `SparseTensor` objects respectively.
   The first dictionary contains mappings for keys appearing in
   `context_features`, and the second dictionary contains mappings for keys
@@ -1146,3 +1166,42 @@ def _parse_single_sequence_example_raw(serialized,
             feature_list_sparse_tensors + feature_list_dense_values))
 
     return (context_output, feature_list_output)
+
+
+# Swap `name` and `na_value` for backward compatibility.
+def decode_csv(records, record_defaults, field_delim=",",
+               use_quote_delim=True, name=None, na_value=""):
+  # pylint: disable=protected-access
+  """Convert CSV records to tensors. Each column maps to one tensor.
+
+  RFC 4180 format is expected for the CSV records.
+  (https://tools.ietf.org/html/rfc4180)
+  Note that we allow leading and trailing spaces with int or float field.
+
+  Args:
+    records: A `Tensor` of type `string`.
+      Each string is a record/row in the csv and all records should have
+      the same format.
+    record_defaults: A list of `Tensor` objects with specific types.
+      Acceptable types are `float32`, `float64`, `int32`, `int64`, `string`.
+      One tensor per column of the input record, with either a
+      scalar default value for that column or empty if the column is required.
+    field_delim: An optional `string`. Defaults to `","`.
+      char delimiter to separate fields in a record.
+    use_quote_delim: An optional `bool`. Defaults to `True`.
+      If false, treats double quotation marks as regular
+      characters inside of the string fields (ignoring RFC 4180, Section 2,
+      Bullet 5).
+    name: A name for the operation (optional).
+    na_value: Additional string to recognize as NA/NaN.
+
+  Returns:
+    A list of `Tensor` objects. Has the same type as `record_defaults`.
+    Each tensor will have the same shape as records.
+  """
+  # TODO(martinwicke), remove the wrapper when new Python API generator is done.
+  return gen_parsing_ops._decode_csv(
+      records=records, record_defaults=record_defaults,
+      field_delim=field_delim, use_quote_delim=use_quote_delim,
+      na_value=na_value, name=name)
+  # pylint: enable=protected-access

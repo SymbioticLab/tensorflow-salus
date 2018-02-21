@@ -241,8 +241,6 @@ class CTCGreedyDecoderOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("CTCGreedyDecoder").Device(DEVICE_CPU),
                         CTCGreedyDecoderOp);
-REGISTER_KERNEL_BUILDER(Name("CTCGreedyDecoder").Device(DEVICE_RPC),
-                        CTCGreedyDecoderOp);
 
 // CTC beam search
 class CTCBeamSearchDecoderOp : public OpKernel {
@@ -333,8 +331,6 @@ class CTCBeamSearchDecoderOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("CTCBeamSearchDecoder").Device(DEVICE_CPU),
-                        CTCBeamSearchDecoderOp);
-REGISTER_KERNEL_BUILDER(Name("CTCBeamSearchDecoder").Device(DEVICE_RPC),
                         CTCBeamSearchDecoderOp);
 
 }  // end namespace tensorflow

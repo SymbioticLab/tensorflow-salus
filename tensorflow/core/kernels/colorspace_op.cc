@@ -35,6 +35,9 @@ namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
 typedef Eigen::GpuDevice GPUDevice;
+#ifdef TENSORFLOW_USE_SYCL
+typedef Eigen::SyclDevice SYCLDevice;
+#endif
 
 template <typename Device, typename T>
 class RGBToHSVOp : public OpKernel {
@@ -116,16 +119,6 @@ class HSVToRGBOp : public OpKernel {
 TF_CALL_float(REGISTER_CPU);
 TF_CALL_double(REGISTER_CPU);
 
-#define REGISTER_RPC(T)                                       \
-  REGISTER_KERNEL_BUILDER(Name("RGBToHSV").Device(DEVICE_RPC) \
-                              .TypeConstraint<T>("T"),        \
-                          RGBToHSVOp<CPUDevice, T>);          \
-  REGISTER_KERNEL_BUILDER(Name("HSVToRGB").Device(DEVICE_RPC) \
-                              .TypeConstraint<T>("T"),        \
-                          HSVToRGBOp<CPUDevice, T>);
-TF_CALL_float(REGISTER_RPC);
-TF_CALL_double(REGISTER_RPC);
-
 #if GOOGLE_CUDA
 // Forward declarations of the function specializations for GPU (to prevent
 // building the GPU versions here, they will be built compiling _gpu.cu.cc).
@@ -154,6 +147,18 @@ TF_CALL_double(DECLARE_GPU);
                           HSVToRGBOp<GPUDevice, T>);
 TF_CALL_float(REGISTER_GPU);
 TF_CALL_double(REGISTER_GPU);
+#endif
+
+#ifdef TENSORFLOW_USE_SYCL
+#define REGISTER_SYCL(T)                                       \
+  REGISTER_KERNEL_BUILDER(Name("RGBToHSV").Device(DEVICE_SYCL) \
+                              .TypeConstraint<T>("T"),         \
+                          RGBToHSVOp<SYCLDevice, T>);          \
+  REGISTER_KERNEL_BUILDER(Name("HSVToRGB").Device(DEVICE_SYCL) \
+                              .TypeConstraint<T>("T"),         \
+                          HSVToRGBOp<SYCLDevice, T>);
+TF_CALL_float(REGISTER_SYCL);
+TF_CALL_double(REGISTER_SYCL);
 #endif
 
 }  // namespace tensorflow

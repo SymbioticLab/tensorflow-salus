@@ -22,14 +22,13 @@ REGISTER_KERNEL_BUILDER(
         .TypeConstraint<int32>("Tidx")
         .Device(DEVICE_CPU)
         .HostMemory("reduction_indices"),
-    ReductionOp<CPUDevice, bool, Eigen::internal::OrReducer>);
-
+    ReductionOp<CPUDevice, bool, int32, Eigen::internal::OrReducer>);
 REGISTER_KERNEL_BUILDER(
     Name("Any")
-        .TypeConstraint<int32>("Tidx")
-        .Device(DEVICE_RPC)
+        .TypeConstraint<int64>("Tidx")
+        .Device(DEVICE_CPU)
         .HostMemory("reduction_indices"),
-    ReductionOp<CPUDevice, bool, Eigen::internal::OrReducer>);
+    ReductionOp<CPUDevice, bool, int64, Eigen::internal::OrReducer>);
 
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(
@@ -37,7 +36,13 @@ REGISTER_KERNEL_BUILDER(
         .TypeConstraint<int32>("Tidx")
         .Device(DEVICE_GPU)
         .HostMemory("reduction_indices"),
-    ReductionOp<GPUDevice, bool, Eigen::internal::OrReducer>);
+    ReductionOp<GPUDevice, bool, int32, Eigen::internal::OrReducer>);
+REGISTER_KERNEL_BUILDER(
+    Name("Any")
+        .TypeConstraint<int64>("Tidx")
+        .Device(DEVICE_GPU)
+        .HostMemory("reduction_indices"),
+    ReductionOp<GPUDevice, bool, int64, Eigen::internal::OrReducer>);
 #endif
 
 }  // namespace tensorflow

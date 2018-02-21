@@ -73,7 +73,7 @@ class EncodePngOp : public OpKernel {
                     "image must have 1, 2, 3, or 4 channels, got ", channels));
 
     // Encode image to png string
-    Tensor* output = NULL;
+    Tensor* output = nullptr;
     OP_REQUIRES_OK(context,
                    context->allocate_output(0, TensorShape({}), &output));
     if (desired_channel_bits_ == 8) {
@@ -98,6 +98,5 @@ class EncodePngOp : public OpKernel {
   int desired_channel_bits_;
 };
 REGISTER_KERNEL_BUILDER(Name("EncodePng").Device(DEVICE_CPU), EncodePngOp);
-REGISTER_KERNEL_BUILDER(Name("EncodePng").Device(DEVICE_RPC), EncodePngOp);
 
 }  // namespace tensorflow

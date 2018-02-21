@@ -135,7 +135,7 @@ class QuantizedMatMulOp : public OpKernel {
     if (meta::IsSupportedAndEnabled() && std::is_same<T1, quint8>() &&
         std::is_same<T2, quint8>() && std::is_same<Toutput, qint32>() &&
         (offset_c == 0) && (mult_c == 1) && (shift_c == 0) &&
-        (transpose_c == false)) {
+        (transpose_c == false) && (k <= 2048)) {
       // Gemmlowp/meta code path works on 32 & 64 bit Arm with NEON Simd and
       // allows optimized quantized 8bit to 32bit gemm.
       meta::QuantizedGemm(context, transpose_a_, transpose_b_, a_data, b_data,
@@ -193,13 +193,6 @@ class QuantizedMatMulOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("QuantizedMatMul")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<quint8>("T1")
-                            .TypeConstraint<quint8>("T2")
-                            .TypeConstraint<qint32>("Toutput"),
-                        QuantizedMatMulOp<quint8, quint8, qint32>);
-
-REGISTER_KERNEL_BUILDER(Name("QuantizedMatMul")
-                            .Device(DEVICE_RPC)
                             .TypeConstraint<quint8>("T1")
                             .TypeConstraint<quint8>("T2")
                             .TypeConstraint<qint32>("Toutput"),

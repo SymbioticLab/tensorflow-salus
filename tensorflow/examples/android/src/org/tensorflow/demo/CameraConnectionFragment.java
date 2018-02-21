@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import org.tensorflow.demo.env.Logger;
-import org.tensorflow.demo.R;
+import org.tensorflow.demo.R; // Explicit import needed for internal Google builds.
 
 public class CameraConnectionFragment extends Fragment {
   private static final Logger LOGGER = new Logger();
@@ -216,10 +216,8 @@ public class CameraConnectionFragment extends Fragment {
    */
   private final OnImageAvailableListener imageListener;
 
-  /**
-   * The input size in pixels desired by TensorFlow (width and height of a square bitmap).
-   */
-  private final int inputSize;
+  /** The input size in pixels desired by TensorFlow (width and height of a square bitmap). */
+  private final Size inputSize;
 
   /**
    * The layout identifier to inflate for this Fragment.
@@ -232,7 +230,8 @@ public class CameraConnectionFragment extends Fragment {
   private CameraConnectionFragment(
       final ConnectionCallback connectionCallback,
       final OnImageAvailableListener imageListener,
-      final int layout, final int inputSize) {
+      final int layout,
+      final Size inputSize) {
     this.cameraConnectionCallback = connectionCallback;
     this.imageListener = imageListener;
     this.layout = layout;
@@ -259,32 +258,42 @@ public class CameraConnectionFragment extends Fragment {
 
   /**
    * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
-   * width and height are at least as large as the respective requested values, and whose aspect
-   * ratio matches with the specified value.
+   * width and height are at least as large as the minimum of both, or an exact match if possible.
    *
-   * @param choices     The list of sizes that the camera supports for the intended output class
-   * @param width       The minimum desired width
-   * @param height      The minimum desired height
-   * @param aspectRatio The aspect ratio
+   * @param choices The list of sizes that the camera supports for the intended output class
+   * @param width The minimum desired width
+   * @param height The minimum desired height
    * @return The optimal {@code Size}, or an arbitrary one if none were big enough
    */
-  private static Size chooseOptimalSize(
-      final Size[] choices, final int width, final int height, final Size aspectRatio) {
-    final int minWidth = Math.max(width, MINIMUM_PREVIEW_SIZE);
-    final int minHeight = Math.max(height, MINIMUM_PREVIEW_SIZE);
+  protected static Size chooseOptimalSize(final Size[] choices, final int width, final int height) {
+    final int minSize = Math.max(Math.min(width, height), MINIMUM_PREVIEW_SIZE);
+    final Size desiredSize = new Size(width, height);
 
     // Collect the supported resolutions that are at least as big as the preview Surface
+    boolean exactSizeFound = false;
     final List<Size> bigEnough = new ArrayList<Size>();
     final List<Size> tooSmall = new ArrayList<Size>();
     for (final Size option : choices) {
-      if (option.getHeight() >= minHeight && option.getWidth() >= minWidth) {
+      if (option.equals(desiredSize)) {
+        // Set the size but don't return yet so that remaining sizes will still be logged.
+        exactSizeFound = true;
+      }
+
+      if (option.getHeight() >= minSize && option.getWidth() >= minSize) {
         bigEnough.add(option);
       } else {
         tooSmall.add(option);
       }
     }
+
+    LOGGER.i("Desired size: " + desiredSize + ", min size: " + minSize + "x" + minSize);
     LOGGER.i("Valid preview sizes: [" + TextUtils.join(", ", bigEnough) + "]");
     LOGGER.i("Rejected preview sizes: [" + TextUtils.join(", ", tooSmall) + "]");
+
+    if (exactSizeFound) {
+      LOGGER.i("Exact size match found.");
+      return desiredSize;
+    }
 
     // Pick the smallest of those, assuming we found any
     if (bigEnough.size() > 0) {
@@ -299,7 +308,9 @@ public class CameraConnectionFragment extends Fragment {
 
   public static CameraConnectionFragment newInstance(
       final ConnectionCallback callback,
-      final OnImageAvailableListener imageListener, final int layout, final int inputSize) {
+      final OnImageAvailableListener imageListener,
+      final int layout,
+      final Size inputSize) {
     return new CameraConnectionFragment(callback, imageListener, layout, inputSize);
   }
 
@@ -342,56 +353,44 @@ public class CameraConnectionFragment extends Fragment {
     super.onPause();
   }
 
+  public void setCamera(String cameraId) {
+    this.cameraId = cameraId;
+  }
+
   /**
    * Sets up member variables related to camera.
-   *
-   * @param width  The width of available size for camera preview
-   * @param height The height of available size for camera preview
    */
-  private void setUpCameraOutputs(final int width, final int height) {
+  private void setUpCameraOutputs() {
     final Activity activity = getActivity();
     final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     try {
-      for (final String cameraId : manager.getCameraIdList()) {
-        final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+      final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
-        // We don't use a front facing camera in this sample.
-        final Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-        if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-          continue;
-        }
+      final StreamConfigurationMap map =
+          characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
-        final StreamConfigurationMap map =
-            characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+      // For still image captures, we use the largest available size.
+      final Size largest =
+          Collections.max(
+              Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
+              new CompareSizesByArea());
 
-        if (map == null) {
-          continue;
-        }
+      sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
-        // For still image captures, we use the largest available size.
-        final Size largest =
-            Collections.max(
-                Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
-                new CompareSizesByArea());
+      // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
+      // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
+      // garbage capture data.
+      previewSize =
+          chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+              inputSize.getWidth(),
+              inputSize.getHeight());
 
-        sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-
-        // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-        // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-        // garbage capture data.
-        previewSize =
-            chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-                inputSize, inputSize, largest);
-
-        // We fit the aspect ratio of TextureView to the size of preview we picked.
-        final int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-          textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
-        } else {
-          textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
-        }
-
-        CameraConnectionFragment.this.cameraId = cameraId;
+      // We fit the aspect ratio of TextureView to the size of preview we picked.
+      final int orientation = getResources().getConfiguration().orientation;
+      if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
+      } else {
+        textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
     } catch (final CameraAccessException e) {
       LOGGER.e(e, "Exception!");
@@ -412,7 +411,7 @@ public class CameraConnectionFragment extends Fragment {
    * Opens the camera specified by {@link CameraConnectionFragment#cameraId}.
    */
   private void openCamera(final int width, final int height) {
-    setUpCameraOutputs(width, height);
+    setUpCameraOutputs();
     configureTransform(width, height);
     final Activity activity = getActivity();
     final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);

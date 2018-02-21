@@ -153,13 +153,6 @@ class SelectOp : public OpKernel {
 
 TF_CALL_ALL_TYPES(REGISTER_SELECT);
 
-#define REGISTER_SELECT_RPC(type)                                  \
-  REGISTER_KERNEL_BUILDER(                                         \
-      Name("Select").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
-      SelectOp<CPUDevice, type>);
-
-TF_CALL_ALL_TYPES(REGISTER_SELECT_RPC);
-
 #if GOOGLE_CUDA
 
 // Registration of the GPU implementations.
@@ -188,7 +181,9 @@ REGISTER_SELECT_GPU(complex128);
       SelectOp<SYCLDevice, type>);
 
 REGISTER_SELECT_SYCL(float);
+REGISTER_SELECT_SYCL(double);
 REGISTER_SELECT_SYCL(int32);
+REGISTER_SELECT_SYCL(int64);
 #undef REGISTER_SELECT_SYCL
 #endif // TENSORFLOW_USE_SYCL
 

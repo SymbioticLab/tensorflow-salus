@@ -191,11 +191,4 @@ class DrawBoundingBoxesOp : public OpKernel {
 TF_CALL_half(REGISTER_CPU_KERNEL);
 TF_CALL_float(REGISTER_CPU_KERNEL);
 
-#define REGISTER_RPC_KERNEL(T)                                             \
-  REGISTER_KERNEL_BUILDER(                                                 \
-      Name("DrawBoundingBoxes").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      DrawBoundingBoxesOp<T>);
-TF_CALL_half(REGISTER_RPC_KERNEL);
-TF_CALL_float(REGISTER_RPC_KERNEL);
-
 }  // namespace tensorflow

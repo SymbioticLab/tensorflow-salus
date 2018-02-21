@@ -19,6 +19,8 @@ limitations under the License.
 #include <string.h>
 #include <map>
 #include <vector>
+#include <string>
+
 #include "tensorflow/core/framework/numeric_op.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/register_types.h"
@@ -26,6 +28,7 @@ limitations under the License.
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/tensor_slice.h"
 #include "tensorflow/core/kernels/bounds_check.h"
+#include "tensorflow/core/kernels/mkl_conv_ops.h"
 #include "tensorflow/core/kernels/ops_util.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/gtl/array_slice.h"
@@ -37,13 +40,27 @@ limitations under the License.
 #include "tensorflow/core/util/tensor_format.h"
 
 #include "tensorflow/core/util/mkl_util.h"
-#include "third_party/mkl/include/mkl_dnn.h"
-#include "third_party/mkl/include/mkl_dnn_types.h"
+
+
+#ifdef INTEL_MKL_DNN
+#include "mkldnn.hpp"
+
+using mkldnn::stream;
+using mkldnn::prop_kind;
+
+using mkldnn::convolution_forward;
+using mkldnn::convolution_direct;
+#else
+#include "mkl_dnn.h"
+#include "mkl_dnn_types.h"
+#endif
 
 namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
-typedef Eigen::GpuDevice GPUDevice;
+
+// For now, MKL-ML is default. So making MKL-DNN not a default choice.
+#ifndef INTEL_MKL_DNN
 
 template <typename Device, typename T, bool biasEnabled>
 class MklConv2DOp : public OpKernel {
@@ -70,9 +87,10 @@ class MklConv2DOp : public OpKernel {
   }
 
   void Compute(OpKernelContext* context) override {
+    MklConv2DOpContext mkl_context;
     const Tensor& input = MklGetInput(context, 0);
-    GetMklShape(context, 0, &(mkl_params_.input_shape));
-    bool input_in_mkl_format = mkl_params_.input_shape.IsMklTensor();
+    GetMklShape(context, 0, &(mkl_context.input_shape));
+    bool input_in_mkl_format = mkl_context.input_shape.IsMklTensor();
 
     const Tensor& filter = MklGetInput(context, 1);
     MklShape mkl_filter_shape;
@@ -103,9 +121,9 @@ class MklConv2DOp : public OpKernel {
                   errors::InvalidArgument("filter too large"));
     }
 
-    const int64 input_depth = input_in_mkl_format
-                                  ? mkl_params_.input_shape.GetSizes()[2]
-                                  : GetTensorDim(input, data_format_, 'C');
+    const int64 input_depth =
+        input_in_mkl_format ? GetMklTensorDim(mkl_context.input_shape, 'C')
+                            : GetTensorDim(input, data_format_, 'C');
     OP_REQUIRES(
         context, input_depth == filter.dim_size(2),
         errors::InvalidArgument("input and filter must have the same depth: ",
@@ -115,9 +133,9 @@ class MklConv2DOp : public OpKernel {
 
     // The second dimension for input is rows/height.
     // The first dimension for filter is rows/height.
-    const int64 input_rows_raw = input_in_mkl_format
-                                     ? mkl_params_.input_shape.GetSizes()[1]
-                                     : GetTensorDim(input, data_format_, 'H');
+    const int64 input_rows_raw =
+        input_in_mkl_format ? GetMklTensorDim(mkl_context.input_shape, 'H')
+                            : GetTensorDim(input, data_format_, 'H');
     OP_REQUIRES(context, FastBoundsCheck(input_rows_raw,
                                          std::numeric_limits<int>::max()),
                 errors::InvalidArgument("Input rows too large"));
@@ -126,9 +144,9 @@ class MklConv2DOp : public OpKernel {
 
     // The third dimension for input is columns/width.
     // The second dimension for filter is columns/width.
-    const int64 input_cols_raw = input_in_mkl_format
-                                     ? mkl_params_.input_shape.GetSizes()[0]
-                                     : GetTensorDim(input, data_format_, 'W');
+    const int64 input_cols_raw =
+        input_in_mkl_format ? GetMklTensorDim(mkl_context.input_shape, 'W')
+                            : GetTensorDim(input, data_format_, 'W');
     OP_REQUIRES(context, FastBoundsCheck(input_cols_raw,
                                          std::numeric_limits<int>::max()),
                 errors::InvalidArgument("Input cols too large"));
@@ -136,9 +154,9 @@ class MklConv2DOp : public OpKernel {
     const int filter_cols = static_cast<int>(filter.dim_size(1));
 
     // The first dimension for input is batch.
-    const int64 input_batch_raw = input_in_mkl_format
-                                      ? mkl_params_.input_shape.GetSizes()[3]
-                                      : GetTensorDim(input, data_format_, 'N');
+    const int64 input_batch_raw =
+        input_in_mkl_format ? GetMklTensorDim(mkl_context.input_shape, 'N')
+                            : GetTensorDim(input, data_format_, 'N');
     OP_REQUIRES(context, FastBoundsCheck(input_batch_raw,
                                          std::numeric_limits<int>::max()),
                 errors::InvalidArgument("batch is too large"));
@@ -165,8 +183,11 @@ class MklConv2DOp : public OpKernel {
 
     // If there is nothing to compute, return.
     if (out_shape.num_elements() == 0) {
-      // TODO(jbobba): Verify correctness here
-      //               Need semantics for Null MKL tensor
+      // Nothing to do, allocate output tensor and return
+      MklShape mkl_output_mkl_shape;
+      mkl_output_mkl_shape.SetMklTensor(false);
+      AllocateOutputSetMklShape(context, 0, &output, input.shape(),
+                                mkl_output_mkl_shape);
       return;
     }
 
@@ -174,104 +195,134 @@ class MklConv2DOp : public OpKernel {
       // Nothing to do, allocate output tensor and return
       MklShape mkl_output_mkl_shape;
       mkl_output_mkl_shape.SetMklTensor(false);
-      AllocateOutputSetMklshape(context, 0, &output, input.shape(),
+      AllocateOutputSetMklShape(context, 0, &output, input.shape(),
                                 mkl_output_mkl_shape);
       return;
     }
 
     // Create MKL convolution primitives
-    mkl_params_.in_dims = input_in_mkl_format
-                              ? mkl_params_.input_shape.GetDimension()
+    mkl_context.in_dims = input_in_mkl_format
+                              ? mkl_context.input_shape.GetDimension()
                               : input.dims();
-    mkl_params_.filter_dims = filter.dims();
-    mkl_params_.in_sizes[0] = static_cast<size_t>(input_cols);
-    mkl_params_.in_sizes[1] = static_cast<size_t>(input_rows);
-    mkl_params_.in_sizes[2] = static_cast<size_t>(input_depth);
-    mkl_params_.in_sizes[3] = static_cast<size_t>(batch);
-    mkl_params_.out_sizes[0] = static_cast<size_t>(out_cols);
-    mkl_params_.out_sizes[1] = static_cast<size_t>(out_rows);
-    mkl_params_.out_sizes[2] = static_cast<size_t>(out_depth);
-    mkl_params_.out_sizes[3] = static_cast<size_t>(batch);
-    mkl_params_.input_offset[0] = static_cast<int>(-pad_cols);
-    mkl_params_.input_offset[1] = static_cast<int>(-pad_rows);
-    mkl_params_.conv_stride[0] = static_cast<size_t>(stride_cols);
-    mkl_params_.conv_stride[1] = static_cast<size_t>(stride_rows);
+    mkl_context.filter_dims = filter.dims();
 
-    GetStridesFromSizes(data_format_, mkl_params_.out_strides,
-                        mkl_params_.out_sizes);
-    GetStridesFromSizes(data_format_, mkl_params_.in_strides,
-                        mkl_params_.in_sizes);
+    mkl_context.in_sizes[MklDims::W] = static_cast<size_t>(input_cols);
+    mkl_context.in_sizes[MklDims::H] = static_cast<size_t>(input_rows);
+    mkl_context.in_sizes[MklDims::C] = static_cast<size_t>(input_depth);
+    mkl_context.in_sizes[MklDims::N] = static_cast<size_t>(batch);
+
+    mkl_context.out_sizes[MklDims::W] = static_cast<size_t>(out_cols);
+    mkl_context.out_sizes[MklDims::H] = static_cast<size_t>(out_rows);
+    mkl_context.out_sizes[MklDims::C] = static_cast<size_t>(out_depth);
+    mkl_context.out_sizes[MklDims::N] = static_cast<size_t>(batch);
+
+    mkl_context.input_offset[0] = static_cast<int>(-pad_cols);
+    mkl_context.input_offset[1] = static_cast<int>(-pad_rows);
+
+    mkl_context.conv_stride[0] = static_cast<size_t>(stride_cols);
+    mkl_context.conv_stride[1] = static_cast<size_t>(stride_rows);
+
+    GetStridesFromSizes(data_format_, mkl_context.out_strides,
+                        mkl_context.out_sizes);
+    GetStridesFromSizes(data_format_, mkl_context.in_strides,
+                        mkl_context.in_sizes);
 
     // TF filter dimension order (out_depth, in_depth, cols, rows) ->
     // MKL filter dimension order (out_depth, in_depth, rows, cols)
-    mkl_params_.filter_sizes[0] = filter.dim_size(1);  // cols
-    mkl_params_.filter_sizes[1] = filter.dim_size(0);  // rows
-    mkl_params_.filter_sizes[2] = filter.dim_size(2);  // in_depth
-    mkl_params_.filter_sizes[3] = filter.dim_size(3);  // out_depth
+    mkl_context.filter_sizes[0] = filter.dim_size(1);  // cols
+    mkl_context.filter_sizes[1] = filter.dim_size(0);  // rows
+    mkl_context.filter_sizes[2] = filter.dim_size(2);  // in_depth
+    mkl_context.filter_sizes[3] = filter.dim_size(3);  // out_depth
 
     // TF filter layout - (rows, cols, in_depth, out_depth)
-    mkl_params_.filter_strides[0] =
+    mkl_context.filter_strides[0] =
         filter.dim_size(2) * filter.dim_size(3);  // cols
-    mkl_params_.filter_strides[1] =
+    mkl_context.filter_strides[1] =
         filter.dim_size(1) * filter.dim_size(2) * filter.dim_size(3);  // rows
-    mkl_params_.filter_strides[2] = filter.dim_size(3);  // in_depth
-    mkl_params_.filter_strides[3] = 1;                   // out_depth
+    mkl_context.filter_strides[2] = filter.dim_size(3);  // in_depth
+    mkl_context.filter_strides[3] = 1;                   // out_depth
 
     if (biasEnabled) {
       const Tensor& bias = MklGetInput(context, 2);
-      mkl_params_.bias_sizes[0] = {static_cast<size_t>(bias.dim_size(0))};
-      mkl_params_.bias_strides[0] = {1};
+      mkl_context.bias_sizes[0] = {static_cast<size_t>(bias.dim_size(0))};
+      mkl_context.bias_strides[0] = {1};
     }
 
     // Create Convolution Primitive
     if (biasEnabled) {
-      CHECK_EQ(dnnConvolutionCreateForwardBias_F32(
-                   &mkl_prim_convolution_fwd_, nullptr,
-                   dnnAlgorithmConvolutionDirect, mkl_params_.in_dims,
-                   mkl_params_.in_sizes, mkl_params_.out_sizes,
-                   mkl_params_.filter_sizes, mkl_params_.conv_stride,
-                   mkl_params_.input_offset, dnnBorderZeros),
-               E_SUCCESS);
+      CHECK_EQ(
+          dnnConvolutionCreateForwardBias_F32(
+              &mkl_context.prim_fwd, nullptr, dnnAlgorithmConvolutionDirect,
+              mkl_context.in_dims, mkl_context.in_sizes, mkl_context.out_sizes,
+              mkl_context.filter_sizes, mkl_context.conv_stride,
+              mkl_context.input_offset, dnnBorderZeros),
+          E_SUCCESS);
     } else {
-      CHECK_EQ(dnnConvolutionCreateForward_F32(
-                   &mkl_prim_convolution_fwd_, nullptr,
-                   dnnAlgorithmConvolutionDirect, mkl_params_.in_dims,
-                   mkl_params_.in_sizes, mkl_params_.out_sizes,
-                   mkl_params_.filter_sizes, mkl_params_.conv_stride,
-                   mkl_params_.input_offset, dnnBorderZeros),
-               E_SUCCESS);
+      CHECK_EQ(
+          dnnConvolutionCreateForward_F32(
+              &mkl_context.prim_fwd, nullptr, dnnAlgorithmConvolutionDirect,
+              mkl_context.in_dims, mkl_context.in_sizes, mkl_context.out_sizes,
+              mkl_context.filter_sizes, mkl_context.conv_stride,
+              mkl_context.input_offset, dnnBorderZeros),
+          E_SUCCESS);
     }
 
     TensorShape mkl_output_tf_shape;
     MklShape mkl_output_mkl_shape;
     mkl_output_mkl_shape.SetMklTensor(true);
-    mkl_output_mkl_shape.SetMklLayout(mkl_prim_convolution_fwd_,
-                                      dnnResourceDst);
-    mkl_output_mkl_shape.SetTfLayout(mkl_params_.in_dims, mkl_params_.out_sizes,
-                                     mkl_params_.out_strides);
+    mkl_output_mkl_shape.SetMklLayout(mkl_context.prim_fwd, dnnResourceDst);
+    mkl_output_mkl_shape.SetTfLayout(mkl_context.in_dims, mkl_context.out_sizes,
+                                     mkl_context.out_strides);
+    // MKL might change the dimension ordering
+    // Create mapping to recover the original TF dimension order
+    mkl_output_mkl_shape.SetTfDimOrder(mkl_context.in_dims, data_format_);
+
     mkl_output_tf_shape.AddDim(
         dnnLayoutGetMemorySize_F32(
             static_cast<dnnLayout_t>(mkl_output_mkl_shape.GetMklLayout())) /
         sizeof(T));
-    AllocateOutputSetMklshape(context, 0, &output, mkl_output_tf_shape,
+    AllocateOutputSetMklShape(context, 0, &output, mkl_output_tf_shape,
                               mkl_output_mkl_shape);
-    mkl_conv_res_[dnnResourceDst] =
+    // Filter output to be used in the backprop_input
+    TensorShape mkl_filter_output_tf_shape;
+    MklShape mkl_filter_output_mkl_shape;
+    mkl_filter_output_mkl_shape.SetMklTensor(true);
+    mkl_filter_output_mkl_shape.SetMklLayout(mkl_context.prim_fwd,
+                                             dnnResourceFilter);
+
+    size_t filter_sizes[4] = {filter.dim_size(0), filter.dim_size(1),
+                              filter.dim_size(2), filter.dim_size(3)};
+    mkl_filter_output_mkl_shape.SetTfLayout(filter.dims(), filter_sizes,
+                                            mkl_context.filter_strides);
+
+    mkl_filter_output_mkl_shape.SetTfDimOrder(mkl_context.filter_dims,
+                                              data_format_);
+    mkl_filter_output_tf_shape.AddDim(
+        dnnLayoutGetMemorySize_F32(static_cast<dnnLayout_t>(
+            mkl_filter_output_mkl_shape.GetMklLayout())) /
+        sizeof(T));
+    AllocateOutputSetMklShape(context, 1, &mkl_context.output_filter,
+                              mkl_filter_output_tf_shape,
+                              mkl_filter_output_mkl_shape);
+
+    mkl_context.conv_res[dnnResourceDst] =
         static_cast<void*>(output->flat<T>().data());
 
-    MklCreateInputLayouts(context);
+    mkl_context.MklCreateInputLayouts(context);
 
+    // Temp tensor used to allocate tmp buffers
     Tensor mkl_tmp_input_buf_tensor, mkl_tmp_filter_buf_tensor,
-        mkl_tmp_bias_buf_tensor;  // Temp tensor used to allocate tmp
-                                  // buffers
-    MklPrepareConvolutionInputs(context, &mkl_tmp_input_buf_tensor,
-                                &mkl_tmp_filter_buf_tensor,
-                                &mkl_tmp_bias_buf_tensor);
+        mkl_tmp_bias_buf_tensor;
+    mkl_context.MklPrepareConvolutionInputs(context,
+                                            &mkl_tmp_input_buf_tensor,
+                                            &mkl_tmp_filter_buf_tensor,
+                                            &mkl_tmp_bias_buf_tensor);
 
     // Execute convolution
-    CHECK_EQ(dnnExecute_F32(mkl_prim_convolution_fwd_, mkl_conv_res_),
+    CHECK_EQ(dnnExecute_F32(mkl_context.prim_fwd, mkl_context.conv_res),
              E_SUCCESS);
 
-    MklCleanup();
+    mkl_context.MklCleanup();
   }
 
  private:
@@ -289,167 +340,376 @@ class MklConv2DOp : public OpKernel {
     int input_offset[2];
     size_t conv_stride[2];
     MklShape input_shape;
-  } MklConv2DOpParams;
+    dnnPrimitive_t prim_fwd;
+    void* conv_res[dnnResourceNumber];
+    dnnLayout_t lt_filter, lt_bias, lt_input;
+    Tensor* output_filter = nullptr;
 
-  // Create MKL dnnLayout_t objects for tensors coming into the layer
-  void MklCreateInputLayouts(OpKernelContext* context) {
-    bool input_in_mkl_format = mkl_params_.input_shape.IsMklTensor();
-    if (input_in_mkl_format) {
-      mkl_lt_input_ =
-          static_cast<dnnLayout_t>(mkl_params_.input_shape.GetCurLayout());
-    } else {
-      CHECK_EQ(
-          dnnLayoutCreate_F32(&mkl_lt_input_, mkl_params_.in_dims,
-                              mkl_params_.in_sizes, mkl_params_.in_strides),
-          E_SUCCESS);
-    }
-
-    CHECK_EQ(dnnLayoutCreate_F32(&mkl_lt_filter_, mkl_params_.filter_dims,
-                                 mkl_params_.filter_sizes,
-                                 mkl_params_.filter_strides),
-             E_SUCCESS);
-
-    if (biasEnabled) {
-      CHECK_EQ(dnnLayoutCreate_F32(&mkl_lt_bias_, 1, mkl_params_.bias_sizes,
-                                   mkl_params_.bias_strides),
-               E_SUCCESS);
-    }
-  }
-
-  // Compare incoming tensor layouts with MKL preferred layouts and convert
-  // data to the preferred layout if necessary
-  void MklPrepareConvolutionInputs(OpKernelContext* context,
-                                   Tensor* mkl_tmp_input_buf_tensor,
-                                   Tensor* mkl_tmp_filter_buf_tensor,
-                                   Tensor* mkl_tmp_bias_buf_tensor) {
-    bool mkl_convert_input, mkl_convert_filter, mkl_convert_bias;
-    dnnPrimitive_t mkl_prim_convert_filter, mkl_prim_convert_bias,
-        mkl_prim_convert_input;
-    dnnLayout_t mkl_lt_internal_filter, mkl_lt_internal_bias,
-        mkl_lt_internal_input;
-    void *mkl_buf_convert_input, *mkl_buf_convert_filter,
-         *mkl_buf_convert_bias;
-    mkl_prim_convert_filter = nullptr;
-    mkl_prim_convert_bias   = nullptr;
-    mkl_prim_convert_input  = nullptr;
-    mkl_lt_internal_filter  = nullptr;
-    mkl_lt_internal_bias    = nullptr;
-    mkl_lt_internal_input   = nullptr;
-    mkl_buf_convert_input   = nullptr;
-    mkl_buf_convert_filter  = nullptr;
-    mkl_buf_convert_bias    = nullptr;
-
-    // Compare with internal layouts and convert if needed
-    const Tensor& input = MklGetInput(context, 0);
-    void* mkl_buf_input =
-        const_cast<void*>(static_cast<const void*>(input.flat<T>().data()));
-    CHECK_EQ(
-        dnnLayoutCreateFromPrimitive_F32(
-            &mkl_lt_internal_input, mkl_prim_convolution_fwd_, dnnResourceSrc),
-        E_SUCCESS);
-    mkl_convert_input =
-        !dnnLayoutCompare_F32(mkl_lt_internal_input, mkl_lt_input_);
-    if (mkl_convert_input) {
-      CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_input, mkl_lt_input_,
-                                       mkl_lt_internal_input),
-               E_SUCCESS);
-      AllocTmpBuffer(context, mkl_tmp_input_buf_tensor, mkl_lt_internal_input,
-                     &mkl_buf_convert_input);
-      CHECK_EQ(dnnConversionExecute_F32(mkl_prim_convert_input, mkl_buf_input,
-                                        mkl_buf_convert_input),
-               E_SUCCESS);
-      dnnDelete_F32(mkl_prim_convert_input);
-    }
-    dnnLayoutDelete_F32(mkl_lt_internal_input);
-
-    mkl_conv_res_[dnnResourceSrc] =
-        (mkl_convert_input) ? mkl_buf_convert_input : mkl_buf_input;
-
-    const Tensor& filter = MklGetInput(context, 1);
-    void* mkl_buf_filter =
-        const_cast<void*>(static_cast<const void*>(filter.flat<T>().data()));
-    CHECK_EQ(dnnLayoutCreateFromPrimitive_F32(&mkl_lt_internal_filter,
-                                              mkl_prim_convolution_fwd_,
-                                              dnnResourceFilter),
-             E_SUCCESS);
-    mkl_convert_filter =
-        !dnnLayoutCompare_F32(mkl_lt_internal_filter, mkl_lt_filter_);
-    if (mkl_convert_filter) {
-      CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_filter, mkl_lt_filter_,
-                                       mkl_lt_internal_filter),
-               E_SUCCESS);
-      AllocTmpBuffer(context, mkl_tmp_filter_buf_tensor, mkl_lt_internal_filter,
-                     &mkl_buf_convert_filter);
-      CHECK_EQ(dnnConversionExecute_F32(mkl_prim_convert_filter, mkl_buf_filter,
-                                        mkl_buf_convert_filter),
-               E_SUCCESS);
-      dnnDelete_F32(mkl_prim_convert_filter);
-    }
-    dnnLayoutDelete_F32(mkl_lt_internal_filter);
-
-    mkl_conv_res_[dnnResourceFilter] =
-        (mkl_convert_filter) ? mkl_buf_convert_filter : mkl_buf_filter;
-
-    if (biasEnabled) {
-      const Tensor& bias = MklGetInput(context, 2);
-      void* mkl_buf_bias =
-          const_cast<void*>(static_cast<const void*>(bias.flat<T>().data()));
-      CHECK_EQ(dnnLayoutCreateFromPrimitive_F32(&mkl_lt_internal_bias,
-                                                mkl_prim_convolution_fwd_,
-                                                dnnResourceBias),
-               E_SUCCESS);
-      mkl_convert_bias =
-          !dnnLayoutCompare_F32(mkl_lt_internal_bias, mkl_lt_bias_);
-      if (mkl_convert_bias) {
-        CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_bias, mkl_lt_bias_,
-                                         mkl_lt_internal_bias),
+    // Create MKL dnnLayout_t objects for tensors coming into the layer
+    void MklCreateInputLayouts(OpKernelContext* context) {
+      bool input_in_mkl_format = input_shape.IsMklTensor();
+      if (input_in_mkl_format) {
+        lt_input = static_cast<dnnLayout_t>(input_shape.GetCurLayout());
+      } else {
+        CHECK_EQ(dnnLayoutCreate_F32(&lt_input, in_dims, in_sizes, in_strides),
                  E_SUCCESS);
-        AllocTmpBuffer(context, mkl_tmp_bias_buf_tensor, mkl_lt_internal_bias,
-                       &mkl_buf_convert_bias);
-        CHECK_EQ(dnnConversionExecute_F32(mkl_prim_convert_bias, mkl_buf_bias,
-                                          mkl_buf_convert_bias),
-                 E_SUCCESS);
-        dnnDelete_F32(mkl_prim_convert_bias);
       }
-      dnnLayoutDelete_F32(mkl_lt_internal_bias);
 
-      mkl_conv_res_[dnnResourceBias] =
-          (mkl_convert_bias) ? mkl_buf_convert_bias : mkl_buf_bias;
+      CHECK_EQ(dnnLayoutCreate_F32(&lt_filter, filter_dims, filter_sizes,
+                                   filter_strides),
+               E_SUCCESS);
+
+      if (biasEnabled) {
+        CHECK_EQ(dnnLayoutCreate_F32(&lt_bias, 1, bias_sizes, bias_strides),
+                 E_SUCCESS);
+      }
+    }
+
+    // Compare incoming tensor layouts with MKL preferred layouts and convert
+    // data to the preferred layout if necessary
+    void MklPrepareConvolutionInputs(OpKernelContext* context,
+                                     Tensor* mkl_tmp_input_buf_tensor,
+                                     Tensor* mkl_tmp_filter_buf_tensor,
+                                     Tensor* mkl_tmp_bias_buf_tensor) {
+      bool mkl_convert_input, mkl_convert_filter, mkl_convert_bias;
+      dnnPrimitive_t mkl_prim_convert_filter, mkl_prim_convert_bias,
+          mkl_prim_convert_input;
+      dnnLayout_t mkl_lt_internal_filter, mkl_lt_internal_bias,
+          mkl_lt_internal_input;
+      void *mkl_buf_convert_input, *mkl_buf_convert_filter,
+          *mkl_buf_convert_bias;
+      mkl_prim_convert_filter = nullptr;
+      mkl_prim_convert_bias = nullptr;
+      mkl_prim_convert_input = nullptr;
+      mkl_lt_internal_filter = nullptr;
+      mkl_lt_internal_bias = nullptr;
+      mkl_lt_internal_input = nullptr;
+      mkl_buf_convert_input = nullptr;
+      mkl_buf_convert_filter = nullptr;
+      mkl_buf_convert_bias = nullptr;
+
+      // Compare with internal layouts and convert if needed
+      const Tensor& input = MklGetInput(context, 0);
+      void* mkl_buf_input =
+          const_cast<void*>(static_cast<const void*>(input.flat<T>().data()));
+      CHECK_EQ(dnnLayoutCreateFromPrimitive_F32(&mkl_lt_internal_input,
+                                                prim_fwd, dnnResourceSrc),
+               E_SUCCESS);
+      mkl_convert_input =
+          !dnnLayoutCompare_F32(mkl_lt_internal_input, lt_input);
+      if (mkl_convert_input) {
+        CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_input,
+                 lt_input, mkl_lt_internal_input), E_SUCCESS);
+        AllocTmpBuffer(context, mkl_tmp_input_buf_tensor, mkl_lt_internal_input,
+                       &mkl_buf_convert_input);
+        CHECK_EQ(dnnConversionExecute_F32(mkl_prim_convert_input, mkl_buf_input,
+                                          mkl_buf_convert_input),
+                 E_SUCCESS);
+        dnnDelete_F32(mkl_prim_convert_input);
+      }
+      dnnLayoutDelete_F32(mkl_lt_internal_input);
+
+      conv_res[dnnResourceSrc] =
+          (mkl_convert_input) ? mkl_buf_convert_input : mkl_buf_input;
+
+      const Tensor& filter = MklGetInput(context, 1);
+      void* mkl_buf_filter =
+          const_cast<void*>(static_cast<const void*>(filter.flat<T>().data()));
+      CHECK_EQ(dnnLayoutCreateFromPrimitive_F32(&mkl_lt_internal_filter,
+                                                prim_fwd, dnnResourceFilter),
+               E_SUCCESS);
+      mkl_convert_filter =
+          !dnnLayoutCompare_F32(mkl_lt_internal_filter, lt_filter);
+      if (mkl_convert_filter) {
+        CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_filter, lt_filter,
+                                         mkl_lt_internal_filter),
+                 E_SUCCESS);
+
+        mkl_buf_convert_filter = const_cast<void*>(
+            static_cast<const void*>(output_filter->flat<T>().data()));
+
+        CHECK_EQ(
+            dnnConversionExecute_F32(mkl_prim_convert_filter, mkl_buf_filter,
+                                     mkl_buf_convert_filter),
+            E_SUCCESS);
+        dnnDelete_F32(mkl_prim_convert_filter);
+      }
+      dnnLayoutDelete_F32(mkl_lt_internal_filter);
+
+      conv_res[dnnResourceFilter] =
+          (mkl_convert_filter) ? mkl_buf_convert_filter : mkl_buf_filter;
+
+      if (biasEnabled) {
+        const Tensor& bias = MklGetInput(context, 2);
+        void* mkl_buf_bias =
+            const_cast<void*>(static_cast<const void*>(bias.flat<T>().data()));
+        CHECK_EQ(dnnLayoutCreateFromPrimitive_F32(&mkl_lt_internal_bias,
+                                                  prim_fwd, dnnResourceBias),
+                 E_SUCCESS);
+        mkl_convert_bias = !dnnLayoutCompare_F32(mkl_lt_internal_bias, lt_bias);
+        if (mkl_convert_bias) {
+          CHECK_EQ(dnnConversionCreate_F32(&mkl_prim_convert_bias, lt_bias,
+                                           mkl_lt_internal_bias),
+                   E_SUCCESS);
+          AllocTmpBuffer(context, mkl_tmp_bias_buf_tensor, mkl_lt_internal_bias,
+                         &mkl_buf_convert_bias);
+          CHECK_EQ(dnnConversionExecute_F32(mkl_prim_convert_bias, mkl_buf_bias,
+                                            mkl_buf_convert_bias),
+                   E_SUCCESS);
+          dnnDelete_F32(mkl_prim_convert_bias);
+        }
+        dnnLayoutDelete_F32(mkl_lt_internal_bias);
+
+        conv_res[dnnResourceBias] =
+            (mkl_convert_bias) ? mkl_buf_convert_bias : mkl_buf_bias;
+      }
+    }
+
+    void MklCleanup() {
+      bool input_in_mkl_format = input_shape.IsMklTensor();
+      dnnDelete_F32(prim_fwd);
+      if (!input_in_mkl_format) dnnLayoutDelete_F32(lt_input);
+      dnnLayoutDelete_F32(lt_filter);
+      if (biasEnabled) dnnLayoutDelete_F32(lt_bias);
+    }
+  } MklConv2DOpContext;
+
+  std::vector<int32> strides_;
+  Padding padding_;
+  TensorFormat data_format_;
+};
+
+#else
+
+template <typename Device, typename T, bool biasEnabled>
+class MklConv2DOp : public OpKernel {
+ public:
+  ~MklConv2DOp() {}
+
+  explicit MklConv2DOp(OpKernelConstruction* context) : OpKernel(context) {
+    OP_REQUIRES_OK(context, context->GetAttr("strides", &strides_));
+    string data_format;
+    OP_REQUIRES_OK(context, context->GetAttr("data_format", &data_format));
+    OP_REQUIRES(context, FormatFromString(data_format, &data_format_),
+                errors::InvalidArgument("Invalid data format"));
+    OP_REQUIRES(context, strides_.size() == 4,
+                errors::InvalidArgument("Sliding window strides field must "
+                                        "specify 4 dimensions"));
+
+    const int64 stride_n = GetTensorDim(strides_, data_format_, 'N');
+    const int64 stride_c = GetTensorDim(strides_, data_format_, 'C');
+    OP_REQUIRES(
+        context, stride_n == 1 && stride_c == 1,
+        errors::InvalidArgument("Current implementation does not yet support "
+                                "strides in the batch and depth dimensions."));
+    OP_REQUIRES_OK(context, context->GetAttr("padding", &padding_));
+  }
+
+  void Compute(OpKernelContext* context) override {
+    try {
+      auto cpu_engine = engine(engine::cpu, 0);
+
+      // Input tensors
+      size_t src_idx = 0, filter_idx = 1;
+      const Tensor& src_tensor = MklGetInput(context, src_idx);
+      const Tensor& filter_tensor = MklGetInput(context, filter_idx);
+
+      MklDnnShape src_mkl_shape, filter_mkl_shape;
+      GetMklShape(context, src_idx, &src_mkl_shape);
+      GetMklShape(context, filter_idx, &filter_mkl_shape);
+      CHECK(!filter_mkl_shape.IsMklTensor())
+        << "Conv2D filter should not be in MKL Layout";
+
+      MklDnnData<T> src(&cpu_engine);
+      MklDnnData<T> filter(&cpu_engine);
+      MklDnnData<T> output(&cpu_engine);
+
+      memory::dims src_dims, filter_dims, padding_l, padding_r, strides;
+      memory::dims output_dims_tf_order, output_dims_mkl_order;
+
+      // Get shapes of input tensors in MKL-DNN order
+      MklDnnConvUtil conv_utl(context, strides_, padding_, data_format_);
+      auto src_tf_shape = GetTfShape(context, src_idx);
+      auto filter_tf_shape = GetTfShape(context, filter_idx);
+      conv_utl.GetConvFwdSizesInMklOrder(src_tf_shape, filter_tf_shape,
+                                         &src_dims, &filter_dims, &strides,
+                                         &output_dims_tf_order,
+                                         &output_dims_mkl_order, &padding_l,
+                                         &padding_r);
+      if (!context->status().ok()) return;
+
+      // Check for corner case - if there is nothing to compute, return.
+      TensorShape output_tf_shape = MklDnnDimsToTFShape(output_dims_tf_order);
+
+      // Forward filter in TF format from input at index 1 to output at index 1.
+      ForwardTfTensorInToOut(context, 1, 1);
+
+      // Corner cases: output with 0 elements and 0 batch size.
+      Tensor* output_tensor = nullptr;
+      if (output_tf_shape.num_elements() == 0 ||
+          output_dims_tf_order[0] == 0) {
+        // TODO(jbobba): Verify correctness here
+        //               Need semantics for Null MKL tensor
+        MklDnnShape output_mkl_shape;
+        output_mkl_shape.SetMklTensor(false);
+        AllocateOutputSetMklShape(context, 0, &output_tensor, src_tf_shape,
+                                output_mkl_shape);
+        return;
+      }
+
+      // Create memory for user data.
+      // Describe how the inputs and outputs of Convolution look like. Also
+      // specify buffers containing actual input and output data.
+      auto tf_fmt = TFDataFormatToMklDnnDataFormat(data_format_);
+      // If input is in MKL layout, then simply grab input layout; otherwise,
+      // construct input Tf layout. For TF layout, although input shape
+      // (src_dims) required is in MKL-DNN order, the layout is Tensorflow's
+      // layout (NHWC or NCHW depending on data format).
+      auto src_md = src_mkl_shape.IsMklTensor()
+                    ? src_mkl_shape.GetMklLayout()
+                    : memory::desc(src_dims, MklDnnType<T>(), tf_fmt);
+      src.SetUsrMem(src_md, &src_tensor);
+      // Although filter shape (filter_dims) required is in MKL-DNN order,
+      // the layout is Tensorflow's layout (HWIO).
+      auto filter_md = filter_mkl_shape.IsMklTensor()
+                    ? filter_mkl_shape.GetMklLayout()
+          : memory::desc(filter_dims, MklDnnType<T>(), memory::format::hwio);
+      filter.SetUsrMem(filter_md, &filter_tensor);
+      // Set output shape (output_dims) required in MKL-DNN order.
+      // Currently, we set output layout as Tensorflow's layout (NHWC or NCHW
+      // depending on data format). But later we propagate Mkl layout of the
+      // output to the next op directly.
+      output.SetUsrMem(output_dims_mkl_order, tf_fmt);
+
+      // Create memory descriptors for convolution data w/ no specified format.
+      src.SetOpMemDesc(src_dims, memory::format::any);
+      filter.SetOpMemDesc(filter_dims, memory::format::any);
+      output.SetOpMemDesc(output_dims_mkl_order, memory::format::any);
+
+      // If bias is enabled, then do the same steps as above for bias.
+      if (biasEnabled) {
+        MklDnnData<T> bias(&cpu_engine);
+        memory::dims bias_size;
+        conv_utl.GetBiasSizeInMklOrder(2 /* bias idx */, &bias_size);
+        const Tensor& bias_tensor = MklGetInput(context, 2);
+        bias.SetUsrMem(bias_size, memory::format::x, &bias_tensor);
+        bias.SetOpMemDesc(bias_size, memory::format::any);
+
+        // Create convolution primitive with Bias.
+        auto conv_desc = convolution_forward::desc(prop_kind::forward,
+            convolution_direct, src.GetOpMemDesc(), filter.GetOpMemDesc(),
+            bias.GetOpMemDesc(), output.GetOpMemDesc(), strides,
+            padding_l, padding_r, TFPaddingToMklDnnPadding(padding_));
+
+        auto conv_prim_desc = convolution_forward::primitive_desc(conv_desc,
+                                                                cpu_engine);
+        AllocateOutputTensor(context, conv_prim_desc,
+                             output_dims_mkl_order, tf_fmt, &output_tensor);
+        // Set data handle for output.
+        output.SetUsrMemDataHandle(output_tensor);
+        PrepareAndExecuteNet(conv_prim_desc, &src, &filter, &bias, &output);
+      } else {
+        // Create convolution primitive without Bias.
+        auto conv_desc = convolution_forward::desc(prop_kind::forward,
+            convolution_direct, src.GetOpMemDesc(), filter.GetOpMemDesc(),
+            output.GetOpMemDesc(), strides, padding_l, padding_r,
+            TFPaddingToMklDnnPadding(padding_));
+
+        auto conv_prim_desc = convolution_forward::primitive_desc(conv_desc,
+                                                                cpu_engine);
+        AllocateOutputTensor(context, conv_prim_desc, output_dims_mkl_order,
+                             tf_fmt, &output_tensor);
+        // Set data handle for output.
+        output.SetUsrMemDataHandle(output_tensor);
+        PrepareAndExecuteNet(conv_prim_desc, &src, &filter, nullptr, &output);
+      }
+    } catch (mkldnn::error &e) {
+      string error_msg = "Status: " + std::to_string(e.status) +
+                       ", message: " + std::string(e.message) +
+                       ", in file " + std::string(__FILE__) + ":" +
+                       std::to_string(__LINE__);
+      OP_REQUIRES_OK(context,
+        errors::Aborted("Operation received an exception:", error_msg));
     }
   }
 
-  void MklCleanup() {
-    bool input_in_mkl_format = mkl_params_.input_shape.IsMklTensor();
-    dnnDelete_F32(mkl_prim_convolution_fwd_);
-    if (!input_in_mkl_format) dnnLayoutDelete_F32(mkl_lt_input_);
-    dnnLayoutDelete_F32(mkl_lt_filter_);
-    if (biasEnabled) dnnLayoutDelete_F32(mkl_lt_bias_);
-  }
-  
+ private:
   std::vector<int32> strides_;
   Padding padding_;
   TensorFormat data_format_;
 
-  MklConv2DOpParams mkl_params_;
-  dnnPrimitive_t mkl_prim_convolution_fwd_ = nullptr;
-  void* mkl_conv_res_[dnnResourceNumber];
-  dnnLayout_t mkl_lt_filter_ = nullptr, mkl_lt_bias_ = nullptr,
-              mkl_lt_input_ = nullptr;
-  
+  // Allocate output tensor.
+  void AllocateOutputTensor(
+                  OpKernelContext* context,
+                  const convolution_forward::primitive_desc& conv_prim_desc,
+                  const memory::dims& output_dims_mkl_order,
+                  memory::format output_tf_format, Tensor** output_tensor) {
+      CHECK_NOTNULL(output_tensor);
+      auto dst_pd = conv_prim_desc.dst_primitive_desc();
 
+      // Allocate shape of Mkl tensor.
+      MklDnnShape output_mkl_shape;
+      output_mkl_shape.SetMklTensor(true);
+      output_mkl_shape.SetMklLayout(&dst_pd);
+      output_mkl_shape.SetElemType(MklDnnType<T>());
+      output_mkl_shape.SetTfLayout(output_dims_mkl_order.size(),
+                                   output_dims_mkl_order, output_tf_format);
+
+      // Allocate shape of TF tensor.
+      TensorShape output_tf_shape;
+      output_tf_shape.AddDim((dst_pd.get_size() / sizeof(T)));
+
+      const int kOutputSlotIdx = 0;
+      AllocateOutputSetMklShape(context, kOutputSlotIdx, output_tensor,
+                                output_tf_shape, output_mkl_shape);
+  }
+
+  // Prepare and execute net - checks for input and output reorders.
+  void PrepareAndExecuteNet(
+                  const convolution_forward::primitive_desc& conv_prim_desc,
+                  MklDnnData<T>* src, MklDnnData<T>* filter,
+                  MklDnnData<T>* bias, MklDnnData<T>* output) {
+    // Create reorders between user layout and MKL layout if it is needed and
+    // add it to the net before convolution. No need to check for output
+    // reorder as we propagate output layout to the next layer.
+    std::vector<primitive> net;
+    src->CheckReorderToOpMem(conv_prim_desc.src_primitive_desc(), &net);
+    filter->CheckReorderToOpMem(conv_prim_desc.weights_primitive_desc(), &net);
+
+    // Create convolution primitive and add it to net.
+    if (bias) {
+      CHECK_EQ(biasEnabled, true);
+      net.push_back(convolution_forward(conv_prim_desc, src->GetOpMem(),
+                                    filter->GetOpMem(), bias->GetOpMem(),
+                                    output->GetOpMem()));
+    } else {
+      CHECK_EQ(biasEnabled, false);
+      net.push_back(convolution_forward(conv_prim_desc, src->GetOpMem(),
+                                    filter->GetOpMem(), output->GetOpMem()));
+    }
+
+    stream(stream::kind::eager).submit(net).wait();
+  }
 };
 
-#define REGISTER_MKL_CPU(T)                                                \
-  REGISTER_KERNEL_BUILDER(                                                 \
-      Name("MklConv2D").Device(DEVICE_CPU)                                 \
-      .TypeConstraint<T>("T")                                              \
-      .Label(mkl_layer_registry::kMklLayerLabel),                          \
-      MklConv2DOp<CPUDevice, T, false>);                                   \
-  REGISTER_KERNEL_BUILDER(                                                 \
-      Name("MklConv2DWithBias").Device(DEVICE_CPU)                         \
-      .TypeConstraint<T>("T")                                              \
-      .Label(mkl_layer_registry::kMklLayerLabel),                          \
-      MklConv2DOp<CPUDevice, T, true>);
+#endif
+
+#define REGISTER_MKL_CPU(T)                                         \
+  REGISTER_KERNEL_BUILDER(Name("_MklConv2D")                        \
+                              .Device(DEVICE_CPU)                   \
+                              .TypeConstraint<T>("T")               \
+                              .Label(mkl_op_registry::kMklOpLabel), \
+                          MklConv2DOp<CPUDevice, T, false>);        \
+  REGISTER_KERNEL_BUILDER(Name("_MklConv2DWithBias")                \
+                              .Device(DEVICE_CPU)                   \
+                              .TypeConstraint<T>("T")               \
+                              .Label(mkl_op_registry::kMklOpLabel), \
+                          MklConv2DOp<CPUDevice, T, true>);         \
+  REGISTER_KERNEL_BUILDER(Name("__MklDummyConv2DWithBias")          \
+                              .Device(DEVICE_CPU)                   \
+                              .TypeConstraint<T>("T")               \
+                              .Label(mkl_op_registry::kMklOpLabel), \
+                          MklDummyOp<CPUDevice, T>);
 
 TF_CALL_float(REGISTER_MKL_CPU);
 

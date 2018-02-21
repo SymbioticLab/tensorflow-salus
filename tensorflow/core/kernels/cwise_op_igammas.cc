@@ -18,7 +18,4 @@ limitations under the License.
 namespace tensorflow {
 REGISTER2(BinaryOp, CPU, "Igamma", functor::igamma, float, double);
 REGISTER2(BinaryOp, CPU, "Igammac", functor::igammac, float, double);
-
-REGISTER_RPC2(BinaryOp, "Igamma", functor::igamma, float, double);
-REGISTER_RPC2(BinaryOp, "Igammac", functor::igammac, float, double);
 }  // namespace tensorflow

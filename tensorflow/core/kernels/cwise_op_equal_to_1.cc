@@ -18,24 +18,12 @@ limitations under the License.
 namespace tensorflow {
 REGISTER6(BinaryOp, CPU, "Equal", functor::equal_to, float, Eigen::half, double,
           uint8, int8, int16);
-
-REGISTER_RPC6(BinaryOp, "Equal", functor::equal_to, float, Eigen::half, double,
-              uint8, int8, int16);
-
 REGISTER_KERNEL_BUILDER(
     Name("ApproximateEqual").Device(DEVICE_CPU).TypeConstraint<float>("T"),
     ApproximateEqualOp<CPUDevice, float>);
 REGISTER_KERNEL_BUILDER(
     Name("ApproximateEqual").Device(DEVICE_CPU).TypeConstraint<double>("T"),
     ApproximateEqualOp<CPUDevice, double>);
-
-REGISTER_KERNEL_BUILDER(
-    Name("ApproximateEqual").Device(DEVICE_RPC).TypeConstraint<float>("T"),
-    ApproximateEqualOp<CPUDevice, float>);
-REGISTER_KERNEL_BUILDER(
-    Name("ApproximateEqual").Device(DEVICE_RPC).TypeConstraint<double>("T"),
-    ApproximateEqualOp<CPUDevice, double>);
-
 #if GOOGLE_CUDA
 REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, float, Eigen::half, double,
           uint8);
@@ -59,8 +47,8 @@ REGISTER_KERNEL_BUILDER(Name("Equal")
 #endif
 
 #ifdef TENSORFLOW_USE_SYCL
-REGISTER2(BinaryOp, SYCL, "Equal", functor::equal_to, float, double);
-
+REGISTER5(BinaryOp, SYCL, "Equal", functor::equal_to, float, double, uint8,
+          int8, int16);
 REGISTER_KERNEL_BUILDER(Name("Equal")
                             .Device(DEVICE_SYCL)
                             .HostMemory("x")

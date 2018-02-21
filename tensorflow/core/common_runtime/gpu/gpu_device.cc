@@ -1,4 +1,4 @@
-/* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2017 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ limitations under the License.
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
+#include <list>
+#include <map>
+#include <tuple>
 #include <vector>
 
 #include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
@@ -39,8 +42,11 @@ limitations under the License.
 #include "tensorflow/core/framework/device_base.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/framework/tensor.pb.h"
 #include "tensorflow/core/framework/types.h"
+#include "tensorflow/core/framework/variant_op_registry.h"
 #include "tensorflow/core/graph/types.h"
+#include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/gtl/stl_util.h"
 #include "tensorflow/core/lib/strings/numbers.h"
@@ -54,9 +60,8 @@ limitations under the License.
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/public/session_options.h"
 #include "tensorflow/core/util/device_name_utils.h"
+#include "tensorflow/core/util/env_var.h"
 #include "tensorflow/core/util/stream_executor_util.h"
-
-namespace gpu = ::perftools::gputools;
 
 namespace tensorflow {
 
@@ -74,16 +79,18 @@ namespace tensorflow {
 
 class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
  public:
-  EigenCudaStreamDevice() : scratch_(nullptr), semaphore_(nullptr) {
+  EigenCudaStreamDevice()
+      : scratch_(nullptr), semaphore_(nullptr), context_(nullptr) {
     Eigen::initializeDeviceProp();
   }
-  ~EigenCudaStreamDevice() {}
+  ~EigenCudaStreamDevice() override {}
   void Reinitialize(OpKernelContext* context, const cudaStream_t* cuda_stream,
                     int gpu_id, ::tensorflow::Allocator* alloc, char* scratch) {
     if (LogMemory::IsEnabled()) {
       operation_ = context->op_kernel().name() + "/EigenAllocator";
       step_id_ = context->step_id();
     }
+    context_ = context;
     scratch_ = scratch;
     semaphore_ =
         reinterpret_cast<unsigned int*>(scratch + Eigen::kCudaScratchSize);
@@ -100,17 +107,24 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
   void* allocate(size_t num_bytes) const override {
     void* ret = allocator_->AllocateRaw(32 /* alignment */, num_bytes);
     if (ret == nullptr) {
-      LOG(FATAL) << "EigenAllocator for GPU ran out of memory when allocating "
-                 << num_bytes << ". See error logs for more detailed info.";
+      if (context_) {
+        context_->SetStatus(errors::ResourceExhausted(
+            strings::StrCat("Ran out of GPU memory when allocating ", num_bytes,
+                            " bytes for ", operation_)));
+      } else {
+        LOG(FATAL)
+            << "EigenAllocator for GPU ran out of memory when allocating "
+            << num_bytes << ". See error logs for more detailed info.";
+      }
     }
-    if (LogMemory::IsEnabled()) {
+    if (LogMemory::IsEnabled() && ret != nullptr) {
       LogMemory::RecordRawAllocation(operation_, step_id_, num_bytes, ret,
                                      allocator_);
     }
     return ret;
   }
   void deallocate(void* buffer) const override {
-    if (LogMemory::IsEnabled()) {
+    if (LogMemory::IsEnabled() && buffer != nullptr) {
       LogMemory::RecordRawDeallocation(operation_, step_id_, buffer, allocator_,
                                        true);
     }
@@ -122,13 +136,13 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
 
   // Return a pointer to a per stream scratchpad of 1024 bytes residing
   // in global memory.
-  void* scratchpad() const { return scratch_; }
+  void* scratchpad() const override { return scratch_; }
 
   // Return a semaphore. The semaphore is initially initialized to 0, and
   // each kernel using it is responsible for resetting to 0 upon completion
   // to maintain the invariant that the semaphore is always equal to 0 upon
   // each kernel start.
-  unsigned int* semaphore() const { return semaphore_; }
+  unsigned int* semaphore() const override { return semaphore_; }
 
  private:
   struct AsyncFreeData {
@@ -159,8 +173,66 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
   ::tensorflow::Allocator* allocator_;  // Not owned.
   mutable char* scratch_;
   mutable unsigned int* semaphore_;
+  OpKernelContext* context_;
 
   TF_DISALLOW_COPY_AND_ASSIGN(EigenCudaStreamDevice);
+};
+
+// This factory helps to ensure that different GPU device objects that refer to
+// the same physical device and stream group id use the same stream group
+// object (and therefore the same CUDA streams). This is necessary since there
+// is a single memory allocator per device (see ProcessState::GetGPUAllocator)
+// and allocators must not be shared across streams.
+class BaseGPUDevice::StreamGroupFactory {
+ public:
+  // Returns the unique stream group for use with the stream defined by
+  // {gpu_id, stream_group_within_gpu}, creating it if it does not yet exist.
+  // This function is thread safe.
+  BaseGPUDevice::StreamGroup* GetOrCreate(int gpu_id,
+                                          int stream_group_within_gpu,
+                                          gpu::StreamExecutor* executor) {
+    mutex_lock guard(lock_);
+    StreamGroup* group = &streams_[key_type(gpu_id, stream_group_within_gpu)];
+    if (!group->compute) {
+      group->compute = new gpu::Stream(executor);
+      group->compute->Init();
+      VLOG(2) << "Created stream[" << stream_group_within_gpu
+              << "] = " << group->compute;
+
+      group->host_to_device = new gpu::Stream(executor);
+      group->host_to_device->Init();
+      VLOG(2) << "Created host_to_device_stream[" << stream_group_within_gpu
+              << "] = " << group->host_to_device;
+
+      group->device_to_host = new gpu::Stream(executor);
+      group->device_to_host->Init();
+      VLOG(2) << "Created device_to_host_stream[" << stream_group_within_gpu
+              << "] = " << group->device_to_host;
+
+      group->device_to_device = new gpu::Stream(executor);
+      group->device_to_device->Init();
+      VLOG(2) << "Created device_to_device_stream[" << stream_group_within_gpu
+              << "] = " << group->device_to_host;
+    }
+    return group;
+  }
+
+  // Returns a reference to the StreamGroupFactory singleton. Note that this is
+  // never destroyed, so the objects it owns are never deleted.
+  static StreamGroupFactory& Global() {
+    static StreamGroupFactory* instance = new StreamGroupFactory();
+    return *instance;
+  }
+
+ private:
+  mutex lock_;
+  using key_type = std::tuple<int, int>;
+  std::map<key_type, StreamGroup> streams_;
+
+  // StreamGroupFactory cannot be created directly; Call
+  // StreamGroupFactory::Global() to get the global instance.
+  StreamGroupFactory() = default;
+  TF_DISALLOW_COPY_AND_ASSIGN(StreamGroupFactory);
 };
 
 BaseGPUDevice::BaseGPUDevice(const SessionOptions& options, const string& name,
@@ -168,10 +240,9 @@ BaseGPUDevice::BaseGPUDevice(const SessionOptions& options, const string& name,
                              int gpu_id, const string& physical_device_desc,
                              Allocator* gpu_allocator, Allocator* cpu_allocator,
                              bool sync_every_op, int32 max_streams)
-    : LocalDevice(options,
-                  Device::BuildDeviceAttributes(name, DEVICE_GPU, memory_limit,
-                                                locality, physical_device_desc),
-                  gpu_allocator),
+    : LocalDevice(options, Device::BuildDeviceAttributes(name, DEVICE_GPU,
+                                                         memory_limit, locality,
+                                                         physical_device_desc)),
       gpu_allocator_(gpu_allocator),
       cpu_allocator_(cpu_allocator),
       gpu_id_(gpu_id),
@@ -183,12 +254,6 @@ BaseGPUDevice::BaseGPUDevice(const SessionOptions& options, const string& name,
 BaseGPUDevice::~BaseGPUDevice() {
   delete gpu_device_info_;
   for (auto ctx : device_contexts_) ctx->Unref();
-  for (auto& stream_group : streams_) {
-    delete stream_group.compute;
-    delete stream_group.host_to_device;
-    delete stream_group.device_to_host;
-    delete stream_group.device_to_device;
-  }
 }
 
 Status BaseGPUDevice::Init(const SessionOptions& options) {
@@ -207,27 +272,8 @@ Status BaseGPUDevice::Init(const SessionOptions& options) {
 
   // Create the specified number of GPU streams
   for (int i = 0; i < max_streams_; i++) {
-    auto stream = new gpu::Stream(executor_);
-    stream->Init();
-    VLOG(2) << "Created stream[" << i << "] = " << stream;
-
-    auto host_to_device_stream = new gpu::Stream(executor_);
-    host_to_device_stream->Init();
-    VLOG(2) << "Created host_to_device_stream[" << i
-            << "] = " << host_to_device_stream;
-
-    auto device_to_host_stream = new gpu::Stream(executor_);
-    device_to_host_stream->Init();
-    VLOG(2) << "Created device_to_host_stream[" << i
-            << "] = " << device_to_host_stream;
-
-    auto device_to_device_stream = new gpu::Stream(executor_);
-    device_to_device_stream->Init();
-    VLOG(2) << "Created device_to_device_stream[" << i
-            << "] = " << device_to_device_stream;
-
-    streams_.push_back({stream, host_to_device_stream, device_to_host_stream,
-                        device_to_device_stream});
+    streams_.push_back(
+        StreamGroupFactory::Global().GetOrCreate(gpu_id_, i, executor_));
 
     size_t scratch_buffer_size = Eigen::kCudaScratchSize + sizeof(unsigned int);
     void* scratch_buffer = gpu_allocator_->AllocateRaw(
@@ -249,16 +295,56 @@ Status BaseGPUDevice::Init(const SessionOptions& options) {
           "Failed to memcopy into scratch buffer for device ", gpu_id_);
     }
 
-    device_contexts_.push_back(
-        new GPUDeviceContext(i, stream, host_to_device_stream,
-                             device_to_host_stream, device_to_device_stream));
+    device_contexts_.push_back(new GPUDeviceContext(
+        i, streams_.back()->compute, streams_.back()->host_to_device,
+        streams_.back()->device_to_host, streams_.back()->device_to_device));
   }
   gpu_device_info_ = new GpuDeviceInfo;
-  gpu_device_info_->stream = streams_[0].compute;
+  gpu_device_info_->stream = streams_[0]->compute;
   gpu_device_info_->default_context = device_contexts_[0];
   gpu_device_info_->event_mgr = em_.get();
   gpu_device_info_->gpu_id = gpu_id_;
   set_tensorflow_gpu_device_info(gpu_device_info_);
+
+  // Whether and how the GPU device uses its own threadpool.
+  // This option is experimental. Once we confirm the best setting, we
+  // may change the default behavior and completely remove this flag.
+  // Default values might change in future releases.
+  // Possible values:
+  //   * global: GPU uses threads shared with CPU in the main compute
+  //          thread-pool. This is currently the default.
+  //   * gpu_private: GPU uses threads dedicated to this device.
+  //   * gpu_shared: All GPUs share a dedicated thread pool.
+  string gpu_thread_mode;
+  TF_RETURN_IF_ERROR(
+      ReadStringFromEnvVar("TF_GPU_THREAD_MODE", "global", &gpu_thread_mode));
+  gpu_thread_mode = str_util::Lowercase(gpu_thread_mode);
+  if (gpu_thread_mode != "global") {
+    int64 gpu_thread_count = -1;
+    // Default to two threads. One for device compute and another for memory
+    // copies.
+    TF_RETURN_IF_ERROR(
+        ReadInt64FromEnvVar("TF_GPU_THREAD_COUNT", 2, &gpu_thread_count));
+    if (gpu_thread_mode == "gpu_private") {
+      // TODO(zhengxq): since these threads only serve a single GPU device,
+      //   we should set the device context once for each thread, and avoid
+      //   setting them for each kernel.
+      // TODO(zhengxq): pin the thread to the same socket of the target GPU.
+      thread_pool_.reset(new thread::ThreadPool(
+          options.env, strings::StrCat("gpu_private_", gpu_id_),
+          static_cast<int32>(gpu_thread_count)));
+      set_tensorflow_device_thread_pool(thread_pool_.get());
+    } else if (gpu_thread_mode == "gpu_shared") {
+      static thread::ThreadPool* thread_pool = new thread::ThreadPool(
+          options.env, "gpu_shared", static_cast<int32>(gpu_thread_count));
+      set_tensorflow_device_thread_pool(thread_pool);
+    } else {
+      string error_message =
+          strings::StrCat("Invalid gpu_thread_mode: ", gpu_thread_mode);
+      LOG(WARNING) << error_message;
+      return errors::InvalidArgument(error_message);
+    }
+  }
 
   return Status::OK();
 }
@@ -274,14 +360,14 @@ Status BaseGPUDevice::FillContextMap(const Graph* graph,
                                      DeviceContextMap* device_context_map) {
   VLOG(2) << "FillContextMap";
 
-  const auto num_streams = streams_.size();
+  const size_t num_streams = streams_.size();
   // Special case for single stream.
   if (num_streams == 1) {
     return Status::OK();
   }
   const int64 before = Env::Default()->NowMicros();
   gpu_stream_util::AssignStreamsOpts opts;
-  opts.max_streams = num_streams;
+  opts.max_streams = static_cast<int32>(num_streams);
   std::unordered_map<int, int> node_to_stream_id;
   TF_RETURN_IF_ERROR(
       gpu_stream_util::AssignStreams(graph, opts, &node_to_stream_id));
@@ -349,7 +435,7 @@ void BaseGPUDevice::ComputeHelper(OpKernel* op_kernel,
 
   if (vlog_1) {
     VLOG(1) << "GpuDevice::Compute " << op_kernel->name() << " op "
-            << op_kernel->def().op() << " on GPU" << gpu_id_ << " stream["
+            << op_kernel->type_string() << " on GPU" << gpu_id_ << " stream["
             << stream_id << "]";
   }
 
@@ -420,15 +506,64 @@ void BaseGPUDevice::ComputeAsync(AsyncOpKernel* op_kernel,
     gpu_device_context =
         static_cast<GPUDeviceContext*>(context->op_device_context());
   }
+  gpu::Stream* stream = gpu_device_context->stream();
   const auto stream_id = gpu_device_context->stream_id();
 
   VLOG(1) << "GpuDevice::ComputeAsync " << op_kernel->name() << " op "
-          << op_kernel->def().op() << " on GPU" << gpu_id_ << " stream["
+          << op_kernel->type_string() << " on GPU" << gpu_id_ << " stream["
           << stream_id << "]";
 
-  port::Tracing::TraceMe activity(
-      strings::StrCat(op_kernel->name(), ":", op_kernel->type_string()));
+  // When TraceMe profiling is off (which is the default), the
+  // following TraceMe constructor is simply a conditional test of
+  // false value. Measurements show that its overhead is negligible.
+  port::Tracing::TraceMe activity(op_kernel->name(), op_kernel->type_string(),
+                                  op_kernel->IsExpensive());
+  gpu::cuda::ScopedActivateExecutorContext scoped_activation{stream->parent()};
   op_kernel->ComputeAsync(context, done);
+}
+
+Status BaseGPUDevice::MaybeCopyTensorToGPU(
+    const AllocatorAttributes& alloc_attrs, const Tensor& from, Tensor* to,
+    StatusCallback done) {
+  if (alloc_attrs.on_host()) {
+    *to = from;
+    done(Status::OK());
+    return Status::OK();
+  } else {
+    if (!DMAHelper::CanUseDMA(&from)) {
+      Status err = errors::Internal("GPU copy from non-DMA ",
+                                    DataTypeString(from.dtype()), " tensor");
+      done(err);
+      return err;
+    }
+    auto* copy =
+        new Tensor(GetAllocator(alloc_attrs), from.dtype(), from.shape());
+
+    // If the tensor is not initialized, we likely ran out of memory.
+    if (!copy->IsInitialized()) {
+      delete copy;
+      Status err = errors::ResourceExhausted(
+          "OOM when allocating tensor of shape ", from.shape().DebugString(),
+          " and type ", DataTypeString(from.dtype()));
+      done(err);
+      return err;
+    }
+
+    StatusCallback wrapped_done = std::bind(
+        [to, copy](StatusCallback done_,
+                   // Begin unbound arguments.
+                   const Status& s) {
+          *to = std::move(*copy);
+          delete copy;
+          done_(s);
+        },
+        std::move(done), std::placeholders::_1);
+
+    port::Tracing::ScopedAnnotation annotation("MakeTensorFromProto");
+    device_contexts_[0]->CopyCPUTensorToDevice(&from, this, copy,
+                                               std::move(wrapped_done));
+    return Status::OK();
+  }
 }
 
 Status BaseGPUDevice::MakeTensorFromProto(const TensorProto& tensor_proto,
@@ -443,26 +578,55 @@ Status BaseGPUDevice::MakeTensorFromProto(const TensorProto& tensor_proto,
     return errors::InvalidArgument("Cannot parse tensor from proto: ",
                                    tensor_proto.DebugString());
   }
-  Status status;
-  if (alloc_attrs.on_host()) {
-    *tensor = parsed;
-  } else {
-    if (!DMAHelper::CanUseDMA(&parsed)) {
-      return errors::Internal("GPU copy from non-DMA ",
-                              DataTypeString(parsed.dtype()), " tensor");
+
+  if (parsed.dtype() == DT_VARIANT) {
+    const Variant* from = parsed.flat<Variant>().data();
+    Tensor copy(cpu_allocator(), DT_VARIANT, parsed.shape());
+    Variant* copy_variant = copy.flat<Variant>().data();
+
+    std::list<Notification> notifications;
+    Status copy_status;
+    auto copier = [this, &alloc_attrs, &notifications, &copy_status](
+                      const Tensor& from, Tensor* to) {
+      // Copier isn't run in a multithreaded environment, so we don't
+      // have to worry about the notifications list being modified in parallel.
+      notifications.emplace_back();
+      Notification& n = *notifications.rbegin();
+      return MaybeCopyTensorToGPU(alloc_attrs, from, to,
+                                  [&n, &copy_status](const Status& s) {
+                                    if (copy_status.ok()) {
+                                      copy_status.Update(s);
+                                    }
+                                    n.Notify();
+                                  });
+    };
+    Status s;
+    for (int64 ix = 0; ix < parsed.NumElements(); ++ix) {
+      s = VariantDeviceCopy(VariantDeviceCopyDirection::HOST_TO_DEVICE,
+                            from[ix], &copy_variant[ix], copier);
+      if (!s.ok()) {
+        break;
+      }
     }
-    Tensor copy(GetAllocator(alloc_attrs), parsed.dtype(), parsed.shape());
-    port::Tracing::ScopedAnnotation annotation("MakeTensorFromProto");
+    for (auto& n : notifications) {
+      n.WaitForNotification();
+    }
+    if (!s.ok()) {
+      return s;
+    }
+    *tensor = std::move(copy);
+    return copy_status;
+  } else {
     Notification n;
-    device_contexts_[0]->CopyCPUTensorToDevice(&parsed, this, &copy,
-                                               [&n, &status](const Status& s) {
-                                                 status = s;
-                                                 n.Notify();
-                                               });
+    Status status;
+    TF_RETURN_IF_ERROR(MaybeCopyTensorToGPU(alloc_attrs, parsed, tensor,
+                                            [&n, &status](const Status& s) {
+                                              status = s;
+                                              n.Notify();
+                                            }));
     n.WaitForNotification();
-    *tensor = copy;
+    return status;
   }
-  return status;
 }
 
 namespace {
@@ -482,6 +646,79 @@ class ConcretePerOpGpuDevice : public PerOpGpuDevice {
   EigenCudaStreamDevice stream_device_;
   Eigen::GpuDevice device_;
 };
+
+Status ParseVisibleDeviceList(const string& visible_device_list,
+                              std::vector<int>* visible_gpu_order) {
+  visible_gpu_order->clear();
+  gpu::Platform* gpu_manager = GPUMachineManager();
+
+  // If the user wants to remap the visible to virtual GPU mapping,
+  // check for that here.
+  if (visible_device_list.empty()) {
+    visible_gpu_order->resize(gpu_manager->VisibleDeviceCount());
+    // By default, visible to virtual mapping is unchanged.
+    int deviceNo = 0;
+    std::generate(visible_gpu_order->begin(), visible_gpu_order->end(),
+                  [&deviceNo] { return deviceNo++; });
+  } else {
+    const std::vector<string> order_str =
+        str_util::Split(visible_device_list, ',');
+    for (const string& cuda_gpu_id_str : order_str) {
+      int32 cuda_gpu_id;
+      if (!strings::safe_strto32(cuda_gpu_id_str, &cuda_gpu_id)) {
+        return errors::InvalidArgument(
+            "Could not parse entry in 'visible_device_list': '",
+            cuda_gpu_id_str, "'. visible_device_list = ", visible_device_list);
+      }
+      if (cuda_gpu_id < 0 || cuda_gpu_id >= gpu_manager->VisibleDeviceCount()) {
+        return errors::InvalidArgument(
+            "'visible_device_list' listed an invalid GPU id '", cuda_gpu_id,
+            "' but visible device count is ",
+            gpu_manager->VisibleDeviceCount());
+      }
+      visible_gpu_order->push_back(cuda_gpu_id);
+    }
+  }
+
+  // Validate no repeats.
+  std::set<int> visible_device_set(visible_gpu_order->begin(),
+                                   visible_gpu_order->end());
+  if (visible_device_set.size() != visible_gpu_order->size()) {
+    return errors::InvalidArgument(
+        "visible_device_list contained a duplicate entry: ",
+        visible_device_list);
+  }
+  return Status::OK();
+}
+
+int64 MinSystemMemory(int64 available_memory) {
+  // We use the following heuristic for now:
+  //
+  // If the available_memory is < 2GiB, we allocate 225MiB to system memory.
+  // Otherwise, allocate max(300MiB, 0.05 * available_memory) to system memory.
+  //
+  // In the future we could be more sophisticated by using a table of devices.
+  int64 min_system_memory;
+  if (available_memory < (1LL << 31)) {
+    // 225MiB
+    min_system_memory = 225 * 1024 * 1024;
+  } else {
+    // max(300 MiB, 0.05 * available_memory)
+    min_system_memory =
+        std::max(314572800LL, static_cast<int64>(available_memory * 0.05));
+  }
+#if defined(__GNUC__) && defined(__OPTIMIZE__)
+// Do nothing
+#elif !defined(__GNUC__) && defined(NDEBUG)
+// Do nothing
+#else
+  // Double the amount of available GPU memory in non-opt builds (debug
+  // builds in windows); because in non-opt builds more system memory
+  // is necessary.
+  min_system_memory *= 2;
+#endif
+  return min_system_memory;
+}
 }  // namespace
 
 void BaseGPUDevice::ReinitializeDevice(OpKernelContext* context,
@@ -491,7 +728,7 @@ void BaseGPUDevice::ReinitializeDevice(OpKernelContext* context,
       static_cast<ConcretePerOpGpuDevice*>(device);
   DCHECK(concrete_device);
   const cudaStream_t* cuda_stream = reinterpret_cast<const cudaStream_t*>(
-      streams_[stream_id].compute->implementation()->CudaStreamMemberHack());
+      streams_[stream_id]->compute->implementation()->CudaStreamMemberHack());
   concrete_device->Reinitialize(context, cuda_stream, gpu_id_, allocator,
                                 scratch_[stream_id]);
 }
@@ -519,22 +756,65 @@ void BaseGPUDevice::ReinitializeGpuDevice(OpKernelContext* context,
 Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
                                            const string& name_prefix,
                                            std::vector<Device*>* devices) {
-  int n = INT_MAX;
+  TF_RETURN_IF_ERROR(ValidateGPUMachineManager());
+  gpu::Platform* gpu_manager = GPUMachineManager();
+  if (gpu_manager == nullptr) {
+    return Status::OK();
+  }
+  // If there are no GPUs visible, do nothing.
+  if (gpu_manager->VisibleDeviceCount() <= 0) {
+    return Status::OK();
+  }
+
+  size_t n = INT_MAX;
   auto iter = options.config.device_count().find("GPU");
   if (iter != options.config.device_count().end()) {
     n = iter->second;
   }
+  const auto& gpu_options = options.config.gpu_options();
+  std::vector<int> visible_gpu_order;
+  TF_RETURN_IF_ERROR(ParseVisibleDeviceList(gpu_options.visible_device_list(),
+                                            &visible_gpu_order));
   std::vector<int> valid_gpu_ids;
-  TF_RETURN_IF_ERROR(GetValidDeviceIds(
-      options.config.gpu_options().visible_device_list(), &valid_gpu_ids));
+  TF_RETURN_IF_ERROR(GetValidDeviceIds(visible_gpu_order, &valid_gpu_ids));
   if (static_cast<size_t>(n) > valid_gpu_ids.size()) {
     n = valid_gpu_ids.size();
   }
+  if (!valid_gpu_ids.empty()) {
+    // Save the original device.
+    int original_device = 0;
+    cudaError_t err = cudaGetDevice(&original_device);
+    if (err != cudaSuccess) {
+      return errors::Internal("cudaGetDevice() failed. Status: ",
+                              cudaGetErrorString(err));
+    }
+    // Force to implicitly initialize CUDA runtime on each valid GPU before
+    // CreateGPUDevice().
+    for (int gpu_id : valid_gpu_ids) {
+      err = cudaSetDevice(gpu_id);
+      if (err != cudaSuccess) {
+        return errors::Internal("cudaSetDevice() on GPU:", gpu_id,
+                                " failed. Status: ", cudaGetErrorString(err));
+      }
+      err = cudaFree(nullptr);
+      if (err != cudaSuccess) {
+        return errors::Internal(
+            "CUDA runtime implicit initialization on GPU:", gpu_id,
+            " failed. Status: ", cudaGetErrorString(err));
+      }
+    }
+    // Reset to the original device.
+    err = cudaSetDevice(original_device);
+    if (err != cudaSuccess) {
+      return errors::Internal("cudaSetDevice() on GPU:", original_device,
+                              " failed. Status: ", cudaGetErrorString(err));
+    }
+  }
   for (int i = 0; i < n; i++) {
     BaseGPUDevice* gpu_device;
-    TF_RETURN_IF_ERROR(CreateGPUDevice(options,
-                                       strings::StrCat(name_prefix, "/gpu:", i),
-                                       valid_gpu_ids[i], &gpu_device));
+    TF_RETURN_IF_ERROR(CreateGPUDevice(
+        options, strings::StrCat(name_prefix, "/device:GPU:", i),
+        valid_gpu_ids[i], &gpu_device));
     TF_RETURN_IF_ERROR(gpu_device->Init(options));
     devices->push_back(gpu_device);
   }
@@ -542,29 +822,19 @@ Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
   return Status::OK();
 }
 
-namespace {
-int64 MinSystemMemory(int64 available_memory) {
-  // We use the following heuristic for now:
-  //
-  // If the available_memory is < 2GiB, we allocate 200MiB to system memory.
-  // Otherwise, allocate 300MiB to system memory.
-  //
-  // In the future we could be more sophisticated by using a table of
-  // devices.
-  if (available_memory < (1LL << 31)) {
-    // 200MiB
-    return 209715200LL;
-  } else {
-    // max(300 MiB, 0.95 * available_memory)
-    return std::max(314572800LL, static_cast<int64>(available_memory * 0.05));
-  }
-}
-}  // namespace
-
 static string GetShortDeviceDescription(int device_id,
                                         const gpu::DeviceDescription& desc) {
+  int cc_major;
+  int cc_minor;
+  if (!desc.cuda_compute_capability(&cc_major, &cc_minor)) {
+    cc_major = 0;
+    cc_minor = 0;
+  }
+  // LINT.IfChange
   return strings::StrCat("device: ", device_id, ", name: ", desc.name(),
-                         ", pci bus id: ", desc.pci_bus_id());
+                         ", pci bus id: ", desc.pci_bus_id(),
+                         ", compute capability: ", cc_major, ".", cc_minor);
+  // LINT.ThenChange(//tensorflow/python/platform/test.py)
 }
 
 Status BaseGPUDeviceFactory::CreateGPUDevice(const SessionOptions& options,
@@ -593,7 +863,10 @@ Status BaseGPUDeviceFactory::CreateGPUDevice(const SessionOptions& options,
   }
 
   int64 total_memory, available_memory;
-  CHECK(se->DeviceMemoryUsage(&available_memory, &total_memory));
+  if (!se->DeviceMemoryUsage(&available_memory, &total_memory)) {
+    return errors::Unknown(
+        strings::StrCat("Failed to query available memory for GPU ", gpu_id));
+  }
 
   int64 allocated_memory;
   double config_memory_fraction =
@@ -771,13 +1044,10 @@ Status EnablePeerAccess(gpu::Platform* platform,
         if (!status.ok()) {
           LOG(WARNING)
               << "Unable to enable peer access between device ordinals "
-              << i_gpu_id << " and " << j_gpu_id;
+              << i_gpu_id << " and " << j_gpu_id << ", status: " << status;
         } else {
           ++enabled_peer_count;
         }
-      } else {
-        LOG(INFO) << "Peer access not supported between device ordinals "
-                  << i_gpu_id << " and " << j_gpu_id;
       }
     }
   }
@@ -797,60 +1067,8 @@ Status EnablePeerAccess(gpu::Platform* platform,
 }  // namespace
 
 Status BaseGPUDeviceFactory::GetValidDeviceIds(
-    const string& visible_device_list, std::vector<int>* ids) {
-  TF_RETURN_IF_ERROR(ValidateGPUMachineManager());
-
+    const std::vector<int>& visible_gpu_order, std::vector<int>* ids) {
   gpu::Platform* gpu_manager = GPUMachineManager();
-  if (gpu_manager == nullptr) {
-    return Status::OK();
-  }
-
-  // If there are no GPUs visible, do nothing.
-  if (gpu_manager->VisibleDeviceCount() <= 0) {
-    return Status::OK();
-  }
-
-  // If the user wants to remap the visible to virtual GPU mapping,
-  // check for that here.
-  std::vector<int> visible_gpu_order;
-  if (visible_device_list.empty()) {
-    visible_gpu_order.resize(gpu_manager->VisibleDeviceCount());
-    // By default, visible to virtual mapping is unchanged.
-    int deviceNo = 0;
-    std::generate(visible_gpu_order.begin(), visible_gpu_order.end(),
-                  [&deviceNo] { return deviceNo++; });
-  } else {
-    std::vector<string> order_str = str_util::Split(visible_device_list, ',');
-    for (int i = 0; i < order_str.size(); ++i) {
-      const string& gpu_id_str = order_str[i];
-      int32 gpu_id;
-      if (!strings::safe_strto32(gpu_id_str, &gpu_id)) {
-        return errors::InvalidArgument(
-            "Could not parse entry in 'visible_device_list': '", gpu_id_str,
-            "'.  visible_device_list = ", visible_device_list);
-      }
-
-      if (gpu_id < 0 || gpu_id >= gpu_manager->VisibleDeviceCount()) {
-        return errors::InvalidArgument(
-            "'visible_device_list' listed an invalid GPU id '", gpu_id,
-            "' but visible device count is ",
-            gpu_manager->VisibleDeviceCount());
-      }
-
-      visible_gpu_order.push_back(gpu_id);
-    }
-  }
-
-  // Validate no repeats.
-  std::set<int> visible_device_set(visible_gpu_order.begin(),
-                                   visible_gpu_order.end());
-  if (visible_device_set.size() != visible_gpu_order.size()) {
-    return errors::InvalidArgument(
-        "visible_device_list contained "
-        "a duplicate entry: ",
-        visible_device_list);
-  }
-
   bool new_gpu_found = false;
   for (int i = 0; i < visible_gpu_order.size(); ++i) {
     int gpu_id = visible_gpu_order[i];
@@ -885,21 +1103,21 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
       cc_minor = 0;
     }
     LOG(INFO) << "Found device " << i << " with properties: "
-              << "\nname: " << description.name() << "\nmajor: " << cc_major
-              << " minor: " << cc_minor << " memoryClockRate (GHz) "
-              << description.clock_rate_ghz() << "\npciBusID "
-              << description.pci_bus_id() << "\nTotal memory: "
+              << "\nname: " << description.name() << " major: " << cc_major
+              << " minor: " << cc_minor
+              << " memoryClockRate(GHz): " << description.clock_rate_ghz()
+              << "\npciBusID: " << description.pci_bus_id() << "\ntotalMemory: "
               << strings::HumanReadableNumBytes(total_bytes)
-              << "\nFree memory: "
-              << strings::HumanReadableNumBytes(free_bytes);
+              << " freeMemory: " << strings::HumanReadableNumBytes(free_bytes);
   }
-
-  if (new_gpu_found) {
+  // Checking peering and shows matrix if more than one gpu found.
+  if (new_gpu_found && visible_gpu_order.size() > 1) {
     // Enable peer access
     TF_RETURN_IF_ERROR(EnablePeerAccess(gpu_manager, visible_gpu_order));
 
     // Print out a matrix showing which devices can DMA to one
     // another.
+    LOG(INFO) << "Device peer to peer matrix";
     auto access_map = GetPeerAccessMap(gpu_manager, visible_gpu_order);
     string line_buf = "DMA: ";
     for (int i = 0; i < visible_gpu_order.size(); ++i) {
@@ -971,10 +1189,10 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
       continue;
     }
 
-    int new_id = ids->size();
+    size_t new_id = ids->size();
     ids->push_back(visible_gpu_id);
 
-    LOG(INFO) << "Creating TensorFlow device (/gpu:" << new_id << ") -> "
+    LOG(INFO) << "Creating TensorFlow device (/device:GPU:" << new_id << ") -> "
               << "(" << GetShortDeviceDescription(visible_gpu_id, desc) << ")";
   }
 

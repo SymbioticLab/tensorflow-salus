@@ -107,19 +107,6 @@ TF_CALL_half(REGISTER_CPU);
 TF_CALL_float(REGISTER_CPU);
 TF_CALL_double(REGISTER_CPU);
 
-#undef REGISTER_CPU
-
-#define REGISTER_RPC(T)                                         \
-  REGISTER_KERNEL_BUILDER(Name("SoftmaxCrossEntropyWithLogits") \
-                              .Device(DEVICE_RPC)               \
-                              .TypeConstraint<T>("T"),          \
-                          SoftmaxXentWithLogitsOp<CPUDevice, T>);
-TF_CALL_half(REGISTER_RPC);
-TF_CALL_float(REGISTER_RPC);
-TF_CALL_double(REGISTER_RPC);
-
-#undef REGISTER_RPC
-
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("SoftmaxCrossEntropyWithLogits")
                             .Device(DEVICE_GPU)
