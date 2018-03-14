@@ -120,7 +120,7 @@ def install(ctx, save=False):
             ws.run('{} uninstall -y tensorflow'.format(ws.venv.pip), warn=True)
             ws.run('{} install {}/*.whl'.format(ws.venv.pip, tempdir))
             if save:
-                ws.run('cp -a {} {}'.format(tempdir, os.path.expanduser('~/downloads/')))
+                ws.run('cp -a {}/* {}'.format(tempdir, os.path.expanduser('~/downloads/')))
         finally:
             if tempdir:
                 ws.run('rm -rf {}'.format(tempdir))
