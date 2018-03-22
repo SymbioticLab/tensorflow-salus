@@ -122,20 +122,15 @@ cc_library(
     name = "zrpc_exechelper",
     srcs = [
         "exechelper/graphview.cc",
-        "exechelper/devicefactories.cc",
-        "exechelper/allocators.cc",
         "exechelper/memorytypes.cc",
         "exechelper/paginghelper.cc",
     ],
     hdrs = [
         "exechelper/graphview.h",
-        "exechelper/devicefactories.h",
-        "exechelper/allocators.h",
         "exechelper/memorytypes.h",
         "exechelper/paginghelper.h",
     ],
     deps = [
-        ":zrpc_util",
         "//tensorflow/core:core_cpu_lib",
         "//tensorflow/core:gpu_runtime",
         "//tensorflow/core:gpu_lib",
