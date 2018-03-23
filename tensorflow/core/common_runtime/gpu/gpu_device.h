@@ -98,6 +98,9 @@ class BaseGPUDevice : public LocalDevice {
 
   gpu::StreamExecutor* executor_;  // not owned
 
+  std::vector<GPUDeviceContext*> device_contexts_;
+  const int32 max_streams_;
+
  private:
   struct StreamGroup {
     gpu::Stream* compute = nullptr;
@@ -109,12 +112,10 @@ class BaseGPUDevice : public LocalDevice {
 
   gtl::InlinedVector<StreamGroup*, 4> streams_;
   gtl::InlinedVector<char*, 4> scratch_;
-  std::vector<GPUDeviceContext*> device_contexts_;
   GpuDeviceInfo* gpu_device_info_ = nullptr;
   mutex trace_mu_;
   int gpu_id_ = -1;
   const bool sync_every_op_ = false;
-  const int32 max_streams_;
   std::unique_ptr<EventMgr> em_;
   std::unique_ptr<thread::ThreadPool> thread_pool_;
 
