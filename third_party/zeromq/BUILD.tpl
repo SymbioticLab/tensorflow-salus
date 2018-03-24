@@ -2,7 +2,7 @@ licenses(["notice"])
 
 cc_library(
     name = "zmq_cpp",
-    srcs = ["lib/libzmq.so"],
+    srcs = ["lib/${zmq_lib}"],
     hdrs = [
         "include/zmq.h",
         "include/zmq.hpp",
