@@ -31,6 +31,17 @@ function cp_external() {
   cp "${src_dir}/local_config_cuda/cuda/cuda/cuda_config.h" "${dest_dir}/local_config_cuda/cuda/cuda/"
 }
 
+function cp_solib() {
+  local src_dir=$1
+  local dest_dir=$2
+  local item=$3
+  mkdir -p "$dest_dir"
+  if [[ ! -f "${dest_dir}/__init__.py" ]]; then
+    cp "${src_dir}/__init__.py" "${dest_dir}"
+  fi
+  cp -R "${src_dir}/${item}" "${dest_dir}"
+}
+
 PLATFORM="$(uname -s | tr 'A-Z' 'a-z')"
 function is_windows() {
   # On windows, the shell script is actually running in msys
@@ -109,13 +120,17 @@ function main() {
       cp_external \
         bazel-bin/tensorflow/tools/pip_package/build_pip_package.runfiles/org_tensorflow/external \
         "${TMPDIR}/external"
-      # Copy MKL libs over so they can be loaded at runtime
       so_lib_dir=$(ls $RUNFILES | grep solib) || true
       if [ -n "${so_lib_dir}" ]; then
         mkl_so_dir=$(ls ${RUNFILES}/${so_lib_dir} | grep mkl) || true
+        # Copy MKL libs over so they can be loaded at runtime
         if [ -n "${mkl_so_dir}" ]; then
-          mkdir "${TMPDIR}/${so_lib_dir}"
-          cp -R ${RUNFILES}/${so_lib_dir}/${mkl_so_dir} "${TMPDIR}/${so_lib_dir}"
+          cp_solib "${RUNFILES}/$so_lib_dir" "${TMPDIR}/${so_lib_dir}" "${mkl_so_dir}"
+        fi
+        # Copy zmq libs over so they can be loaded at runtime
+        zmq_so_dir=$(ls ${RUNFILES}/${so_lib_dir} | grep zmq) || true
+        if [ -n "${zmq_so_dir}" ]; then
+          cp_solib "${RUNFILES}/$so_lib_dir" "${TMPDIR}/${so_lib_dir}" "${zmq_so_dir}"
         fi
       fi
     else
@@ -127,13 +142,17 @@ function main() {
       cp_external \
         bazel-bin/tensorflow/tools/pip_package/build_pip_package.runfiles \
         "${TMPDIR}/external"
-      # Copy MKL libs over so they can be loaded at runtime
       so_lib_dir=$(ls $RUNFILES | grep solib) || true
       if [ -n "${so_lib_dir}" ]; then
+        # Copy MKL libs over so they can be loaded at runtime
         mkl_so_dir=$(ls ${RUNFILES}/${so_lib_dir} | grep mkl) || true
         if [ -n "${mkl_so_dir}" ]; then
-          mkdir "${TMPDIR}/${so_lib_dir}"
-          cp -R ${RUNFILES}/${so_lib_dir}/${mkl_so_dir} "${TMPDIR}/${so_lib_dir}"
+          cp_solib "${RUNFILES}/$so_lib_dir" "${TMPDIR}/${so_lib_dir}" "${mkl_so_dir}"
+        fi
+        # Copy zmq libs over so they can be loaded at runtime
+        zmq_so_dir=$(ls ${RUNFILES}/${so_lib_dir} | grep zmq) || true
+        if [ -n "${zmq_so_dir}" ]; then
+          cp_solib "${RUNFILES}/$so_lib_dir" "${TMPDIR}/${so_lib_dir}" "${zmq_so_dir}"
         fi
       fi
     fi
