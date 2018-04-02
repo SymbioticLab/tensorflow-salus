@@ -73,11 +73,11 @@ class GraphMgr {
 
   // Registers a graph. Fills in "handle". The registered graph retains a
   // reference to cluster_flr to do cross process function calls.
-  Status Register(const string& session, const GraphDef& gdef,
-                  const GraphOptions& graph_options,
-                  const DebugOptions& debug_options,
-                  DistributedFunctionLibraryRuntime* cluster_flr,
-                  string* handle);
+  virtual Status Register(const string& session, const GraphDef& gdef,
+                          const GraphOptions& graph_options,
+                          const DebugOptions& debug_options,
+                          DistributedFunctionLibraryRuntime* cluster_flr,
+                          string* handle);
 
   // Executes one step of a registered graph "handle".
   //
@@ -173,10 +173,10 @@ class GraphMgr {
   void BuildCostModel(Item* item, StepStatsCollector* collector,
                       CostGraphDef* cost_graph);
 
-  virtual Status InitItem(const string& session, const GraphDef& gdef,
-                          const GraphOptions& graph_options,
-                          const DebugOptions& debug_options,
-                          DistributedFunctionLibraryRuntime* cluster_flr, Item* item);
+  Status InitItem(const string& session, const GraphDef& gdef,
+                  const GraphOptions& graph_options,
+                  const DebugOptions& debug_options,
+                  DistributedFunctionLibraryRuntime* cluster_flr, Item* item);
 
   Status DecorateAndPublishGraphForDebug(const DebugOptions& debug_options,
                                          Graph* graph, Device* device);
