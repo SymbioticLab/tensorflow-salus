@@ -121,12 +121,10 @@ cc_library(
 cc_library(
     name = "zrpc_exechelper",
     srcs = [
-        "exechelper/graphview.cc",
         "exechelper/memorytypes.cc",
         "exechelper/paginghelper.cc",
     ],
     hdrs = [
-        "exechelper/graphview.h",
         "exechelper/memorytypes.h",
         "exechelper/paginghelper.h",
     ],
