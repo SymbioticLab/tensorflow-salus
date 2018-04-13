@@ -88,12 +88,13 @@ def patch(ctx):
 
 @task(pre=[checkinit], aliases=['bb'], positional=['bazelArgs'])
 def build(ctx, bazelArgs=''):
+    ba = bazelArgs if bazelArgs else ctx.buildcfg.bazelArgs
     with wscd(ctx) as ws:
         with gitbr(ctx, BUILD_BRANCH):
             cmd = buildcmd(
                 'bazel', 'build', '-c opt',
                 ws.if_cuda('--config=cuda'),
-                bazelArgs,
+                ba,
                 '//tensorflow:libtensorflow_framework.so',
                 '//tensorflow:libtensorflow_kernels.so',
                 '//tensorflow/tools/pip_package:build_pip_package'

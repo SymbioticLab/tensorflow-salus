@@ -1,4 +1,5 @@
 buildcfg:
+  bazelArgs:
   env:
     TF_CPP_MIN_VLOG_LEVEL: 3
     TF_CPP_MIN_LOG_LEVEL:
