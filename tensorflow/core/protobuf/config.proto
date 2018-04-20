@@ -208,7 +208,7 @@ message RPCOptions {
   bool use_rpc_for_inprocess_master = 1;
 };
 
-message ZMQRPCOptions {
+message SalusOptions {
   // the zeromq endpoint to connect to
   string endpoint = 1;
   // whether executor scheduler should only use CPU
@@ -218,6 +218,7 @@ message ZMQRPCOptions {
   message ResourceMapDef {
     map<string, double> persistant = 1;
     map<string, double> temporary = 2;
+    int64 alloc_count = 3;
   }
   ResourceMapDef resource_map = 3;
 }
@@ -323,8 +324,8 @@ message ConfigProto {
 
   // Next: 16
 
-  // Options that apply when this session uses zmq rpc devices.
-  ZMQRPCOptions zmq_options = 101;
+  // Options that apply when this session uses salus.
+  SalusOptions salus_options = 101;
 };
 
 // Options for a single Run() call.
