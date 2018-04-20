@@ -88,7 +88,12 @@ def patch(ctx):
 
 @task(pre=[checkinit], aliases=['bb'], positional=['bazelArgs'])
 def build(ctx, bazelArgs=''):
-    ba = bazelArgs if bazelArgs else ctx.buildcfg.bazelArgs
+    ba = bazelArgs
+    if not bazelArgs:
+        if 'bazelArgs' in ctx.buildcfg:
+            ba = ctx.buildcfg.bazelArgs
+            if ba is None:
+                ba = ''
     with wscd(ctx) as ws:
         with gitbr(ctx, BUILD_BRANCH):
             cmd = buildcmd(
