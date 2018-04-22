@@ -18,6 +18,7 @@ limitations under the License.
 #include <vector>
 
 #include "tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.h"
+#include "tensorflow/core/common_runtime/gpu/gpu_managed_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_cudamalloc_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_debug_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_init.h"
@@ -68,6 +69,15 @@ bool useCudaMemoryGuardAllocator() {
     return false;
 }
 
+bool useCudaManagedAllocator() {
+  const char* debug_allocator_str = std::getenv("TF_GPU_ALLOCATOR");
+  if (debug_allocator_str != nullptr &&
+      strcmp(debug_allocator_str, "cuda_managed") == 0)
+    return true;
+  else
+    return false;
+}
+
 }  // namespace
 
 ProcessState* ProcessState::instance_ = nullptr;
@@ -110,6 +120,9 @@ ProcessState::MemDesc ProcessState::PtrType(const void* ptr) {
 Allocator* ProcessState::GetGPUAllocator(const GPUOptions& options, int gpu_id,
                                          size_t total_bytes) {
 #if GOOGLE_CUDA
+  static GpuManagedAllocator managedAlloc;
+  if (useCudaManagedAllocator())
+    return &managedAlloc;
   const string& allocator_type = options.allocator_type();
   mutex_lock lock(mu_);
   gpu::Platform* gpu_platform = GPUMachineManager();
@@ -178,6 +191,9 @@ Allocator* ProcessState::GetGPUAllocator(const GPUOptions& options, int gpu_id,
 }
 
 Allocator* ProcessState::GetCPUAllocator(int numa_node) {
+  static GpuManagedAllocator managedAlloc;
+  if (useCudaManagedAllocator())
+    return &managedAlloc;
   // Although we're temporarily ignoring numa_node, check for legality.
   CHECK_GE(numa_node, 0);
   // TODO(tucker): actually maintain separate CPUAllocators for
@@ -226,6 +242,9 @@ Allocator* ProcessState::GetCPUAllocator(int numa_node) {
 }
 
 Allocator* ProcessState::GetCUDAHostAllocator(int numa_node) {
+  static GpuManagedAllocator managedAlloc;
+  if (useCudaManagedAllocator())
+    return &managedAlloc;
   if (!HasGPUDevice() || !FLAGS_brain_mem_reg_cuda_dma) {
     return cpu_allocator();
   }
