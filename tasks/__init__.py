@@ -104,6 +104,7 @@ def build(ctx, bazelArgs=''):
                 '//tensorflow:libtensorflow_kernels.so',
                 '//tensorflow/tools/pip_package:build_pip_package'
             )
+            print(cmd)
             ws.run(cmd, pty=True)
 
 
