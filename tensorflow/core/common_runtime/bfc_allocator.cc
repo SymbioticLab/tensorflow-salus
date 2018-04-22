@@ -190,14 +190,17 @@ void* BFCAllocator::AllocateRaw(size_t unused_alignment, size_t num_bytes) {
   // Fast path: Try once to allocate without getting the retry_helper_ involved
   void* r = AllocateRawInternal(unused_alignment, num_bytes, false);
   if (r != nullptr) {
+    VLOG(1) << "+" << num_bytes << ", " << r;
     return r;
   } else {
     static const int64 kMaxMillisToWait = 10000;  // 10 seconds
-    return retry_helper_.AllocateRaw(
+    r = retry_helper_.AllocateRaw(
         [this](size_t a, size_t nb, bool v) {
           return AllocateRawInternal(a, nb, v);
         },
         kMaxMillisToWait, unused_alignment, num_bytes);
+    if (r) VLOG(1) << "+" << num_bytes << ", " << r;
+    return r;
   }
 }
 
@@ -222,6 +225,7 @@ void* BFCAllocator::AllocateRaw(size_t unused_alignment, size_t num_bytes,
             << " memory is available.";
       }
     }
+    if (result) VLOG(1) << "+" << num_bytes << ", " << result;
     return result;
   } else {
     return AllocateRaw(unused_alignment, num_bytes);
@@ -370,6 +374,7 @@ void BFCAllocator::SplitChunk(BFCAllocator::ChunkHandle h, size_t num_bytes) {
 }
 
 void BFCAllocator::DeallocateRaw(void* ptr) {
+  if (ptr) VLOG(1) << "-0, " << ptr;
   DeallocateRawInternal(ptr);
   retry_helper_.NotifyDealloc();
 }

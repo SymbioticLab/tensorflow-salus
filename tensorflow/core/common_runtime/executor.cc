@@ -2031,6 +2031,12 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
                              const TaggedNodeSeq& ready,
                              NodeExecStatsWrapper* stats,
                              TaggedNodeReadyQueue* inline_ready) {
+  VLOG(1) << "NodeDone: " << node->id() << " step " << step_id_ << " " << SummarizeNode(*node);
+  if (VLOG_IS_ON(1)) {
+      for (auto &tn : ready) {
+          VLOG(1) << "NodeReady: " << tn.node->id() << " step " << step_id_ << " " << SummarizeNode(*tn.node);
+      }
+  }
   nodestats::SetAllEnd(stats);
   if (stats_collector_ != nullptr && !SetTimelineLabel(node, stats)) {
     // Only record non-transfer nodes.
