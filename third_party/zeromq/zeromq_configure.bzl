@@ -101,11 +101,11 @@ def _zeromq_autoconf_impl(repository_ctx):
     _check_and_link_dir(repository_ctx, path, "lib")
 
     cpu_value = _cpu_value(repository_ctx)
-    version = "5"
     # copy over the template
     repository_ctx.template('BUILD', Label("//third_party/zeromq:BUILD.tpl"),
         {
-            "${zmq_lib}": _find_lib("zmq", repository_ctx, cpu_value, path, version).file_name
+            "${zmq_lib}": _find_lib("zmq", repository_ctx, cpu_value, path, 5).file_name,
+            "${sodium_lib}": _find_lib("sodium", repository_ctx, cpu_value, path, 23).file_name
         })
 
 zeromq_configure = repository_rule(
