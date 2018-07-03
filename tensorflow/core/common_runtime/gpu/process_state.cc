@@ -18,6 +18,7 @@ limitations under the License.
 #include <vector>
 
 #include "tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.h"
+#include "tensorflow/core/common_runtime/gpu/gpu_double_bfc_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_managed_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_cudamalloc_allocator.h"
 #include "tensorflow/core/common_runtime/gpu/gpu_debug_allocator.h"
@@ -76,6 +77,15 @@ bool useCudaManagedAllocator() {
     return true;
   else
     return false;
+}
+
+bool useSmallAllocOptimization() {
+    const char* debug_allocator_str = std::getenv("TF_GPU_ALLOCATOR");
+    if (debug_allocator_str != nullptr &&
+        strcmp(debug_allocator_str, "small_opt") == 0)
+      return true;
+    else
+      return false;
 }
 
 }  // namespace
@@ -145,7 +155,11 @@ Allocator* ProcessState::GetGPUAllocator(const GPUOptions& options, int gpu_id,
       return nullptr;
     }
 
-    gpu_allocator = new GPUBFCAllocator(gpu_id, total_bytes, options);
+    if (useSmallAllocOptimization()) {
+      gpu_allocator = new GPUDoubleBFCAllocator(gpu_id, total_bytes, options);
+    } else {
+      gpu_allocator = new GPUBFCAllocator(gpu_id, total_bytes, options);
+    }
 
     // If true, checks for memory overwrites by writing
     // distinctive patterns on both ends of allocated memory.
