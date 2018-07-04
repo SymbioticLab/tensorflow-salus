@@ -25,7 +25,7 @@
 namespace tensorflow {
 
 static const size_t MAX_SMALL = 1 * 1024 * 1024; // 1MB
-static const double SMALL_RATIO = 0.04;
+static const double SMALL_POOL = 200 * 1024 * 1024; // 200MB;
 
 GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory)
     : GPUDoubleBFCAllocator(device_id, total_memory, {}) {}
@@ -35,15 +35,17 @@ GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory,
     , small_alloc_(new BFCAllocator(
         new GPUMemAllocator(
             GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
-            total_memory * SMALL_RATIO, false,
+            SMALL_POOL, false,
         strings::StrCat("GPU_", device_id, "_bfc_small")))
     , big_alloc_(new BFCAllocator(
         new GPUMemAllocator(
             GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
-            total_memory * (1 - SMALL_RATIO), gpu_options.allow_growth(),
+            total_memory - SMALL_POOL, gpu_options.allow_growth(),
         strings::StrCat("GPU_", device_id, "_bfc_big")))
     , next_allocation_id_(1)
-{}
+{
+    CHECK(total_memory > SMALL_POOL) << "Total memory less than SMALL_POOL!!!";
+}
 
 BFCAllocator *GPUDoubleBFCAllocator::SelectAllocator(size_t num_bytes) const
 {
