@@ -25,7 +25,7 @@
 namespace tensorflow {
 
 static const size_t MAX_SMALL = 1 * 1024 * 1024; // 1MB
-static const double SMALL_POOL = 200 * 1024 * 1024; // 200MB;
+static const double SMALL_POOL = 500 * 1024 * 1024; // 200MB;
 
 GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory)
     : GPUDoubleBFCAllocator(device_id, total_memory, {}) {}
