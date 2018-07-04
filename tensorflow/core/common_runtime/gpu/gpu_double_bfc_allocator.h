@@ -59,6 +59,8 @@ class GPUDoubleBFCAllocator : public VisitableAllocator {
 
   void GetStats(AllocatorStats* stats) override;
 
+  void DumpMemoryLog() const;
+
  private:
   BFCAllocator *SelectAllocator(size_t num_bytes) const;
 

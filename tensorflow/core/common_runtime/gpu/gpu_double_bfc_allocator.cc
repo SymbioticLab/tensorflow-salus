@@ -165,4 +165,16 @@ void GPUDoubleBFCAllocator::GetStats(AllocatorStats* stats)
     // use big's bytes_limit
 }
 
+void GPUDoubleBFCAllocator::DumpMemoryLog() const
+{
+    {
+        mutex_lock l(big_alloc_->lock_);
+        big_alloc_->DumpMemoryLog(128);
+    }
+    {
+        mutex_lock l(small_alloc_->lock_);
+        small_alloc_->DumpMemoryLog(128);
+    }
+}
+
 } // namespace tensorflow
