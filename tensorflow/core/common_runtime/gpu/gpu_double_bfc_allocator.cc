@@ -58,9 +58,11 @@ void* GPUDoubleBFCAllocator::AllocateRaw(size_t alignment, size_t num_bytes)
     auto alloc = SelectAllocator(num_bytes);
     auto ptr = alloc->AllocateRaw(alignment, num_bytes);
 
-    mutex_lock l(lock_);
-    auto id = next_allocation_id_++;
-    CHECK(used_allocator.emplace(ptr, Chunk{alloc, id}).second);
+    if (ptr) {
+        mutex_lock l(lock_);
+        auto id = next_allocation_id_++;
+        CHECK(used_allocator.emplace(ptr, Chunk{alloc, id}).second);
+    }
     return ptr;
 }
 
@@ -70,14 +72,19 @@ void* GPUDoubleBFCAllocator::AllocateRaw(size_t alignment, size_t num_bytes,
     auto alloc = SelectAllocator(num_bytes);
     auto ptr = alloc->AllocateRaw(alignment, num_bytes, allocation_attr);
 
-    mutex_lock l(lock_);
-    auto id = next_allocation_id_++;
-    CHECK(used_allocator.emplace(ptr, Chunk{alloc, id}).second);
+    if (ptr) {
+        mutex_lock l(lock_);
+        auto id = next_allocation_id_++;
+        CHECK(used_allocator.emplace(ptr, Chunk{alloc, id}).second);
+    }
     return ptr;
 }
 
 GPUDoubleBFCAllocator::Chunk GPUDoubleBFCAllocator::FindAllocator(void* ptr) const
 {
+    if (!ptr) {
+        return {};
+    }
     mutex_lock l(lock_);
     auto it = used_allocator.find(ptr);
     if (it != used_allocator.end()) {
@@ -88,6 +95,10 @@ GPUDoubleBFCAllocator::Chunk GPUDoubleBFCAllocator::FindAllocator(void* ptr) con
 
 void GPUDoubleBFCAllocator::DeallocateRaw(void* ptr)
 {
+    if (!ptr) {
+        return;
+    }
+
     BFCAllocator* alloc = nullptr;
     {
         mutex_lock l(lock_);
