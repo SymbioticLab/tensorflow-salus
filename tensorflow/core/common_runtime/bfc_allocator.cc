@@ -203,6 +203,7 @@ void* BFCAllocator::AllocateRaw(size_t unused_alignment, size_t num_bytes) {
         kMaxMillisToWait, unused_alignment, num_bytes);
     if (r) {
         VLOG(1) << "+" << num_bytes << ", " << r << " after " << count + 1 << " retries";
+        LOG(WARNING) << "+" << num_bytes << ", " << r << " after " << count + 1 << " retries";
     } else {
         LOG(WARNING) << "Failed to allocate " << num_bytes << " after " << count + 1 << " retires";
     }
