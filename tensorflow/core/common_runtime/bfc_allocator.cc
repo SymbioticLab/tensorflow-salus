@@ -194,12 +194,18 @@ void* BFCAllocator::AllocateRaw(size_t unused_alignment, size_t num_bytes) {
     return r;
   } else {
     static const int64 kMaxMillisToWait = 10000;  // 10 seconds
+    int count = 0;
     r = retry_helper_.AllocateRaw(
-        [this](size_t a, size_t nb, bool v) {
+        [this, &count](size_t a, size_t nb, bool v) {
+          ++count;
           return AllocateRawInternal(a, nb, v);
         },
         kMaxMillisToWait, unused_alignment, num_bytes);
-    if (r) VLOG(1) << "+" << num_bytes << ", " << r;
+    if (r) {
+        VLOG(1) << "+" << num_bytes << ", " << r << " after " << count + 1 << " retries";
+    } else {
+        LOG(WARNING) << "Failed to allocate " << num_bytes << " after " << count + 1 << " retires";
+    }
     return r;
   }
 }
