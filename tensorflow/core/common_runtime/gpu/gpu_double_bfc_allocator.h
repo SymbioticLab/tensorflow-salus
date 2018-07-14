@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <ostream>
 
 namespace tensorflow {
 
@@ -61,8 +62,12 @@ class GPUDoubleBFCAllocator : public VisitableAllocator {
 
   void DumpMemoryLog() const;
 
+  string GenerateMemoryMap() const;
+
  private:
   BFCAllocator *SelectAllocator(size_t num_bytes) const;
+
+  std::ostream &GenerateMemoryMapForBFC(BFCAllocator* alloc, std::ostream &out) const;
 
   struct Chunk {
     BFCAllocator *allocator;

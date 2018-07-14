@@ -22,6 +22,8 @@
 #include "tensorflow/core/common_runtime/gpu/gpu_init.h"
 #include "tensorflow/core/lib/strings/strcat.h"
 
+#include <sstream>
+
 namespace tensorflow {
 
 static const size_t MAX_SMALL = 1 * 1024 * 1024; // 1MB
@@ -177,6 +179,30 @@ void GPUDoubleBFCAllocator::DumpMemoryLog() const
         mutex_lock l(small_alloc_->lock_);
         small_alloc_->DumpMemoryLog(128);
     }
+}
+
+std::ostream &GPUDoubleBFCAllocator::GenerateMemoryMapForBFC(BFCAllocator* alloc, std::ostream &out) const
+{
+    mutex_lock l(alloc->lock_);
+
+    for (const auto& region : alloc->region_manager_.regions()) {
+        auto h = alloc->region_manager_.get_handle(region.ptr());
+        while (h != BFCAllocator::kInvalidChunkHandle) {
+            const auto c = alloc->ChunkFromHandle(h);
+            out << c->ptr << ", " << c->size << ", " << c->in_use() << ";";
+            h = c->next;
+        }
+    }
+
+    return out;
+}
+
+string GPUDoubleBFCAllocator::GenerateMemoryMap() const
+{
+    std::ostringstream oss;
+    GenerateMemoryMapForBFC(big_alloc_.get(), oss);
+    GenerateMemoryMapForBFC(small_alloc_.get(), oss);
+    return oss.str();
 }
 
 } // namespace tensorflow
