@@ -185,14 +185,16 @@ std::ostream &GPUDoubleBFCAllocator::GenerateMemoryMapForBFC(BFCAllocator* alloc
 {
     mutex_lock l(alloc->lock_);
 
+    out << alloc->name_ << "\t";
     for (const auto& region : alloc->region_manager_.regions()) {
         auto h = alloc->region_manager_.get_handle(region.ptr());
         while (h != BFCAllocator::kInvalidChunkHandle) {
             const auto c = alloc->ChunkFromHandle(h);
-            out << c->ptr << ", " << c->size << ", " << c->in_use() << ";";
+            out << c->ptr << "," << c->size << "," << c->in_use() << ";";
             h = c->next;
         }
     }
+    out << "&";
 
     return out;
 }
