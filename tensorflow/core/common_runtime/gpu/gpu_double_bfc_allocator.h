@@ -37,7 +37,7 @@ class GPUDoubleBFCAllocator : public VisitableAllocator {
   // the process and must reference a valid ID in the process.
   GPUDoubleBFCAllocator(int device_id, size_t total_memory);
   GPUDoubleBFCAllocator(int device_id, size_t total_memory,
-                        const GPUOptions& gpu_options);
+                        const GPUOptions& gpu_options, bool use_small_opt);
   ~GPUDoubleBFCAllocator() override {}
 
   string Name() override { return name_; }
