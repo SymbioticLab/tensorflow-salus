@@ -432,6 +432,7 @@ class BFCAllocator : public VisitableAllocator {
   AllocatorStats stats_ GUARDED_BY(lock_);
 
   friend class GPUBFCAllocatorPrivateMethodsTest;
+  friend class GPUDoubleBFCAllocator;
   TF_DISALLOW_COPY_AND_ASSIGN(BFCAllocator);
 };
 

@@ -155,11 +155,7 @@ Allocator* ProcessState::GetGPUAllocator(const GPUOptions& options, int gpu_id,
       return nullptr;
     }
 
-    if (useSmallAllocOptimization()) {
-      gpu_allocator = new GPUDoubleBFCAllocator(gpu_id, total_bytes, options);
-    } else {
-      gpu_allocator = new GPUBFCAllocator(gpu_id, total_bytes, options);
-    }
+    gpu_allocator = new GPUDoubleBFCAllocator(gpu_id, total_bytes, options, useSmallAllocOptimization());
 
     // If true, checks for memory overwrites by writing
     // distinctive patterns on both ends of allocated memory.

@@ -22,32 +22,46 @@
 #include "tensorflow/core/common_runtime/gpu/gpu_init.h"
 #include "tensorflow/core/lib/strings/strcat.h"
 
+#include <sstream>
+
 namespace tensorflow {
 
 static const size_t MAX_SMALL = 1 * 1024 * 1024; // 1MB
-static const double SMALL_RATIO = 0.04;
+static const double SMALL_POOL = 500 * 1024 * 1024; // 200MB;
 
 GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory)
-    : GPUDoubleBFCAllocator(device_id, total_memory, {}) {}
+    : GPUDoubleBFCAllocator(device_id, total_memory, {}, true) {}
 
-GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory, const GPUOptions& gpu_options)
-    : name_(strings::StrCat("GPU_", device_id, "_smallopt"))
-    , small_alloc_(new BFCAllocator(
-        new GPUMemAllocator(
-            GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
-            total_memory * SMALL_RATIO, false,
-        strings::StrCat("GPU_", device_id, "_bfc_small")))
-    , big_alloc_(new BFCAllocator(
-        new GPUMemAllocator(
-            GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
-            total_memory * (1 - SMALL_RATIO), gpu_options.allow_growth(),
-        strings::StrCat("GPU_", device_id, "_bfc_big")))
+GPUDoubleBFCAllocator::GPUDoubleBFCAllocator(int device_id, size_t total_memory, const GPUOptions& gpu_options, bool use_small_opt)
+    : name_(strings::StrCat("GPU_", device_id, "_dbfc"))
+    , small_alloc_(nullptr)
+    , big_alloc_(nullptr)
     , next_allocation_id_(1)
-{}
+{
+    if (use_small_opt) {
+        CHECK(total_memory > SMALL_POOL) << "Total memory less than SMALL_POOL!!!";
+        small_alloc_.reset(new BFCAllocator(
+            new GPUMemAllocator(
+                GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
+                SMALL_POOL, false,
+            strings::StrCat("GPU_", device_id, "_bfc_small")));
+        big_alloc_.reset(new BFCAllocator(
+            new GPUMemAllocator(
+                GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
+                total_memory - SMALL_POOL, gpu_options.allow_growth(),
+            strings::StrCat("GPU_", device_id, "_bfc_big")));
+    } else {
+        big_alloc_.reset(new BFCAllocator(
+            new GPUMemAllocator(
+                GPUMachineManager()->ExecutorForDevice(device_id).ValueOrDie()),
+                total_memory, gpu_options.allow_growth(),
+            strings::StrCat("GPU_", device_id, "_bfc_big")));
+    }
+}
 
 BFCAllocator *GPUDoubleBFCAllocator::SelectAllocator(size_t num_bytes) const
 {
-    if (num_bytes <= MAX_SMALL) {
+    if (small_alloc_ && num_bytes <= MAX_SMALL) {
         return small_alloc_.get();
     }
     return big_alloc_.get();
@@ -115,13 +129,17 @@ void GPUDoubleBFCAllocator::DeallocateRaw(void* ptr)
 
 void GPUDoubleBFCAllocator::AddAllocVisitor(Visitor visitor)
 {
-    small_alloc_->AddAllocVisitor(std::move(visitor));
+    if (small_alloc_) {
+        small_alloc_->AddAllocVisitor(std::move(visitor));
+    }
     big_alloc_->AddAllocVisitor(std::move(visitor));
 }
 
 void GPUDoubleBFCAllocator::AddFreeVisitor(Visitor visitor)
 {
-    small_alloc_->AddFreeVisitor(std::move(visitor));
+    if (small_alloc_) {
+        small_alloc_->AddFreeVisitor(std::move(visitor));
+    }
     big_alloc_->AddFreeVisitor(std::move(visitor));
 }
 
@@ -154,6 +172,9 @@ void GPUDoubleBFCAllocator::GetStats(AllocatorStats* stats)
     // based on big's stats
     big_alloc_->GetStats(stats);
 
+    if (!small_alloc_) {
+        return;
+    }
     // add small
     AllocatorStats small;
     small_alloc_->GetStats(&small);
@@ -163,6 +184,46 @@ void GPUDoubleBFCAllocator::GetStats(AllocatorStats* stats)
     stats->max_bytes_in_use += small.max_bytes_in_use;
     // use big's max_alloc_size
     // use big's bytes_limit
+}
+
+void GPUDoubleBFCAllocator::DumpMemoryLog() const
+{
+    {
+        mutex_lock l(big_alloc_->lock_);
+        big_alloc_->DumpMemoryLog(128);
+    }
+    if (small_alloc_) {
+        mutex_lock l(small_alloc_->lock_);
+        small_alloc_->DumpMemoryLog(128);
+    }
+}
+
+std::ostream &GPUDoubleBFCAllocator::GenerateMemoryMapForBFC(BFCAllocator* alloc, std::ostream &out) const
+{
+    mutex_lock l(alloc->lock_);
+
+    out << alloc->name_ << "\t";
+    for (const auto& region : alloc->region_manager_.regions()) {
+        auto h = alloc->region_manager_.get_handle(region.ptr());
+        while (h != BFCAllocator::kInvalidChunkHandle) {
+            const auto c = alloc->ChunkFromHandle(h);
+            out << c->ptr << "," << c->size << "," << c->in_use() << ";";
+            h = c->next;
+        }
+    }
+    out << "&";
+
+    return out;
+}
+
+string GPUDoubleBFCAllocator::GenerateMemoryMap() const
+{
+    std::ostringstream oss;
+    GenerateMemoryMapForBFC(big_alloc_.get(), oss);
+    if (small_alloc_) {
+        GenerateMemoryMapForBFC(small_alloc_.get(), oss);
+    }
+    return oss.str();
 }
 
 } // namespace tensorflow
