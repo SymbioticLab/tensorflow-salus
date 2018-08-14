@@ -221,6 +221,9 @@ message SalusOptions {
     int64 alloc_count = 3;
   }
   ResourceMapDef resource_map = 3;
+
+  // Stream base index for GPU device
+  int32 stream_base_index = 4;
 }
 
 // Session configuration parameters.

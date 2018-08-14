@@ -101,7 +101,6 @@ class BaseGPUDevice : public LocalDevice {
   std::vector<GPUDeviceContext*> device_contexts_;
   const int32 max_streams_;
 
- private:
   struct StreamGroup {
     gpu::Stream* compute = nullptr;
     gpu::Stream* host_to_device = nullptr;
@@ -111,6 +110,8 @@ class BaseGPUDevice : public LocalDevice {
   class StreamGroupFactory;
 
   gtl::InlinedVector<StreamGroup*, 4> streams_;
+
+private:
   gtl::InlinedVector<char*, 4> scratch_;
   GpuDeviceInfo* gpu_device_info_ = nullptr;
   mutex trace_mu_;

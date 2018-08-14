@@ -271,9 +271,10 @@ Status BaseGPUDevice::Init(const SessionOptions& options) {
   }
 
   // Create the specified number of GPU streams
+  const auto stream_base_index = options.config.salus_options().stream_base_index();
   for (int i = 0; i < max_streams_; i++) {
     streams_.push_back(
-        StreamGroupFactory::Global().GetOrCreate(gpu_id_, i, executor_));
+        StreamGroupFactory::Global().GetOrCreate(gpu_id_, i + stream_base_index, executor_));
 
     size_t scratch_buffer_size = Eigen::kCudaScratchSize + sizeof(unsigned int);
     void* scratch_buffer = gpu_allocator_->AllocateRaw(
