@@ -59,6 +59,7 @@ limitations under the License.
 #include "tensorflow/core/platform/tracing.h"
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/util/tensor_slice_reader_cache.h"
+#include "tensorflow/core/util/env_var.h"
 
 namespace tensorflow {
 namespace {
@@ -610,8 +611,54 @@ void GetMaxPendingCounts(const Node* n, size_t* max_pending,
   *max_dead_count = num_in_edges;
 }
 
+namespace {
+  bool shouldDumpGraph() {
+    bool value;
+    auto s = ReadBoolFromEnvVar("SALUS_DUMP_GRAPH", false, &value);
+    return s.ok() && value;
+  }
+  bool shouldDumpGraphCached() {
+    static bool value = shouldDumpGraph();
+    return value;
+  }
+    std::string tfGraphToGraphviz(const Graph &g, const std::string &name)
+    {
+      std::ostringstream os;
+      os << "digraph " << name << "{";
+
+      // graph attributes
+      os << "graph[num_nodes=" << g.num_nodes()
+         << ",num_edges=" << g.num_edges()
+         << ","
+         << "];";
+
+      // all nodes
+      for (auto *n : g.nodes()) {
+        os << n->id() << "[name=\"" << n->name() << "\""
+           << ",type=\"" << n->type_string() << "\""
+           << "];";
+      }
+      // all edges
+      for (auto e : g.edges()) {
+        os << e->src()->id() << "->" << e->dst()->id() << "["
+           << "src_output=" << e->src_output()
+           << ",dst_input=" << e->dst_input()
+           << ",id=" << e->id()
+           << "];";
+      }
+
+      os << "}";
+      return os.str();
+    }
+}
+
 Status ExecutorImpl::Initialize() {
   gview_.Initialize(graph_);
+
+  if (shouldDumpGraphCached()) {
+    VLOG(1) << "event: new_graph " << R"({"device":")" << params_.device->name()
+    << R"(","graph":")" << tfGraphToGraphviz(*graph_, "") << R"("})";
+  }
 
   // Build the information about frames in this subgraph.
   ControlFlowInfo cf_info;
