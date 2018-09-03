@@ -106,6 +106,7 @@ Status ZrpcSession::CreateImpl(CallOptions *call_options, const GraphDef &graph)
     CreateSessionResponse resp;
     Status s = master_->CreateSession(call_options, &req, &resp);
     if (s.ok()) {
+        LOG(INFO) << "Created session with handle " << resp.session_handle();
         mutex_lock l(mu_);
         swap(handle_, *(resp.mutable_session_handle()));
         current_graph_version_ = resp.graph_version();
