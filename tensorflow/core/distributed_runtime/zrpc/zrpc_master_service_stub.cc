@@ -64,7 +64,7 @@ ZrpcMasterServiceStub::ZrpcMasterServiceStub(Env *env, const std::string &execut
     , m_sendSock(m_zmqctx, zmq::socket_type::dealer)
     , m_recvId(strings::FpToString(random::New64()))
 {
-    LOG(INFO) << "Created ZeroMQ context with recv id" << m_recvId;
+    VLOG(2) << "Created ZeroMQ context with recv id" << m_recvId;
 
     m_recvThread = env->StartThread(ThreadOptions(),
                                     strings::StrCat("ZrpcMasterServiceStub::recvLoop::", m_recvId),
@@ -117,26 +117,26 @@ ZrpcMasterServiceStub::Item::~Item()
 void ZrpcMasterServiceStub::dumpWaitingCb()
 {
     mutex_lock locker(m_mtable);
-    LOG(INFO) << "Pending callbacks:";
+    VLOG(3) << "Pending callbacks:";
     for (auto &p : m_recvCallbacks) {
         auto &item = p.second;
-        LOG(INFO) << "  seq: " << p.first;
+        VLOG(3) << "  seq: " << p.first;
         if (item.reply) {
-            LOG(INFO) << "    reply type: " << item.reply->GetTypeName();
+            VLOG(3) << "    reply type: " << item.reply->GetTypeName();
         } else {
-            LOG(INFO) << "    reply type: nullptr";
+            VLOG(3) << "    reply type: nullptr";
         }
-        LOG(INFO) << "   done: " << item.done.target_type().name();
+        VLOG(3) << "   done: " << item.done.target_type().name();
         for (auto &typed : item.typedCallbacks) {
-            LOG(INFO) << "    " << typed.first
-                      << " -> " << typed.second.target_type().name();
+            VLOG(3) << "    " << typed.first
+                   << " -> " << typed.second.target_type().name();
         }
     }
 }
 
 void ZrpcMasterServiceStub::recvLoop()
 {
-    LOG(INFO) << "Started zmq recving thread, using ZMQ_IDENTITY: " << m_recvId;
+    VLOG(2) << "Started zmq recving thread, using ZMQ_IDENTITY: " << m_recvId;
 
     zmq::socket_t recvSock(m_zmqctx, zmq::socket_type::dealer);
     try {
@@ -182,7 +182,7 @@ void ZrpcMasterServiceStub::recvLoop()
                 continue;
             }
 
-            LOG(INFO) << "Received evenlop: seq=" << edef.seq() << " type=" << edef.type();
+            VLOG(2) << "Received evenlop: seq=" << edef.seq() << " type=" << edef.type();
 
             // Find corresonding item in table
             DoneCallback cb;
@@ -241,9 +241,9 @@ void ZrpcMasterServiceStub::recvLoop()
             }
 
             // Invoke callback regardless whether we have a body or not
-            LOG(INFO) << "Calling callback function for seq " << edef.seq() << " and type " << edef.type();
+            VLOG(2) << "Calling callback function for seq " << edef.seq() << " and type " << edef.type();
             cb(Status::OK(), std::move(reply));
-            LOG(INFO) << "Callback function returned for seq " << edef.seq() << " and type " << edef.type();
+            VLOG(4) << "Callback function returned for seq " << edef.seq() << " and type " << edef.type();
         } catch (zmq::error_t &err) {
             if (err.num() == ETERM || err.num() == EINTR) {
                 break;
@@ -294,7 +294,7 @@ ZrpcMasterServiceStub::AsyncCallStarter ZrpcMasterServiceStub::makeStarter(const
     zmq::message_t evenlop(edef.ByteSizeLong());
     edef.SerializeToArray(evenlop.data(), evenlop.size());
 
-    LOG(INFO) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
+    VLOG(2) << "Sending evenlop message_t: " << edef.type() << " seq " << edef.seq();
 
     // Create body message
     zmq::message_t zmqmsg(msg.ByteSizeLong());
@@ -323,7 +323,7 @@ void ZrpcMasterServiceStub::AsyncCallStarter::start()
             m_client.m_sendSock.send(m_evenlop, ZMQ_SNDMORE);
             m_client.m_sendSock.send(m_zmqmsg);
         }
-        LOG(INFO) << "Message sent for seq: " << m_seq;
+        VLOG(3) << "Message sent for seq: " << m_seq;
     } catch (zmq::error_t &err) {
         LOG(ERROR) << "Error when sending message seq " << m_seq << ": " << err.what();
         // cleanup callback if any
@@ -354,8 +354,8 @@ Status ZrpcMasterServiceStub::rpcCall(const std::string &sessionId, const ::goog
 #define HANDLER_IMPL(name, sessIdExpr) \
 Status ZrpcMasterServiceStub:: name (const name ## Request &req, name ## Response *resp) \
 { \
-    LOG(INFO) << "==================================================================="; \
-    LOG(INFO) << "RpcClient::" #name; \
+    VLOG(2) << "==================================================================="; \
+    VLOG(2) << "RpcClient::" #name; \
 \
     zrpc::CustomRequest request; \
     req.SerializeToString(request.mutable_extra()); \
