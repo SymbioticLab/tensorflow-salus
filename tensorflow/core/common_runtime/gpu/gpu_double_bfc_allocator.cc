@@ -207,7 +207,11 @@ std::ostream &GPUDoubleBFCAllocator::GenerateMemoryMapForBFC(BFCAllocator* alloc
         auto h = alloc->region_manager_.get_handle(region.ptr());
         while (h != BFCAllocator::kInvalidChunkHandle) {
             const auto c = alloc->ChunkFromHandle(h);
-            out << c->ptr << "," << c->size << "," << c->in_use() << ";";
+            const size_t bsize = 0;
+            if (c->bin_num != BFCAllocator::kInvalidBinNum) {
+                bsize = alloc->BinFromIndex(c->bin_num)->bin_size;
+            }
+            out << c->ptr << "," << c->size << "," << c->in_use() << bsize << ";";
             h = c->next;
         }
     }
