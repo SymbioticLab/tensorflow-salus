@@ -35,10 +35,11 @@ def init(ctx, yes=False):
     # check python
     candidates = [
         os.path.expanduser('~/.local/venvs/tfbuild/bin/python'),
+        ctx.run('which python', hide=True).stdout.strip(),
         sys.executable
     ]
     for pybin in candidates:
-        if os.access(pybin, os.X_OK):
+        if os.path.isfile(pybin) and os.access(pybin, os.X_OK):
             default_values['PYTHON_BIN_PATH'] = pybin
             break
     # check zeromq
@@ -127,6 +128,7 @@ def install(ctx, save=False):
             ws.run('{} uninstall -y tensorflow'.format(ws.venv.pip), warn=True)
             ws.run('{} install {}/*.whl'.format(ws.venv.pip, tempdir))
             if save:
+                ws.run('mkdir -p {}'.format(os.path.expanduser('~/downloads')))
                 ws.run('cp -a {}/* {}'.format(tempdir, os.path.expanduser('~/downloads/')))
         finally:
             if tempdir:
