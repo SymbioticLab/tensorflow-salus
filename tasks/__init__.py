@@ -141,3 +141,11 @@ def interactive(ctx, sh=None):
         with gitbr(ws, BUILD_BRANCH):
             print("Entering interactive shell...")
             shell(ws, sh)
+
+
+@task(pre=[checkinit, build])
+def docker(ctx):
+    """Populate the docker context directory by copying files over,
+       preserving symlinks internal to the context directory
+    """
+    pass
