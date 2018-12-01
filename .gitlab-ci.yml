@@ -12,6 +12,8 @@ variables:
 
 build:
   stage: build
+  tags:
+    - gpu
   services:
     - docker:dind
   script:
@@ -24,6 +26,14 @@ build:
     - docker pull $IMAGE_TAG || docker pull $LATEST_TAG || true
     - docker build --cache-from $IMAGE_TAG --cache-from $LATEST_TAG -t $IMAGE_TAG docker
     - docker push $IMAGE_TAG
+
+test:
+  stage: test
+  image: $IMAGE_TAG
+  tags:
+    - gpu
+  script:
+    - python -c 'import tensorflow'
 
 release:
   stage: release

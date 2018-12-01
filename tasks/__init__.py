@@ -16,14 +16,14 @@ def deps(ctx):
         'zeromq@4.2.2',
         'cppzmq@4.2.2'
     ]
-    ctx.run(['spack', 'install'] + dependencies)
-    ctx.run(['spack', 'view', '-v', '-d', 'true', 'spack-packages'] + dependencies)
+    ctx.run('spack install ' + ' '.join(dependencies))
+    ctx.run('spack view -v -d true spack-packages ' + ' '.join(dependencies))
 
     # python dependencies
     pydependencies = [
         'numpy',
     ]
-    ctx.run(['pip', 'install'] + pydependencies)
+    ctx.run('pip install ' + ' '.join(pydependencies))
 
 
 @task
@@ -168,7 +168,6 @@ def docker(ctx):
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package .')
 
         # cp all files from bazel-output to docker context, preserving symlink
-        ws.run(['mkdir', 'tensorflow-src'])
-        ws.run(['cp', '-rL', 'bazel-out', 'tensorflow-src'])
-        ws.run(['cp', '-rL', 'bazel-bin', 'tensorflow-src'])
-
+        ws.run('mkdir -p tensorflow-src')
+        ws.run('cp -rL bazel-out tensorflow-src')
+        ws.run('cp -rL bazel-bin tensorflow-src')
