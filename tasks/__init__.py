@@ -9,6 +9,22 @@ from invoke.exceptions import Exit
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
 from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr
 
+@task
+def deps(ctx):
+    """Install dependencies"""
+    dependencies = [
+        'zeromq@4.2.2',
+        'cppzmq@4.2.2'
+    ]
+    ctx.run(['spack', 'install'] + dependencies)
+    ctx.run(['spack', 'view', '-v', '-d', 'true', 'spack-packages'] + dependencies)
+
+    # python dependencies
+    pydependencies = [
+        'numpy',
+    ]
+    ctx.run(['pip', 'install'] + pydependencies)
+
 
 @task
 def init(ctx, yes=False):
@@ -84,7 +100,6 @@ def patch(ctx):
 
     with wscd(ctx) as ws:
         maybepatch(ws, 'tools/debug-build.patch')
-        maybepatch(ws, 'tools/path-gcc54.patch')
 
 
 @task(pre=[checkinit], aliases=['bb'], positional=['bazelArgs'])
@@ -124,7 +139,6 @@ def install(ctx, save=False):
         try:
             tempdir = ws.run('mktemp -d', hide=True).stdout.strip()
             ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package {}'.format(tempdir))
-            ws.run('echo $PATH')
             ws.run('{} uninstall -y tensorflow'.format(ws.venv.pip), warn=True)
             ws.run('{} install {}/*.whl'.format(ws.venv.pip, tempdir))
             if save:
@@ -148,4 +162,13 @@ def docker(ctx):
     """Populate the docker context directory by copying files over,
        preserving symlinks internal to the context directory
     """
-    pass
+    docker_ctx_dir = 'docker'
+    with wscd(ctx, docker_ctx_dir) as ws:
+        # generate wheel package
+        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package .')
+
+        # cp all files from bazel-output to docker context, preserving symlink
+        ws.run(['mkdir', 'tensorflow-src'])
+        ws.run(['cp', '-rL', 'bazel-out', 'tensorflow-src'])
+        ws.run(['cp', '-rL', 'bazel-bin', 'tensorflow-src'])
+

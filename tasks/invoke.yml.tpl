@@ -25,11 +25,11 @@ buildcfg:
 
     TF_NEED_CUDA: 1
     TF_CUDA_VERSION: 9.1
-    CUDA_TOOLKIT_PATH: /opt/cuda
+    CUDA_TOOLKIT_PATH: /usr/local/cuda
     TF_CUDNN_VERSION: 7
-    CUDNN_INSTALL_PATH: /opt/cuda
+    CUDNN_INSTALL_PATH: /usr/local/cuda
     TF_CUDA_COMPUTE_CAPABILITIES: 6.1
     TF_CUDA_CLANG: 0
-    GCC_HOST_COMPILER_PATH: /usr/bin/gcc-6
+    GCC_HOST_COMPILER_PATH: /usr/bin/gcc-5
 
     TF_SET_ANDROID_WORKSPACE:

@@ -1,0 +1,37 @@
+image: registry.gitlab.com/salus/builder
+stages:
+  - build
+  - test
+  - release
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+
+build:
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - inv deps
+    - inv init --yes false
+    - inv config
+    - inv build
+    - inv docker
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $IMAGE_TAG || docker pull $LATEST_TAG || true
+    - docker build --cache-from $IMAGE_TAG --cache-from $LATEST_TAG -t $IMAGE_TAG docker
+    - docker push $IMAGE_TAG
+
+release:
+  stage: release
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $IMAGE_TAG
+    - docker tag $IMAGE_TAG $LATEST_TAG
+    - docker push $LATEST_TAG
+
