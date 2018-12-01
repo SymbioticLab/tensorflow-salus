@@ -17,7 +17,7 @@ def deps(ctx):
         'cppzmq@4.3.0'
     ]
     ctx.run('spack install ' + ' '.join(dependencies))
-    ctx.run('spack view -v -d true spack-packages ' + ' '.join(dependencies))
+    ctx.run('spack view -v -d true add spack-packages ' + ' '.join(dependencies))
 
     # python dependencies
     pydependencies = [
