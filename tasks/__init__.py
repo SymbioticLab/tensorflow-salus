@@ -13,8 +13,8 @@ from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd
 def deps(ctx):
     """Install dependencies"""
     dependencies = [
-        'zeromq@4.2.2',
-        'cppzmq@4.2.2'
+        'zeromq@4.3.0',
+        'cppzmq@4.3.0'
     ]
     ctx.run('spack install ' + ' '.join(dependencies))
     ctx.run('spack view -v -d true spack-packages ' + ' '.join(dependencies))
