@@ -127,9 +127,18 @@ def wscd(ctx, relpath=''):
 @contextmanager
 def gitbr(ctx, branch):
     currentBranch = ctx.run('git rev-parse --abbrev-ref HEAD', hide=True).stdout.strip()
-    if currentBranch == branch:
+    if currentBranch == 'HEAD':
+        # detached head
+        prevCommit = ctx.run('git rev-parse HEAD', hide=True).stdout.strip()
+        ctx.run('git checkout -b {}'.format(branch), hide=True)
+        yield
+        ctx.run('git checkout {}'.format(prevCommit), hide=True)
+        ctx.run('git branch -D {}'.format(branch), hide=True)
+    elif currentBranch == branch:
+        # already on the branch
         yield
     else:
+        # on other branch
         ctx.run('git checkout -b {}'.format(branch), hide=True)
         try:
             yield
