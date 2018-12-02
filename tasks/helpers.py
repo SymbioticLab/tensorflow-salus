@@ -49,7 +49,7 @@ def confirm(question, enabled_by_default=True, yes=False):
             var = enabled_by_default
         else:
             print('Invalid selection: %s' % user_input_origin)
-        return var
+    return var
 
 
 def template(src, dst, values):

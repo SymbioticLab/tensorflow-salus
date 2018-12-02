@@ -17,8 +17,11 @@ build:
   services:
     - docker:dind
   script:
+    - apt-get update && apt-get install -y unzip
+    - curl -JOL 'https://github.com/bazelbuild/bazel/releases/download/0.5.4/bazel-0.5.4-without-jdk-installer-linux-x86_64.sh'
+    - bash bazel-0.5.4-*.sh
     - inv deps
-    - inv init --yes false
+    - inv init --no_edit
     - inv config
     - inv build
     - inv docker

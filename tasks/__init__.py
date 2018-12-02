@@ -27,7 +27,7 @@ def deps(ctx):
 
 
 @task
-def init(ctx, yes=False):
+def init(ctx, yes=False, no_edit=False):
     '''Initialize the project environments
         yes: Answer yes to all questions
     '''
@@ -65,7 +65,7 @@ def init(ctx, yes=False):
     tpl = os.path.join(TASKS_DIR, 'invoke.yml.tpl')
     template(tpl, target, default_values)
 
-    if confirm('Do you want to edit {}?'.format(target), yes=yes):
+    if not no_edit and confirm('Do you want to edit {}?'.format(target), yes=yes):
         edit_file(ctx, target)
 
     print("Remember to run `inv cf' after changing environment variables.")
@@ -163,11 +163,12 @@ def docker(ctx):
        preserving symlinks internal to the context directory
     """
     docker_ctx_dir = 'docker'
-    with wscd(ctx, docker_ctx_dir) as ws:
+    with wscd(ctx) as ws:
         # generate wheel package
-        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package .')
+        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
 
         # cp all files from bazel-output to docker context, preserving symlink
-        ws.run('mkdir -p tensorflow-src')
-        ws.run('cp -rL bazel-out tensorflow-src')
-        ws.run('cp -rL bazel-bin tensorflow-src')
+        tfsrc = os.path.join(WORKSPACE, 'tensorflow-src')
+        ws.run('mkdir -p {}'.format(tfsrc))
+        ws.run('cp -rL bazel-out {}'.format(tfsrc))
+        ws.run('cp -rL bazel-bin {}'.format(tfsrc))
