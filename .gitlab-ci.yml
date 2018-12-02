@@ -20,6 +20,7 @@ build:
     - apt-get update && apt-get install -y unzip
     - curl -JOL 'https://github.com/bazelbuild/bazel/releases/download/0.5.4/bazel-0.5.4-without-jdk-installer-linux-x86_64.sh'
     - bash bazel-0.5.4-*.sh
+    - git status
     - inv deps
     - inv init --no-edit
     - inv config
