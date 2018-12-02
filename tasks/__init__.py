@@ -169,5 +169,16 @@ def docker(ctx):
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
 
         # copy all files from bazel-output to docker context, resolving symlink
-        tfsrc = os.path.join(docker_ctx_dir, 'tensorflow-src')
-        ws.run('rsync -rvL bazel-bin bazel-out {}'.format(tfsrc))
+        cmd = [
+            'rsync',
+            '-avL',
+            '--include=libtensorflow_*.so',  # copy the header files
+            '--include=*.h',  # copy the header files
+            '--include=*/',  # copy the folder
+            '--exclude=*',  # exclude everything
+            '--prune-empty-dirs',
+            'bazel-bin',
+            'bazel-out',
+            os.path.join(docker_ctx_dir, 'tensorflow-src')
+        ]
+        ws.run(' '.join(cmd))
