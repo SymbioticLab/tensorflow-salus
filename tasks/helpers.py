@@ -5,6 +5,8 @@ import sys
 from contextlib import contextmanager
 from string import Template
 
+from invoke.exceptions import UnexpectedExit
+
 from .config import venv, WORKSPACE
 
 
@@ -127,21 +129,23 @@ def wscd(ctx, relpath=''):
 @contextmanager
 def gitbr(ctx, branch):
     currentBranch = ctx.run('git rev-parse --abbrev-ref HEAD', hide=True).stdout.strip()
+
+    if currentBranch == branch:
+        yield
+
     if currentBranch == 'HEAD':
         # detached head
-        prevCommit = ctx.run('git rev-parse HEAD', hide=True).stdout.strip()
-        ctx.run('git checkout -b {}'.format(branch), hide=True)
-        yield
-        ctx.run('git checkout {}'.format(prevCommit), hide=True)
-        ctx.run('git branch -D {}'.format(branch), hide=True)
-    elif currentBranch == branch:
-        # already on the branch
-        yield
+        prevState = ctx.run('git rev-parse HEAD', hide=True).stdout.strip()
     else:
         # on other branch
-        ctx.run('git checkout -b {}'.format(branch), hide=True)
-        try:
-            yield
-        finally:
-            ctx.run('git checkout {}'.format(currentBranch), hide=True)
-            ctx.run('git branch -D {}'.format(branch), hide=True)
+        prevState = currentBranch
+
+    try:
+        ctx.run('git branch -D {}'.format(branch), hide=True)
+    except UnexpectedExit:
+        pass
+
+    ctx.run('git checkout -b {}'.format(branch), hide=True)
+    yield
+    ctx.run('git checkout {}'.format(prevState), hide=True)
+    ctx.run('git branch -D {}'.format(branch), hide=True)
