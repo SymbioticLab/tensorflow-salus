@@ -172,10 +172,10 @@ def docker(ctx):
         cmd = [
             'rsync',
             '-avL',
-            '--include=libtensorflow_*.so',  # copy the header files
-            '--include=*.h',  # copy the header files
-            '--include=*/',  # copy the folder
-            '--exclude=*',  # exclude everything
+            "--include='libtensorflow_*.so'",  # copy the header files
+            "--include='*.h'",  # copy the header files
+            "--include='*/'",  # copy the folder
+            "--exclude='*'",  # exclude everything
             '--prune-empty-dirs',
             'bazel-bin',
             'bazel-out',
