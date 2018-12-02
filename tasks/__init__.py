@@ -169,6 +169,7 @@ def docker(ctx):
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
 
         # copy all files from bazel-output to docker context, resolving symlink
+        tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
         cmd = [
             'rsync',
             '-avL',
@@ -176,7 +177,11 @@ def docker(ctx):
             '"merge {}"'.format(os.path.join(docker_ctx_dir, 'whitelist.rsync-filter')),
             '--prune-empty-dirs',
             'bazel-bin',
-            'bazel-tensorflow',
-            os.path.join(docker_ctx_dir, 'tensorflow-src')
+            'bazel-{}'.format(tf_repo_name),
+            os.path.join(docker_ctx_dir, tf_repo_name)
         ]
         ws.run(' '.join(cmd))
+
+        # create a stable symlink
+        if tf_repo_name != 'tensorflow':
+            ws.run('ln -s {} docker/tensorflow'.format(tf_repo_name))
