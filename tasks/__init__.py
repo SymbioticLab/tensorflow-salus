@@ -172,13 +172,11 @@ def docker(ctx):
         cmd = [
             'rsync',
             '-avL',
-            "--include='libtensorflow_*.so'",  # copy the header files
-            "--include='*.h'",  # copy the header files
-            "--include='*/'",  # copy the folder
-            "--exclude='*'",  # exclude everything
+            '--filter',
+            '"merge {}"'.format(os.path.join(docker_ctx_dir, 'whitelist.rsync-filter')),
             '--prune-empty-dirs',
             'bazel-bin',
-            'bazel-out',
+            'bazel-tensorflow',
             os.path.join(docker_ctx_dir, 'tensorflow-src')
         ]
         ws.run(' '.join(cmd))
