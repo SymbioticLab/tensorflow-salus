@@ -21,7 +21,7 @@ build:
     - curl -JOL 'https://github.com/bazelbuild/bazel/releases/download/0.5.4/bazel-0.5.4-without-jdk-installer-linux-x86_64.sh'
     - bash bazel-0.5.4-*.sh
     - inv deps
-    - inv init --no_edit
+    - inv init --no-edit
     - inv config
     - inv build
     - inv docker

@@ -168,7 +168,7 @@ def docker(ctx):
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
 
         # cp all files from bazel-output to docker context, preserving symlink
-        tfsrc = os.path.join(WORKSPACE, 'tensorflow-src')
+        tfsrc = os.path.join(docker_ctx_dir, 'tensorflow-src')
         ws.run('mkdir -p {}'.format(tfsrc))
-        ws.run('cp -rL bazel-out {}'.format(tfsrc))
-        ws.run('cp -rL bazel-bin {}'.format(tfsrc))
+        ws.run('cp --verbose -rL bazel-out {}'.format(tfsrc))
+        ws.run('cp --verbose -rL bazel-bin {}'.format(tfsrc))
