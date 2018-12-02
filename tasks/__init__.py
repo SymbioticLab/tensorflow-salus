@@ -9,6 +9,7 @@ from invoke.exceptions import Exit
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
 from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr
 
+
 @task
 def deps(ctx):
     """Install dependencies"""
@@ -167,8 +168,6 @@ def docker(ctx):
         # generate wheel package
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
 
-        # cp all files from bazel-output to docker context, preserving symlink
+        # copy all files from bazel-output to docker context, resolving symlink
         tfsrc = os.path.join(docker_ctx_dir, 'tensorflow-src')
-        ws.run('mkdir -p {}'.format(tfsrc))
-        ws.run('cp --verbose -rL bazel-out {}'.format(tfsrc))
-        ws.run('cp --verbose -rL bazel-bin {}'.format(tfsrc))
+        ws.run('rsync -rvL bazel-bin bazel-out {}'.format(tfsrc))
