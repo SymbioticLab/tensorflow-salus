@@ -30,13 +30,26 @@ build:
     - docker build --cache-from $IMAGE_TAG --cache-from $LATEST_TAG -t $IMAGE_TAG docker
     - docker push $IMAGE_TAG
 
-test:
+test-pyimport:
   stage: test
   image: $IMAGE_TAG
   tags:
     - gpu
   script:
+    # We need to get out of the tensorflow source folder, otherwise import won't work
+    - cd /salus
     - python -c 'import tensorflow'
+
+test-tfsrc:
+  stage: test
+  image: $IMAGE_TAG
+  script:
+    - test -d ${TENSORFLOW_ROOT}/tensorflow/core
+    - test -d ${TENSORFLOW_ROOT}/tensorflow/cc
+    - test -d ${TENSORFLOW_ROOT}/third_party
+    - test -d ${TENSORFLOW_ROOT}/bazel-bin/tensorflow
+    - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_framework.so
+    - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_kernels.so
 
 release:
   stage: release

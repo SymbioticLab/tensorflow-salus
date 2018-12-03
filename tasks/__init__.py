@@ -7,7 +7,7 @@ from invoke import task
 from invoke.exceptions import Exit
 
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
-from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr
+from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr, detect_cuda, detect_executible
 
 
 @task
@@ -50,17 +50,23 @@ def init(ctx, yes=False, no_edit=False):
         'ZEROMQ_PATH': ''
     }
     # check python
-    candidates = [
+    default_values['PYTHON_BIN_PATH'] = detect_executible([
         os.path.expanduser('~/.local/venvs/tfbuild/bin/python'),
         ctx.run('which python', hide=True).stdout.strip(),
         sys.executable
-    ]
-    for pybin in candidates:
-        if os.path.isfile(pybin) and os.access(pybin, os.X_OK):
-            default_values['PYTHON_BIN_PATH'] = pybin
-            break
+    ])
+
     # check zeromq
     default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'spack-packages')
+
+    # check CUDA
+    default_values['CUDA_PATH'], default_values['CUDA_VERSION'], default_values['CUDNN_VERSION'] = detect_cuda()
+
+    # check host gcc
+    default_values['PYTHON_BIN_PATH'] = detect_executible([
+        ctx.run('which gcc', hide=True).stdout.strip(),
+        '/usr/bin/gcc-5',
+    ])
 
     print('Creating tasks.yml...')
     tpl = os.path.join(TASKS_DIR, 'invoke.yml.tpl')
@@ -158,7 +164,7 @@ def interactive(ctx, sh=None):
             shell(ws, sh)
 
 
-@task(pre=[checkinit, build])
+@task(pre=[checkinit])
 def docker(ctx):
     """Populate the docker context directory by copying files over,
        preserving symlinks internal to the context directory
@@ -167,6 +173,8 @@ def docker(ctx):
     with wscd(ctx) as ws:
         # generate wheel package
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
+
+        ws.run('ls -al')
 
         # copy all files from bazel-output to docker context, resolving symlink
         tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
@@ -180,7 +188,7 @@ def docker(ctx):
             'bazel-{}'.format(tf_repo_name),
             os.path.join(docker_ctx_dir, tf_repo_name)
         ]
-        ws.run(' '.join(cmd))
+        ws.run(' '.join(cmd), echo=True)
 
         # create a stable symlink
         if tf_repo_name != 'tensorflow':

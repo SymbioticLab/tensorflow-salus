@@ -149,3 +149,22 @@ def gitbr(ctx, branch):
     yield
     ctx.run('git checkout {}'.format(prevState), hide=True)
     ctx.run('git branch -D {}'.format(branch), hide=True)
+
+
+def detect_cuda():
+    cuda_path = os.environ.get('CUDA_HOME', '/usr/local/cuda')
+
+    cuda_version = os.environ.get('CUDA_VERSION', '9.1')
+    cuda_version = '.'.join(cuda_version.split('.')[:2])
+
+    cudnn_version = os.environ.get('CUDNN_VERSION', '7')
+    cudnn_version = '.'.join(cudnn_version.split('.')[:1])
+
+    return cuda_path, cuda_version, cudnn_version
+
+
+def detect_executible(candidates):
+    for exe in candidates:
+        if os.path.isfile(exe) and os.access(exe, os.X_OK):
+            return exe
+    return ''
