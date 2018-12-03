@@ -7,11 +7,28 @@ from invoke import task
 from invoke.exceptions import Exit
 
 from .config import BUILD_BRANCH, WORKSPACE, TASKS_DIR
-from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr
+from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd, gitbr, detect_cuda, detect_executible
 
 
 @task
-def init(ctx, yes=False):
+def deps(ctx):
+    """Install dependencies"""
+    dependencies = [
+        'zeromq@4.2.5',
+        'cppzmq@4.3.0'
+    ]
+    ctx.run('spack install ' + ' '.join(dependencies))
+    ctx.run('spack view -v -d true add spack-packages ' + ' '.join(dependencies))
+
+    # python dependencies
+    pydependencies = [
+        'numpy',
+    ]
+    ctx.run('pip install ' + ' '.join(pydependencies))
+
+
+@task
+def init(ctx, yes=False, no_edit=False):
     '''Initialize the project environments
         yes: Answer yes to all questions
     '''
@@ -33,23 +50,29 @@ def init(ctx, yes=False):
         'ZEROMQ_PATH': ''
     }
     # check python
-    candidates = [
+    default_values['PYTHON_BIN_PATH'] = detect_executible([
         os.path.expanduser('~/.local/venvs/tfbuild/bin/python'),
         ctx.run('which python', hide=True).stdout.strip(),
         sys.executable
-    ]
-    for pybin in candidates:
-        if os.path.isfile(pybin) and os.access(pybin, os.X_OK):
-            default_values['PYTHON_BIN_PATH'] = pybin
-            break
+    ])
+
     # check zeromq
     default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'spack-packages')
+
+    # check CUDA
+    default_values['CUDA_PATH'], default_values['CUDA_VERSION'], default_values['CUDNN_VERSION'] = detect_cuda()
+
+    # check host gcc
+    default_values['GCC_BIN_PATH'] = detect_executible([
+        ctx.run('which gcc', hide=True).stdout.strip(),
+        '/usr/bin/gcc-5',
+    ])
 
     print('Creating tasks.yml...')
     tpl = os.path.join(TASKS_DIR, 'invoke.yml.tpl')
     template(tpl, target, default_values)
 
-    if confirm('Do you want to edit {}?'.format(target), yes=yes):
+    if not no_edit and confirm('Do you want to edit {}?'.format(target), yes=yes):
         edit_file(ctx, target)
 
     print("Remember to run `inv cf' after changing environment variables.")
@@ -84,7 +107,6 @@ def patch(ctx):
 
     with wscd(ctx) as ws:
         maybepatch(ws, 'tools/debug-build.patch')
-        maybepatch(ws, 'tools/path-gcc54.patch')
 
 
 @task(pre=[checkinit], aliases=['bb'], positional=['bazelArgs'])
@@ -124,7 +146,6 @@ def install(ctx, save=False):
         try:
             tempdir = ws.run('mktemp -d', hide=True).stdout.strip()
             ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package {}'.format(tempdir))
-            ws.run('echo $PATH')
             ws.run('{} uninstall -y tensorflow'.format(ws.venv.pip), warn=True)
             ws.run('{} install {}/*.whl'.format(ws.venv.pip, tempdir))
             if save:
@@ -141,3 +162,34 @@ def interactive(ctx, sh=None):
         with gitbr(ws, BUILD_BRANCH):
             print("Entering interactive shell...")
             shell(ws, sh)
+
+
+@task(pre=[checkinit])
+def docker(ctx):
+    """Populate the docker context directory by copying files over,
+       preserving symlinks internal to the context directory
+    """
+    docker_ctx_dir = 'docker'
+    with wscd(ctx) as ws:
+        # generate wheel package
+        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
+
+        ws.run('ls -al')
+
+        # copy all files from bazel-output to docker context, resolving symlink
+        tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
+        cmd = [
+            'rsync',
+            '-avL',
+            '--filter',
+            '"merge {}"'.format(os.path.join(docker_ctx_dir, 'whitelist.rsync-filter')),
+            '--prune-empty-dirs',
+            'bazel-bin',
+            'bazel-{}'.format(tf_repo_name),
+            os.path.join(docker_ctx_dir, tf_repo_name)
+        ]
+        ws.run(' '.join(cmd), echo=True)
+
+        # create a stable symlink
+        if tf_repo_name != 'tensorflow':
+            ws.run('ln -s {} docker/tensorflow'.format(tf_repo_name))

@@ -1,0 +1,18 @@
+# Include directories we want
+- _solib_local/
+- *.runfiles/
++ bazel-bin/
++ bazel-bin/tensorflow/
++ bazel-tensorflow*/
+- bazel-tensorflow*/bazel-out/
+- bazel-tensorflow*/_bin/
++ bazel-tensorflow*/**/
+
+# Include the header files
++ *.h
+
+# Include the so files
++ *.so
+
+# Exclude everything else
+- *

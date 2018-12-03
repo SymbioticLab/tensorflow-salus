@@ -1,0 +1,63 @@
+image: registry.gitlab.com/salus/builder
+stages:
+  - build
+  - test
+  - release
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+
+build:
+  stage: build
+  tags:
+    - gpu
+  services:
+    - docker:dind
+  script:
+    - apt-get update && apt-get install -y unzip
+    - curl -JOL 'https://github.com/bazelbuild/bazel/releases/download/0.5.4/bazel-0.5.4-without-jdk-installer-linux-x86_64.sh'
+    - bash bazel-0.5.4-*.sh
+    - inv deps
+    - inv init --no-edit
+    - inv config
+    - inv build
+    - inv docker
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $IMAGE_TAG || docker pull $LATEST_TAG || true
+    - docker build --cache-from $IMAGE_TAG --cache-from $LATEST_TAG -t $IMAGE_TAG docker
+    - docker push $IMAGE_TAG
+
+test-pyimport:
+  stage: test
+  image: $IMAGE_TAG
+  tags:
+    - gpu
+  script:
+    # We need to get out of the tensorflow source folder, otherwise import won't work
+    - cd /salus
+    - python -c 'import tensorflow'
+
+test-tfsrc:
+  stage: test
+  image: $IMAGE_TAG
+  script:
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/tensorflow/core
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/tensorflow/cc
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/third_party
+    - test -d ${TENSORFLOW_ROOT}/bazel-bin/tensorflow
+    - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_framework.so
+    - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_kernels.so
+
+release:
+  stage: release
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $IMAGE_TAG
+    - docker tag $IMAGE_TAG $LATEST_TAG
+    - docker push $LATEST_TAG
+

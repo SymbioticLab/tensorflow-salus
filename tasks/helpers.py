@@ -5,6 +5,8 @@ import sys
 from contextlib import contextmanager
 from string import Template
 
+from invoke.exceptions import UnexpectedExit
+
 from .config import venv, WORKSPACE
 
 
@@ -49,7 +51,7 @@ def confirm(question, enabled_by_default=True, yes=False):
             var = enabled_by_default
         else:
             print('Invalid selection: %s' % user_input_origin)
-        return var
+    return var
 
 
 def template(src, dst, values):
@@ -127,12 +129,42 @@ def wscd(ctx, relpath=''):
 @contextmanager
 def gitbr(ctx, branch):
     currentBranch = ctx.run('git rev-parse --abbrev-ref HEAD', hide=True).stdout.strip()
+
     if currentBranch == branch:
         yield
+
+    if currentBranch == 'HEAD':
+        # detached head
+        prevState = ctx.run('git rev-parse HEAD', hide=True).stdout.strip()
     else:
-        ctx.run('git checkout -b {}'.format(branch), hide=True)
-        try:
-            yield
-        finally:
-            ctx.run('git checkout {}'.format(currentBranch), hide=True)
-            ctx.run('git branch -D {}'.format(branch), hide=True)
+        # on other branch
+        prevState = currentBranch
+
+    try:
+        ctx.run('git branch -D {}'.format(branch), hide=True)
+    except UnexpectedExit:
+        pass
+
+    ctx.run('git checkout -b {}'.format(branch), hide=True)
+    yield
+    ctx.run('git checkout {}'.format(prevState), hide=True)
+    ctx.run('git branch -D {}'.format(branch), hide=True)
+
+
+def detect_cuda():
+    cuda_path = os.environ.get('CUDA_HOME', '/usr/local/cuda')
+
+    cuda_version = os.environ.get('CUDA_VERSION', '9.1')
+    cuda_version = '.'.join(cuda_version.split('.')[:2])
+
+    cudnn_version = os.environ.get('CUDNN_VERSION', '7')
+    cudnn_version = '.'.join(cudnn_version.split('.')[:1])
+
+    return cuda_path, cuda_version, cudnn_version
+
+
+def detect_executible(candidates):
+    for exe in candidates:
+        if os.path.isfile(exe) and os.access(exe, os.X_OK):
+            return exe
+    return ''
