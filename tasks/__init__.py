@@ -63,7 +63,7 @@ def init(ctx, yes=False, no_edit=False):
     default_values['CUDA_PATH'], default_values['CUDA_VERSION'], default_values['CUDNN_VERSION'] = detect_cuda()
 
     # check host gcc
-    default_values['PYTHON_BIN_PATH'] = detect_executible([
+    default_values['GCC_BIN_PATH'] = detect_executible([
         ctx.run('which gcc', hide=True).stdout.strip(),
         '/usr/bin/gcc-5',
     ])
