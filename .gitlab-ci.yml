@@ -44,9 +44,9 @@ test-tfsrc:
   stage: test
   image: $IMAGE_TAG
   script:
-    - test -d ${TENSORFLOW_ROOT}/tensorflow/core
-    - test -d ${TENSORFLOW_ROOT}/tensorflow/cc
-    - test -d ${TENSORFLOW_ROOT}/third_party
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/tensorflow/core
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/tensorflow/cc
+    - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow*/third_party
     - test -d ${TENSORFLOW_ROOT}/bazel-bin/tensorflow
     - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_framework.so
     - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_kernels.so
