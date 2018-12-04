@@ -44,6 +44,7 @@ test-tfsrc:
   stage: test
   image: $IMAGE_TAG
   script:
+    - test -d ${TENSORFLOW_ROOT}/bazel-genfiles
     - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow/tensorflow/core
     - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow/tensorflow/cc
     - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow/third_party
