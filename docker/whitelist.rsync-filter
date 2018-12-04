@@ -10,6 +10,7 @@
 
 # Include the so files
 + bazel-bin/tensorflow/*.so
++ bazel-bin/tensorflow/*.params
 
 # Exclude everything else
 - *
