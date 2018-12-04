@@ -186,10 +186,13 @@ def docker(ctx):
             '--prune-empty-dirs',
             'bazel-bin',
             'bazel-{}'.format(tf_repo_name),
-            os.path.join(docker_ctx_dir, tf_repo_name)
+            os.path.join(docker_ctx_dir, 'tensorflow')
         ]
         ws.run(' '.join(cmd), echo=True)
 
-        # create a stable symlink
+        # fix name
         if tf_repo_name != 'tensorflow':
-            ws.run('ln -s {} docker/tensorflow'.format(tf_repo_name))
+            ws.run('mv docker/tensorflow/bazel-{} docker/tensorflow/bazel-tensorflow'.format(tf_repo_name))
+
+        # fix permission
+        ws.run('chmod -R go-w docker/tensorflow')
