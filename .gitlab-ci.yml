@@ -49,6 +49,8 @@ test-tfsrc:
     - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow/tensorflow/cc
     - test -d ${TENSORFLOW_ROOT}/bazel-tensorflow/third_party
     - test -d ${TENSORFLOW_ROOT}/bazel-bin/tensorflow
+    - test -f ${TENSORFLOW_ROOT}/bazel-tensorflow/third_party/eigen3/unsupported/Eigen/CXX11/Tensor
+    - test -f ${TENSORFLOW_ROOT}/bazel-tensorflow/external/eigen_archive/unsupported/Eigen/CXX11/Tensor
     - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_framework.so
     - test -f ${TENSORFLOW_ROOT}/bazel-bin/tensorflow/libtensorflow_kernels.so
 
