@@ -9,6 +9,10 @@
 + *.h
 + *.proto
 
+# Include whole Eigen library, which can't be cover in header files
++ bazel-tensorflow/third_party/eigen3/***
++ bazel-tensorflow/external/eigen_archive/***
+
 # Include the so files
 + bazel-bin/tensorflow/*.so
 + bazel-bin/tensorflow/*.params
