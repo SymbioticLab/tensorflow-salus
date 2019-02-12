@@ -18,10 +18,11 @@ limitations under the License.
 #include <algorithm>
 #include <vector>
 
-#include "external/llvm/include/llvm/IR/Module.h"
+#include "llvm/IR/Module.h"
 #include "tensorflow/compiler/xla/layout_util.h"
 #include "tensorflow/compiler/xla/service/hlo_computation.h"
 #include "tensorflow/compiler/xla/service/hlo_instruction.h"
+#include "tensorflow/compiler/xla/service/hlo_module.h"
 #include "tensorflow/compiler/xla/service/hlo_opcode.h"
 #include "tensorflow/compiler/xla/service/llvm_ir/llvm_util.h"
 #include "tensorflow/compiler/xla/shape_util.h"
@@ -59,6 +60,11 @@ bool AreValidGemmShapes(const Shape& lhs_shape, const Shape& rhs_shape,
 }  // namespace
 
 bool ImplementedAsGemm(const HloInstruction& hlo) {
+  // We can only do this if the HLO is unnested.
+  if (hlo.parent() != hlo.GetModule()->entry_computation()) {
+    return false;
+  }
+
   // For certain types of Dot, we can call pre-canned BLAS gemm.
   if (hlo.opcode() == HloOpcode::kDot) {
     const Shape& lhs_shape = hlo.operand(0)->shape();
@@ -85,11 +91,16 @@ bool ImplementedAsGemm(const HloInstruction& hlo) {
 }
 
 bool ImplementedAsDnnConvolution(const HloInstruction& hlo) {
+  // We can only do this if the HLO is unnested.
+  if (hlo.parent() != hlo.GetModule()->entry_computation()) {
+    return false;
+  }
+
   // Forward convolution.
   if (hlo.opcode() == HloOpcode::kConvolution) {
     const ConvolutionDimensionNumbers& dnums =
         hlo.convolution_dimension_numbers();
-    if (dnums.spatial_dimensions_size() > 3) {
+    if (dnums.input_spatial_dimensions_size() > 3) {
       return false;
     }
 
@@ -201,13 +212,6 @@ llvm::Value* EmitShuffleDown(llvm::Value* value, llvm::Value* offset,
           builder->CreateBitCast(x, builder->getIntNTy(32 * num_segments)),
           builder->getIntNTy(bit_width)),
       value->getType());
-}
-
-const HloInstruction* LatestNonGteAncestor(const HloInstruction* hlo) {
-  while (hlo->opcode() == HloOpcode::kGetTupleElement) {
-    hlo = hlo->operand(0);
-  }
-  return hlo;
 }
 
 }  // namespace gpu

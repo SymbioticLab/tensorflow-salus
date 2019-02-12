@@ -209,18 +209,6 @@ REGISTER_FRACTIONALAVGPOOL(double);
 
 #undef REGISTER_FRACTIONALAVGPOOL
 
-#define REGISTER_FRACTIONALAVGPOOL_RPC(type)                                  \
-  REGISTER_KERNEL_BUILDER(                                                    \
-      Name("FractionalAvgPool").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
-      FractionalAvgPoolOp<type>)
-
-REGISTER_FRACTIONALAVGPOOL_RPC(int32);
-REGISTER_FRACTIONALAVGPOOL_RPC(int64);
-REGISTER_FRACTIONALAVGPOOL_RPC(float);
-REGISTER_FRACTIONALAVGPOOL_RPC(double);
-
-#undef REGISTER_FRACTIONALAVGPOOL_RPC
-
 template <class T>
 class FractionalAvgPoolGradOp : public OpKernel {
  public:
@@ -361,17 +349,4 @@ REGISTER_FRACTIONALAVGPOOLGRAD(float);
 REGISTER_FRACTIONALAVGPOOLGRAD(double);
 
 #undef REGISTER_FRACTIONALAVGPOOLGRAD
-
-#define REGISTER_FRACTIONALAVGPOOLGRAD_RPC(type)          \
-  REGISTER_KERNEL_BUILDER(Name("FractionalAvgPoolGrad")   \
-                              .Device(DEVICE_RPC)         \
-                              .TypeConstraint<type>("T"), \
-                          FractionalAvgPoolGradOp<type>)
-
-REGISTER_FRACTIONALAVGPOOLGRAD_RPC(int32);
-REGISTER_FRACTIONALAVGPOOLGRAD_RPC(int64);
-REGISTER_FRACTIONALAVGPOOLGRAD_RPC(float);
-REGISTER_FRACTIONALAVGPOOLGRAD_RPC(double);
-
-#undef REGISTER_FRACTIONALAVGPOOLGRAD_RPC
 }  // namespace tensorflow

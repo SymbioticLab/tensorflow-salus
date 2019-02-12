@@ -183,6 +183,5 @@ class ReduceJoinOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("ReduceJoin").Device(DEVICE_CPU), ReduceJoinOp);
-REGISTER_KERNEL_BUILDER(Name("ReduceJoin").Device(DEVICE_RPC), ReduceJoinOp);
 
 }  // namespace tensorflow

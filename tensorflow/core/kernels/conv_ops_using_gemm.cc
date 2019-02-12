@@ -563,21 +563,12 @@ class Conv2DUsingGemmOp : public BinaryOp<T> {
       Conv2DUsingGemmOp<                                        \
           T, Im2ColConvFunctor<T, T, T, FastGemmFunctor<T, T, T>>>);
 
-#define REGISTER_RPC(T)                                         \
-  REGISTER_KERNEL_BUILDER(                                      \
-      Name("Conv2D").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      Conv2DUsingGemmOp<                                        \
-          T, Im2ColConvFunctor<T, T, T, FastGemmFunctor<T, T, T>>>);
-
-
 // Only register this GEMM-based implementation of Conv2d if the compiler flags
 // request the implementation explicitly, since otherwise it will clash with the
 // default EigenTensor-based kernel.
 #if defined(USE_GEMM_FOR_CONV)
 TF_CALL_half(REGISTER_CPU);
 TF_CALL_float(REGISTER_CPU);
-TF_CALL_half(REGISTER_RPC);
-TF_CALL_float(REGISTER_RPC);
 #endif  // USE_GEMM_FOR_CONV
 
 }  // namespace tensorflow

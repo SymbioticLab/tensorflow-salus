@@ -45,7 +45,7 @@ public:
     {
         SetDeadline(call_options->GetTimeout());
         auto s = stub_.CreateSession(*request, response);
-        LOG(INFO) << "RpcClient created session with id " << response->session_handle();
+        VLOG(2) << "RpcClient created session with id " << response->session_handle();
         return s;
     }
 
@@ -102,7 +102,7 @@ private:
     }
 };
 
-MasterInterface *NewZrpcMaster(Env *env, const std::string &endpoint)
+MasterInterface *NewZrpcRemoteMaster(Env *env, const std::string &endpoint)
 {
     return new ZrpcRemoteMaster(env, endpoint);
 }

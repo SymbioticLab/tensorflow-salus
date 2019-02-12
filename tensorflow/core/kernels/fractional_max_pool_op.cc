@@ -210,18 +210,6 @@ REGISTER_FRACTIONALMAXPOOL(double);
 
 #undef REGISTER_FRACTIONALMAXPOOL
 
-#define REGISTER_FRACTIONALMAXPOOL_RPC(type)                                  \
-  REGISTER_KERNEL_BUILDER(                                                    \
-      Name("FractionalMaxPool").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
-      FractionalMaxPoolOp<type>)
-
-REGISTER_FRACTIONALMAXPOOL_RPC(int32);
-REGISTER_FRACTIONALMAXPOOL_RPC(int64);
-REGISTER_FRACTIONALMAXPOOL_RPC(float);
-REGISTER_FRACTIONALMAXPOOL_RPC(double);
-
-#undef REGISTER_FRACTIONALMAXPOOL_RPC
-
 static const int kInvalidMaxPoolingIndex = -1;
 
 template <class T>
@@ -257,9 +245,11 @@ class FractionalMaxPoolGradOp : public OpKernel {
     constexpr int tensor_in_and_out_dims = 4;
     std::vector<int64> input_size;
     std::vector<int64> output_size;
+    input_size.reserve(tensor_in_and_out_dims);
     for (int i = 0; i < tensor_in_and_out_dims; ++i) {
       input_size.push_back(tensor_in.dim_size(i));
     }
+    output_size.reserve(tensor_in_and_out_dims);
     for (int i = 0; i < tensor_in_and_out_dims; ++i) {
       output_size.push_back(tensor_out.dim_size(i));
     }
@@ -392,17 +382,4 @@ REGISTER_FRACTIONALMAXPOOLGRAD(float);
 REGISTER_FRACTIONALMAXPOOLGRAD(double);
 
 #undef REGISTER_FRACTIONALMAXPOOLGRAD
-
-#define REGISTER_FRACTIONALMAXPOOLGRAD_RPC(type)          \
-  REGISTER_KERNEL_BUILDER(Name("FractionalMaxPoolGrad")   \
-                              .Device(DEVICE_RPC)         \
-                              .TypeConstraint<type>("T"), \
-                          FractionalMaxPoolGradOp<type>)
-
-REGISTER_FRACTIONALMAXPOOLGRAD_RPC(int32);
-REGISTER_FRACTIONALMAXPOOLGRAD_RPC(int64);
-REGISTER_FRACTIONALMAXPOOLGRAD_RPC(float);
-REGISTER_FRACTIONALMAXPOOLGRAD_RPC(double);
-
-#undef REGISTER_FRACTIONALMAXPOOLGRAD_RPC
 }  // namespace tensorflow

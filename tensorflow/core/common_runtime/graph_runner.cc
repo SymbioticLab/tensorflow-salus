@@ -22,6 +22,8 @@ limitations under the License.
 #include "tensorflow/core/common_runtime/rendezvous_mgr.h"
 #include "tensorflow/core/framework/log_memory.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/tensor_util.h"
+#include "tensorflow/core/framework/versions.pb.h"
 #include "tensorflow/core/graph/algorithm.h"
 #include "tensorflow/core/graph/graph_constructor.h"
 #include "tensorflow/core/graph/node_builder.h"
@@ -95,21 +97,34 @@ class SimpleRendezvous : public Rendezvous {
 
 }  // namespace
 
-// static
+GraphRunner::GraphRunner(Env* env) : cpu_device_(GetCPUDevice(env)) {}
+
+GraphRunner::~GraphRunner() {}
+
 Status GraphRunner::Run(Graph* graph, FunctionLibraryRuntime* function_library,
-                        Env* env, const NamedTensorList& inputs,
+                        const NamedTensorList& inputs,
                         const std::vector<string>& output_names,
                         std::vector<Tensor>* outputs) {
+  if (cpu_device_ == nullptr) {
+    return errors::NotFound("Cannot find a device for GraphRunner.");
+  }
+
+  if (function_library && function_library->device() &&
+      function_library->device()->device_type() != cpu_device_->device_type()) {
+    // We are running on a CPU but the function library is for a non-CPU device,
+    // so just ignore the function_library.
+    // TODO(matthewmurray) Can we create a new FunctionLibraryRuntime that is
+    // identical to function_library except that it uses CPU?
+    VLOG(1) << "Cannot run on CPU device with a function library for a "
+            << function_library->device()->device_type() << " device.";
+    function_library = nullptr;
+  }
+
   // TODO(vrv): Instead of copying the entire graph, consider modifying
   // the existing graph, and then removing those removed edges.
   // prior to returning.
   std::unique_ptr<Graph> graph_to_run(new Graph(graph->op_registry()));
   CopyGraph(*graph, graph_to_run.get());
-
-  std::unique_ptr<Device> device = GetCPUDevice(env);
-  if (!device) {
-    return errors::NotFound("Cannot find a device for GraphRunner.");
-  }
 
   SimpleRendezvous* rendez = new SimpleRendezvous;
   core::ScopedUnref rendez_unref(rendez);
@@ -119,8 +134,8 @@ Status GraphRunner::Run(Graph* graph, FunctionLibraryRuntime* function_library,
   for (const auto& in : inputs) {
     const string& tensor_name = in.first;
     input_names.emplace_back(tensor_name);
-    string full_key = Rendezvous::CreateKey("/cpu:0", 1, "/cpu:1", tensor_name,
-                                            FrameAndIter(0, 0));
+    string full_key = Rendezvous::CreateKey("/device:CPU:0", 1, "/device:CPU:1",
+                                            tensor_name, FrameAndIter(0, 0));
     Rendezvous::ParsedKey parsed;
     TF_RETURN_IF_ERROR(Rendezvous::ParseKey(full_key, &parsed));
     TF_RETURN_IF_ERROR(rendez->Send(parsed, Rendezvous::Args(), in.second,
@@ -128,9 +143,11 @@ Status GraphRunner::Run(Graph* graph, FunctionLibraryRuntime* function_library,
   }
 
   // Call RewriteGraphForExecution
+  subgraph::RewriteGraphMetadata metadata;
   TF_RETURN_IF_ERROR(subgraph::RewriteGraphForExecution(
       graph_to_run.get(), input_names, output_names, {} /* target nodes */,
-      device->attributes()));
+      cpu_device_->attributes(), false /* use_function_convention */,
+      &metadata));
 
   // Create the local executor and the Rendezvous for fetching back the
   // constants.
@@ -143,10 +160,11 @@ Status GraphRunner::Run(Graph* graph, FunctionLibraryRuntime* function_library,
   Graph* g = graph_to_run.release();
 
   LocalExecutorParams params;
-  params.device = device.get();
+  // The ownership of the output tensors are bound to this device's lifetime.
+  params.device = cpu_device_.get();
   params.function_library = function_library;
-  params.create_kernel = [&device, g](const NodeDef& ndef, OpKernel** kernel) {
-    return CreateNonCachedKernel(device.get(), nullptr, ndef,
+  params.create_kernel = [this, g](const NodeDef& ndef, OpKernel** kernel) {
+    return CreateNonCachedKernel(cpu_device_.get(), nullptr, ndef,
                                  g->versions().producer(), kernel);
   };
   params.delete_kernel = [](OpKernel* kernel) { delete kernel; };
@@ -168,13 +186,19 @@ Status GraphRunner::Run(Graph* graph, FunctionLibraryRuntime* function_library,
 
   outputs->resize(output_names.size());
   for (size_t i = 0; i < output_names.size(); ++i) {
-    const string& output_key = Rendezvous::CreateKey(
-        "/cpu:0", 1, "/cpu:1", output_names[i], FrameAndIter(0, 0));
+    const string& output_key =
+        Rendezvous::CreateKey("/device:CPU:0", 1, "/device:CPU:1",
+                              output_names[i], FrameAndIter(0, 0));
     Rendezvous::ParsedKey parsed;
     TF_RETURN_IF_ERROR(Rendezvous::ParseKey(output_key, &parsed));
     bool is_dead;
+    Tensor output_tensor;
     TF_RETURN_IF_ERROR(
-        rendez->Recv(parsed, Rendezvous::Args(), &(*outputs)[i], &is_dead));
+        rendez->Recv(parsed, Rendezvous::Args(), &output_tensor, &is_dead));
+    // Does a deep copy so that ownership of the tensor isn't tied to the
+    // allocator of the cpu device we created above. The allocator could be
+    // deleted along with the device.
+    (*outputs)[i] = tensor::DeepCopy(output_tensor);
   }
 
   return Status::OK();

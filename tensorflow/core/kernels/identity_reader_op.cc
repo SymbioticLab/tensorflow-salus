@@ -17,8 +17,10 @@ limitations under the License.
 
 #include <memory>
 #include "tensorflow/core/framework/reader_base.h"
+#include "tensorflow/core/framework/reader_base.pb.h"
 #include "tensorflow/core/framework/reader_op_kernel.h"
 #include "tensorflow/core/lib/core/errors.h"
+#include "tensorflow/core/lib/strings/str_util.h"
 #include "tensorflow/core/lib/strings/strcat.h"
 #include "tensorflow/core/platform/protobuf.h"
 
@@ -69,11 +71,6 @@ class IdentityReaderOp : public ReaderOpKernel {
 REGISTER_KERNEL_BUILDER(Name("IdentityReader").Device(DEVICE_CPU),
                         IdentityReaderOp);
 REGISTER_KERNEL_BUILDER(Name("IdentityReaderV2").Device(DEVICE_CPU),
-                        IdentityReaderOp);
-
-REGISTER_KERNEL_BUILDER(Name("IdentityReader").Device(DEVICE_RPC),
-                        IdentityReaderOp);
-REGISTER_KERNEL_BUILDER(Name("IdentityReaderV2").Device(DEVICE_RPC),
                         IdentityReaderOp);
 
 }  // namespace tensorflow

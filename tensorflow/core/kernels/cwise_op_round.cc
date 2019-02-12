@@ -18,14 +18,9 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Round", functor::round, Eigen::half, float, double,
           int32, int64);
-REGISTER_RPC5(UnaryOp, "Round", functor::round, Eigen::half, float, double,
-              int32, int64);
 
 #ifdef TENSORFLOW_USE_SYCL
 REGISTER2(UnaryOp, SYCL, "Round", functor::round, float, double);
-namespace functor {
-DEFINE_UNARY2(round, float, double);
-}  // namespace functor
 #endif
 
 #if GOOGLE_CUDA

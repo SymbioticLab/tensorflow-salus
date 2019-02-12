@@ -28,13 +28,9 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.media.Image;
-import android.media.Image.Plane;
-import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
@@ -58,17 +54,13 @@ import org.tensorflow.demo.OverlayView.DrawCallback;
 import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
-import org.tensorflow.demo.R;
+import org.tensorflow.demo.R; // Explicit import needed for internal Google builds.
 
 /**
  * Sample activity that stylizes the camera preview according to "A Learned Representation For
  * Artistic Style" (https://arxiv.org/abs/1610.07629)
  */
 public class StylizeActivity extends CameraActivity implements OnImageAvailableListener {
-  static {
-    System.loadLibrary("tensorflow_demo");
-  }
-
   private static final Logger LOGGER = new Logger();
 
   private static final String MODEL_FILE = "file:///android_asset/stylize_quantized.pb";
@@ -87,7 +79,9 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
 
   private static final boolean DEBUG_MODEL = false;
 
-  private static final int[] SIZES = {32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024};
+  private static final int[] SIZES = {128, 192, 256, 384, 512, 720};
+
+  private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 720);
 
   // Start at a medium size, but let the user step up through smaller sizes so they don't get
   // immediately stuck processing a large image.
@@ -97,12 +91,10 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
 
   private Integer sensorOrientation;
 
-  private int previewWidth = 0;
-  private int previewHeight = 0;
-  private byte[][] yuvBytes;
-  private int[] rgbBytes = null;
+  private long lastProcessingTimeMs;
   private Bitmap rgbFrameBitmap = null;
   private Bitmap croppedBitmap = null;
+  private Bitmap cropCopyBitmap = null;
 
   private final float[] styleVals = new float[NUM_STYLES];
   private int[] intValues;
@@ -110,17 +102,12 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
 
   private int frameNum = 0;
 
-  private Bitmap cropCopyBitmap;
   private Bitmap textureCopyBitmap;
-
-  private boolean computing = false;
 
   private Matrix frameToCropTransform;
   private Matrix cropToFrameTransform;
 
   private BorderedText borderedText;
-
-  private long lastProcessingTimeMs;
 
   private TensorFlowInferenceInterface inferenceInterface;
 
@@ -191,8 +178,8 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
   }
 
   @Override
-  protected int getDesiredPreviewFrameSize() {
-    return SIZES[SIZES.length - 1];
+  protected Size getDesiredPreviewFrameSize() {
+    return DESIRED_PREVIEW_SIZE;
   }
 
   public static Bitmap getBitmapFromAsset(final Context context, final String filePath) {
@@ -299,7 +286,9 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
               setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
             }
           };
-      saveButton.setText("Save");
+      saveButton.setText("save");
+      saveButton.setTextSize(12);
+
       saveButton.setOnClickListener(
           new OnClickListener() {
             @Override
@@ -363,14 +352,12 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
-    final float textSizePx =
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
+    final float textSizePx = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
     borderedText = new BorderedText(textSizePx);
     borderedText.setTypeface(Typeface.MONOSPACE);
 
-    inferenceInterface = new TensorFlowInferenceInterface();
-    inferenceInterface.initializeTensorFlow(getAssets(), MODEL_FILE);
+    inferenceInterface = new TensorFlowInferenceInterface(getAssets(), MODEL_FILE);
 
     previewWidth = size.getWidth();
     previewHeight = size.getHeight();
@@ -394,7 +381,6 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
     grid = (GridView) findViewById(R.id.grid_layout);
     grid.setAdapter(adapter);
     grid.setOnTouchListener(gridTouchAdapter);
-
     setStyle(adapter.items[0], 1.0f);
   }
 
@@ -456,79 +442,42 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
     }
   }
 
+  private void resetPreviewBuffers() {
+    croppedBitmap = Bitmap.createBitmap(desiredSize, desiredSize, Config.ARGB_8888);
+
+    frameToCropTransform = ImageUtils.getTransformationMatrix(
+        previewWidth, previewHeight,
+        desiredSize, desiredSize,
+        sensorOrientation, true);
+
+    cropToFrameTransform = new Matrix();
+    frameToCropTransform.invert(cropToFrameTransform);
+    intValues = new int[desiredSize * desiredSize];
+    floatValues = new float[desiredSize * desiredSize * 3];
+    initializedSize = desiredSize;
+  }
+
   @Override
-  public void onImageAvailable(final ImageReader reader) {
-    Image image = null;
+  protected void processImage() {
+    if (desiredSize != initializedSize) {
+      LOGGER.i(
+          "Initializing at size preview size %dx%d, stylize size %d",
+          previewWidth, previewHeight, desiredSize);
 
-    try {
-      image = reader.acquireLatestImage();
+      rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
+      croppedBitmap = Bitmap.createBitmap(desiredSize, desiredSize, Config.ARGB_8888);
+      frameToCropTransform = ImageUtils.getTransformationMatrix(
+          previewWidth, previewHeight,
+          desiredSize, desiredSize,
+          sensorOrientation, true);
 
-      if (image == null) {
-        return;
-      }
-
-      if (computing) {
-        image.close();
-        return;
-      }
-
-      if (desiredSize != initializedSize) {
-        LOGGER.i(
-            "Initializing at size preview size %dx%d, stylize size %d",
-            previewWidth, previewHeight, desiredSize);
-        rgbBytes = new int[previewWidth * previewHeight];
-        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-        croppedBitmap = Bitmap.createBitmap(desiredSize, desiredSize, Config.ARGB_8888);
-
-        frameToCropTransform =
-            ImageUtils.getTransformationMatrix(
-                previewWidth, previewHeight,
-                desiredSize, desiredSize,
-                sensorOrientation, true);
-
-        cropToFrameTransform = new Matrix();
-        frameToCropTransform.invert(cropToFrameTransform);
-
-        yuvBytes = new byte[3][];
-
-        intValues = new int[desiredSize * desiredSize];
-        floatValues = new float[desiredSize * desiredSize * 3];
-        initializedSize = desiredSize;
-      }
-
-      computing = true;
-
-      Trace.beginSection("imageAvailable");
-
-      final Plane[] planes = image.getPlanes();
-      fillBytes(planes, yuvBytes);
-
-      final int yRowStride = planes[0].getRowStride();
-      final int uvRowStride = planes[1].getRowStride();
-      final int uvPixelStride = planes[1].getPixelStride();
-      ImageUtils.convertYUV420ToARGB8888(
-          yuvBytes[0],
-          yuvBytes[1],
-          yuvBytes[2],
-          rgbBytes,
-          previewWidth,
-          previewHeight,
-          yRowStride,
-          uvRowStride,
-          uvPixelStride,
-          false);
-
-      image.close();
-    } catch (final Exception e) {
-      if (image != null) {
-        image.close();
-      }
-      LOGGER.e(e, "Exception!");
-      Trace.endSection();
-      return;
+      cropToFrameTransform = new Matrix();
+      frameToCropTransform.invert(cropToFrameTransform);
+      intValues = new int[desiredSize * desiredSize];
+      floatValues = new float[desiredSize * desiredSize * 3];
+      initializedSize = desiredSize;
     }
-
-    rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+    rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
     final Canvas canvas = new Canvas(croppedBitmap);
     canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
 
@@ -542,19 +491,17 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
           @Override
           public void run() {
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-
             final long startTime = SystemClock.uptimeMillis();
             stylizeImage(croppedBitmap);
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
-
             textureCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-
             requestRender();
-            computing = false;
+            readyForNextImage();
           }
         });
-
-    Trace.endSection();
+    if (desiredSize != initializedSize) {
+      resetPreviewBuffers();
+    }
   }
 
   private void stylizeImage(final Bitmap bitmap) {
@@ -585,12 +532,13 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
     }
 
     // Copy the input data into TensorFlow.
-    inferenceInterface.fillNodeFloat(
-        INPUT_NODE, new int[] {1, bitmap.getWidth(), bitmap.getHeight(), 3}, floatValues);
-    inferenceInterface.fillNodeFloat(STYLE_NODE, new int[] {NUM_STYLES}, styleVals);
+    LOGGER.i("Width: %s , Height: %s", bitmap.getWidth(), bitmap.getHeight());
+    inferenceInterface.feed(
+        INPUT_NODE, floatValues, 1, bitmap.getWidth(), bitmap.getHeight(), 3);
+    inferenceInterface.feed(STYLE_NODE, styleVals, NUM_STYLES);
 
-    inferenceInterface.runInference(new String[] {OUTPUT_NODE});
-    inferenceInterface.readNodeFloat(OUTPUT_NODE, floatValues);
+    inferenceInterface.run(new String[] {OUTPUT_NODE}, isDebug());
+    inferenceInterface.fetch(OUTPUT_NODE, floatValues);
 
     for (int i = 0; i < intValues.length; ++i) {
       intValues[i] =
@@ -601,11 +549,6 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
     }
 
     bitmap.setPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-  }
-
-  @Override
-  public void onSetDebug(final boolean debug) {
-    inferenceInterface.enableStatLogging(debug);
   }
 
   private void renderDebug(final Canvas canvas) {

@@ -116,26 +116,4 @@ REGISTER_KERNEL_BUILDER(Name("QuantizedRelu6")
                             .TypeConstraint<quint8>("Tinput")
                             .TypeConstraint<quint8>("out_type"),
                         QuantizedRelu6Op<quint8>);
-
-REGISTER_KERNEL_BUILDER(Name("QuantizedRelu")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<qint32>("Tinput")
-                            .TypeConstraint<qint32>("out_type"),
-                        QuantizedReluOp<qint32>);
-REGISTER_KERNEL_BUILDER(Name("QuantizedRelu")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<quint8>("Tinput")
-                            .TypeConstraint<quint8>("out_type"),
-                        QuantizedReluOp<quint8>);
-
-REGISTER_KERNEL_BUILDER(Name("QuantizedRelu6")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<qint32>("Tinput")
-                            .TypeConstraint<qint32>("out_type"),
-                        QuantizedRelu6Op<qint32>);
-REGISTER_KERNEL_BUILDER(Name("QuantizedRelu6")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<quint8>("Tinput")
-                            .TypeConstraint<quint8>("out_type"),
-                        QuantizedRelu6Op<quint8>);
 }  // namespace tensorflow

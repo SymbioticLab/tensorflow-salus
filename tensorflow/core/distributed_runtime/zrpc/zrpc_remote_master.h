@@ -22,8 +22,8 @@ limitations under the License.
 
 namespace tensorflow {
 class Env;
-// Returns a MasterInterface wrapped around the gRPC channel `channel`.
-MasterInterface* NewZrpcMaster(Env *env, const std::string &endpoint);
+// Returns a MasterInterface wrapped around the ZRPC endpoint.
+MasterInterface* NewZrpcRemoteMaster(Env *env, const std::string &endpoint);
 }  // namespace tensorflow
 
 #endif  // TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_ZRPC_ZRPC_REMOTE_MASTER_H_

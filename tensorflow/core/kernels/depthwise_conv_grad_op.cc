@@ -231,7 +231,8 @@ static void CopyOutputBackpropRegion(const DepthwiseArgs& args,
       }
       // Pad to vector-register width (if needed).
       for (int64 d = 0; d < pad_size; ++d) {
-        buffer[buf_base + vectorized_size + scalar_size + d] = 0;
+        buffer[buf_base + vectorized_size + scalar_size + d] =
+            static_cast<T>(0);
       }
     }
   }
@@ -297,7 +298,7 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
 
   for (int i = 0; i < output_vectorized_size; i += kPacketSize) {
     // Reset accumulator.
-    auto vaccum = Eigen::internal::pset1<Packet>(0);
+    auto vaccum = Eigen::internal::pset1<Packet>(static_cast<T>(0));
     for (int j = 0; j < filter_spatial_size; ++j) {
       // Calculate index.
       const int64 index = i + j * padded_filter_inner_dim_size;
@@ -318,7 +319,7 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
   }
 
   if (output_scalar_size > 0) {
-    auto vaccum = Eigen::internal::pset1<Packet>(0);
+    auto vaccum = Eigen::internal::pset1<Packet>(static_cast<T>(0));
     for (int j = 0; j < filter_spatial_size; ++j) {
       const int64 index =
           output_vectorized_size + j * padded_filter_inner_dim_size;
@@ -346,7 +347,7 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
   if (depth_multiplier > 1) {
     for (int64 d = 0; d < in_depth; ++d) {
       const int64 index = d * args.depth_multiplier;
-      T accum = 0;
+      T accum = static_cast<T>(0);
       for (int64 dm = 0; dm < dm_vectorized_size; dm += kPacketSize) {
         const auto v = Eigen::internal::ploadu<Packet>(out_buffer + index + dm);
         accum += Eigen::internal::predux(v);
@@ -361,19 +362,15 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
   }
 }
 
-// Kernels to compute the input backprop for depthwise convolution.
-template <typename Device, typename T>
-struct LaunchDepthwiseConvBackpropInputOp;
-
 // Computes the depthwise conv2d backprop input of 'out_backprop' by
 // 'depthwise_filter' and stores the result in 'in_backprop'.
 template <typename T>
 struct LaunchDepthwiseConvBackpropInputOp<CPUDevice, T> {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
 
-  static void launch(OpKernelContext* ctx, const DepthwiseArgs& args,
-                     const T* out_backprop, const T* depthwise_filter,
-                     T* in_backprop, TensorFormat data_format) {
+  void operator()(OpKernelContext* ctx, const DepthwiseArgs& args,
+                  const T* out_backprop, const T* depthwise_filter,
+                  T* in_backprop, TensorFormat data_format) {
     OP_REQUIRES(
         ctx, data_format == FORMAT_NHWC,
         errors::Unimplemented(
@@ -514,27 +511,10 @@ static void DepthwiseConvBackpropInputReference(const DepthwiseArgs& args,
 
 #if GOOGLE_CUDA
 
-template <typename T>
-struct DepthwiseConv2dBackpropInputGPULaunch {
-  static void Run(const GPUDevice& d, const DepthwiseArgs args,
-                  const T* out_backprop, const T* filter, T* in_backprop,
-                  TensorFormat data_format);
-};
-
-template <typename T>
-struct LaunchDepthwiseConvBackpropInputOp<GPUDevice, T> {
-  static void launch(OpKernelContext* ctx, const DepthwiseArgs args,
-                     const T* out_backprop, const T* filter, T* in_backprop,
-                     TensorFormat data_format) {
-    const GPUDevice& d = ctx->eigen_device<GPUDevice>();
-    DepthwiseConv2dBackpropInputGPULaunch<T>().Run(
-        d, args, out_backprop, filter, in_backprop, data_format);
-    auto stream = ctx->op_device_context()->stream();
-    OP_REQUIRES(ctx, stream->ok(), errors::Internal("Launch of gpu kernel for "
-                                                    "DepthwiseConv2dBackpropInp"
-                                                    "utGPULaunch failed"));
-  }
-};
+extern template struct LaunchDepthwiseConvBackpropInputOp<GPUDevice,
+                                                          Eigen::half>;
+extern template struct LaunchDepthwiseConvBackpropInputOp<GPUDevice, float>;
+extern template struct LaunchDepthwiseConvBackpropInputOp<GPUDevice, double>;
 
 #endif  // GOOGLE_CUDA
 
@@ -598,7 +578,7 @@ class DepthwiseConv2dNativeBackpropInputOp : public OpKernel {
     if (input_shape.num_elements() == 0) {
       return;
     }
-    LaunchDepthwiseConvBackpropInputOp<Device, T>::launch(
+    LaunchDepthwiseConvBackpropInputOp<Device, T>()(
         context, args, out_backprop_ptr, filter_ptr, in_backprop_ptr,
         data_format_);
   }
@@ -620,15 +600,6 @@ class DepthwiseConv2dNativeBackpropInputOp : public OpKernel {
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
-
-#define REGISTER_RPC_KERNEL(T)                                       \
-  REGISTER_KERNEL_BUILDER(Name("DepthwiseConv2dNativeBackpropInput") \
-                              .Device(DEVICE_RPC)                    \
-                              .TypeConstraint<T>("T"),               \
-                          DepthwiseConv2dNativeBackpropInputOp<CPUDevice, T>);
-TF_CALL_float(REGISTER_RPC_KERNEL);
-TF_CALL_double(REGISTER_RPC_KERNEL);
-#undef REGISTER_RPC_KERNEL
 
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(Name("DepthwiseConv2dNativeBackpropInput")
@@ -753,9 +724,9 @@ template <typename T>
 struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
 
-  static void launch(OpKernelContext* ctx, const DepthwiseArgs& args,
-                     const T* out_backprop, const T* input, T* filter_backprop,
-                     TensorFormat data_format) {
+  void operator()(OpKernelContext* ctx, const DepthwiseArgs& args,
+                  const T* out_backprop, const T* input, T* filter_backprop,
+                  TensorFormat data_format) {
     OP_REQUIRES(
         ctx, data_format == FORMAT_NHWC,
         errors::Unimplemented(
@@ -916,35 +887,10 @@ static void DepthwiseConvBackpropFilterReference(const DepthwiseArgs& args,
 
 #if GOOGLE_CUDA
 
-template <typename T>
-struct DepthwiseConv2dBackpropFilterGPULaunch {
-  static void Run(const GPUDevice& d, const DepthwiseArgs args,
-                  const T* out_backprop, const T* input, T* filter_backprop,
-                  TensorFormat data_format);
-};
-
-template <typename T>
-struct LaunchDepthwiseConvBackpropFilterOp<GPUDevice, T> {
-  static void launch(OpKernelContext* ctx, const DepthwiseArgs args,
-                     const T* out_backprop, const T* input, T* filter_backprop,
-                     TensorFormat data_format) {
-    const GPUDevice& d = ctx->eigen_device<GPUDevice>();
-    auto stream = ctx->op_device_context()->stream();
-
-    // Initialize the results to 0.
-    int num_filter_backprop =
-        args.filter_rows * args.filter_cols * args.out_depth;
-    perftools::gputools::DeviceMemoryBase filter_bp_ptr(filter_backprop,
-                                                        num_filter_backprop);
-    stream->ThenMemset32(&filter_bp_ptr, 0, num_filter_backprop * sizeof(T));
-
-    DepthwiseConv2dBackpropFilterGPULaunch<T>().Run(
-        d, args, out_backprop, input, filter_backprop, data_format);
-    OP_REQUIRES(ctx, stream->ok(), errors::Internal("Launch of gpu kernel for "
-                                                    "DepthwiseConv2dBackpropFil"
-                                                    "terGPULaunch failed"));
-  }
-};
+extern template struct LaunchDepthwiseConvBackpropFilterOp<GPUDevice,
+                                                           Eigen::half>;
+extern template struct LaunchDepthwiseConvBackpropFilterOp<GPUDevice, float>;
+extern template struct LaunchDepthwiseConvBackpropFilterOp<GPUDevice, double>;
 
 #endif  // GOOGLE_CUDA
 
@@ -1010,7 +956,7 @@ class DepthwiseConv2dNativeBackpropFilterOp : public OpKernel {
     if (filter_shape.num_elements() == 0) {
       return;
     }
-    LaunchDepthwiseConvBackpropFilterOp<Device, T>::launch(
+    LaunchDepthwiseConvBackpropFilterOp<Device, T>()(
         context, args, out_backprop_ptr, input_ptr, filter_backprop_ptr,
         data_format_);
   }
@@ -1024,15 +970,15 @@ class DepthwiseConv2dNativeBackpropFilterOp : public OpKernel {
   TF_DISALLOW_COPY_AND_ASSIGN(DepthwiseConv2dNativeBackpropFilterOp);
 };
 
-#define REGISTER_RPC_KERNEL(T)                    \
+#define REGISTER_CPU_KERNEL(T)                    \
   REGISTER_KERNEL_BUILDER(                        \
       Name("DepthwiseConv2dNativeBackpropFilter") \
-          .Device(DEVICE_RPC)                     \
+          .Device(DEVICE_CPU)                     \
           .TypeConstraint<T>("T"),                \
       DepthwiseConv2dNativeBackpropFilterOp<CPUDevice, T>);
-TF_CALL_float(REGISTER_RPC_KERNEL);
-TF_CALL_double(REGISTER_RPC_KERNEL);
-#undef REGISTER_RPC_KERNEL
+TF_CALL_float(REGISTER_CPU_KERNEL);
+TF_CALL_double(REGISTER_CPU_KERNEL);
+#undef REGISTER_CPU_KERNEL
 
 #if GOOGLE_CUDA
 REGISTER_KERNEL_BUILDER(

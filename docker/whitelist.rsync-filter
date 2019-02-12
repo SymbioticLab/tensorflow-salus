@@ -1,0 +1,21 @@
+# Include directories we want
+- _solib_local/
+- *.runfiles/
+- bazel-tensorflow*/bazel-out/
+- bazel-tensorflow*/_bin/
++ */
+
+# Include the header files
++ *.h
++ *.proto
+
+# Include whole Eigen library, which can't be cover in header files
++ bazel-tensorflow*/third_party/eigen3/***
++ bazel-tensorflow*/external/eigen_archive/***
+
+# Include the so files
++ bazel-bin/tensorflow/*.so
++ bazel-bin/tensorflow/*.params
+
+# Exclude everything else
+- *

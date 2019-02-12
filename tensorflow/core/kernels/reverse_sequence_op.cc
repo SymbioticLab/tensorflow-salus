@@ -175,21 +175,7 @@ class ReverseSequenceOp : public OpKernel {
   REGISTER_REVERSE_SEQUENCE(type, int64);
 
 TF_CALL_NUMBER_TYPES(REGISTER_REVERSE_SEQUENCE_LEN);
-
-#define REGISTER_REVERSE_SEQUENCE_RPC(type, len_type)                       \
-  REGISTER_KERNEL_BUILDER(                                                  \
-      Name("ReverseSequence").Device(DEVICE_RPC).TypeConstraint<type>("T"). \
-      TypeConstraint<len_type>("Tlen"),                                     \
-      ReverseSequenceOp<CPUDevice, type, len_type>);
-
-#define REGISTER_REVERSE_SEQUENCE_LEN_RPC(type)    \
-  REGISTER_REVERSE_SEQUENCE_RPC(type, int32);      \
-  REGISTER_REVERSE_SEQUENCE_RPC(type, int64);
-
-TF_CALL_NUMBER_TYPES(REGISTER_REVERSE_SEQUENCE_LEN_RPC);
-
-#undef REGISTER_REVERSE_SEQUENCE_RPC
-#undef REGISTER_REVERSE_SEQUENCE_LEN_RPC
+TF_CALL_bool(REGISTER_REVERSE_SEQUENCE_LEN);
 
 #if GOOGLE_CUDA
 
@@ -215,6 +201,7 @@ namespace functor {
   DECLARE_GPU_SPEC_LEN(T, 5);
 
 TF_CALL_GPU_NUMBER_TYPES(DECLARE_GPU_SPECS);
+TF_CALL_bool(DECLARE_GPU_SPECS);
 
 }  // namespace functor
 
@@ -230,6 +217,7 @@ TF_CALL_GPU_NUMBER_TYPES(DECLARE_GPU_SPECS);
   REGISTER_REVERSE_SEQUENCE_GPU(type, int64);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_REVERSE_SEQUENCE_GPU_LEN);
+TF_CALL_bool(REGISTER_REVERSE_SEQUENCE_GPU_LEN);
 
 #undef REGISTER_REVERSE_SEQUENCE_GPU
 

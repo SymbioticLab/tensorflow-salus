@@ -391,11 +391,4 @@ REGISTER_KERNEL_BUILDER(Name("QuantizedMul")
                             .TypeConstraint<qint32>("Toutput"),
                         QuantizedMulOp<quint8, qint32>);
 
-REGISTER_KERNEL_BUILDER(Name("QuantizedMul")
-                            .Device(DEVICE_RPC)
-                            .TypeConstraint<quint8>("T1")
-                            .TypeConstraint<quint8>("T2")
-                            .TypeConstraint<qint32>("Toutput"),
-                        QuantizedMulOp<quint8, qint32>);
-
 }  // namespace tensorflow

@@ -106,7 +106,7 @@ counted backwards from the end, with `-1` being equivalent to `n - 1`.
 
 For example:
 
-```
+```python
 # tensor `a` is [["a", "b"], ["c", "d"]]
 tf.reduce_join(a, 0) ==> ["ac", "bd"]
 tf.reduce_join(a, 1) ==> ["ab", "cd"]
@@ -202,6 +202,7 @@ REGISTER_OP("StringSplit")
     .Output("indices: int64")
     .Output("values: string")
     .Output("shape: int64")
+    .Attr("skip_empty: bool = true")
     .SetShapeFn([](InferenceContext* c) {
       ShapeHandle unused;
       TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &unused));
@@ -238,6 +239,7 @@ For example:
 
 input: 1-D. Strings to split.
 delimiter: 0-D. Delimiter characters (bytes), or empty string.
+skip_empty: A `bool`. If `True`, skip the empty strings from the result.
 indices: A dense matrix of int64 representing the indices of the sparse tensor.
 values: A vector of strings corresponding to the splited values.
 shape: a length-2 vector of int64 representing the shape of the sparse
@@ -330,7 +332,7 @@ Examples
 
 Using scalar `pos` and `len`:
 
-```
+```python
 input = [b'Hello', b'World']
 position = 1
 length = 3
@@ -340,7 +342,7 @@ output = [b'ell', b'orl']
 
 Using `pos` and `len` with same shape as `input`:
 
-```
+```python
 input = [[b'ten', b'eleven', b'twelve'],
          [b'thirteen', b'fourteen', b'fifteen'],
          [b'sixteen', b'seventeen', b'eighteen']]
@@ -379,7 +381,7 @@ input = b'thirteen'
 position = [1, 5, 7]
 length =   [3, 2, 1]
 
-output = [b'hir', b'ee', b'n"]
+output = [b'hir', b'ee', b'n']
 ```
 
 input: Tensor of strings

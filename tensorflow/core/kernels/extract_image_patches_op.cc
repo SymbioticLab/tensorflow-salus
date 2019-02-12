@@ -130,16 +130,6 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER);
 
 #undef REGISTER
 
-// Registration of the RPC implementations.
-#define REGISTER_RPC(T)                                                      \
-  REGISTER_KERNEL_BUILDER(                                                   \
-      Name("ExtractImagePatches").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      ExtractImagePatchesOp<CPUDevice, T>);
-
-TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC);
-
-#undef REGISTER_RPC
-
 #if GOOGLE_CUDA
 
 // Forward declarations of the functor specializations for GPU.

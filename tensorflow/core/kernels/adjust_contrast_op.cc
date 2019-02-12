@@ -31,6 +31,9 @@ namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
 typedef Eigen::GpuDevice GPUDevice;
+#ifdef TENSORFLOW_USE_SYCL
+typedef Eigen::SyclDevice SYCLDevice;
+#endif
 
 // AdjustContrastOp is deprecated as of GraphDef version >= 2
 
@@ -95,21 +98,6 @@ REGISTER_KERNEL(int32);
 REGISTER_KERNEL(float);
 REGISTER_KERNEL(double);
 #undef REGISTER_KERNEL
-
-#define REGISTER_KERNEL(T)                                              \
-  REGISTER_KERNEL_BUILDER(                                              \
-      Name("AdjustContrast").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      AdjustContrastOp<CPUDevice, T>);
-
-
-REGISTER_KERNEL(uint8);
-REGISTER_KERNEL(int8);
-REGISTER_KERNEL(int16);
-REGISTER_KERNEL(int32);
-REGISTER_KERNEL(float);
-REGISTER_KERNEL(double);
-#undef REGISTER_KERNEL
-
 
 #if GOOGLE_CUDA
 // Forward declarations of the function specializations for GPU (to prevent
@@ -424,5 +412,26 @@ class AdjustContrastOpv2<GPUDevice> : public AdjustContrastOpV2Base {
 REGISTER_KERNEL_BUILDER(Name("AdjustContrastv2").Device(DEVICE_GPU),
                         AdjustContrastOpv2<GPUDevice>);
 #endif  // GOOGLE_CUDA
+
+#ifdef TENSORFLOW_USE_SYCL
+template <>
+class AdjustContrastOpv2<SYCLDevice> : public AdjustContrastOpV2Base {
+ public:
+  explicit AdjustContrastOpv2(OpKernelConstruction* context)
+      : AdjustContrastOpV2Base(context) {}
+
+  void DoCompute(OpKernelContext* context,
+                 const ComputeOptions& options) override {
+    const int64 shape[4] = {options.batch, options.height, options.width,
+                            options.channels};
+    functor::AdjustContrastv2<SYCLDevice>()(
+        context->eigen_device<SYCLDevice>(),
+        options.input->shaped<float, 4>(shape), options.factor->scalar<float>(),
+        options.output->shaped<float, 4>(shape));
+  }
+};
+REGISTER_KERNEL_BUILDER(Name("AdjustContrastv2").Device(DEVICE_SYCL),
+                        AdjustContrastOpv2<SYCLDevice>);
+#endif  // TENSORFLOW_USE_SYCL
 
 }  // namespace tensorflow

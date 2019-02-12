@@ -167,8 +167,6 @@ class ExampleParserOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ParseExample").Device(DEVICE_CPU),
                         ExampleParserOp);
-REGISTER_KERNEL_BUILDER(Name("ParseExample").Device(DEVICE_RPC),
-                        ExampleParserOp);
 
 class SingleSequenceExampleParserOp : public OpKernel {
  public:
@@ -218,7 +216,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
                   TensorShapeUtils::IsScalar(context_dense_keys[di].shape()),
                   errors::InvalidArgument(
                       "Expected context_dense_keys[", di,
-                      "] to be a vector, got shape: ",
+                      "] to be a scalar, got shape: ",
                       context_dense_keys[di].shape().DebugString()));
       context_dense_keys_t[di] = context_dense_keys[di].scalar<string>()();
     }
@@ -227,7 +225,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
                   TensorShapeUtils::IsScalar(context_sparse_keys[di].shape()),
                   errors::InvalidArgument(
                       "Expected context_sparse_keys[", di,
-                      "] to be a vector, got shape: ",
+                      "] to be a scalar, got shape: ",
                       context_sparse_keys[di].shape().DebugString()));
       context_sparse_keys_t[di] = context_sparse_keys[di].scalar<string>()();
     }
@@ -236,7 +234,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
           ctx, TensorShapeUtils::IsScalar(feature_list_dense_keys[di].shape()),
           errors::InvalidArgument(
               "Expected feature_list_dense_keys[", di,
-              "] to be a vector, got shape: ",
+              "] to be a scalar, got shape: ",
               feature_list_dense_keys[di].shape().DebugString()));
       feature_list_dense_keys_t[di] =
           feature_list_dense_keys[di].scalar<string>()();
@@ -246,7 +244,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
           ctx, TensorShapeUtils::IsScalar(feature_list_sparse_keys[di].shape()),
           errors::InvalidArgument(
               "Expected feature_list_sparse_keys[", di,
-              "] to be a vector, got shape: ",
+              "] to be a scalar, got shape: ",
               feature_list_sparse_keys[di].shape().DebugString()));
       feature_list_sparse_keys_t[di] =
           feature_list_sparse_keys[di].scalar<string>()();
@@ -564,8 +562,6 @@ class SingleSequenceExampleParserOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("ParseSingleSequenceExample").Device(DEVICE_CPU),
                         SingleSequenceExampleParserOp);
-REGISTER_KERNEL_BUILDER(Name("ParseSingleSequenceExample").Device(DEVICE_RPC),
-                        SingleSequenceExampleParserOp);
 
 #ifndef IS_MOBILE_PLATFORM
 // when using lite protos on mobile, decoding JSON is not available.
@@ -601,8 +597,6 @@ class DecodeJSONExampleOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("DecodeJSONExample").Device(DEVICE_CPU),
-                        DecodeJSONExampleOp);
-REGISTER_KERNEL_BUILDER(Name("DecodeJSONExample").Device(DEVICE_RPC),
                         DecodeJSONExampleOp);
 #endif
 

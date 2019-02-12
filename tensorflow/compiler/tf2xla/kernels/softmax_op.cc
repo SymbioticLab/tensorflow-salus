@@ -74,8 +74,8 @@ class SoftmaxOp : public XlaOpKernel {
   bool log_;
 };
 
-REGISTER_XLA_OP("Softmax", SoftmaxOp);
-REGISTER_XLA_OP("LogSoftmax", SoftmaxOp);
+REGISTER_XLA_OP(Name("Softmax"), SoftmaxOp);
+REGISTER_XLA_OP(Name("LogSoftmax"), SoftmaxOp);
 
 std::pair<xla::ComputationDataHandle, xla::ComputationDataHandle>
 CrossEntropyWithLogits(XlaOpKernelContext* ctx, DataType type,
@@ -152,7 +152,7 @@ class SoftmaxXentWithLogitsOp : public XlaOpKernel {
   }
 };
 
-REGISTER_XLA_OP("SoftmaxCrossEntropyWithLogits", SoftmaxXentWithLogitsOp);
+REGISTER_XLA_OP(Name("SoftmaxCrossEntropyWithLogits"), SoftmaxXentWithLogitsOp);
 
 class SparseSoftmaxXentWithLogitsOp : public XlaOpKernel {
  public:
@@ -202,7 +202,7 @@ class SparseSoftmaxXentWithLogitsOp : public XlaOpKernel {
     // NaN otherwise; then add that vector to the labels to force out-of-range
     // values to NaNs.
     xla::ComputationDataHandle nan_or_zero = builder->Select(
-        builder->LogicalAnd(
+        builder->And(
             builder->Le(XlaHelpers::Zero(builder, indices_type), indices),
             builder->Lt(indices, XlaHelpers::IntegerLiteral(
                                      builder, indices_type, depth))),
@@ -220,7 +220,7 @@ class SparseSoftmaxXentWithLogitsOp : public XlaOpKernel {
   }
 };
 
-REGISTER_XLA_OP("SparseSoftmaxCrossEntropyWithLogits",
+REGISTER_XLA_OP(Name("SparseSoftmaxCrossEntropyWithLogits"),
                 SparseSoftmaxXentWithLogitsOp);
 
 }  // namespace

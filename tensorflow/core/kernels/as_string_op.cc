@@ -157,6 +157,5 @@ class AsStringOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("AsString").Device(DEVICE_CPU), AsStringOp);
-REGISTER_KERNEL_BUILDER(Name("AsString").Device(DEVICE_RPC), AsStringOp);
 
 }  // namespace tensorflow

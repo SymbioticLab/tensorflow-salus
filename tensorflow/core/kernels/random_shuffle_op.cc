@@ -110,13 +110,5 @@ class RandomShuffleOp : public OpKernel {
       Name("RandomShuffle").Device(DEVICE_CPU).TypeConstraint<T>("T"), \
       RandomShuffleOp<T>);
 TF_CALL_ALL_TYPES(REGISTER)
-#undef REGISTER
-
-#define REGISTER_RPC(T)                                                \
-  REGISTER_KERNEL_BUILDER(                                             \
-      Name("RandomShuffle").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      RandomShuffleOp<T>);
-TF_CALL_ALL_TYPES(REGISTER_RPC)
-#undef REGISTER_RPC
 
 }  // namespace tensorflow

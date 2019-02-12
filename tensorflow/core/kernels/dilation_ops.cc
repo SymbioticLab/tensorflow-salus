@@ -465,25 +465,6 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER);
 
 #undef REGISTER
 
-#define REGISTER_RPC(T)                                                 \
-  REGISTER_KERNEL_BUILDER(                                          \
-      Name("Dilation2D").Device(DEVICE_RPC).TypeConstraint<T>("T"), \
-      DilationOp<CPUDevice, T>);                                    \
-                                                                    \
-  REGISTER_KERNEL_BUILDER(Name("Dilation2DBackpropInput")           \
-                              .Device(DEVICE_RPC)                   \
-                              .TypeConstraint<T>("T"),              \
-                          DilationBackpropInputOp<CPUDevice, T>);   \
-                                                                    \
-  REGISTER_KERNEL_BUILDER(Name("Dilation2DBackpropFilter")          \
-                              .Device(DEVICE_RPC)                   \
-                              .TypeConstraint<T>("T"),              \
-                          DilationBackpropFilterOp<CPUDevice, T>);
-
-TF_CALL_REAL_NUMBER_TYPES(REGISTER_RPC);
-
-#undef REGISTER_RPC
-
 #if GOOGLE_CUDA
 
 #define REGISTER(T)                                                 \

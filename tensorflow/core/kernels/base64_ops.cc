@@ -50,8 +50,6 @@ class EncodeBase64Op : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("EncodeBase64").Device(DEVICE_CPU),
                         EncodeBase64Op);
-REGISTER_KERNEL_BUILDER(Name("EncodeBase64").Device(DEVICE_RPC),
-                        EncodeBase64Op);
 
 class DecodeBase64Op : public OpKernel {
  public:
@@ -73,8 +71,6 @@ class DecodeBase64Op : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("DecodeBase64").Device(DEVICE_CPU),
-                        DecodeBase64Op);
-REGISTER_KERNEL_BUILDER(Name("DecodeBase64").Device(DEVICE_RPC),
                         DecodeBase64Op);
 
 }  // namespace

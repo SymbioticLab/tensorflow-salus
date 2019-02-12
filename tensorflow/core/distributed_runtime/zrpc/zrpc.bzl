@@ -6,7 +6,7 @@ load(
     "if_cuda",
     "if_mkl",
     "if_android_arm",
-    "if_x86",
+    "if_linux_x86_64",
 )
 
 def zrpc_copts():
@@ -14,7 +14,7 @@ def zrpc_copts():
     + if_cuda(["-DGOOGLE_CUDA=1"])
     + if_mkl(["-DINTEL_MKL=1"])
     + if_android_arm(["-mfpu=neon"])
-    + if_x86(["-msse3"])
+    + if_linux_x86_64(["-msse3"])
     + select({
         "//tensorflow:android": [
             "-std=c++11",

@@ -135,18 +135,4 @@ REGISTER(GPU, Eigen::half, int64)
 
 #undef REGISTER
 
-#define REGISTER_RPC(T, Index)                    \
-  REGISTER_KERNEL_BUILDER(                        \
-      Name("SparseSoftmaxCrossEntropyWithLogits") \
-          .Device(DEVICE_RPC)                   \
-          .TypeConstraint<T>("T")                 \
-          .TypeConstraint<Index>("Tlabels"),      \
-      SparseSoftmaxXentWithLogitsOp<CPUDevice, T, Index>);
-REGISTER_RPC(float, int32)
-REGISTER_RPC(float, int64)
-REGISTER_RPC(double, int32)
-REGISTER_RPC(double, int64)
-REGISTER_RPC(Eigen::half, int32)
-REGISTER_RPC(Eigen::half, int64)
-
 }  // namespace tensorflow

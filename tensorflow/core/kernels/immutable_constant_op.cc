@@ -102,7 +102,4 @@ constexpr char const* ImmutableConstantOp::kMemoryRegionNameAttr;
 
 REGISTER_KERNEL_BUILDER(Name("ImmutableConst").Device(DEVICE_CPU),
                         ImmutableConstantOp);
-
-REGISTER_KERNEL_BUILDER(Name("ImmutableConst").Device(DEVICE_RPC),
-                        ImmutableConstantOp);
 }  // namespace tensorflow

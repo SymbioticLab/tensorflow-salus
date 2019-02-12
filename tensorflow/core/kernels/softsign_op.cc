@@ -23,6 +23,7 @@ limitations under the License.
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/register_types.h"
 #include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/kernels/warn_about_ints.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 namespace tensorflow {
@@ -33,7 +34,10 @@ typedef Eigen::GpuDevice GPUDevice;
 template <typename Device, typename T>
 class SoftsignOp : public UnaryElementWiseOp<T, SoftsignOp<Device, T>> {
  public:
-  using UnaryElementWiseOp<T, SoftsignOp<Device, T>>::UnaryElementWiseOp;
+  explicit SoftsignOp(OpKernelConstruction* context)
+      : UnaryElementWiseOp<T, SoftsignOp<Device, T>>(context) {
+    WarnAboutInts(context);
+  }
 
   void Operate(OpKernelContext* context, const Tensor& input, Tensor* output) {
     functor::Softsign<Device, T> functor;
@@ -46,7 +50,10 @@ template <typename Device, typename T>
 class SoftsignGradOp
     : public BinaryElementWiseOp<T, SoftsignGradOp<Device, T>> {
  public:
-  using BinaryElementWiseOp<T, SoftsignGradOp<Device, T>>::BinaryElementWiseOp;
+  explicit SoftsignGradOp(OpKernelConstruction* context)
+      : BinaryElementWiseOp<T, SoftsignGradOp<Device, T>>(context) {
+    WarnAboutInts(context);
+  }
 
   void OperateNoTemplate(OpKernelContext* context, const Tensor& g,
                          const Tensor& a, Tensor* output);
@@ -85,17 +92,6 @@ void SoftsignGradOp<Device, T>::OperateNoTemplate(OpKernelContext* context,
 
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
-
-#define REGISTER_KERNELS_RPC(type)                                       \
-  REGISTER_KERNEL_BUILDER(                                               \
-      Name("Softsign").Device(DEVICE_RPC).TypeConstraint<type>("T"),     \
-      SoftsignOp<CPUDevice, type>);                                      \
-  REGISTER_KERNEL_BUILDER(                                               \
-      Name("SoftsignGrad").Device(DEVICE_RPC).TypeConstraint<type>("T"), \
-      SoftsignGradOp<CPUDevice, type>);
-
-TF_CALL_REAL_NUMBER_TYPES(REGISTER_KERNELS_RPC);
-#undef REGISTER_KERNELS_RPC
 
 #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.

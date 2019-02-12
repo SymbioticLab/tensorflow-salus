@@ -101,9 +101,4 @@ REGISTER_KERNEL_BUILDER(Name("TFRecordReader").Device(DEVICE_CPU),
 REGISTER_KERNEL_BUILDER(Name("TFRecordReaderV2").Device(DEVICE_CPU),
                         TFRecordReaderOp);
 
-REGISTER_KERNEL_BUILDER(Name("TFRecordReader").Device(DEVICE_RPC),
-                        TFRecordReaderOp);
-REGISTER_KERNEL_BUILDER(Name("TFRecordReaderV2").Device(DEVICE_RPC),
-                        TFRecordReaderOp);
-
 }  // namespace tensorflow

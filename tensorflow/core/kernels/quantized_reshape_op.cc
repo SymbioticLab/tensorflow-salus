@@ -55,16 +55,4 @@ REGISTER_CPU_KERNEL(::tensorflow::qint32);
 
 #undef REGISTER_CPU_KERNEL
 
-#define REGISTER_RPC_KERNEL(type)                         \
-  REGISTER_KERNEL_BUILDER(Name("QuantizedReshape")        \
-                              .Device(DEVICE_RPC)         \
-                              .HostMemory("shape")        \
-                              .TypeConstraint<type>("T"), \
-                          QuantizedReshapeOp)
-
-REGISTER_RPC_KERNEL(::tensorflow::quint8);
-REGISTER_RPC_KERNEL(::tensorflow::qint32);
-
-#undef REGISTER_RPC_KERNEL
-
 }  // namespace tensorflow

@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include <iostream>
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/strings/str_util.h"
@@ -49,7 +50,6 @@ class AssertOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Assert").Device(DEVICE_CPU), AssertOp);
-REGISTER_KERNEL_BUILDER(Name("Assert").Device(DEVICE_RPC), AssertOp);
 
 class PrintOp : public OpKernel {
  public:
@@ -77,7 +77,7 @@ class PrintOp : public OpKernel {
       strings::StrAppend(&msg, "[", ctx->input(i).SummarizeValue(summarize_),
                          "]");
     }
-    LOG(INFO) << msg;
+    std::cerr << msg << std::endl;
   }
 
  private:
@@ -89,6 +89,5 @@ class PrintOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Print").Device(DEVICE_CPU), PrintOp);
-REGISTER_KERNEL_BUILDER(Name("Print").Device(DEVICE_RPC), PrintOp);
 
 }  // end namespace tensorflow
