@@ -132,6 +132,7 @@ def gitbr(ctx, branch):
 
     if currentBranch == branch:
         yield
+        return
 
     if currentBranch == 'HEAD':
         # detached head
