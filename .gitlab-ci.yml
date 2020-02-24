@@ -11,7 +11,8 @@ variables:
 build:
   image: tensorflow/tensorflow:${TF_BASE_VERSION}-devel-gpu-py3
   stage: build
-  before_script: pip install conan invoke
+  before_script:
+    - pip install conan invoke
   script:
     - inv ci --ref ${CI_COMMIT_REF_NAME}
   artifacts:
