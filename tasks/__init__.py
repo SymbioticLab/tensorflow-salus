@@ -197,6 +197,7 @@ def docker(ctx):
         ws.run('chmod -R go-w docker/tensorflow')
 
 
+@task
 def ci(ctx, ref):
     '''Build on CI
     '''
