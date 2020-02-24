@@ -40,3 +40,5 @@ gradleBuild
 spack-packages
 /.kdev4
 *.kdev4
+/deps
+/kernel_prof

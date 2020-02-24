@@ -57,7 +57,7 @@ def init(ctx, yes=False, no_edit=False):
     ])
 
     # check zeromq
-    default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'spack-packages')
+    default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'deps/packages')
 
     # check CUDA
     default_values['CUDA_PATH'], default_values['CUDA_VERSION'], default_values['CUDNN_VERSION'] = detect_cuda()
@@ -205,8 +205,6 @@ def ci(ctx, ref):
         ws.run('mkdir deps')
         ws.run('cd deps && conan install ..')
         ws.run(' '.join([
-            'env',
-            'ZEROMQ_PATH=deps/packages',
             'tensorflow/tools/ci_build/builds/configured', 'GPU',
             'bazel', 'build',
             '//tensorflow/tools/pip_package:build_pip_package',
