@@ -1,0 +1,11 @@
+[requires]
+zeromq/4.3.2
+cppzmq/4.6.0
+
+[options]
+zeromq:shared=True
+libsodium:shared=True
+
+[imports]
+include, *.* -> ./packages/include
+lib, *.so* -> ./packages/lib
