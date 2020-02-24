@@ -11,17 +11,9 @@ variables:
 build:
   image: tensorflow/tensorflow:${TF_BASE_VERSION}-devel-gpu-py3
   stage: build
+  before_script: pip install conan invoke
   script:
-    - pip install conan
-    - mkdir deps
-    - cd deps && conan install ..
-    - env ZEROMQ_PATH=deps/packages tensorflow/tools/ci_build/configured GPU bazel build //tensorflow/tools/pip_package:build_pip_package //tensorflow:libtensorflow_kernels.so //tensorflow:libtensorflow_framework.so
-    # build pip wheel
-    - mkdir dist && bazel-bin/tensorflow/tools/pip_package/build_pip_package dist
-    # build source package for salus
-    - rsync -avL --filter "merge docker/whitelist.rsync-filter" --prune-empty-dirs bazel-bin bazel-genfiles bazel-tensorflow dist/devel
-    - chmod -R go-w dist/devel
-    - cd dist/devel && zip ../${CI_PROJECT_NAME}-devel-${CI_COMMIT_REF_NAME}.zip -r .
+    - inv ci --ref ${CI_COMMIT_REF_NAME}
   artifacts:
     name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}"
     paths:

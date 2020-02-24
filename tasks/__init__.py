@@ -195,3 +195,38 @@ def docker(ctx):
 
         # fix permission
         ws.run('chmod -R go-w docker/tensorflow')
+
+
+def ci(ctx, ref):
+    '''Build on CI
+    '''
+    with wscd(ctx) as ws:
+        ws.run('mkdir deps')
+        ws.run('cd deps && conan install ..')
+        ws.run(' '.join([
+            'env',
+            'ZEROMQ_PATH=deps/packages',
+            'tensorflow/tools/ci_build/builds/configured', 'GPU',
+            'bazel', 'build',
+            '//tensorflow/tools/pip_package:build_pip_package',
+            '//tensorflow:libtensorflow_kernels.so',
+            '//tensorflow:libtensorflow_framework.so'
+        ]))
+        ws.run('mkdir dist')
+        # build pip wheel
+        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package dist')
+        # build source package for salus
+        cmd = [
+            'rsync',
+            '-avL',
+            '--filter',
+            '"merge {}"'.format('docker/whitelist.rsync-filter'),
+            '--prune-empty-dirs',
+            'bazel-bin',
+            'bazel-genfiles',
+            'bazel-tensorflow',
+            'deps/devel',
+        ]
+        ws.run(' '.join(cmd), echo=True)
+        ws.run('chmod -R go-w dist/devel')
+        ws.run('cd dist/devel && zip ../tensorflow-salus-devel-{ref}.zip -r .'.format(ref=ref))
