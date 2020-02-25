@@ -216,6 +216,7 @@ def ci(ctx, ref):
         # build pip wheel
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package dist')
         # build source package for salus
+        tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
         cmd = [
             'rsync',
             '-avL',
@@ -224,7 +225,7 @@ def ci(ctx, ref):
             '--prune-empty-dirs',
             'bazel-bin',
             'bazel-genfiles',
-            'bazel-tensorflow',
+            'bazel-{}'.format(tf_repo_name),
             'deps/devel',
         ]
         ws.run(' '.join(cmd), echo=True)
