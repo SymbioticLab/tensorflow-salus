@@ -151,10 +151,10 @@ def gitbr(ctx, branch):
 def detect_cuda():
     cuda_path = os.environ.get('CUDA_HOME', '/usr/local/cuda')
 
-    cuda_version = os.environ.get('CUDA_VERSION', '9.1')
+    cuda_version = os.environ.get('TF_CUDA_VERSION', os.environ.get('CUDA_VERSION', '9.1'))
     cuda_version = '.'.join(cuda_version.split('.')[:2])
 
-    cudnn_version = os.environ.get('CUDNN_VERSION', '7')
+    cudnn_version = os.environ.get('TF_CUDNN_VERSION', os.environ.get('CUDNN_VERSION', '7'))
     cudnn_version = '.'.join(cudnn_version.split('.')[:1])
 
     return cuda_path, cuda_version, cudnn_version

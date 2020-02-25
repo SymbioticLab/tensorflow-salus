@@ -52,8 +52,9 @@ def init(ctx, yes=False, no_edit=False):
     # check python
     default_values['PYTHON_BIN_PATH'] = detect_executible([
         os.path.expanduser('~/.local/venvs/tfbuild/bin/python'),
+        ctx.run('which ${CI_BUILD_PYTHON}', hide=True).stdout.strip(),
+        sys.executable,
         ctx.run('which python', hide=True).stdout.strip(),
-        sys.executable
     ])
 
     # check zeromq

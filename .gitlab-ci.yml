@@ -13,8 +13,11 @@ build:
   stage: build
   before_script:
     - pip install conan invoke
+    - conan profile new default --detect
+    - conan profile update settings.compiler.libcxx=libstdc++11 default
   script:
     - inv init --no-edit
+    - cat invoke.yml
     - inv ci --ref ${CI_COMMIT_REF_NAME}
   artifacts:
     name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}"
