@@ -11,7 +11,7 @@ from .config import venv, WORKSPACE
 
 
 def get_env(envdict, name, default=''):
-    return envdict.get(name) or default
+    return str(envdict.get(name)) or default
 
 
 def env_is(envdict, name):
@@ -108,14 +108,10 @@ def wscd(ctx, relpath=''):
             self.venv = venv(os.path.dirname(os.path.dirname(ctx.buildcfg.env.PYTHON_BIN_PATH)))
 
         def run(self, *args, **kwargs):
-            if 'env' in kwargs:
-                tmp = dict(self._ctx.buildcfg.env)
-                tmp.update(kwargs['env'])
-                kwargs['env'] = tmp
-            else:
-                kwargs['env'] = dict(self._ctx.buildcfg.env)
+            env = kwargs.pop('env', {})
+            env.update({k: str(v) for k, v in self._ctx.buildcfg.env.items()})
 
-            return self._ctx.run(*args, **kwargs)
+            return self._ctx.run(*args, env=env, **kwargs)
 
         def if_cuda(self, iterable):
             if env_is(self._ctx.buildcfg.env, 'TF_NEED_CUDA'):

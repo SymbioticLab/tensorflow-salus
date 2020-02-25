@@ -14,6 +14,7 @@ build:
   before_script:
     - pip install conan invoke
   script:
+    - inv init --no-edit
     - inv ci --ref ${CI_COMMIT_REF_NAME}
   artifacts:
     name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}"
