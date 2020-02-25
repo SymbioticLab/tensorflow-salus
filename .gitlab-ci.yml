@@ -11,6 +11,9 @@ variables:
 build:
   image: tensorflow/tensorflow:${TF_BASE_VERSION}-devel-gpu-py3
   stage: build
+  # need to run on our self-hosted machine otherwise times out on gitlab agents
+  tags:
+    - gpu
   before_script:
     - pip install conan invoke
     - conan profile new default --detect
