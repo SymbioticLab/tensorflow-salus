@@ -238,5 +238,5 @@ def ci(ctx, ref):
         # fix perm and name
         ws.run('chmod -R go-w dist/devel')
         if tf_repo_name != 'tensorflow':
-            ws.run('mv dist/devel/bazel-{} dist/devel/bazel-tensorflow')
+            ws.run('mv dist/devel/bazel-{} dist/devel/bazel-tensorflow'.format(tf_repo_name))
         ws.run('cd dist/devel && zip ../tensorflow-salus-devel-{ref}.zip -r .'.format(ref=ref))
