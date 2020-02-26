@@ -35,22 +35,25 @@ test-pyimport:
   tags:
     - gpu
   script:
-    # We need to get out of the tensorflow source folder, otherwise import won't work
     - pip install ${CI_PROJECT_DIR}/dist/*.whl
-    - python -c 'import tensorflow'
+    # We need to get out of the tensorflow source folder, otherwise import won't work
+    - cd / && python -c 'import tensorflow'
 
 test-tfsrc:
   stage: test
   script:
-    - test -d dist/devel/bazel-genfiles
-    - test -d dist/devel/bazel-tensorflow/tensorflow/core
-    - test -d dist/devel/bazel-tensorflow/tensorflow/cc
-    - test -d dist/devel/bazel-tensorflow/third_party
-    - test -d dist/devel/bazel-bin/tensorflow
-    - test -f dist/devel/bazel-tensorflow/third_party/eigen3/unsupported/Eigen/CXX11/Tensor
-    - test -f dist/devel/bazel-tensorflow/external/eigen_archive/unsupported/Eigen/CXX11/Tensor
-    - test -f dist/devel/bazel-bin/tensorflow/libtensorflow_framework.so
-    - test -f dist/devel/bazel-bin/tensorflow/libtensorflow_kernels.so
+    - unzip dist/*.zip -d testdist
+    - test -d testdist/bazel-genfiles
+    - test -d testdist/bazel-tensorflow/tensorflow/core
+    - test -d testdist/bazel-tensorflow/tensorflow/cc
+    - test -d testdist/bazel-tensorflow/third_party
+    - test -d testdist/bazel-bin/tensorflow
+    - test -f testdist/bazel-tensorflow/third_party/eigen3/unsupported/Eigen/CXX11/Tensor
+    - test -f testdist/bazel-tensorflow/external/eigen_archive/unsupported/Eigen/CXX11/Tensor
+    - test -f testdist/bazel-bin/tensorflow/libtensorflow_framework.so
+    - test -f testdist/bazel-bin/tensorflow/libtensorflow_framework.so-2.params
+    - test -f testdist/bazel-bin/tensorflow/libtensorflow_kernels.so
+    - test -f testdist/bazel-bin/tensorflow/libtensorflow_kernels.so-2.params
 
 release:
   stage: release
