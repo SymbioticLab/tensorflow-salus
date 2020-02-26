@@ -42,3 +42,4 @@ spack-packages
 *.kdev4
 /deps
 /kernel_prof
+/dist

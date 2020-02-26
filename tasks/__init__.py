@@ -205,13 +205,19 @@ def ci(ctx, ref):
     with wscd(ctx) as ws:
         ws.run('mkdir deps')
         ws.run('cd deps && conan install ..')
+        # fix CUDA stubs
+        ws.run('ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1')
         ws.run(' '.join([
             'tensorflow/tools/ci_build/builds/configured', 'GPU',
             'bazel', 'build',
             '//tensorflow/tools/pip_package:build_pip_package',
             '//tensorflow:libtensorflow_kernels.so',
             '//tensorflow:libtensorflow_framework.so'
-        ]))
+            ]),
+            env={
+                'LD_LIBRARY_PATH': '/usr/local/cuda/lib64/stubs:{}'.format(os.environ.get('LD_LIBRARY_PATH', ''))
+            }
+        )
         ws.run('mkdir dist')
         # build pip wheel
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package dist')
@@ -226,8 +232,11 @@ def ci(ctx, ref):
             'bazel-bin',
             'bazel-genfiles',
             'bazel-{}'.format(tf_repo_name),
-            'deps/devel',
+            'dist/devel',
         ]
         ws.run(' '.join(cmd), echo=True)
+        # fix perm and name
         ws.run('chmod -R go-w dist/devel')
+        if tf_repo_name != 'tensorflow':
+            ws.run('mv dist/devel/bazel-{} dist/devel/bazel-tensorflow')
         ws.run('cd dist/devel && zip ../tensorflow-salus-devel-{ref}.zip -r .'.format(ref=ref))
