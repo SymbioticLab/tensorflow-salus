@@ -7,6 +7,8 @@ variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   LATEST_TAG: $CI_REGISTRY_IMAGE:latest
   TF_BASE_VERSION: 1.5.1
+  CONAN_LOGIN_USERNAME: peifeng
+  # CONAN_PASSWORD is set in project settings
 
 build:
   image: tensorflow/tensorflow:${TF_BASE_VERSION}-devel-gpu-py3
@@ -21,11 +23,12 @@ build:
   script:
     - inv init --no-edit
     - cat invoke.yml
-    - inv ci --ref ${CI_COMMIT_REF_NAME}
+    - inv conan-login
+    - inv ci-build --ref "${CI_COMMIT_SHA}"
+    - inv conan-upload
   artifacts:
-    name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}"
+    name: "${CI_PROJECT_NAME}-${TF_BASE_VERSION}-${CI_COMMIT_SHA}"
     paths:
-      - ${CI_PROJECT_DIR}/dist/*.zip
       - ${CI_PROJECT_DIR}/dist/*.whl
     expire_in: 1 week
 
@@ -39,33 +42,17 @@ test-pyimport:
     # We need to get out of the tensorflow source folder, otherwise import won't work
     - cd / && python -c 'import tensorflow'
 
-test-tfsrc:
-  stage: test
-  script:
-    - unzip dist/*.zip -d testdist
-    - test -d testdist/bazel-genfiles
-    - test -d testdist/bazel-tensorflow/tensorflow/core
-    - test -d testdist/bazel-tensorflow/tensorflow/cc
-    - test -d testdist/bazel-tensorflow/third_party
-    - test -d testdist/bazel-bin/tensorflow
-    - test -f testdist/bazel-tensorflow/third_party/eigen3/unsupported/Eigen/CXX11/Tensor
-    - test -f testdist/bazel-tensorflow/external/eigen_archive/unsupported/Eigen/CXX11/Tensor
-    - test -f testdist/bazel-bin/tensorflow/libtensorflow_framework.so
-    - test -f testdist/bazel-bin/tensorflow/libtensorflow_framework.so-2.params
-    - test -f testdist/bazel-bin/tensorflow/libtensorflow_kernels.so
-    - test -f testdist/bazel-bin/tensorflow/libtensorflow_kernels.so-2.params
-
 release:
   stage: release
+  before_script:
+    - pip install conan invoke
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $IMAGE_TAG
-    - docker tag $IMAGE_TAG $LATEST_TAG
-    - docker push $LATEST_TAG
+    - inv conan-login
+    - inv conan-promote --ref "${CI_COMMIT_SHA}"
+    - inv conan-upload
   only:
     - master
-  artifacts:  # keep the artifacts (default expire forever)
-    name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}"
+  artifacts:  # keep the artifacts passed from previous stage (default expire forever)
+    name: "${CI_PROJECT_NAME}-${TF_BASE_VERSION}"
     paths:
-      - ${CI_PROJECT_DIR}/dist/*.zip
       - ${CI_PROJECT_DIR}/dist/*.whl

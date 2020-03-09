@@ -11,23 +11,6 @@ from .helpers import confirm, edit_file, shell, template, eprint, buildcmd, wscd
 
 
 @task
-def deps(ctx):
-    """Install dependencies"""
-    dependencies = [
-        'zeromq@4.2.5',
-        'cppzmq@4.3.0'
-    ]
-    ctx.run('spack install ' + ' '.join(dependencies))
-    ctx.run('spack view -v -d true add spack-packages ' + ' '.join(dependencies))
-
-    # python dependencies
-    pydependencies = [
-        'numpy',
-    ]
-    ctx.run('pip install ' + ' '.join(pydependencies))
-
-
-@task
 def init(ctx, yes=False, no_edit=False):
     '''Initialize the project environments
         yes: Answer yes to all questions
@@ -58,7 +41,7 @@ def init(ctx, yes=False, no_edit=False):
     ])
 
     # check zeromq
-    default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'deps/packages')
+    default_values['ZEROMQ_PATH'] = os.path.join(WORKSPACE, 'deps')
 
     # check CUDA
     default_values['CUDA_PATH'], default_values['CUDA_VERSION'], default_values['CUDNN_VERSION'] = detect_cuda()
@@ -165,48 +148,17 @@ def interactive(ctx, sh=None):
             shell(ws, sh)
 
 
-@task(pre=[checkinit])
-def docker(ctx):
-    """Populate the docker context directory by copying files over,
-       preserving symlinks internal to the context directory
-    """
-    docker_ctx_dir = 'docker'
-    with wscd(ctx) as ws:
-        # generate wheel package
-        ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package ' + docker_ctx_dir)
-
-        # copy all files from bazel-output to docker context, resolving symlink
-        tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
-        cmd = [
-            'rsync',
-            '-avL',
-            '--filter',
-            '"merge {}"'.format(os.path.join(docker_ctx_dir, 'whitelist.rsync-filter')),
-            '--prune-empty-dirs',
-            'bazel-bin',
-            'bazel-genfiles',
-            'bazel-{}'.format(tf_repo_name),
-            os.path.join(docker_ctx_dir, 'tensorflow')
-        ]
-        ws.run(' '.join(cmd), echo=True)
-
-        # fix name
-        if tf_repo_name != 'tensorflow':
-            ws.run('mv docker/tensorflow/bazel-{} docker/tensorflow/bazel-tensorflow'.format(tf_repo_name))
-
-        # fix permission
-        ws.run('chmod -R go-w docker/tensorflow')
-
-
 @task
-def ci(ctx, ref):
+def ci_build(ctx, ref):
     '''Build on CI
     '''
     with wscd(ctx) as ws:
         ws.run('mkdir deps')
-        ws.run('cd deps && conan install ..')
-        # fix CUDA stubs
+        ws.run('cd deps && conan install ../conan')
+        # fix CUDA stubs in CI docker image in case no nvidia runtime is available
         ws.run('ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1')
+
+        # compile
         ws.run(' '.join([
             'tensorflow/tools/ci_build/builds/configured', 'GPU',
             'bazel', 'build',
@@ -218,25 +170,36 @@ def ci(ctx, ref):
                 'LD_LIBRARY_PATH': '/usr/local/cuda/lib64/stubs:{}'.format(os.environ.get('LD_LIBRARY_PATH', ''))
             }
         )
+
+        # build artifacts
         ws.run('mkdir dist')
         # build pip wheel
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package dist')
-        # build source package for salus
-        tf_repo_name = os.path.basename(WORKSPACE.rstrip('/'))
-        cmd = [
-            'rsync',
-            '-avL',
-            '--filter',
-            '"merge {}"'.format('docker/whitelist.rsync-filter'),
-            '--prune-empty-dirs',
-            'bazel-bin',
-            'bazel-genfiles',
-            'bazel-{}'.format(tf_repo_name),
-            'dist/devel',
-        ]
-        ws.run(' '.join(cmd), echo=True)
-        # fix perm and name
-        ws.run('chmod -R go-w dist/devel')
-        if tf_repo_name != 'tensorflow':
-            ws.run('mv dist/devel/bazel-{} dist/devel/bazel-tensorflow'.format(tf_repo_name))
-        ws.run('cd dist/devel && zip ../tensorflow-salus-devel-{ref}.zip -r .'.format(ref=ref))
+        # build devel package for salus
+        ws.run('conan export-pkg conan/ tensorflow-devel/$TF_BASE_VERSION-{}@'.format(ref))
+
+
+@task
+def conan_login(ctx):
+    ctx.run('conan remote add salus-conan https://api.bintray.com/conan/symbioticlab/salus-conan')
+    ctx.run('conan user -p $CONAN_PASSWORD -r salus-conan $CONAN_LOGIN_USERNAME')
+
+
+@task
+def conan_upload(ctx):
+    '''Upload conan packages
+    '''
+    ctx.run('conan upload -r salus-conan --all --confirm tensorflow-devel')
+
+
+@task
+def conan_promote(ctx, ref):
+    '''Promote the package from testing to stable
+    '''
+    ctx.run(
+        ' '.join([
+            'conan', 'alias',
+            'tensorflow-devel/$TF_BASE_VERSION@symbioticlab/stable',
+            'tensorflow-devel/$TF_BASE_VERSION-{}@symbioticlab/testing'.format(ref),
+        ])
+    )
