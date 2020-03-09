@@ -5,7 +5,7 @@ import os
 class TensorflowsalusConan(ConanFile):
     name = "tensorflow-devel"
     # we remove compiler from settings so that we can use the package from different compilers
-    settings = "os", "build_type", "arch"
+    settings = "os", "arch"
     description = "Development package for tensorflow. This is a total hack exposing all internals of TensorFlow"
     url = "https://github.com/SymbioticLab/tensorflow-salus"
     license = "Apache-2.0"
