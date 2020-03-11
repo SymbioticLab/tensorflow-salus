@@ -705,7 +705,8 @@ tf_cc_shared_object(
 )
 
 tf_cc_shared_object(
-    name = "libtensorflow_kernels.so",
+    name = "libtensorflow_kernels.so.1.5.1",
+    linkopts = ["-Wl,-soname,libtensorflow_kernels.so.1"],
     framework_so = [],
     deps = [
         "//tensorflow/core:protos_all_cc",

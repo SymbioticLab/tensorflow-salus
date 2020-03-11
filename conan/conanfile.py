@@ -55,8 +55,15 @@ class TensorflowsalusConan(ConanFile):
         self.copy("*", "include/external/eigen_archive", "bazel-tensorflow/external/eigen_archive")
 
         # Package so files
-        for libname in ["tensorflow_framework", "tensorflow_kernels"]:
-            self.copy("lib{}.so".format(libname), "lib", "bazel-bin/tensorflow", keep_path=False)
+        for libname in ["tensorflow_kernels"]:
+            ver = self.version.split('-')[0]
+            sover = ver.split('.')[0]
+            # fix soname
+            with tools.chdir(os.path.join(self.build_folder, "bazel-bin/tensorflow")):
+                self.run("ln -s lib{libname}.so.{ver} lib{libname}.so".format(libname=libname, ver=ver))
+                self.run("ln -s lib{libname}.so.{ver} lib{libname}.so.{sover}".format(libname=libname, sover=sover))
+                self.run("mv lib{libname}.so.{ver}-2.params lib{libname}.so-2.params".format(libname=libname, ver=ver))
+            self.copy("lib{}.so*".format(libname), "lib", "bazel-bin/tensorflow", keep_path=False, symlinks=True)
             self.copy("lib{}.so-2.params".format(libname), "lib", "bazel-bin/tensorflow", keep_path=False)
 
         # Ship a cmake module, conan can automatically find this

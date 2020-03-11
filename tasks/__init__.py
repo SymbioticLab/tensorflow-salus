@@ -107,8 +107,7 @@ def build(ctx, bazelArgs=''):
                 'bazel', 'build', '-c opt',
                 ws.if_cuda('--config=cuda'),
                 ba,
-                '//tensorflow:libtensorflow_framework.so',
-                '//tensorflow:libtensorflow_kernels.so',
+                '//tensorflow:libtensorflow_kernels.so.1.5.1',
                 '//tensorflow/tools/pip_package:build_pip_package'
             )
             print(cmd)
@@ -163,8 +162,7 @@ def ci_build(ctx, ref):
             'tensorflow/tools/ci_build/builds/configured', 'GPU',
             'bazel', 'build',
             '//tensorflow/tools/pip_package:build_pip_package',
-            '//tensorflow:libtensorflow_kernels.so',
-            '//tensorflow:libtensorflow_framework.so'
+            '//tensorflow:libtensorflow_kernels.so.1.5.1',
             ]),
             env={
                 'LD_LIBRARY_PATH': '/usr/local/cuda/lib64/stubs:{}'.format(os.environ.get('LD_LIBRARY_PATH', ''))
