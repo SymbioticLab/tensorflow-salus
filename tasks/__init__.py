@@ -170,7 +170,7 @@ def ci_build(ctx, ref):
         )
 
         # build artifacts
-        ws.run('mkdir dist')
+        ws.run('mkdir -p dist')
         # build pip wheel
         ws.run('bazel-bin/tensorflow/tools/pip_package/build_pip_package dist')
         # build devel package for salus

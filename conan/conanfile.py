@@ -56,19 +56,44 @@ class TensorflowsalusConan(ConanFile):
 
         # Package so files
         for libname in ["tensorflow_kernels"]:
-            ver = self.version.split('-')[0]
-            sover = ver.split('.')[0]
-            # fix soname
-            with tools.chdir(os.path.join(self.build_folder, "bazel-bin/tensorflow")):
-                self.run("ln -s lib{libname}.so.{ver} lib{libname}.so".format(libname=libname, ver=ver))
-                self.run("ln -s lib{libname}.so.{ver} lib{libname}.so.{sover}".format(libname=libname, sover=sover))
-                self.run("mv lib{libname}.so.{ver}-2.params lib{libname}.so-2.params".format(libname=libname, ver=ver))
-            self.copy("lib{}.so*".format(libname), "lib", "bazel-bin/tensorflow", keep_path=False, symlinks=True)
-            self.copy("lib{}.so-2.params".format(libname), "lib", "bazel-bin/tensorflow", keep_path=False)
+            lib = self._sonamehelper(libname)
+            self.copy(lib.barename, "lib", "bazel-bin/tensorflow", keep_path=False, symlinks=True)
+            self.copy(lib.soname, "lib", "bazel-bin/tensorflow", keep_path=False, symlinks=True)
+            self.copy(lib.fullname, "lib", "bazel-bin/tensorflow", keep_path=False)
+            self.copy(lib.params_file, "lib", "bazel-bin/tensorflow", keep_path=False)
 
         # Ship a cmake module, conan can automatically find this
         self.copy("TensorFlowConfig.cmake", "lib/cmake/tensorflow", keep_path=False)
 
+    def _sonamehelper(self, libname):
+        """Fix soname"""
+        class soname(object):
+            def __init__(self, libname, version):
+                self.libname = libname
+                self._ver = version
+                self._sover = version.split('.')[0]
+            @property
+            def barename(self):
+                return "lib{}.so".format(self.libname)
+            @property
+            def soname(self):
+                return self.barename + "." + self._sover
+            @property
+            def fullname(self):
+                return self.barename + "." + self._ver
+            @property
+            def params_file(self):
+                return self.barename + "-2.params"
+            @property
+            def full_params_file(self):
+                return self.fullname + "-2.params"
+
+        lib = soname(libname, self.version.split('-')[0])
+        with tools.chdir(os.path.join(self.build_folder, "bazel-bin/tensorflow")):
+            self.run("ln -sf {} {}".format(lib.fullname, lib.barename))
+            self.run("ln -sf {} {}".format(lib.fullname, lib.soname))
+            self.run("cp {} {}".format(lib.full_params_file, lib.params_file))
+        return lib
 
     def package_info(self):
         self.cpp_info.name = self.name
