@@ -17,7 +17,7 @@ class TensorflowsalusConan(ConanFile):
     export_sources = "TensorFlowConfig.cmake"
 
     # comma-separated list of requirements
-    requires = "zeromq/4.3.2", "cppzmq/4.6.0"
+    requires = "zeromq/4.3.2@symbioticlab/stable", "cppzmq/4.6.0@symbioticlab/stable"
     default_options = {
         "zeromq:shared": True,
         "libsodium:shared": True,
