@@ -18,7 +18,6 @@
 # Usage Documentation
 #
 # Cache variables: (not for direct use in CMakeLists.txt)
-#  TensorFlow_LIBRARY
 #  TensorFlow_Kernel_LIBRARY
 #  TensorFlow_INCLUDE_DIR
 #
@@ -31,13 +30,12 @@
 #
 # Adds the following targets:
 #  tensorflow::headers - A header only interface library
-#  tensorflow::framework - The whole tensorflow library
 #  tensorflow::kernels - All kernels
 #
 # Use this module this way:
 #  find_package(TensorFlow)
 #  add_executable(myapp ${SOURCES})
-#  target_link_libraries(myapp tensorflow::framework)
+#  target_link_libraries(myapp tensorflow::kernels)
 #
 # Requires these CMake modules:
 #  FindPackageHandleStandardArgs (CMake standard module)
@@ -56,14 +54,6 @@ find_path(TensorFlow_INCLUDE_DIR
     NO_DEFAULT_PATH
 )
 
-find_library(TensorFlow_LIBRARY
-    NAMES
-        tensorflow_framework
-    PATHS ${TensorFlow_ROOT}
-    PATH_SUFFIXES lib
-    NO_DEFAULT_PATH
-)
-
 find_library(TensorFlow_Kernel_LIBRARY
     NAMES
         tensorflow_kernels
@@ -73,14 +63,13 @@ find_library(TensorFlow_Kernel_LIBRARY
 )
 
 # hide locals from GUI
-mark_as_advanced(TensorFlow_INCLUDE_DIR TensorFlow_LIBRARY TensorFlow_Kernel_LIBRARY)
+mark_as_advanced(TensorFlow_INCLUDE_DIR TensorFlow_Kernel_LIBRARY)
 
 # set TensorFlow_FOUND
 include(FindPackageHandleStandardArgs)
 unset(TensorFlow_FOUND)
 find_package_handle_standard_args(TensorFlow DEFAULT_MSG
     TensorFlow_INCLUDE_DIR
-    TensorFlow_LIBRARY
     TensorFlow_Kernel_LIBRARY
 )
 
@@ -89,7 +78,7 @@ if(TensorFlow_FOUND)
     message("-- Found TensorFlow: ${TensorFlow_ROOT}")
     set(tf_binary_path ${TensorFlow_ROOT}/lib)
 
-    set(TensorFlow_LIBRARIES ${TensorFlow_LIBRARY} ${TensorFlow_Kernel_LIBRARY})
+    set(TensorFlow_LIBRARIES ${TensorFlow_Kernel_LIBRARY})
     set(TensorFlow_INCLUDE_DIRS
         ${TensorFlow_INCLUDE_DIR}
         ${TensorFlow_INCLUDE_DIR}/external/eigen_archive
@@ -118,15 +107,6 @@ if(TensorFlow_FOUND)
         ${TensorFlow_INCLUDE_DIRS}
     )
 
-    add_library(tensorflow::framework SHARED IMPORTED)
-    file(STRINGS ${tf_binary_path}/libtensorflow_framework.so-2.params FrameworkLinkLibraries REGEX "^-l")
-    set_property(TARGET tensorflow::framework PROPERTY INTERFACE_LINK_LIBRARIES
-        tensorflow::headers
-        ${tf_cuda_link_path_flag}
-        ${FrameworkLinkLibraries}
-    )
-    set_property(TARGET tensorflow::framework PROPERTY IMPORTED_LOCATION ${TensorFlow_LIBRARY})
-
     add_library(tensorflow::kernels SHARED IMPORTED)
     file(STRINGS ${tf_binary_path}/libtensorflow_kernels.so-2.params KernelLibraries REGEX "^-l")
     set_property(TARGET tensorflow::kernels PROPERTY INTERFACE_LINK_LIBRARIES
@@ -135,5 +115,4 @@ if(TensorFlow_FOUND)
         ${KernelLinkLibraries}
     )
     set_property(TARGET tensorflow::kernels PROPERTY IMPORTED_LOCATION ${TensorFlow_Kernel_LIBRARY})
-
 endif()
