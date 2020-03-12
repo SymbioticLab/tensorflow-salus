@@ -29,9 +29,11 @@ class TensorflowsalusConan(ConanFile):
         self.copy("*.so*", "lib", "lib")
 
     def package(self):
+        # find out repo name
+        bazel_tensorflow = "bazel-" + os.path.basename(self.build_folder)
         # Package header files
         self.copy(
-            "*.h", "include", "bazel-tensorflow",
+            "*.h", "include", bazel_tensorflow,
             excludes=(
                 "_bin/*", "bazel-out/*",
                 # eigen will be copied in whole
@@ -43,7 +45,7 @@ class TensorflowsalusConan(ConanFile):
 
         # Package proto files
         self.copy(
-            "*.proto", "include", "bazel-tensorflow",
+            "*.proto", "include", bazel_tensorflow,
             excludes=(
                 "_bin/*", "bazel-out/*",
             )
@@ -51,8 +53,8 @@ class TensorflowsalusConan(ConanFile):
         self.copy("*.proto", "include", "bazel-genfiles")
 
         # Package whole Eigen library, which can't be cover in header files
-        self.copy("*", "include/third_party/eigen3", "bazel-tensorflow/third_party/eigen3")
-        self.copy("*", "include/external/eigen_archive", "bazel-tensorflow/external/eigen_archive")
+        self.copy("*", "include/third_party/eigen3", os.path.join(bazel_tensorflow, "third_party/eigen3"))
+        self.copy("*", "include/external/eigen_archive", os.path.join(bazel_tensorflow, "external/eigen_archive"))
 
         # Package so files
         for libname in ["tensorflow_kernels"]:
